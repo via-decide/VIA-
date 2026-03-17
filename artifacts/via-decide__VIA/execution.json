@@ -2,6 +2,7 @@
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
   "branch": "simba/implement-a-core-backend-module-called-via-dynam",
+  "branch": "simba/implement-a-core-backend-module-called-via-shado",
   "files_to_create": [
     "codex-task.md",
     "antigravity-repair-task.md",

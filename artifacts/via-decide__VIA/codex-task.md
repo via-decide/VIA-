@@ -5,6 +5,10 @@ Implement a core backend module called via-dynamic-payload-validator to enforce 
 
 CONSTRAINTS
 Do NOT use heavy external validation libraries like Zod or Joi if they introduce significant latency. You must implement a highly optimized, native recursive checking algorithm. The validation layer must add less than 2ms of overhead per message, ensuring the high-speed swarm communication remains frictionless.
+Implement a core backend module called via-shadow-router to enable A/B testing and "shadow deployments" of new AI agent logic in production. 1. Create a new directory src/core/network/shadow-router/. 2. Create experiment-config.json defining active experiments, traffic allocation percentages (e.g., 5% to Variant B), and target agent IDs. 3. Implement ShadowRouter.js (or .ts). This module will sit alongside the PredictiveEngine. 4. Build the shadow logic: When a request comes in, the router must route the live request to the primary (Control) agent to ensure the user gets a fast, stable response. Simultaneously, it must asynchronously duplicate the request payload and send it to the experimental (Variant) agent. 5. Build a comparator function: Capture the output, execution time, and memory usage of *both* the Control and Variant agents. 6. Discard the Variant's response (do not send it to the user), but log the comparative metrics to the telemetry stream or database for developer analysis.
+
+CONSTRAINTS
+Do NOT block the main event loop or delay the Control agent's response to the user. The payload duplication and Variant execution must be strictly "fire-and-forget" from the main thread's perspective, offloaded entirely to the WorkerPool. Ensure that the Variant agent operates in a read-only or sandboxed database context so it cannot accidentally mutate real production user data during its test run.
 
 PROCESS (MANDATORY)
 1. Read README.md and AGENTS.md before editing.
