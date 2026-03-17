@@ -1,9 +1,9 @@
-Branch: simba/implement-a-core-backend-module-called-via-socke
-Title: Implement a core backend module called via-socket-mesh to handle mass...
+Branch: simba/implement-a-core-backend-module-called-via-decen
+Title: Implement a core backend module called via-decentralized-reputation-o...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Establish the high-throughput, low-latency gateway required for real-time AI ecosystems. This infrastructure is essential for maintaining persistent, bi-directional communication channels-perfect for streaming live autonomous agent outputs or handling high-frequency webhooks (like real-time messaging integrations) without the overhead of continuous HTTP polling.
+- Goal: Achieve "Trustless Accountability." By moving reputation from a private database to a cryptographically verifiable oracle, the VIA engine ensures that agents cannot "cheat" their way to influence. This creates a high-stakes environment where agents are incentivized to be accurate, as a single major lie could result in the permanent loss of their operational "stake" and social standing.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
