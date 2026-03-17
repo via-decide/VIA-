@@ -1,10 +1,14 @@
 {
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
+<<<<<<< simba/implement-a-core-backend-module-called-via-plugi
+  "branch": "simba/implement-a-core-backend-module-called-via-plugi",
+=======
   "branch": "simba/implement-a-core-backend-module-called-via-api-g",
   "branch": "simba/implement-a-core-backend-module-called-via-local",
   "branch": "simba/implement-a-core-backend-module-called-via-dynam",
   "branch": "simba/implement-a-core-backend-module-called-via-shado",
+>>>>>>> main
   "files_to_create": [
     "codex-task.md",
     "antigravity-repair-task.md",
