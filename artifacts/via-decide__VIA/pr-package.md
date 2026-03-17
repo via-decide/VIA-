@@ -1,9 +1,9 @@
-Branch: simba/implement-a-core-backend-module-called-via-socke
-Title: Implement a core backend module called via-socket-mesh to handle mass...
+Branch: simba/implement-a-core-backend-module-called-via-ident
+Title: Implement a core backend module called via-identity-resolver to bridg...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Establish the high-throughput, low-latency gateway required for real-time AI ecosystems. This infrastructure is essential for maintaining persistent, bi-directional communication channels-perfect for streaming live autonomous agent outputs or handling high-frequency webhooks (like real-time messaging integrations) without the overhead of continuous HTTP polling.
+- Goal: Unify the "Fragmented User." In the decentralized world, a single human often has five different IDs across five different apps. By resolving these into a single internal GlobalID, the VIA engine can maintain a persistent understanding of a user's context and reputation, regardless of which "social window" they are looking through.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
