@@ -1,9 +1,9 @@
-Branch: simba/implement-a-core-backend-module-called-via-socke
-Title: Implement a core backend module called via-socket-mesh to handle mass...
+Branch: simba/implement-a-core-backend-module-called-via-senti
+Title: Implement a core backend module called via-sentiment-heatmap to aggre...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Establish the high-throughput, low-latency gateway required for real-time AI ecosystems. This infrastructure is essential for maintaining persistent, bi-directional communication channels-perfect for streaming live autonomous agent outputs or handling high-frequency webhooks (like real-time messaging integrations) without the overhead of continuous HTTP polling.
+- Goal: Visualize the "Global Mood." By turning millions of abstract social interactions into a tangible, real-time heatmap, the VIA engine gains a macro-level understanding of the social landscape. This allows the swarm to navigate around "toxic storms," lean into "pockets of joy," and respond to the internet not just as a series of texts, but as a living, breathing emotional organism.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
