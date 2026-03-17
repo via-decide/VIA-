@@ -1,15 +1,9 @@
-Branch: simba/implement-a-core-backend-module-called-via-edge-
-Title: Implement a core backend module called via-edge-cache-manager to hand...
+Branch: simba/implement-a-core-backend-module-called-via-socke
+Title: Implement a core backend module called via-socket-mesh to handle mass...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Dramatically reduce database load and latency for read-heavy social/agent graphs by serving frequently accessed data directly from memory. This mimics the edge-caching architecture used by major social platforms to serve news feeds instantly.
-Branch: simba/implement-a-core-backend-module-called-via-swarm
-Title: Implement a core backend module called via-swarm-balancer to handle p...
-
-## Summary
-- Repo orchestration task for via-decide/VIA
-- Goal: Enable true horizontal scaling within the Node process. By offloading heavy data parsing and agent reasoning to dedicated background threads, the main event loop remains free to handle incoming network traffic and routing, guaranteeing high throughput even under heavy load.
+- Goal: Establish the high-throughput, low-latency gateway required for real-time AI ecosystems. This infrastructure is essential for maintaining persistent, bi-directional communication channels-perfect for streaming live autonomous agent outputs or handling high-frequency webhooks (like real-time messaging integrations) without the overhead of continuous HTTP polling.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
