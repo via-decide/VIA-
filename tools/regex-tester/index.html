@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>🔍 RegEx Tester</title>
+<script src="../../shared/vd-nav-fix.js"></script>
+<style>:root{--bg:#0f0d0c;--bg2:#1a1614;--bg3:#231e1b;--border:#3a2e28;--text:#f0e4d0;--muted:#8a7568;--leaf:#52B756}body{margin:0;padding:24px;background:var(--bg);color:var(--text);font-family:system-ui}.w{max-width:900px;margin:0 auto}input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text)}.row{display:grid;grid-template-columns:1fr 120px;gap:10px}.panel{margin-top:10px;background:var(--bg2);border:1px solid var(--border);padding:12px;border-radius:8px}.hl{background:rgba(82,183,86,.3);border-radius:4px}.err{color:#f87171}code{white-space:pre-wrap;word-break:break-word}</style></head>
+<body><div class="w"><h1>🔍 RegEx Tester</h1><div class="row"><input id="pattern" placeholder="pattern e.g. (foo)\\d+"/><input id="flags" value="g" placeholder="gim"/></div><textarea id="text" rows="8" placeholder="Type text to test"></textarea><div id="status" class="panel"></div><div id="view" class="panel"><code id="highlight"></code></div><div id="list" class="panel"></div></div>
+<script>
+const esc=(s)=>s.replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function update(){
+  const p=document.getElementById('pattern').value; const f=document.getElementById('flags').value; const txt=document.getElementById('text').value;
+  const status=document.getElementById('status'), high=document.getElementById('highlight'), list=document.getElementById('list');
+  if(!p){status.textContent='Enter a pattern.'; high.textContent=txt; list.textContent='No matches'; return;}
+  try{
+    const re=new RegExp(p,f); const matches=[...txt.matchAll(re)];
+    if(!matches.length){status.textContent='No matches'; high.textContent=txt; list.textContent='No matches'; return;}
+    status.textContent=`${matches.length} match(es)`;
+    const spans=[]; for(const m of matches){spans.push({s:m.index,e:m.index+m[0].length,val:m[0]});}
+    let out='',last=0; spans.forEach(sp=>{out += esc(txt.slice(last,sp.s)) + `<span class="hl">${esc(sp.val)}</span>`; last=sp.e;}); out += esc(txt.slice(last));
+    high.innerHTML=out;
+    list.innerHTML = '<strong>Matches</strong><br>' + matches.map((m,i)=>`#${i+1} @ ${m.index}: <code>${esc(m[0])}</code>${m.length>1?` | groups: ${m.slice(1).map(g=>`<code>${esc(String(g))}</code>`).join(', ')}`:''}`).join('<br>');
+  }catch(e){status.innerHTML=`<span class="err">Regex error: ${esc(e.message)}</span>`; high.textContent=txt; list.textContent='Error state';}
+}
+['pattern','flags','text'].forEach(id=>document.getElementById(id).addEventListener('keyup',update));
+['pattern','flags','text'].forEach(id=>document.getElementById(id).addEventListener('input',update));
+update();
+</script></body></html>

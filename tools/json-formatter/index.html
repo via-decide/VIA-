@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>{ } JSON Formatter</title>
+<script src="../../shared/vd-nav-fix.js"></script>
+<style>:root{--bg:#0f0d0c;--bg2:#1a1614;--bg3:#231e1b;--border:#3a2e28;--text:#f0e4d0;--muted:#8a7568;--leaf:#52B756}body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text);padding:24px}.w{max-width:900px;margin:0 auto}textarea,pre,select,button{font:inherit}textarea{width:100%;min-height:220px;padding:12px;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px}pre{white-space:pre-wrap;word-wrap:break-word;background:var(--bg2);border:1px solid var(--border);padding:12px;border-radius:8px;min-height:180px}.row{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}button{padding:8px 12px;border:0;border-radius:8px;background:var(--leaf);font-weight:700;cursor:pointer}select{padding:8px;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:8px}.err{color:#f87171;white-space:pre-wrap}</style></head>
+<body><div class="w"><h1>{ } JSON Formatter</h1><textarea id="input" placeholder="Paste JSON here"></textarea><div class="row"><button id="format">Format</button><button id="minify">Minify</button><button id="copy">Copy</button><label>Indent <select id="indent"><option value="2">2 spaces</option><option value="4">4 spaces</option><option value="tab">Tab</option></select></label></div><div id="error" class="err"></div><pre id="out"></pre></div>
+<script>
+const input = document.getElementById('input'); const out = document.getElementById('out'); const err = document.getElementById('error');
+const parseErrorLine = (msg='') => { const m = msg.match(/position\s(\d+)/i); if(!m) return null; const pos=Number(m[1]); return input.value.slice(0,pos).split('\n').length; };
+function run(minify=false){
+  err.textContent='';
+  try {
+    const obj = JSON.parse(input.value);
+    const ind = document.getElementById('indent').value;
+    out.textContent = JSON.stringify(obj, null, minify ? 0 : (ind==='tab'?'\t':Number(ind)));
+  } catch (e) {
+    const line = parseErrorLine(e.message);
+    err.textContent = `Invalid JSON${line ? ` on line ${line}` : ''}: ${e.message}`;
+    out.textContent = '';
+  }
+}
+document.getElementById('format').onclick=()=>run(false);
+document.getElementById('minify').onclick=()=>run(true);
+document.getElementById('copy').onclick=async()=>{try{await navigator.clipboard.writeText(out.textContent);}catch(_){}};
+</script></body></html>

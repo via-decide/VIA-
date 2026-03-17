@@ -1,0 +1,1 @@
+{ "name": "RegEx Tester", "cat": "coders", "desc": "Test regular expressions safely in the browser.", "icon": "🔍", "entry": "tools/regex-tester/index.html", "engine": false }

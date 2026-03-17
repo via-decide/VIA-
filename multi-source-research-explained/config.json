@@ -1,0 +1,26 @@
+{
+  "id": "multi-source-research-explained",
+  "name": "Multi Source Research Explained",
+  "description": "Synthesize findings from multiple sources into clear outputs.",
+  "category": "researchers",
+  "audience": [
+    "researchers",
+    "students"
+  ],
+  "inputs": [
+    "question",
+    "sources"
+  ],
+  "outputs": [
+    "research_synthesis"
+  ],
+  "relatedTools": [
+    "student-research",
+    "export-studio"
+  ],
+  "entry": "multi-source-research-explained/index.html",
+  "tags": [
+    "legacy",
+    "research"
+  ]
+}

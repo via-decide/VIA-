@@ -1,0 +1,32 @@
+[
+  {
+    "id": "oxygen-crisis",
+    "title": "Oxygen Crisis",
+    "text": "A habitat oxygen processor failed. Pick your first response.",
+    "choices": [
+      {"value":"seal", "label":"Seal two sectors to slow leak", "score":120, "result":"Leak rate reduced.", "next":"power-allocation"},
+      {"value":"override", "label":"Run manual override with crew", "score":140, "result":"Crew stabilized pressure.", "next":"power-allocation"},
+      {"value":"diagnose", "label":"Run diagnostics before action", "score":90, "result":"You gained deeper system insight.", "next":"power-allocation"}
+    ]
+  },
+  {
+    "id": "power-allocation",
+    "title": "Power Allocation",
+    "text": "Only one subsystem can run at full power.",
+    "choices": [
+      {"value":"medbay", "label":"Prioritize medbay", "score":120, "result":"Survivability increased.", "next":"final-approach"},
+      {"value":"repair", "label":"Prioritize repair armature", "score":130, "result":"Repair speed increased.", "next":"final-approach"},
+      {"value":"split", "label":"Split power across all teams", "score":100, "result":"Everyone got limited support.", "next":"final-approach"}
+    ]
+  },
+  {
+    "id": "final-approach",
+    "title": "Final Approach",
+    "text": "Choose the final strategy to secure the mission.",
+    "choices": [
+      {"value":"risky-push", "label":"Risky fast push", "score":170, "result":"Mission completed under pressure.", "next":null},
+      {"value":"safe-plan", "label":"Safe coordinated plan", "score":150, "result":"Mission completed with high team stability.", "next":null},
+      {"value":"fallback", "label":"Fallback and regroup", "score":110, "result":"Mission completed conservatively.", "next":null}
+    ]
+  }
+]

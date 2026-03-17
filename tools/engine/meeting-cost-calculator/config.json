@@ -1,0 +1,8 @@
+{
+  "id": "meeting-cost-calculator",
+  "name": "Meeting Cost Calculator",
+  "description": "Estimate direct meeting cost based on participants, rates, and preparation time.",
+  "category": "business",
+  "entry": "tools/engine/meeting-cost-calculator/index.html",
+  "tags": ["business", "calculator", "productivity", "standalone"]
+}
