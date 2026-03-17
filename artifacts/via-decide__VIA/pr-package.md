@@ -1,9 +1,9 @@
-Branch: simba/implement-a-core-backend-middleware-module-calle
-Title: Implement a core backend middleware module called via-predictive-rout...
+Branch: simba/implement-a-core-backend-module-called-via-swarm
+Title: Implement a core backend module called via-swarm-balancer to handle p...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Upgrade the VIA core architecture into a robust, highly scalable backend capable of intelligently load-balancing massive concurrent agent or user requests. This lays the infrastructural foundation necessary to support advanced, dynamic social-media-style engine tools.
+- Goal: Enable true horizontal scaling within the Node process. By offloading heavy data parsing and agent reasoning to dedicated background threads, the main event loop remains free to handle incoming network traffic and routing, guaranteeing high throughput even under heavy load.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
