@@ -1,0 +1,26 @@
+{
+  "id": "decision-brief-guide",
+  "name": "Decision Brief Guide",
+  "description": "Turn complex analysis into concise decision briefs.",
+  "category": "operators",
+  "audience": [
+    "operators",
+    "founders"
+  ],
+  "inputs": [
+    "context",
+    "options"
+  ],
+  "outputs": [
+    "decision_brief"
+  ],
+  "relatedTools": [
+    "spec-builder",
+    "export-studio"
+  ],
+  "entry": "decision-brief-guide/index.html",
+  "tags": [
+    "legacy",
+    "decision"
+  ]
+}

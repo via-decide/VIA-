@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>🍅 Pomodoro Timer</title>
+<script src="../../shared/vd-nav-fix.js"></script>
+<style>:root{--bg:#0f0d0c;--bg2:#1a1614;--bg3:#231e1b;--border:#3a2e28;--text:#f0e4d0;--muted:#8a7568;--leaf:#52B756}body{margin:0;padding:24px;background:var(--bg);color:var(--text);font-family:system-ui}.w{max-width:620px;margin:0 auto;text-align:center}.timer{font-size:4rem;font-weight:800;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;margin:16px 0}.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}button,input{padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text)}button{background:var(--leaf);border:0;color:#081008;font-weight:700;cursor:pointer}.dots{display:flex;justify-content:center;gap:8px;margin-top:12px}.dot{width:10px;height:10px;border-radius:50%;background:var(--bg3);border:1px solid var(--border)}.dot.on{background:var(--leaf)}</style></head>
+<body><div class="w"><h1>🍅 Pomodoro Timer</h1><input id="task" placeholder="Task label (optional)"><p id="phase">Work</p><div class="timer" id="time">25:00</div><div class="row"><button id="start">Start</button><button id="pause">Pause</button><button id="reset">Reset</button></div><div class="dots" id="dots"></div></div>
+<script>
+const DUR={work:25*60,break:5*60,long:15*60};
+let left=DUR.work, mode='work', run=false, sessions=0, iv=null;
+function fmt(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}
+function draw(){
+  time.textContent=fmt(left); phase.textContent=mode==='work'?'Work':(mode==='break'?'Break':'Long Break');
+  const taskTxt=task.value.trim(); document.title=`${fmt(left)} 🍅 ${mode==='work'&&taskTxt?taskTxt:'Pomodoro Timer'}`;
+  dots.innerHTML=Array.from({length:8},(_,i)=>`<span class="dot ${i<sessions?'on':''}"></span>`).join('');
+}
+function beep(){const ctx=new (window.AudioContext||window.webkitAudioContext)();const o=ctx.createOscillator();const g=ctx.createGain();o.frequency.value=740;o.connect(g);g.connect(ctx.destination);g.gain.setValueAtTime(0.001,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.2,ctx.currentTime+0.02);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.25);o.start();o.stop(ctx.currentTime+0.25);}
+function nextPhase(){
+  if(mode==='work'){sessions++; mode = sessions%4===0 ? 'long' : 'break';}
+  else {mode='work';}
+  left = mode==='work'?DUR.work:(mode==='break'?DUR.break:DUR.long); beep(); draw();
+}
+function tick(){if(!run) return; left--; if(left<=0){nextPhase();} draw();}
+start.onclick=()=>{if(run) return; run=true; iv=setInterval(tick,1000);};
+pause.onclick=()=>{run=false; clearInterval(iv);};
+reset.onclick=()=>{run=false; clearInterval(iv); mode='work'; left=DUR.work; sessions=0; draw();};
+task.addEventListener('input',draw); draw();
+</script></body></html>

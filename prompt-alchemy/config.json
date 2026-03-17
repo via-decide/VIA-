@@ -1,0 +1,34 @@
+{
+  "id": "prompt-alchemy-main",
+  "name": "PromptAlchemy (Main)",
+  "description": "Cross-model first-render prompt pack engine for creators.",
+  "category": "creators",
+  "audience": [
+    "creators",
+    "founders",
+    "operators"
+  ],
+  "inputs": [
+    "platform",
+    "format",
+    "niche",
+    "idea",
+    "brand"
+  ],
+  "outputs": [
+    "prompt_preview",
+    "email_payload"
+  ],
+  "relatedTools": [
+    "promptalchemy",
+    "script-generator",
+    "spec-builder",
+    "export-studio"
+  ],
+  "entry": "prompt-alchemy/index.html",
+  "tags": [
+    "legacy",
+    "main-tool",
+    "prompting"
+  ]
+}

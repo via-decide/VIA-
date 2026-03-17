@@ -1,0 +1,26 @@
+{
+  "id": "agent",
+  "name": "Agent Builder",
+  "description": "Design simple AI agents and workflows.",
+  "category": "coders",
+  "audience": [
+    "coders",
+    "operators"
+  ],
+  "inputs": [
+    "problem",
+    "workflow"
+  ],
+  "outputs": [
+    "agent_plan"
+  ],
+  "relatedTools": [
+    "spec-builder",
+    "app-generator"
+  ],
+  "entry": "agent/index.html",
+  "tags": [
+    "legacy",
+    "workflow"
+  ]
+}

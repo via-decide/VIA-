@@ -1,0 +1,26 @@
+{
+  "id": "founder",
+  "name": "Founder",
+  "description": "Founder positioning and narrative builder.",
+  "category": "founders",
+  "audience": [
+    "founders",
+    "creators"
+  ],
+  "inputs": [
+    "story",
+    "offer"
+  ],
+  "outputs": [
+    "founder_narrative"
+  ],
+  "relatedTools": [
+    "prompt-alchemy-main",
+    "script-generator"
+  ],
+  "entry": "founder/index.html",
+  "tags": [
+    "legacy",
+    "positioning"
+  ]
+}

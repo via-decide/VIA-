@@ -1,0 +1,8 @@
+{
+  "id": "market-dynamics",
+  "name": "Market Dynamics",
+  "description": "Interactive market simulator for supply, demand, and volatility pressures.",
+  "category": "engine",
+  "entry": "tools/engine/market-dynamics/index.html",
+  "tags": ["simulation", "market", "business", "standalone"]
+}

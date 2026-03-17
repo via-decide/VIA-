@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Tool Generator</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #0a1020; color: #e8eeff; }
+    .page { width: min(1100px, 94vw); margin: 0 auto; padding: 20px 0 28px; }
+    .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .btn { border: 1px solid #334264; border-radius: 10px; color: #e8eeff; text-decoration: none; padding: 8px 12px; }
+    .layout { margin-top: 14px; display: grid; grid-template-columns: 420px 1fr; gap: 14px; }
+    .panel { background: #121a2d; border: 1px solid #2b3958; border-radius: 12px; padding: 12px; }
+    label { display: grid; gap: 6px; margin-bottom: 8px; }
+    input, textarea, select { background: #0b1220; color: #e8eeff; border: 1px solid #2b3958; border-radius: 8px; padding: 8px; font: inherit; }
+    textarea { min-height: 140px; }
+    button { background: #6ea8fe; color: #031327; border: 0; border-radius: 8px; padding: 9px 12px; font-weight: 700; cursor: pointer; }
+    pre { margin: 0; background: #0b1220; border: 1px solid #2b3958; border-radius: 10px; padding: 10px; overflow: auto; max-height: 260px; }
+    .status { color: #9db0db; font-size: .9rem; margin: 10px 0 0; }
+    @media (max-width: 980px) { .layout { grid-template-columns: 1fr; } }
+  </style>
+  <script src="../../shared/vd-nav-fix.js"></script>
+</head>
+<body>
+  <main class="page">
+    <header class="head">
+      <div>
+        <h1 style="margin:0">AI Tool Generator</h1>
+        <p style="margin:.4rem 0 0;color:#9db0db">Prompt → tool spec → template → registry plugin payload.</p>
+      </div>
+      <a class="btn" href="../../index.html">Back to Hub</a>
+    </header>
+
+    <div class="layout">
+      <section class="panel">
+        <form id="generator-form">
+          <label>
+            Prompt
+            <textarea id="tool-prompt" required placeholder="Describe the tool you want to create..."></textarea>
+          </label>
+          <label>
+            Tool title (optional)
+            <input id="tool-title" type="text" placeholder="E.g. Sprint Plan Synthesizer" />
+          </label>
+          <label>
+            Category
+            <select id="tool-category">
+              <option value="coders">Coders</option>
+              <option value="creators">Creators</option>
+              <option value="researchers">Researchers</option>
+              <option value="business">Business</option>
+              <option value="education">Education</option>
+              <option value="system">System</option>
+            </select>
+          </label>
+          <label>
+            Output fields (comma separated)
+            <input id="tool-outputs" type="text" placeholder="plan, tasks, risk_report" />
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;">
+            <input id="auto-register" type="checkbox" checked />
+            Runtime register generated tool plugin
+          </label>
+          <button type="submit">Generate Tool Blueprint</button>
+        </form>
+        <p id="generator-status" class="status">Ready.</p>
+      </section>
+
+      <section class="panel" style="display:grid;gap:10px;">
+        <h2 style="margin:0;font-size:1.05rem;">Generated Spec</h2>
+        <pre id="generated-spec"></pre>
+        <h2 style="margin:0;font-size:1.05rem;">Generated HTML Template</h2>
+        <pre id="generated-html"></pre>
+        <h2 style="margin:0;font-size:1.05rem;">Registry Plugin Payload</h2>
+        <pre id="generated-plugin"></pre>
+      </section>
+    </div>
+  </main>
+
+  <script src="../../shared/tool-registry.js"></script>
+  <script src="tool.js"></script>
+  <script>window.AiToolGenerator.init();</script>
+</body>
+</html>

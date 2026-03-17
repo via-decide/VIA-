@@ -1,0 +1,1 @@
+{ "name": "JSON Formatter", "cat": "coders", "desc": "Validate, format, and minify JSON payloads.", "icon": "{ }", "entry": "tools/json-formatter/index.html", "engine": false }
