@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>🎨 Color Palette Generator</title>
+  <script src="../../shared/vd-nav-fix.js"></script>
+  <style>
+    :root { --bg:#0f0d0c; --bg2:#1a1614; --bg3:#231e1b; --border:#3a2e28; --text:#f0e4d0; --muted:#8a7568; --leaf:#52B756; }
+    body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text);padding:24px}
+    .w{max-width:760px;margin:0 auto}.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px}
+    input,button,textarea{font:inherit}.row{display:flex;gap:10px;align-items:end;flex-wrap:wrap}label{display:grid;gap:6px;min-width:220px}
+    input{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:10px;border-radius:8px}
+    button{background:var(--leaf);color:#09110a;border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}
+    .swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:16px}.sw{border:1px solid var(--border);border-radius:10px;padding:10px;background:var(--bg3)}
+    .chip{height:52px;border-radius:8px;border:1px solid var(--border)} .hex{font-size:.82rem;color:var(--muted);margin-top:8px}
+    pre{background:var(--bg3);border:1px solid var(--border);padding:12px;border-radius:8px;white-space:pre-wrap;overflow:auto}
+  </style>
+</head>
+<body>
+  <div class="w">
+    <h1>🎨 Color Palette Generator</h1>
+    <div class="card">
+      <div class="row">
+        <label>Base hex color<input id="hex" value="#52B756" /></label>
+        <button id="gen">Generate</button>
+        <button id="copy">Copy CSS vars</button>
+      </div>
+      <div id="swatches" class="swatches"></div>
+      <h3>CSS variables</h3>
+      <pre id="cssOut"></pre>
+    </div>
+  </div>
+<script>
+const hexIn = document.getElementById('hex');
+const swatches = document.getElementById('swatches');
+const cssOut = document.getElementById('cssOut');
+const normHex = (h) => {
+  const v = String(h).trim().replace('#','');
+  if (/^[0-9a-fA-F]{3}$/.test(v)) return '#' + v.split('').map(c=>c+c).join('').toLowerCase();
+  if (/^[0-9a-fA-F]{6}$/.test(v)) return '#' + v.toLowerCase();
+  return null;
+};
+const hexToRgb = (hex) => [parseInt(hex.slice(1,3),16), parseInt(hex.slice(3,5),16), parseInt(hex.slice(5,7),16)];
+const rgbToHex = (r,g,b) => '#' + [r,g,b].map(n=>Math.max(0,Math.min(255,Math.round(n))).toString(16).padStart(2,'0')).join('');
+function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;let h=0,s=0,l=(max+min)/2;if(d){s=l>0.5?d/(2-max-min):d/(max+min);if(max===r)h=(g-b)/d+(g<b?6:0);else if(max===g)h=(b-r)/d+2;else h=(r-g)/d+4;h/=6;}return [h,s,l];}
+function hslToRgb(h,s,l){let r,g,b;if(s===0){r=g=b=l;}else{const hue2rgb=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};const q=l<0.5?l*(1+s):l+s-l*s;const p=2*l-q;r=hue2rgb(p,q,h+1/3);g=hue2rgb(p,q,h);b=hue2rgb(p,q,h-1/3);}return [r*255,g*255,b*255];}
+function build(){
+  const hex = normHex(hexIn.value);
+  if(!hex){cssOut.textContent='Enter valid hex color like #52B756';swatches.innerHTML='';return;}
+  const [h,s,l]=rgbToHsl(...hexToRgb(hex));
+  const tones = [0,.2,.4,.6,.8].map(i => rgbToHex(...hslToRgb(h,s,Math.min(1,l + (1-l)*i))));
+  const comp = rgbToHex(...hslToRgb((h+0.5)%1,s,l));
+  const names = ['base','tint-20','tint-40','tint-60','tint-80'];
+  swatches.innerHTML = tones.map((c,i)=>`<div class="sw"><div class="chip" style="background:${c}"></div><strong>${names[i]}</strong><div class="hex">${c}</div></div>`).join('') + `<div class="sw"><div class="chip" style="background:${comp}"></div><strong>complement</strong><div class="hex">${comp}</div></div>`;
+  cssOut.textContent = [
+    ':root {',
+    ...tones.map((c,i)=>`  --palette-${names[i]}: ${c};`),
+    `  --palette-complement: ${comp};`,
+    '}'
+  ].join('\n');
+}
+document.getElementById('gen').onclick = build;
+document.getElementById('copy').onclick = async () => { try { await navigator.clipboard.writeText(cssOut.textContent); } catch(_) {} };
+hexIn.addEventListener('input', build);build();
+</script>
+</body>
+</html>

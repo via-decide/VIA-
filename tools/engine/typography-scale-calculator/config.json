@@ -1,0 +1,8 @@
+{
+  "id": "typography-scale-calculator",
+  "name": "Typography Scale Calculator",
+  "description": "Generate CSS typography scale tokens from a base size and ratio.",
+  "category": "creators",
+  "entry": "tools/engine/typography-scale-calculator/index.html",
+  "tags": ["typography", "css", "design", "standalone"]
+}

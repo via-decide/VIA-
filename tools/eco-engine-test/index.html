@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://cdn.jsdelivr.net https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self';" />
+  <title>Eco-Hack Engine Test</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #1f2733;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --border: #30363d;
+      --accent: #2f81f7;
+      --danger: #f85149;
+      --success: #3fb950;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); }
+    .app { max-width: 960px; margin: 0 auto; padding: 20px; }
+    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+    .header-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .auth-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+    input[type="email"], input[type="password"], input[type="text"] {
+      width: 100%; background: #0b1016; color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px;
+    }
+    input.error { border-color: var(--danger); }
+    .inline-error { color: var(--danger); font-size: 12px; min-height: 14px; }
+    .password-wrap { position: relative; }
+    .toggle-pass {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      border: 1px solid var(--border); background: var(--surface2); color: var(--text); border-radius: 6px; padding: 4px 8px; cursor: pointer;
+    }
+    .row { display: flex; align-items: center; gap: 10px; }
+    button {
+      border: 1px solid var(--border); background: var(--surface2); color: var(--text); border-radius: 8px; padding: 10px 14px; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    button:disabled { opacity: 0.65; cursor: not-allowed; }
+    .spinner {
+      width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.45); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #auth-error { color: var(--danger); min-height: 18px; margin: 8px 0; }
+    #confirm-banner {
+      display: none; margin: 10px 0; padding: 10px; border-radius: 8px;
+      background: var(--surface2); border: 1px solid var(--border);
+    }
+    #logout-confirm {
+      display: none; margin-top: 8px; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px;
+    }
+    #dashboard { display: none; }
+    .stats { display: flex; gap: 12px; flex-wrap: wrap; }
+    .stat { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px; min-width: 120px; }
+    #action-log { max-height: 220px; overflow: auto; font-size: 13px; line-height: 1.45; }
+    .muted { color: var(--muted); }
+    .auth-tabs { display:flex; gap:8px; margin: 0 0 12px; }
+    .auth-tab { flex:1; min-height:40px; border-radius:10px; }
+    .auth-tab.on { background: var(--accent); border-color: var(--accent); color:#fff; }
+    .auth-card { background: var(--surface2); border:1px solid var(--border); border-radius:10px; padding:12px; }
+    .auth-meta { margin:8px 0 12px; font-size:12px; color: var(--muted); }
+    .auth-summary { display:none; margin-top:10px; padding:10px; border-radius:8px; border:1px solid var(--border); background: var(--surface2); font-size:12px; }
+    .toast { position: fixed; right: 14px; bottom: 14px; z-index: 9999; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); opacity: 0; transform: translateY(6px); transition: .2s; pointer-events:none; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.ok { border-color: var(--success); }
+    .toast.err { border-color: var(--danger); }
+    @media (max-width: 760px) {
+      .app { padding: 12px; }
+      .panel { padding: 12px; }
+      .auth-grid { grid-template-columns: 1fr; }
+      .row { min-height: 40px; }
+      button { min-height: 40px; }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../shared/reward-wallet.js"></script>
+  <script src="../../shared/growth-stage-engine.js"></script>
+  <script src="../../shared/season-engine.js"></script>
+<script src="../../shared/tool-bridge.js"></script>
+<script src="../../shared/vd-wallet.js"></script>
+<script src="../../shared/tool-storage.js"></script>
+  <script src="../../shared/vd-nav-fix.js"></script>
+<script src="../../shared/tool-bridge.js"></script>
+<script src="../../shared/vd-wallet.js"></script>
+<script src="../../shared/tool-storage.js"></script>
+</head>
+<body>
+  <main class="app">
+    <section class="panel">
+      <div class="header-row">
+        <div>
+          <h1 style="margin:0">Eco-Hack Engine</h1>
+          <p class="muted" style="margin:4px 0 0">Unified Auth + Wallet + Plant testbed</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span id="auth-status" class="muted" style="font-size:12px;padding:4px 8px;border:1px solid var(--border);border-radius:999px;">Not signed in</span>
+          <button id="logout-btn" style="display:none">Logout</button>
+          <span id="auth-status" class="muted" style="font-size:12px;padding:4px 8px;border:1px solid var(--border);border-radius:999px;">Logged out</span>
+          <button id="logout-btn">Logout</button>
+        </div>
+      </div>
+      <div id="logout-confirm">
+        Unsaved changes — Logout anyway?
+        <button id="logout-yes" class="primary">Yes</button>
+        <button id="logout-cancel">Cancel</button>
+      </div>
+    </section>
+
+    <section id="auth-screen" class="panel">
+      <div id="confirm-banner">Check your inbox to confirm your email</div>
+      <div id="auth-error"></div>
+      <div class="auth-tabs" role="tablist" aria-label="Authentication forms">
+        <button type="button" id="tab-login" class="auth-tab on" role="tab" aria-selected="true">Login</button>
+        <button type="button" id="tab-register" class="auth-tab" role="tab" aria-selected="false">Register</button>
+      </div>
+      <div class="auth-grid">
+        <form id="login-form" class="auth-card" novalidate>
+          <h2 style="margin:0 0 8px">Login</h2>
+          <div class="field">
+            <label for="login-email">Email</label>
+            <input id="login-email" type="email" autocomplete="email" inputmode="email" required />
+            <div class="inline-error" id="login-email-error"></div>
+          </div>
+          <div class="field">
+            <label for="login-password">Password</label>
+            <div class="password-wrap">
+              <input id="login-password" type="password" autocomplete="current-password" required />
+              <button type="button" class="toggle-pass" data-target="login-password">👁</button>
+            </div>
+            <div class="inline-error" id="login-password-error"></div>
+          </div>
+          <div class="row">
+            <input id="remember-me" type="checkbox" checked />
+            <label for="remember-me">Stay signed in</label>
+          </div>
+          <div class="auth-meta" id="persistence-mode">Persistence: device remembered</div>
+          <button id="login-btn" class="primary" type="submit">Sign in</button>
+        </form>
+
+        <form id="register-form" class="auth-card" novalidate style="display:none">
+          <h2 style="margin:0 0 8px">Register</h2>
+          <div class="field">
+            <label for="register-email">Email</label>
+            <input id="register-email" type="email" autocomplete="email" inputmode="email" required />
+            <div class="inline-error" id="register-email-error"></div>
+          </div>
+          <div class="field">
+            <label for="register-password">Password</label>
+            <div class="password-wrap">
+              <input id="register-password" type="password" autocomplete="new-password" required />
+              <button type="button" class="toggle-pass" data-target="register-password">👁</button>
+            </div>
+            <div class="inline-error" id="register-password-error"></div>
+          </div>
+          <button id="register-btn" class="primary" type="submit">Create account</button>
+        </form>
+      </div>
+      <div class="auth-summary" id="auth-summary"></div>
+    </section>
+
+    <section id="dashboard" class="panel">
+      <h2>Dashboard</h2>
+      <div class="stats">
+        <div class="stat"><div class="muted">Wallet</div><div id="wallet-value">—</div></div>
+        <div class="stat"><div class="muted">Plant</div><div id="plant-level">🌱 Level 1</div></div>
+        <div class="stat"><div class="muted">User</div><div id="user-email">—</div></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3 style="margin-top:0">Action Log</h3>
+      <div id="action-log"></div>
+    </section>
+  </main>
+
+  <div id="auth-toast" class="toast" aria-live="polite"></div>
+
+  <script>
+    /*
+     * AUTH SYSTEM — Enhanced by Codex
+     * Upgrades: AUTH-01 through AUTH-10
+     * Repo tools reused: shared CSS variable naming pattern (--bg, --surface2, --border, --accent), standalone tool architecture, Action Log pattern in single-file apps
+     * New utilities introduced: friendly error mapper, auth attempt lock utility, button loading utility, field-level validator, localStorage session/TTL sync helper
+     */
+    (() => {
+      const SUPABASE_URL = 'https://bfocxgtlemhxfwfuhlxn.supabase.co';
+      const SUPABASE_ANON_KEY = window.ECO_SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY || localStorage.getItem('eco_supabase_anon_key') || 'YOUR_ANON_KEY';
+      const SUPABASE_ANON_KEY = window.ECO_SUPABASE_ANON_KEY || 'YOUR_ANON_KEY';
+      const db = window.EcoDB || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      if (SUPABASE_ANON_KEY === 'YOUR_ANON_KEY') {
+        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#f85149;background:#0d1117;text-align:center;padding:24px;"><div><h2>⚠️ Setup Required</h2><p style="color:#8b949e;margin-top:12px;">Add your Supabase anon public key to this file.<br>Get it from: supabase.com → Settings → API → anon public</p></div></div>';
+        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#f85149;background:#0d1117;text-align:center;padding:24px;"><div><h2>⚠️ Setup Required</h2><p style="color:#8b949e;margin-top:8px;">Replace YOUR_ANON_KEY in eco-engine-test/index.html<br>with your Supabase anon public key.</p></div></div>';
+        return;
+      }
+
+      window.EcoDB = db;
+
+      const actionLog = document.getElementById('action-log');
+      const authError = document.getElementById('auth-error');
+      const confirmBanner = document.getElementById('confirm-banner');
+      const authScreen = document.getElementById('auth-screen');
+      const dashboard = document.getElementById('dashboard');
+      const walletValue = document.getElementById('wallet-value');
+      const plantLevel = document.getElementById('plant-level');
+      const userEmail = document.getElementById('user-email');
+      const logoutBtn = document.getElementById('logout-btn');
+      const authStatus = document.getElementById('auth-status');
+      const logoutConfirm = document.getElementById('logout-confirm');
+      const logoutYes = document.getElementById('logout-yes');
+      const logoutCancel = document.getElementById('logout-cancel');
+      const loginForm = document.getElementById('login-form');
+      const registerForm = document.getElementById('register-form');
+      const rememberMe = document.getElementById('remember-me');
+      const authToast = document.getElementById('auth-toast');
+      const authSummary = document.getElementById('auth-summary');
+      const persistenceMode = document.getElementById('persistence-mode');
+      const tabLogin = document.getElementById('tab-login');
+      const tabRegister = document.getElementById('tab-register');
+
+      const LOCK_WINDOW_MS = 60000;
+      const LOCK_ATTEMPTS = 5;
+      const LOCK_DURATION_MS = 30000;
+      let refreshInterval = null;
+      let lockUntil = 0;
+      const loginAttempts = [];
+
+      const formatTime = () => new Date().toLocaleTimeString();
+      const logAction = (text) => {
+        const p = document.createElement('div');
+        p.textContent = `[${formatTime()}] ${text}`;
+        actionLog.prepend(p);
+      };
+
+      const logAuthEvent = (event, detail='') => {
+        logAction(`auth_event:${event}${detail ? ' — ' + detail : ''}`);
+      };
+
+      const showToast = (message, kind='ok') => {
+        if (!authToast) return;
+        authToast.textContent = message;
+        authToast.className = `toast ${kind === 'error' ? 'err' : 'ok'} show`;
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => { authToast.className = 'toast'; }, 1800);
+      };
+
+      const renderAuthView = () => {
+        const hasSession = Boolean(authManager?.session?.user?.id);
+        logoutBtn.style.display = hasSession ? 'inline-flex' : 'none';
+        authStatus.textContent = hasSession ? 'Signed in' : 'Not signed in';
+        if (hasSession) {
+          authSummary.style.display = 'block';
+          authSummary.textContent = `Authenticated as ${authManager.session.user.email || '-'} · user_id: ${authManager.session.user.id || '-'}`;
+        } else {
+          authSummary.style.display = 'none';
+          authSummary.textContent = '';
+        }
+      };
+
+      const friendlyError = (message = '') => {
+        if (message.includes('Invalid login credentials')) return 'Wrong email or password. Try again.';
+        if (message.includes('User already registered')) return 'That email is taken. Try logging in instead.';
+        if (message.includes('Email not confirmed')) return 'Please confirm your email before logging in.';
+        if (message.includes('Password should be at least')) return 'Password must be at least 6 characters.';
+        return 'Something went wrong. Please try again.';
+      };
+
+
+
+      if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY === 'YOUR_ANON_KEY') {
+        authError.textContent = 'Supabase key missing. Set window.ECO_SUPABASE_ANON_KEY or localStorage eco_supabase_anon_key.';
+        logAction('Auth warning: Supabase anon key is not configured.');
+      }
+
+      const setAuthTab = (mode) => {
+        const loginOn = mode === 'login';
+        loginForm.style.display = loginOn ? 'block' : 'none';
+        registerForm.style.display = loginOn ? 'none' : 'block';
+        tabLogin.classList.toggle('on', loginOn);
+        tabRegister.classList.toggle('on', !loginOn);
+        tabLogin.setAttribute('aria-selected', String(loginOn));
+        tabRegister.setAttribute('aria-selected', String(!loginOn));
+      };
+      tabLogin.addEventListener('click', () => setAuthTab('login'));
+      tabRegister.addEventListener('click', () => setAuthTab('register'));
+      rememberMe.addEventListener('change', () => {
+        persistenceMode.textContent = rememberMe.checked ? 'Persistence: device remembered' : 'Persistence: 1-hour session only';
+        logAction(`persistence_mode:${rememberMe.checked ? 'remembered' : 'ephemeral'}`);
+      });
+
+      window.addEventListener('growth:stage_evolved', (e) => {
+        logAction('🌿 Plant evolved to ' + e.detail.stage.name + '!');
+      });
+      window.addEventListener('season:day_advanced', (e) => {
+        logAction('🗓️ Day ' + e.detail.day + ' — ' + e.detail.weather.name + ' ' + e.detail.weather.emoji);
+      });
+      window.addEventListener('wallet:insufficient', (e) => {
+        logAction('Not enough ' + e.detail.currency + ' — need ' + e.detail.needed + ', have ' + e.detail.have);
+      });
+
+      const sanitizeEmail = (value) => value.trim().toLowerCase();
+      const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      const validatePassword = (password) => password.length >= 8 && /\d/.test(password);
+
+      const clearFieldError = (input, errorId) => {
+        input.classList.remove('error');
+        document.getElementById(errorId).textContent = '';
+      };
+
+      const setFieldError = (input, errorId, message) => {
+        input.classList.add('error');
+        document.getElementById(errorId).textContent = message;
+      };
+
+      const setButtonLoading = (button, loadingText, isLoading) => {
+        if (!button.dataset.defaultText) button.dataset.defaultText = button.textContent;
+        button.disabled = isLoading;
+        button.innerHTML = isLoading ? `<span class="spinner"></span>${loadingText}` : button.dataset.defaultText;
+      };
+
+
+      const VDWallet = window.VDWallet;
+
+      class WalletManager {
+        constructor() {
+          this.pendingWrites = 0;
+        }
+
+        async fetchWallet() {
+          try {
+            const userId = authManager?.session?.user?.id;
+            if (userId) {
+              const { data, error } = await db
+                .from('users')
+                .select('focusDrops, lumina')
+                .eq('id', userId)
+                .single();
+              if (!error && data) {
+                walletValue.textContent = `${data.focusDrops || 0} 💧 · ${data.lumina || 0} ☀️`;
+                logAction(`Wallet: ${data.focusDrops || 0} Drops, ${data.lumina || 0} Lumina`);
+                return;
+              }
+            }
+          } catch (_err) {}
+
+          const w = VDWallet.get();
+          walletValue.textContent = `${w.focusDrops} 💧 · ${w.lumina} ☀️`;
+          logAction(`Wallet (local): ${w.focusDrops} Drops, ${w.lumina} Lumina`);
+        }
+
+        async addDrops(amount) {
+          this.pendingWrites++;
+          VDWallet.earn('focusDrops', amount, 'eco-engine');
+          try {
+            const userId = authManager?.session?.user?.id;
+            if (userId) {
+              const { data } = await db
+                .from('users').select('focusDrops').eq('id', userId).single();
+              if (data) {
+                await db.from('users')
+                  .update({ focusDrops: (data.focusDrops || 0) + amount })
+                  .eq('id', userId);
+              }
+            }
+          } catch (_err) {}
+          this.pendingWrites--;
+          await this.fetchWallet();
+          logAction(`+${amount} Focus Drops earned`);
+        }
+
+        async addLumina(amount) {
+          this.pendingWrites++;
+          VDWallet.earn('lumina', amount, 'eco-engine');
+          try {
+            const userId = authManager?.session?.user?.id;
+            if (userId) {
+              const { data } = await db
+                .from('users').select('lumina').eq('id', userId).single();
+              if (data) {
+                await db.from('users')
+                  .update({ lumina: (data.lumina || 0) + amount })
+                  .eq('id', userId);
+              }
+            }
+          } catch (_err) {}
+          this.pendingWrites--;
+          await this.fetchWallet();
+          logAction(`+${amount} Lumina earned`);
+        }
+
+        hasPendingWrites() {
+          return this.pendingWrites > 0;
+        }
+
+        resetUI() {
+          walletValue.textContent = '—';
+        }
+      }
+
+      class PlantManager {
+        async loadPlant() {
+          try {
+            const userId = authManager?.session?.user?.id;
+            if (userId) {
+              const { data, error } = await db
+                .from('users')
+                .select('plantLevel, plantHydration, lastWatered')
+                .eq('id', userId)
+                .single();
+              if (!error && data) {
+                const emojis = ['', '🌱', '🌿', '🌳', '🎋', '🌲', '🌴', '🎄', '🏔️', '🌏', '✨'];
+                plantLevel.textContent = `${emojis[data.plantLevel] || '🌱'} Level ${data.plantLevel}`;
+                logAction(`Plant: Level ${data.plantLevel}, Hydration ${data.plantHydration}%`);
+                return;
+              }
+            }
+          } catch (_err) {}
+          plantLevel.textContent = '🌱 Level 1';
+          logAction('Plant (default): Level 1');
+        }
+
+        async waterPlant() {
+          logAction('Plant watered');
+          if (window.GrowthStageEngine) window.GrowthStageEngine.waterPlant(30);
+        }
+
+        async evolvePlant() {
+          logAction('Plant evolved');
+          if (window.GrowthStageEngine) window.GrowthStageEngine.addXP(200);
+        }
+
+        resetUI() {
+          plantLevel.textContent = '🌱 Level 1';
+        }
+      }
+
+      class AuthManager {
+        constructor() {
+          this.walletManager = new WalletManager();
+          this.plantManager = new PlantManager();
+          this.session = null;
+        }
+
+        async init() {
+          this.bindEvents();
+          this.bindAuthState();
+          this.restoreFromLocalFastPath();
+          await this.checkSession();
+          this.startSilentRefresh();
+          if (window.GrowthStageEngine) window.GrowthStageEngine.applyTick();
+          if (window.SeasonEngine) window.SeasonEngine.getTodayWeather();
+        }
+
+        bindEvents() {
+          loginForm.addEventListener('submit', (event) => this.login(event));
+          registerForm.addEventListener('submit', (event) => this.register(event));
+          logoutBtn.addEventListener('click', () => this.requestLogout());
+          logoutYes.addEventListener('click', () => this.logout(true));
+          logoutCancel.addEventListener('click', () => { logoutConfirm.style.display = 'none'; });
+
+          window.addEventListener('storage', (event) => {
+            if (event.key === 'eco_session' && !event.newValue && this.session) {
+              logAuthEvent('logout_success', 'cross-tab logout detected');
+              this.logout(false, { suppressRemote: true });
+            }
+          });
+
+          document.querySelectorAll('.toggle-pass').forEach((btn) => {
+            btn.addEventListener('click', () => {
+              const target = document.getElementById(btn.dataset.target);
+              target.type = target.type === 'password' ? 'text' : 'password';
+            });
+          });
+        }
+
+
+        async ensureUserRow() {
+          const userId = this.session?.user?.id;
+          if (!userId) return;
+          try {
+            await db.from('users').upsert(
+              { id: userId, focusDrops: 0, lumina: 0, plantLevel: 1, plantHydration: 100 },
+              { onConflict: 'id', ignoreDuplicates: true }
+            );
+          } catch (_err) {}
+        }
+
+        bindAuthState() {
+          db.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'TOKEN_REFRESHED') {
+              logAction('Session refreshed silently');
+            }
+            if (session) {
+              this.session = session;
+              localStorage.setItem('eco_session', JSON.stringify(session));
+              await this.ensureUserRow();
+              userEmail.textContent = session.user?.email || '—';
+              this.showDashboard();
+              renderAuthView();
+              await this.walletManager.fetchWallet();
+              await this.plantManager.loadPlant();
+            }
+            if (event === 'SIGNED_OUT') {
+              this.clearSessionCache();
+              this.showAuth();
+              renderAuthView();
+              this.resetUIState();
+              logAuthEvent('logout_success');
+            }
+          });
+        }
+
+        restoreFromLocalFastPath() {
+          const ttl = Number(localStorage.getItem('eco_session_ttl') || 0);
+          if (ttl && Date.now() > ttl) {
+            localStorage.removeItem('eco_session_ttl');
+            this.clearSessionCache();
+            db.auth.signOut();
+            logAction('Session TTL expired; signed out');
+            return;
+          }
+
+          const raw = localStorage.getItem('eco_session');
+          if (!raw) return;
+          try {
+            const cached = JSON.parse(raw);
+            this.session = cached;
+            userEmail.textContent = cached.user?.email || '—';
+            this.showDashboard();
+            this.walletManager.fetchWallet();
+            this.plantManager.loadPlant();
+            logAuthEvent('session_restored', 'local fast-path');
+          } catch (_error) {
+            this.clearSessionCache();
+          }
+        }
+
+        async checkSession() {
+          const { data } = await db.auth.getSession();
+          if (data?.session) {
+            this.session = data.session;
+            localStorage.setItem('eco_session', JSON.stringify(data.session));
+            await this.ensureUserRow();
+            userEmail.textContent = data.session.user?.email || '—';
+            this.showDashboard();
+            await this.walletManager.fetchWallet();
+            await this.plantManager.loadPlant();
+            logAuthEvent('session_restored', 'supabase session');
+          } else {
+            this.showAuth();
+          }
+        }
+
+        startSilentRefresh() {
+          if (refreshInterval) clearInterval(refreshInterval);
+          refreshInterval = setInterval(async () => {
+            const { error } = await db.auth.refreshSession();
+            if (!error) logAction('Session refreshed silently');
+          }, 50 * 60 * 1000);
+        }
+
+        isLocked() {
+          return Date.now() < lockUntil;
+        }
+
+        trackFailedAttempt() {
+          const now = Date.now();
+          loginAttempts.push(now);
+          while (loginAttempts.length && now - loginAttempts[0] > LOCK_WINDOW_MS) loginAttempts.shift();
+          if (loginAttempts.length >= LOCK_ATTEMPTS) {
+            lockUntil = now + LOCK_DURATION_MS;
+            logAction('Too many attempts — locked for 30s');
+            const loginBtn = document.getElementById('login-btn');
+            loginBtn.disabled = true;
+            setTimeout(() => {
+              if (!this.isLocked()) loginBtn.disabled = false;
+            }, LOCK_DURATION_MS + 50);
+          }
+        }
+
+        validateAuthForm(type) {
+          const emailInput = document.getElementById(type === 'login' ? 'login-email' : 'register-email');
+          const passInput = document.getElementById(type === 'login' ? 'login-password' : 'register-password');
+          const emailErrorId = type === 'login' ? 'login-email-error' : 'register-email-error';
+          const passErrorId = type === 'login' ? 'login-password-error' : 'register-password-error';
+
+          clearFieldError(emailInput, emailErrorId);
+          clearFieldError(passInput, passErrorId);
+
+          const email = sanitizeEmail(emailInput.value);
+          const password = passInput.value;
+          let valid = true;
+
+          if (!validateEmail(email)) {
+            setFieldError(emailInput, emailErrorId, 'Enter a valid email address.');
+            valid = false;
+          }
+
+          if (type === 'register' && !validatePassword(password)) {
+            setFieldError(passInput, passErrorId, 'Password must be 8+ characters and include a number.');
+            valid = false;
+          } else if (type === 'login' && password.length === 0) {
+            setFieldError(passInput, passErrorId, 'Enter your password.');
+            valid = false;
+          }
+
+          return { valid, email, password };
+        }
+
+        async login(event) {
+          event.preventDefault();
+          authError.textContent = '';
+          if (this.isLocked()) {
+            authError.textContent = 'Too many attempts. Please wait 30 seconds.';
+            showToast('Temporarily locked after too many attempts', 'error');
+            return;
+          }
+
+          logAuthEvent('login_started');
+
+          const { valid, email, password } = this.validateAuthForm('login');
+          if (!valid) return;
+
+          const loginBtn = document.getElementById('login-btn');
+          setButtonLoading(loginBtn, 'Signing in...', true);
+          try {
+            const { data, error } = await db.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+
+            this.session = data.session;
+            localStorage.setItem('eco_session', JSON.stringify(data.session));
+            await this.ensureUserRow();
+            if (!rememberMe.checked) {
+              localStorage.setItem('eco_session_ttl', String(Date.now() + 3600000));
+            } else {
+              localStorage.removeItem('eco_session_ttl');
+            }
+
+            this.showDashboard();
+            renderAuthView();
+            await this.walletManager.fetchWallet();
+            await this.plantManager.loadPlant();
+            logAuthEvent('login_success', rememberMe.checked ? 'mode=remembered' : 'mode=ephemeral');
+            showToast('Signed in successfully');
+          } catch (error) {
+            this.trackFailedAttempt();
+            authError.textContent = friendlyError(error.message || '');
+            logAuthEvent('login_failed', authError.textContent);
+            showToast(authError.textContent, 'error');
+          } finally {
+            setButtonLoading(loginBtn, 'Signing in...', false);
+          }
+        }
+
+        async register(event) {
+          event.preventDefault();
+          authError.textContent = '';
+          confirmBanner.style.display = 'none';
+
+          logAuthEvent('register_started');
+          const { valid, email, password } = this.validateAuthForm('register');
+          if (!valid) return;
+
+          const registerBtn = document.getElementById('register-btn');
+          setButtonLoading(registerBtn, 'Creating account...', true);
+          try {
+            const { data, error } = await db.auth.signUp({ email, password });
+            if (error) throw error;
+
+            if (!data.session) {
+              confirmBanner.style.display = 'block';
+              logAuthEvent('register_success', 'email confirmation required');
+              showToast('Account created. Check your email to confirm.');
+              return;
+            }
+
+            this.session = data.session;
+            localStorage.setItem('eco_session', JSON.stringify(data.session));
+            await this.ensureUserRow();
+            this.showDashboard();
+            await this.walletManager.fetchWallet();
+            await this.plantManager.loadPlant();
+            await this.walletManager.addDrops(25);
+            await this.walletManager.addLumina(5);
+            logAction('🎁 Welcome bonus: +25 Drops, +5 Lumina');
+            logAuthEvent('register_success', 'session active');
+            showToast('Account created and signed in');
+          } catch (error) {
+            authError.textContent = friendlyError(error.message || '');
+            logAuthEvent('register_failed', authError.textContent);
+            showToast(authError.textContent, 'error');
+          } finally {
+            setButtonLoading(registerBtn, 'Creating account...', false);
+          }
+        }
+
+        requestLogout() {
+          if (!this.walletManager.hasPendingWrites()) {
+            this.logout(true);
+            return;
+          }
+          logoutConfirm.style.display = 'block';
+        }
+
+        async logout(signOutRemote = true, options = {}) {
+          logoutConfirm.style.display = 'none';
+          if (signOutRemote && !options.suppressRemote) {
+            await db.auth.signOut();
+          }
+          this.clearSessionCache();
+          this.resetUIState();
+          this.showAuth();
+          renderAuthView();
+          logAuthEvent('logout_success');
+          showToast('Signed out');
+        }
+
+        clearSessionCache() {
+          this.session = null;
+          localStorage.removeItem('eco_session');
+          localStorage.removeItem('eco_session_ttl');
+          userEmail.textContent = '—';
+        }
+
+        resetUIState() {
+          this.walletManager.resetUI();
+          this.plantManager.resetUI();
+        }
+
+        showDashboard() {
+          authScreen.style.display = 'none';
+          dashboard.style.display = 'block';
+          renderAuthView();
+          if (authStatus) authStatus.textContent = `Logged in: ${this.session?.user?.email || 'yes'}`;
+        }
+
+        showAuth() {
+          authScreen.style.display = 'block';
+          dashboard.style.display = 'none';
+          renderAuthView();
+          if (authStatus) authStatus.textContent = 'Logged out';
+        }
+      }
+
+      const authManager = new AuthManager();
+      window.AuthManager = authManager;
+      window.WalletManager = WalletManager;
+      window.PlantManager = PlantManager;
+      authManager.init();
+      renderAuthView();
+
+      // listen for incoming game credits via ToolBridge
+      window.addEventListener('toolbridge:send', (e) => {
+        const data = e.detail?.data;
+        if (!data || !data.game) return;
+        logAction(`Game credit received from ${data.game}`);
+        if (data.dropsEarned > 0 && authManager.session) {
+          authManager.walletManager.addDrops(data.dropsEarned);
+        }
+        if (data.luminaEarned > 0 && authManager.session) {
+          authManager.walletManager.addLumina(data.luminaEarned);
+        }
+      });
+
+      // on load, check if any game sent credits while offline
+      const pending = ToolBridge.receiveContext('eco-engine-test');
+      if (pending?.data) {
+        logAction(`Pending game credits found: ${JSON.stringify(pending.data)}`);
+      }
+
+      // show VDWallet local totals in action log on load
+      const localWallet = VDWallet.get();
+      logAction(`Local wallet — Drops: ${localWallet.focusDrops}, Lumina: ${localWallet.lumina}, HexTokens: ${localWallet.hexTokens}, MissionXP: ${localWallet.missionXP}`);
+
+      logAction('Eco-Hack auth system booted');
+    })();
+  </script>
+</body>
+</html>

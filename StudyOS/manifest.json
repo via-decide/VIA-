@@ -1,0 +1,56 @@
+{
+  "id": "./",
+  "name": "StudyOS",
+  "short_name": "StudyOS",
+  "description": "StudyOS is a modular study companion for planning, focus sessions, mock tracking, and adaptive revision workflows.",
+  "lang": "en-US",
+  "dir": "ltr",
+  "start_url": "./index.html?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f0d0c",
+  "theme_color": "#0f0d0c",
+  "categories": [
+    "education",
+    "productivity",
+    "utilities"
+  ],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./screenshots/studyos-home.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "StudyOS home dashboard"
+    },
+    {
+      "src": "./screenshots/studyos-dashboard.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "StudyOS planner and insights dashboard"
+    }
+  ]
+}

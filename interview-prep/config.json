@@ -1,0 +1,24 @@
+{
+  "id": "interview-prep",
+  "name": "Interview Prep",
+  "description": "Prepare structured responses for interview scenarios.",
+  "category": "students",
+  "audience": [
+    "students"
+  ],
+  "inputs": [
+    "role",
+    "experience"
+  ],
+  "outputs": [
+    "answer_framework"
+  ],
+  "relatedTools": [
+    "spec-builder"
+  ],
+  "entry": "interview-prep/index.html",
+  "tags": [
+    "legacy",
+    "career"
+  ]
+}

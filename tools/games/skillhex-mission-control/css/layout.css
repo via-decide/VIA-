@@ -1,0 +1,47 @@
+/* CORE UI SYSTEM — DO NOT MODIFY */
+.topbar {
+  padding: 14px 18px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-bottom: 1px solid #2a3a66;
+  background: rgba(13, 20, 44, 0.95);
+}
+
+#app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: 1.4fr 0.9fr;
+  gap: 12px;
+}
+
+#mission-title { margin: 0 0 8px; }
+#mission-text { color: var(--muted); margin: 0 0 12px; }
+
+.choices {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.result {
+  margin-top: 12px;
+  min-height: 24px;
+  color: var(--accent);
+  font-size: 0.95rem;
+}
+
+.lb-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-top: 8px;
+  background: #0f1730;
+}
+
+@media (max-width: 900px) {
+  #app { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Decision Snake · ViaDecide</title>
+  <script defer src="../../../shared/vd-nav-fix.js"></script>
+<script src="../../../shared/vd-wallet.js"></script>
+<script src="../../../shared/tool-storage.js"></script>
+  <style>
+    :root {
+      --bg: #071018;
+      --bg-2: #0d1723;
+      --line: #1f3345;
+      --text: #e2ecf7;
+      --muted: #87a2bf;
+      --accent: #22c55e;
+      --accent-2: #ff8a00;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent !important; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background:
+        radial-gradient(1000px 500px at 10% -10%, rgba(34, 197, 94, 0.16), transparent 55%),
+        radial-gradient(900px 500px at 90% 110%, rgba(255, 138, 0, 0.15), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      padding: calc(20px + env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom));
+    }
+
+    .app { max-width: 760px; margin: 0 auto; }
+    .card {
+      background: rgba(10, 20, 32, 0.88);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    h1 { margin: 0 0 6px; font-size: clamp(1.3rem, 4vw, 2rem); }
+    p { margin: 0; color: var(--muted); }
+
+    .hud {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .stat {
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+    .stat .label { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: .08em; }
+    .stat .value { font-weight: 700; font-size: 1.1rem; margin-top: 2px; }
+
+    .stage { margin-top: 12px; display: flex; justify-content: center; }
+    canvas {
+      width: min(92vw, 520px);
+      height: min(92vw, 520px);
+      max-height: 72vh;
+      border-radius: 12px;
+      background: #02060c;
+      border: 1px solid var(--line);
+      box-shadow: inset 0 0 50px rgba(34, 197, 94, 0.08);
+      image-rendering: pixelated;
+    }
+
+    .toolbar {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    button {
+      border: 1px solid var(--line);
+      background: var(--bg-2);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+      font-weight: 600;
+      user-select: none;
+    }
+    button.primary { border-color: #1d6f3f; background: linear-gradient(135deg, #22c55e, #16a34a); color: #052e16; }
+    button.warn { border-color: #7a4514; background: linear-gradient(135deg, #ff8a00, #ea580c); color: #2a1104; }
+
+    .help { margin-top: 12px; font-size: 0.86rem; text-align: center; color: var(--muted); }
+    .danger { color: var(--danger); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="card">
+      <h1>🐍 Decision Snake</h1>
+      <p>Collect intent nodes, avoid dead ends, and keep the chain of decisions alive.</p>
+
+      <div class="hud">
+        <div class="stat"><div class="label">Score</div><div class="value" id="score">0</div></div>
+        <div class="stat"><div class="label">Best</div><div class="value" id="best">0</div></div>
+        <div class="stat"><div class="label">Speed</div><div class="value" id="speed">1x</div></div>
+      </div>
+
+      <div class="stage"><canvas id="board" width="420" height="420" aria-label="Decision Snake board"></canvas></div>
+
+      <div class="toolbar">
+        <button class="primary" id="start">Start / Restart</button>
+        <button id="pause">Pause</button>
+        <button class="warn" id="faster">Boost +</button>
+      </div>
+      <p class="help">Controls: Arrow keys / WASD / Swipe. <span class="danger">Avoid walls and self-collision.</span></p>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const board = document.getElementById('board');
+      const ctx = board.getContext('2d');
+      const scoreEl = document.getElementById('score');
+      const bestEl = document.getElementById('best');
+      const speedEl = document.getElementById('speed');
+
+      const grid = 21;
+      const tile = board.width / grid;
+      const bestKey = 'vd-snake-best';
+      let best = Number(localStorage.getItem(bestKey) || 0);
+      bestEl.textContent = best;
+
+      let snake;
+      let food;
+      let dir;
+      let nextDir;
+      let score;
+      let running = false;
+      let paused = false;
+      let tickMs = 180;
+      let timer;
+
+      function reset() {
+        snake = [{ x: 10, y: 10 }];
+        food = spawnFood();
+        dir = { x: 1, y: 0 };
+        nextDir = dir;
+        score = 0;
+        tickMs = 180;
+        scoreEl.textContent = score;
+        speedEl.textContent = '1x';
+        paused = false;
+        draw();
+      }
+
+      function spawnFood() {
+        let cell;
+        do {
+          cell = { x: Math.floor(Math.random() * grid), y: Math.floor(Math.random() * grid) };
+        } while (snake && snake.some((s) => s.x === cell.x && s.y === cell.y));
+        return cell;
+      }
+
+      function setDirection(x, y) {
+        if (dir.x === -x && dir.y === -y) return;
+        nextDir = { x, y };
+      }
+
+      function step() {
+        if (!running || paused) return;
+
+        dir = nextDir;
+        const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+
+        if (head.x < 0 || head.y < 0 || head.x >= grid || head.y >= grid || snake.some((s) => s.x === head.x && s.y === head.y)) {
+          running = false;
+          clearInterval(timer);
+          if (score > best) {
+            best = score;
+            localStorage.setItem(bestKey, String(best));
+            if (window.ToolStorage) {
+              ToolStorage.set('snake-game', 'best', { score: best, date: new Date().toLocaleDateString() });
+            }
+            bestEl.textContent = best;
+          }
+          draw(true);
+          return;
+        }
+
+        snake.unshift(head);
+
+        if (head.x === food.x && head.y === food.y) {
+          score += 10;
+          if (window.VDWallet) VDWallet.earn('snakeCoins', 1, 'snake-game');
+          scoreEl.textContent = score;
+          food = spawnFood();
+        } else {
+          snake.pop();
+        }
+
+        draw();
+      }
+
+      function draw(gameOver = false) {
+        ctx.clearRect(0, 0, board.width, board.height);
+
+        ctx.fillStyle = '#02060c';
+        ctx.fillRect(0, 0, board.width, board.height);
+
+        for (let y = 0; y < grid; y++) {
+          for (let x = 0; x < grid; x++) {
+            if ((x + y) % 2 === 0) {
+              ctx.fillStyle = 'rgba(255,255,255,0.02)';
+              ctx.fillRect(x * tile, y * tile, tile, tile);
+            }
+          }
+        }
+
+        ctx.fillStyle = '#ff8a00';
+        ctx.fillRect(food.x * tile + 2, food.y * tile + 2, tile - 4, tile - 4);
+
+        snake.forEach((seg, idx) => {
+          ctx.fillStyle = idx === 0 ? '#22c55e' : '#16a34a';
+          ctx.fillRect(seg.x * tile + 2, seg.y * tile + 2, tile - 4, tile - 4);
+        });
+
+        if (gameOver) {
+          ctx.fillStyle = 'rgba(3,6,12,.82)';
+          ctx.fillRect(0, 0, board.width, board.height);
+          ctx.fillStyle = '#ef4444';
+          ctx.font = 'bold 36px system-ui';
+          ctx.textAlign = 'center';
+          ctx.fillText('Game Over', board.width / 2, board.height / 2 - 10);
+          ctx.fillStyle = '#e2ecf7';
+          ctx.font = '18px system-ui';
+          ctx.fillText(`Score: ${score}`, board.width / 2, board.height / 2 + 24);
+        }
+      }
+
+      function start() {
+        reset();
+        running = true;
+        clearInterval(timer);
+        timer = setInterval(step, tickMs);
+      }
+
+      function boost() {
+        tickMs = Math.max(70, tickMs - 20);
+        speedEl.textContent = `${(180 / tickMs).toFixed(1)}x`;
+        if (running) {
+          clearInterval(timer);
+          timer = setInterval(step, tickMs);
+        }
+      }
+
+      document.getElementById('start').addEventListener('click', start);
+      document.getElementById('pause').addEventListener('click', () => { paused = !paused; });
+      document.getElementById('faster').addEventListener('click', boost);
+
+      window.addEventListener('keydown', (event) => {
+        const key = event.key.toLowerCase();
+        if (key === 'arrowup' || key === 'w') setDirection(0, -1);
+        if (key === 'arrowdown' || key === 's') setDirection(0, 1);
+        if (key === 'arrowleft' || key === 'a') setDirection(-1, 0);
+        if (key === 'arrowright' || key === 'd') setDirection(1, 0);
+      });
+
+      let touchStart = null;
+      board.addEventListener('touchstart', (e) => {
+        touchStart = e.touches[0];
+      }, { passive: true });
+      board.addEventListener('touchend', (e) => {
+        if (!touchStart) return;
+        const end = e.changedTouches[0];
+        const dx = end.clientX - touchStart.clientX;
+        const dy = end.clientY - touchStart.clientY;
+        if (Math.abs(dx) > Math.abs(dy)) {
+          setDirection(dx > 0 ? 1 : -1, 0);
+        } else {
+          setDirection(0, dy > 0 ? 1 : -1);
+        }
+        touchStart = null;
+      }, { passive: true });
+
+      reset();
+    })();
+  </script>
+</body>
+</html>

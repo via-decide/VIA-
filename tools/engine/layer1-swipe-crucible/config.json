@@ -1,0 +1,10 @@
+{
+  "id": "layer1-swipe-crucible",
+  "name": "Layer 1 — Swipe Crucible",
+  "description": "Daily swipe-card sessions for Layer 1 players. Drag cards to complete micro-tasks, earn XP, grow roots.",
+  "category": "engine",
+  "isEngineTool": false,
+  "entry": "tools/engine/layer1-swipe-crucible/index.html",
+  "relatedTools": ["growth-milestone-engine", "season-engine", "reward-wallet"],
+  "tags": ["orchard-engine", "game", "layer1", "swipe", "daily", "standalone"]
+}
