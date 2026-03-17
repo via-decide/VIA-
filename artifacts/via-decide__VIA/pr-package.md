@@ -1,3 +1,9 @@
+Branch: simba/implement-a-core-backend-module-called-via-api-g
+Title: Implement a core backend module called via-api-gateway-aggregator to ...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Simplify client-side engineering by handling complex multi-agent orchestration entirely in the backend. This pattern drastically reduces network overhead (fewer round-trips) and ensures the user gets the fastest possible response, even if one part of the AI swarm is experiencing latency.
 Branch: simba/implement-a-core-backend-module-called-via-local
 Title: Implement a core backend module called via-local-vector-store to give...
 
