@@ -1,3 +1,9 @@
+Branch: simba/implement-a-core-backend-module-called-via-budge
+Title: Implement a core backend module called via-budget-rebalancer to dynam...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Achieve "Financial Autonomy." By treating AI compute as a finite resource and automatically routing it to the most "profitable" or "effective" agents, the VIA engine ensures maximum utility for every dollar spent on API costs, preventing runaway expenses caused by inefficient or looping agents.
 Branch: simba/implement-a-core-backend-module-called-via-distr
 Title: Implement a core backend module called via-distributed-search-indexer...
 
