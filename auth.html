@@ -244,16 +244,35 @@ function prepareProfile(profile){
 }
 
 function saveLocalUser(profile) {
-  const nextProfile = prepareProfile(profile);
+  const localUserKey = 'via_user';
+
+  if (!profile || typeof profile !== 'object') {
+    localStorage.removeItem(localUserKey);
+    return null;
+  }
+
+  const preparedProfile = prepareProfile(profile) || profile;
+  const nextProfile = {
+    id: preparedProfile.id || '',
+    email: preparedProfile.email || '',
+    name: preparedProfile.user_metadata?.name || preparedProfile.user_metadata?.full_name || preparedProfile.display_name || preparedProfile.name || '',
+    avatar: preparedProfile.user_metadata?.avatar_url || preparedProfile.avatar_url || preparedProfile.avatar || '',
+    updatedAt: Date.now(),
+    ...preparedProfile
+  };
+
   if (window.DatabaseService && typeof window.DatabaseService.saveLocalUser === 'function') {
     window.DatabaseService.saveLocalUser(nextProfile);
   } else {
-    localStorage.setItem('via_user', JSON.stringify(nextProfile));
+    localStorage.setItem(localUserKey, JSON.stringify(nextProfile));
   }
+
   localStorage.setItem('via_session', JSON.stringify({
     mode: SUPABASE_CONFIGURED ? 'supabase' : 'offline',
-    at: Date.now()
+    at: nextProfile.updatedAt
   }));
+
+  return nextProfile;
 }
 
 function showTab(mode){

@@ -4,13 +4,20 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
 <meta name="description" content="VIA — Bharat's social platform. Swipe, discover, create. Powered by ViaDecide."/>
+<meta name="theme-color" content="#0B0B1A"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="VIA"/>
+<meta name="mobile-web-app-capable" content="yes"/>
 <title>VIA · Bharat's Feed</title>
+<link rel="manifest" href="./manifest.json"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Serif+Display:ital@0;1&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="./onboarding/onboarding.css"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="./shared/tool-storage.js"></script>
 <script src="./shared/social-core.js"></script>
+<script src="./onboarding/onboarding.js"></script>
 <style>
 /* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -693,7 +700,76 @@ function updateAuthUI(user){
 // ════════════════════════════════════════════════════════════════
 const VIA = {
   user: null,
-  async init(){const s=localStorage.getItem('via_user');if(s){try{this.user=JSON.parse(s);return;}catch(e){}}this.user=getGuestProfile();},
+  authSubscription: null,
+  saveLocalProfile(profile){
+    if(!profile||typeof profile!=='object')return null;
+    if(window.DatabaseService&&typeof window.DatabaseService.saveLocalUser==='function'){
+      return window.DatabaseService.saveLocalUser(profile);
+    }
+    localStorage.setItem('via_user',JSON.stringify(profile));
+    return profile;
+  },
+  async hydrateUser(profile){
+    const normalized=profile&&typeof profile==='object'?{...getGuestProfile(),...profile,is_guest:!profile.id&&profile.is_guest!==false}:getGuestProfile();
+    this.user=normalized;
+    if(!normalized.is_guest){this.saveLocalProfile(normalized);}
+    return normalized;
+  },
+  async restoreSessionUser(session){
+    const authUser=session?.user;
+    if(!authUser)return null;
+    let profile=window.DatabaseService&&typeof window.DatabaseService.getLocalUserProfile==='function'
+      ? window.DatabaseService.getLocalUserProfile()
+      : null;
+    if(profile?.id!==authUser.id&&_sb){
+      try{
+        const { data, error } = await _sb.from('via_users').select('*').eq('id', authUser.id).single();
+        if(!error&&data){profile=data;}
+      }catch(_error){}
+    }
+    profile=profile&&profile.id===authUser.id?profile:{
+      id:authUser.id||'',
+      email:authUser.email||'',
+      username:authUser.user_metadata?.username||'user',
+      display_name:authUser.user_metadata?.name||authUser.user_metadata?.full_name||authUser.email?.split('@')[0]||'VIA User',
+      name:authUser.user_metadata?.name||authUser.user_metadata?.full_name||'',
+      city:authUser.user_metadata?.city||'',
+      avatar:authUser.user_metadata?.avatar_url||'',
+      avatar_url:authUser.user_metadata?.avatar_url||'',
+      avatar_emoji:'🌟',
+      xp:0,followers:0,following:0,posts:0,is_guest:false
+    };
+    return this.hydrateUser(profile);
+  },
+  async init(){
+    if(_sb){
+      try{
+        const { data:{ session } } = await _sb.auth.getSession();
+        if(session){
+          await this.restoreSessionUser(session);
+        }
+      }catch(_error){}
+      if(!this.authSubscription&&typeof _sb.auth.onAuthStateChange==='function'){
+        const { data } = _sb.auth.onAuthStateChange(async(event,session)=>{
+          if(event==='SIGNED_OUT'||!session){
+            localStorage.removeItem('via_user');
+            this.user=getGuestProfile();
+            this.applyToUI();
+            return;
+          }
+          await this.restoreSessionUser(session);
+          this.applyToUI();
+        });
+        this.authSubscription=data?.subscription||null;
+      }
+    }
+    if(!this.user){
+      const stored=window.DatabaseService&&typeof window.DatabaseService.getLocalUserProfile==='function'
+        ? window.DatabaseService.getLocalUserProfile()
+        : (()=>{const s=localStorage.getItem('via_user');if(!s)return null;try{return JSON.parse(s);}catch(_error){return null;}})();
+      this.user=stored||getGuestProfile();
+    }
+  },
   applyToUI(){
     if(!this.user)return;updateAuthUI(this.user);
     const ne=document.querySelector('.profile-name'),he=document.querySelector('.profile-handle');
@@ -704,9 +780,9 @@ const VIA = {
     const fc=document.getElementById('follower-count');if(fc)fc.textContent=formatCount(this.user.followers||0);
     const pp=document.getElementById('profile-posts');if(pp)pp.textContent=this.user.posts||0;
   },
-  async saveXP(v){if(!this.user)return;this.user.xp=v;if(!this.user.is_guest)localStorage.setItem('via_user',JSON.stringify(this.user));},
+  async saveXP(v){if(!this.user)return;this.user.xp=v;if(!this.user.is_guest)this.saveLocalProfile(this.user);},
   openAuth(){window.location.href='./auth.html';},
-  async signOut(){localStorage.removeItem('via_user');this.user=getGuestProfile();this.applyToUI();switchLayer('feed');}
+  async signOut(){if(_sb&&_sb.auth&&typeof _sb.auth.signOut==='function'){try{await _sb.auth.signOut();}catch(_error){}}localStorage.removeItem('via_user');localStorage.removeItem('via_session');this.user=getGuestProfile();this.applyToUI();switchLayer('feed');}
 };
 window.VIA = VIA;
 
@@ -1466,6 +1542,5 @@ function startApp(){
 document.addEventListener('DOMContentLoaded',startApp,{once:true});
 window.addEventListener('load',startApp,{once:true});
 </script>
-<script src="./onboarding/onboarding.js"></script>
 </body>
 </html>
