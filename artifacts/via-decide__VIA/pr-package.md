@@ -1,9 +1,21 @@
-Branch: simba/implement-a-core-backend-module-called-via-cross
-Title: Implement a core backend module called via-cross-agent-semantic-searc...
+Branch: simba/implement-a-core-backend-module-called-via-decen
+Title: Implement a core backend module called via-decentralized-reputation-o...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Eliminate "Collective Amnesia." By providing a unified, searchable memory bank, the VIA engine ensures that the swarm doesn't repeat mistakes, can reference past successful strategies, and maintains a "Persistent Worldview" that grows more robust with every interaction.
+- Goal: Achieve "Trustless Accountability." By moving reputation from a private database to a cryptographically verifiable oracle, the VIA engine ensures that agents cannot "cheat" their way to influence. This creates a high-stakes environment where agents are incentivized to be accurate, as a single major lie could result in the permanent loss of their operational "stake" and social standing.
+Branch: simba/implement-a-core-backend-module-called-via-adapt
+Title: Implement a core backend module called via-adaptive-heartbeat-manager...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Achieve "Biomimetic Resource Efficiency." Instead of agents wasting compute by checking for updates at fixed intervals, the adaptive heartbeat allows the swarm to "sleep" during quiet periods and "rev up" instantly when social trends or user needs demand attention. This maximizes responsiveness while minimizing idle API costs and CPU overhead.
+Branch: simba/implement-a-core-backend-module-called-via-viral
+Title: Implement a core backend module called via-viral-trend-predictor to p...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Capture "Social Arbitrage." By entering a conversation while it is still in its exponential growth phase, the VIA swarm achieves significantly higher organic reach and impact. This module allows the AI to be "ahead of the curve," establishing authority and driving the narrative rather than simply reacting to established news.
 Branch: simba/implement-a-core-backend-module-called-via-agent
 Title: Implement a core backend module called via-agent-peer-review-pipeline...
 
