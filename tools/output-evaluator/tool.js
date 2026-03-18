@@ -1,4 +1,4 @@
-import { emit, read, clear } from '../../shared/tool-bus.js';
+import { emit, read, clear, aggregate } from '../../shared/tool-bus.js';
 
 const dimensions = [
   ['Spec coverage', 'specCoverage'],
@@ -62,6 +62,33 @@ function getScores() {
   }, {});
 }
 
+
+async function hydratePipelineContext() {
+  const aggregated = await aggregate('agent:output-evaluator:hydrate', [
+    { id: 'context-packager', run: () => Promise.resolve(read('agent:context-packager:output')) },
+    { id: 'spec-builder', run: () => Promise.resolve(read('agent:spec-builder:output')) },
+    { id: 'code-reviewer', run: () => Promise.resolve(read('agent:code-reviewer:feedback')) }
+  ]);
+
+  const payload = { context: '', spec: '', review: '', featureName: '' };
+  aggregated.results.forEach((entry) => {
+    const data = entry && entry.value && entry.value.data ? entry.value.data : {};
+    if (entry.id === 'context-packager') payload.context = data.packet || '';
+    if (entry.id === 'spec-builder') {
+      payload.spec = data.spec || '';
+      payload.featureName = data.feature || '';
+    }
+    if (entry.id === 'code-reviewer') payload.review = data.report || '';
+  });
+
+  if (window.AgentBackend && typeof window.AgentBackend.indexMemory === 'function') {
+    const memoryText = [payload.context, payload.spec, payload.review].filter(Boolean).join('\n\n');
+    if (memoryText) window.AgentBackend.indexMemory('pipeline-snapshots', memoryText, { source: 'output-evaluator' });
+  }
+
+  return payload;
+}
+
 function buildReport(scores, featureName) {
   const total = Object.values(scores).reduce((sum, value) => sum + value, 0);
   const verdict = total >= 40 ? 'SHIP IT' : total >= 28 ? 'NEEDS REVISION' : 'REJECT';
@@ -83,11 +110,10 @@ function buildReport(scores, featureName) {
   ].join('\n');
 }
 
-const context = read('agent:context-packager:output')?.data?.packet || '';
-const spec = read('agent:spec-builder:output')?.data?.spec || '';
-const review = read('agent:code-reviewer:feedback')?.data?.report || '';
-const initial = scoreAuto(code.value, spec, context, review);
-renderRows(initial);
+hydratePipelineContext().then((snapshot) => {
+  const initial = scoreAuto(code.value, snapshot.spec, snapshot.context, snapshot.review);
+  renderRows(initial);
+});
 
 rows.addEventListener('input', (event) => {
   const key = event.target.dataset.key;
@@ -96,12 +122,12 @@ rows.addEventListener('input', (event) => {
   document.getElementById(`${key}Val`).textContent = val;
 });
 
-document.getElementById('evaluate').addEventListener('click', () => {
+document.getElementById('evaluate').addEventListener('click', async () => {
   const scores = getScores();
-  const featureName = read('agent:spec-builder:output')?.data?.feature || '';
-  const report = buildReport(scores, featureName);
+  const snapshot = await hydratePipelineContext();
+  const report = buildReport(scores, snapshot.featureName);
   output.textContent = report;
-  emit('agent:output-evaluator:result', { report, scores, featureName });
+  emit('agent:output-evaluator:result', { report, scores, featureName: snapshot.featureName });
 });
 
 document.getElementById('copy').addEventListener('click', () => copyText(output.textContent || ''));
