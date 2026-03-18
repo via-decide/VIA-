@@ -1,9 +1,9 @@
-Branch: simba/we-need-to-transform-the-single-player-swipe-dec
-Title: We need to transform the single-player swipe deck into a synchronous,...
+Branch: simba/we-need-to-replace-the-static-cards-array-with-a
+Title: We need to replace the static CARDS array with a dynamic, self-learni...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Make the VIA platform feel "Alive." Even if a user is just passively reading the Bihar AgriTech story, seeing a sudden burst of 🚀 and 🔥 emojis float up their screen from other users across Bharat creates an immediate, visceral sense of community and synchronous presence.
+- Goal: Create a TikTok-level addictive, personalized feed that runs entirely on the edge (the user's device). By using a Web Worker and an Affinity Matrix, VIA provides hyper-personalized content instantly, with zero server-side tracking, adhering to our sovereign, Bharat-first ethos.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
