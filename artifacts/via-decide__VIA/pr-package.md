@@ -1,3 +1,9 @@
+Branch: simba/implement-context-memory-layer-create-srccoremem
+Title: Implement "Context Memory Layer". Create src/core/memory/context-laye...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Allow VIA to feel continuous, not stateless.
 Branch: simba/create-tool-output-normalizer-create-srccoretool
 Title: Create "Tool Output Normalizer". Create src/core/tools/output-normali...
 

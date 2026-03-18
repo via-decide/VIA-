@@ -1,6 +1,7 @@
 {
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
+  "branch": "simba/implement-context-memory-layer-create-srccoremem",
   "branch": "simba/create-tool-output-normalizer-create-srccoretool",
   "branch": "simba/implement-studyos-adaptive-path-engine-create-sr",
   "branch": "simba/implement-a-decision-graph-engine-to-convert-all",
