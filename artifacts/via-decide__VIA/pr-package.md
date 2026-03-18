@@ -1,3 +1,9 @@
+Branch: simba/build-lightweight-notification-engine-create-src
+Title: Build "Lightweight Notification Engine". Create src/core/notification...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Introduce basic engagement loops.
 Branch: simba/implement-decision-confidence-meter-create-srcco
 Title: Implement "Decision Confidence Meter". Create src/core/decision/confi...
 

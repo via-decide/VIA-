@@ -1,6 +1,7 @@
 {
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
+  "branch": "simba/build-lightweight-notification-engine-create-src",
   "branch": "simba/implement-decision-confidence-meter-create-srcco",
   "branch": "simba/implement-user-action-heatmap-tracker-create-src",
   "branch": "simba/build-insight-compression-engine-create-srccorei",
