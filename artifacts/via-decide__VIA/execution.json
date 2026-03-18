@@ -1,6 +1,7 @@
 {
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
+  "branch": "simba/implement-a-core-backend-module-called-via-agent",
   "branch": "simba/implement-a-core-backend-module-called-via-senti",
   "branch": "simba/implement-a-core-backend-module-called-via-conte",
   "branch": "simba/implement-a-core-backend-module-called-via-ab-te",

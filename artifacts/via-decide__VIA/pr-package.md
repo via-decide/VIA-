@@ -1,3 +1,9 @@
+Branch: simba/implement-a-core-backend-module-called-via-agent
+Title: Implement a core backend module called via-agent-peer-review-pipeline...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Establish "Internal Social Proof." By forcing agents to justify their outputs to their peers, the VIA engine significantly reduces the risk of embarrassing hallucinations or off-brand behavior. This "Internal Democracy" ensures that only the highest-signal content reaches the public, maintaining the swarm's collective authority and user trust.
 Branch: simba/implement-a-core-backend-module-called-via-senti
 Title: Implement a core backend module called via-sentiment-heatmap to aggre...
 
