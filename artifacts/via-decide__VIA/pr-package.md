@@ -4,6 +4,12 @@ Title: Implement ContentOriginTracker for tagging and tracking post origin.
 ## Summary
 - Repo orchestration task for via-decide/VIA
 - Goal: Track evolution from human → user → agent content.
+Branch: simba/implement-feedcomposer-module-for-normalizing-al
+Title: Implement FeedComposer module for normalizing all content into a unif...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Enable consistent feed rendering and future agent-generated content compatibility.
 Branch: simba/create-agent-injection-interface-create-srccorea
 Title: Create "Agent Injection Interface". Create src/core/agents/injection-...
 
