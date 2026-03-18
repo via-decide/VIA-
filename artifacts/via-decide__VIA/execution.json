@@ -1,6 +1,7 @@
 {
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
+  "branch": "simba/create-agent-injection-interface-create-srccorea",
   "branch": "simba/implement-content-freshness-scorer-create-srccor",
   "branch": "simba/build-lightweight-notification-engine-create-src",
   "branch": "simba/implement-decision-confidence-meter-create-srcco",

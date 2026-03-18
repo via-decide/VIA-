@@ -1,6 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
+Create "Agent Injection Interface". Create src/core/agents/injection-layer/. Define API for GN8R to push content into feed. Support draft → review → publish flow.
+
+CONSTRAINTS
+Must support manual override for safety.
 Implement "Content Freshness Scorer". Create src/core/feed/freshness/. Score posts based on recency + interaction velocity. Decay older posts dynamically.
 
 CONSTRAINTS

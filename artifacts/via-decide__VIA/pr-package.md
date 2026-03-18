@@ -1,3 +1,9 @@
+Branch: simba/create-agent-injection-interface-create-srccorea
+Title: Create "Agent Injection Interface". Create src/core/agents/injection-...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Prepare VIA for autonomous content generation phase.
 Branch: simba/implement-content-freshness-scorer-create-srccor
 Title: Implement "Content Freshness Scorer". Create src/core/feed/freshness/...
 
