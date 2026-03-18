@@ -562,6 +562,7 @@ const REDIRECT_MAP = {
 
 // ── STATE ────────────────────────────────────────────────────
 let currentCard = 0, xp = 0, isAnimating = false, activeLayer = 'feed';
+let activeRibbonCard = 0;
 
 // ── DECK ─────────────────────────────────────────────────────
 function buildDeck() {
@@ -591,7 +592,7 @@ function makeCard(index) {
         '<div class="action-icon">🔥</div><div class="action-label" id="like-label-'+index+'">'+d.likes+'</div>' +
       '</div>' +
       '<div class="action-btn" onclick="openRibbon('+index+')">' +
-        '<div class="action-icon">📤</div><div class="action-label">More</div>' +
+        '<div class="action-icon">📤</div><div class="action-label">Share</div>' +
       '</div>' +
       (!d.cta ? '<div class="action-btn" onclick="handleRedirect(\''+d.redirect+'\')"><div class="action-icon">🔗</div><div class="action-label">Open</div></div>' : '') +
     '</div>' +
@@ -765,6 +766,36 @@ const GC = {
 function nextCard() { if(isAnimating||currentCard>=CARDS.length-1)return; const c=getTopCard(); if(c)GC._up(c); }
 function prevCard() { if(isAnimating||currentCard<=0)return; const c=getTopCard(); if(c)GC._down(c); }
 
+function openDiscoverTool(toolPath) {
+  closeSheet();
+  if (toolPath) {
+    if (toolPath.startsWith('http')) {
+      window.open(toolPath, '_blank');
+    } else {
+      window.location.href = toolPath;
+    }
+  } else {
+    switchLayer('feed');
+  }
+}
+
+function copyShareLink(url) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => {
+      const toast = document.createElement('div');
+      toast.textContent = 'Link copied!';
+      toast.style.cssText = 'position:fixed;bottom:7rem;left:50%;transform:translateX(-50%);background:rgba(255,107,0,.9);color:#fff;padding:.5rem 1.2rem;border-radius:99px;font-size:.78rem;font-weight:700;z-index:400;pointer-events:none;';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2000);
+    });
+  } else {
+    const el = document.createElement('textarea');
+    el.value = url; el.style.position = 'fixed'; el.style.opacity = '0';
+    document.body.appendChild(el); el.select();
+    document.execCommand('copy'); document.body.removeChild(el);
+  }
+}
+
 // ── LIKE ─────────────────────────────────────────────────────
 function likeCard(index) {
   addXP(5);
@@ -775,9 +806,17 @@ function likeCard(index) {
 }
 
 // ── RIBBON ───────────────────────────────────────────────────
-function openRibbon()  { document.getElementById('action-ribbon').classList.add('open'); }
+function openRibbon(index) { activeRibbonCard = index; document.getElementById('action-ribbon').classList.add('open'); }
 function closeRibbon() { document.getElementById('action-ribbon').classList.remove('open'); }
-function ribbonAction(type) { closeRibbon(); addXP(5); openSheet(type==='share'?'share':'comment'); }
+function ribbonAction(type) {
+  closeRibbon();
+  addXP(5);
+  if (type === 'share') {
+    openSheet('share', { cardIndex: activeRibbonCard });
+  } else {
+    openSheet('comment');
+  }
+}
 
 // ── A11Y ─────────────────────────────────────────────────────
 let a11yMode=false;
@@ -802,7 +841,11 @@ function updateXP(v) {
 // ── REDIRECT ─────────────────────────────────────────────────
 function handleRedirect(key) {
   addXP(25);
+
+  // Special cases handled inline
   if (key === 'about') { switchLayer('about'); return; }
+  if (key === 'profile') { switchLayer('profile'); return; }
+
   const url=REDIRECT_MAP[key]; if(!url)return;
   if(VIA.user)localStorage.setItem('via_context',JSON.stringify({userId:VIA.user.id,username:VIA.user.username,xp,returnTo:'./index.html'}));
   openSheet('redirect',{url,key});
@@ -896,14 +939,81 @@ function openSheet(type, extra={}) {
   const overlay=document.getElementById('sheet-overlay'), sheet=document.getElementById('sheet'), body=document.getElementById('sheet-body');
   let html='';
   if (type==='redirect'&&extra.url) {
-    html='<div class="sheet-title">Open Story</div><div class="sheet-sub">VIA ecosystem में open होगी।</div><div class="sheet-actions">'+
-      '<div class="sheet-btn" onclick="window.open(\''+extra.url+'\',\'_blank\');closeSheet();addXP(30)"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">🚀</div><div class="sheet-btn-text"><div class="sheet-btn-title">Open</div><div class="sheet-btn-sub">+30 XP</div></div><div class="sheet-btn-arrow">›</div></div>'+
+    const redirectAction = extra.url.startsWith('http')
+      ? 'window.open(\''+extra.url+'\',\'_blank\');closeSheet();addXP(30)'
+      : 'window.location.href=\''+extra.url+'\';closeSheet();addXP(30)';
+    html='<div class="sheet-title">Open Story</div><div class="sheet-sub">Opening: '+(extra.key || 'Tool')+'</div><div class="sheet-actions">'+
+      '<div class="sheet-btn" onclick="'+redirectAction+'"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">🚀</div><div class="sheet-btn-text"><div class="sheet-btn-title">Open</div><div class="sheet-btn-sub">+30 XP</div></div><div class="sheet-btn-arrow">›</div></div>'+
       '<div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Stay here</div><div class="sheet-btn-sub">Continue swiping</div></div><div class="sheet-btn-arrow">›</div></div></div>';
   } else if (type==='discover-detail'&&extra.item) {
-    const {item}=extra;
-    html='<div class="sheet-title">'+item.emoji+' '+item.name+'</div><div class="sheet-sub">'+item.cat+' · Trending on VIA</div><div class="sheet-actions">'+
-      '<div class="sheet-btn" onclick="'+(item.toolPath?'window.location.href=\''+item.toolPath+'\';closeSheet()':'switchLayer(\'feed\');closeSheet()')+'"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">▶</div><div class="sheet-btn-text"><div class="sheet-btn-title">Open '+item.name+'</div><div class="sheet-btn-sub">Launch tool</div></div><div class="sheet-btn-arrow">›</div></div>'+
-      '<div class="sheet-btn" onclick="addXP(20);closeSheet()"><div class="sheet-btn-icon" style="background:rgba(108,99,255,.15)">➕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Follow</div><div class="sheet-btn-sub">+20 XP</div></div><div class="sheet-btn-arrow">›</div></div></div>';
+    const { item } = extra;
+    const safePath = (item.toolPath || '').replace(/'/g, "\\'");
+    html = `
+      <div class="sheet-title">${item.emoji} ${item.name}</div>
+      <div class="sheet-sub">${item.cat} · Open this tool</div>
+      <div class="sheet-actions">
+        <div class="sheet-btn" onclick="openDiscoverTool('${safePath}')">
+          <div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">▶</div>
+          <div class="sheet-btn-text">
+            <div class="sheet-btn-title">Open ${item.name}</div>
+            <div class="sheet-btn-sub">Launch tool</div>
+          </div>
+          <div class="sheet-btn-arrow">›</div>
+        </div>
+        <div class="sheet-btn" onclick="addXP(20);closeSheet()">
+          <div class="sheet-btn-icon" style="background:rgba(108,99,255,.15)">➕</div>
+          <div class="sheet-btn-text">
+            <div class="sheet-btn-title">Follow ${item.name}</div>
+            <div class="sheet-btn-sub">+20 XP · Get updates</div>
+          </div>
+          <div class="sheet-btn-arrow">›</div>
+        </div>
+      </div>`;
+  } else if (type==='share') {
+    const card = CARDS[extra.cardIndex !== undefined ? extra.cardIndex : currentCard];
+    const baseUrl = window.location.origin + window.location.pathname;
+    const cardParam = card ? encodeURIComponent(card.id || '') : '';
+    const shareUrl = baseUrl + (cardParam ? '?card=' + cardParam : '');
+    const shareTitle = card ? card.title.replace(/<[^>]+>/g, '') : 'VIA — Bharat\'s Feed';
+    const shareText = encodeURIComponent(shareTitle + ' — ' + shareUrl);
+
+    if (navigator.share && card) {
+      navigator.share({
+        title: shareTitle,
+        url: shareUrl,
+      }).catch(() => {});
+      return;
+    }
+
+    const waUrl = 'https://wa.me/?text=' + shareText;
+    const tgUrl = 'https://t.me/share/url?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(shareTitle);
+    const twUrl = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(shareTitle);
+
+    html = `
+      <div class="sheet-title">Share this</div>
+      <div class="sheet-sub">${shareTitle.substring(0, 60)}${shareTitle.length > 60 ? '...' : ''}</div>
+      <div class="sheet-actions">
+        <div class="sheet-btn" onclick="window.open('${waUrl}','_blank');closeSheet()">
+          <div class="sheet-btn-icon" style="background:rgba(0,200,100,.15)">💬</div>
+          <div class="sheet-btn-text"><div class="sheet-btn-title">WhatsApp</div><div class="sheet-btn-sub">${shareUrl}</div></div>
+          <div class="sheet-btn-arrow">›</div>
+        </div>
+        <div class="sheet-btn" onclick="window.open('${tgUrl}','_blank');closeSheet()">
+          <div class="sheet-btn-icon" style="background:rgba(41,182,246,.15)">📲</div>
+          <div class="sheet-btn-text"><div class="sheet-btn-title">Telegram</div><div class="sheet-btn-sub">Share to groups</div></div>
+          <div class="sheet-btn-arrow">›</div>
+        </div>
+        <div class="sheet-btn" onclick="window.open('${twUrl}','_blank');closeSheet()">
+          <div class="sheet-btn-icon" style="background:rgba(29,161,242,.15)">🐦</div>
+          <div class="sheet-btn-text"><div class="sheet-btn-title">Twitter / X</div><div class="sheet-btn-sub">Post to feed</div></div>
+          <div class="sheet-btn-arrow">›</div>
+        </div>
+        <div class="sheet-btn" onclick="copyShareLink('${shareUrl}');closeSheet()">
+          <div class="sheet-btn-icon" style="background:rgba(255,255,255,.08)">📋</div>
+          <div class="sheet-btn-text"><div class="sheet-btn-title">Copy Link</div><div class="sheet-btn-sub">${shareUrl}</div></div>
+          <div class="sheet-btn-arrow">›</div>
+        </div>
+      </div>`;
   } else {
     const s=SHEETS[type]; if(!s)return;
     html='<div class="sheet-title">'+s.title+'</div><div class="sheet-sub">'+s.sub+'</div><div class="sheet-actions">'+
