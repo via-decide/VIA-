@@ -35,8 +35,19 @@ User Prompt:
 ${rawPrompt}`;
   }
 
+  function persistRun(agent, payload, context = {}) {
+    if (!global.DatabaseService || typeof global.DatabaseService.logAgentRun !== 'function') return;
+    try {
+      global.DatabaseService.logAgentRun(agent, payload, context);
+    } catch (_error) {
+      // keep runtime non-blocking even when persistence is unavailable
+    }
+  }
+
   function run(agent, tools, options) {
-    return global.WorkflowEngine.runWorkflow(agent, tools, options);
+    const payload = global.WorkflowEngine.runWorkflow(agent, tools, options);
+    persistRun(agent, payload, { source: options && options.source ? options.source : 'workflow-engine' });
+    return payload;
   }
 
   function runSequentially(agent, tools, context = {}) {
@@ -64,6 +75,7 @@ ${rawPrompt}`;
     };
 
     localStorage.setItem(RUN_KEY, JSON.stringify(payload));
+    persistRun(agent, payload, context);
     return payload;
   }
 
@@ -105,6 +117,7 @@ ${rawPrompt}`;
     };
 
     localStorage.setItem(RUN_KEY, JSON.stringify(payload));
+    persistRun(agent, payload, context);
     return payload;
   }
 

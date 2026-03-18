@@ -2,7 +2,7 @@
 SETUP CHECKLIST
 1) Create a Supabase project
 2) Run the SQL migration below in Supabase SQL Editor
-3) Replace SUPABASE_URL and SUPABASE_ANON_KEY in this file
+3) Set window.ECO_SUPABASE_ANON_KEY (or localStorage eco_supabase_anon_key) before using live auth
 -->
 <!--
 Run this in Supabase SQL editor:
@@ -26,6 +26,19 @@ ALTER TABLE via_users ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can read all profiles" ON via_users FOR SELECT USING (true);
 CREATE POLICY "Users can update own profile" ON via_users FOR UPDATE USING (auth.uid() = id);
 CREATE POLICY "Users can insert own profile" ON via_users FOR INSERT WITH CHECK (auth.uid() = id);
+
+CREATE TABLE via_activity_log (
+  id TEXT PRIMARY KEY,
+  event_type TEXT NOT NULL,
+  source TEXT NOT NULL,
+  page_path TEXT NOT NULL,
+  payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE via_activity_log ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Authenticated users can insert activity logs" ON via_activity_log FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "Authenticated users can read activity logs" ON via_activity_log FOR SELECT TO authenticated USING (true);
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -36,6 +49,7 @@ CREATE POLICY "Users can insert own profile" ON via_users FOR INSERT WITH CHECK 
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="./shared/tool-storage.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--saffron:#FF6B00;--saffron2:#FF9500;--deep:#0B0B1A;--deep2:#13132A;--deep3:#1C1C38;--gold:#F5C518;--white:#fff;--muted:#8B8BAD;--border:rgba(255,255,255,.08)}
@@ -127,14 +141,23 @@ input.error,select.error{border-color:#ff6b6b}
 </div>
 
 <script>
-// ── REPLACE THESE WITH YOUR SUPABASE PROJECT CREDENTIALS ──
-// Get them at: https://app.supabase.com → Settings → API
-const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
-const SUPABASE_CONFIGURED = !SUPABASE_URL.includes('YOUR_PROJECT') && SUPABASE_ANON_KEY !== 'YOUR_ANON_KEY';
-const supabase = (typeof window.supabase !== 'undefined' && SUPABASE_CONFIGURED)
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-  : null;
+// ── SUPABASE CONFIGURATION ──
+// Prefer window.ECO_SUPABASE_ANON_KEY (or localStorage eco_supabase_anon_key) so the same backend wiring can be reused across VIA tools.
+const supabaseConfig = window.DatabaseService && typeof window.DatabaseService.getConfig === 'function'
+  ? window.DatabaseService.getConfig()
+  : {
+      url: 'https://YOUR_PROJECT.supabase.co',
+      anonKey: 'YOUR_ANON_KEY',
+      isConfigured: false
+    };
+const SUPABASE_URL = supabaseConfig.url;
+const SUPABASE_ANON_KEY = supabaseConfig.anonKey;
+const SUPABASE_CONFIGURED = Boolean(supabaseConfig.isConfigured);
+const supabase = window.DatabaseService && typeof window.DatabaseService.getClient === 'function'
+  ? window.DatabaseService.getClient()
+  : ((typeof window.supabase !== 'undefined' && SUPABASE_CONFIGURED)
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    : null);
 
 const state = { authMode:'signin', loginType:'email' };
 const usernameRe = /^[a-z0-9_.]{3,20}$/;
@@ -145,7 +168,11 @@ function phoneToPseudoEmail(phone){ return `via_${phone}@phone.via.local`; }
 function parsePhone(raw){ const digits=(raw||'').replace(/\D/g,''); return digits.length===10?digits:null; }
 
 function saveLocalUser(profile){
-  localStorage.setItem('via_user', JSON.stringify(profile));
+  if (window.DatabaseService && typeof window.DatabaseService.saveLocalUser === 'function') {
+    window.DatabaseService.saveLocalUser(profile);
+  } else {
+    localStorage.setItem('via_user', JSON.stringify(profile));
+  }
   localStorage.setItem('via_session', JSON.stringify({ mode: SUPABASE_CONFIGURED ? 'supabase' : 'offline', at: Date.now() }));
 }
 

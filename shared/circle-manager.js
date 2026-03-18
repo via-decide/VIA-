@@ -1,15 +1,20 @@
 (() => {
   const state = { circles: [] };
-  const projectUrl = window.ECO_SUPABASE_URL || 'https://bfocxgtlemhxfwfuhlxn.supabase.co';
-  const anonKey = window.ECO_SUPABASE_ANON_KEY || '';
+  const fallbackProjectUrl = 'https://bfocxgtlemhxfwfuhlxn.supabase.co';
 
   let supabaseClient = null;
   let siegeChannel = null;
 
   function getSupabaseClient() {
     if (supabaseClient) return supabaseClient;
+    if (window.DatabaseService && typeof window.DatabaseService.getClient === 'function') {
+      supabaseClient = window.DatabaseService.getClient();
+      if (supabaseClient) return supabaseClient;
+    }
+
+    const anonKey = window.ECO_SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY || localStorage.getItem('eco_supabase_anon_key') || '';
     if (!window.supabase?.createClient || !anonKey) return null;
-    supabaseClient = window.supabase.createClient(projectUrl, anonKey);
+    supabaseClient = window.supabase.createClient(window.ECO_SUPABASE_URL || fallbackProjectUrl, anonKey);
     return supabaseClient;
   }
 
