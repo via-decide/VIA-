@@ -1,6 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
+Implement DecisionConfidenceMeter to score content quality.
+
+CONSTRAINTS
+Use rule-based scoring only.
 Implement ProgressiveFeedEngine for content prioritization.
 
 CONSTRAINTS

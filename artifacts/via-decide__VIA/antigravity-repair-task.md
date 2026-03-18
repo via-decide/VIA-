@@ -4,6 +4,7 @@ TARGET
 Validate and repair only the files touched by the previous implementation.
 
 TASK
+Implement DecisionConfidenceMeter to score content quality.
 Implement ProgressiveFeedEngine for content prioritization.
 Implement ExecutionHooksEngine to attach actions to posts.
 Implement ContentOriginTracker for tagging and tracking post origin.

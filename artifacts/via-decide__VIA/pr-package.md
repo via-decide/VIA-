@@ -1,3 +1,9 @@
+Branch: simba/implement-decisionconfidencemeter-to-score-conte
+Title: Implement DecisionConfidenceMeter to score content quality.
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Provide trust signal for users.
 Branch: simba/implement-progressivefeedengine-for-content-prio
 Title: Implement ProgressiveFeedEngine for content prioritization.
 
