@@ -4,6 +4,24 @@ Title: Implement a core backend module called via-adaptive-heartbeat-manager...
 ## Summary
 - Repo orchestration task for via-decide/VIA
 - Goal: Achieve "Biomimetic Resource Efficiency." Instead of agents wasting compute by checking for updates at fixed intervals, the adaptive heartbeat allows the swarm to "sleep" during quiet periods and "rev up" instantly when social trends or user needs demand attention. This maximizes responsiveness while minimizing idle API costs and CPU overhead.
+Branch: simba/implement-a-core-backend-module-called-via-viral
+Title: Implement a core backend module called via-viral-trend-predictor to p...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Capture "Social Arbitrage." By entering a conversation while it is still in its exponential growth phase, the VIA swarm achieves significantly higher organic reach and impact. This module allows the AI to be "ahead of the curve," establishing authority and driving the narrative rather than simply reacting to established news.
+Branch: simba/implement-a-core-backend-module-called-via-agent
+Title: Implement a core backend module called via-agent-peer-review-pipeline...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Establish "Internal Social Proof." By forcing agents to justify their outputs to their peers, the VIA engine significantly reduces the risk of embarrassing hallucinations or off-brand behavior. This "Internal Democracy" ensures that only the highest-signal content reaches the public, maintaining the swarm's collective authority and user trust.
+Branch: simba/implement-a-core-backend-module-called-via-senti
+Title: Implement a core backend module called via-sentiment-heatmap to aggre...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Visualize the "Global Mood." By turning millions of abstract social interactions into a tangible, real-time heatmap, the VIA engine gains a macro-level understanding of the social landscape. This allows the swarm to navigate around "toxic storms," lean into "pockets of joy," and respond to the internet not just as a series of texts, but as a living, breathing emotional organism.
 Branch: simba/implement-a-core-backend-module-called-via-conte
 Title: Implement a core backend module called via-context-pruning-engine to ...
 
