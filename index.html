@@ -6,6 +6,7 @@
 <title>VIA · Bharat's Feed</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -457,6 +458,16 @@ html,body{
 }
 .pgrid-item:active{opacity:.7}
 
+.signout-btn{
+  margin-top:2rem;width:100%;
+  padding:.75rem;border-radius:12px;
+  background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);
+  color:#ff6b6b;font-family:'DM Sans',sans-serif;
+  font-size:.82rem;font-weight:700;cursor:pointer;
+  letter-spacing:.04em;transition:all .2s;
+}
+.signout-btn:active{transform:scale(.98);opacity:.9}
+
 /* ── RESPONSIVE ── */
 @media(min-width:500px){
   #app{max-width:430px;left:50%;transform:translateX(-50%);right:auto;width:430px}
@@ -517,6 +528,7 @@ html,body{
       </div>
       <div class="xp-bar"><div class="xp-fill" id="xp-fill-bar"></div></div>
       <div class="profile-grid" id="profile-grid"></div>
+      <button class="signout-btn" onclick="VIA.signOut()">Sign Out</button>
     </div>
   </div>
 
@@ -559,6 +571,131 @@ html,body{
 </div>
 
 <script>
+// ── VIA AUTH LAYER ──────────────────────────────────────────
+// ── REPLACE THESE WITH YOUR SUPABASE PROJECT CREDENTIALS ──
+// Get them at: https://app.supabase.com → Settings → API
+const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
+const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
+const SUPABASE_CONFIGURED =
+  !SUPABASE_URL.includes('YOUR_PROJECT') &&
+  SUPABASE_ANON_KEY !== 'YOUR_ANON_KEY';
+
+const supabase = (typeof window.supabase !== 'undefined' && SUPABASE_CONFIGURED)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+
+const VIA = {
+  user: null,
+
+  async init() {
+    if (supabase) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user?.id) {
+          localStorage.setItem('via_session', JSON.stringify(session));
+          const { data: profile, error } = await supabase
+            .from('via_users')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+
+          if (!error && profile) {
+            this.user = profile;
+            localStorage.setItem('via_user', JSON.stringify(this.user));
+            this.applyToUI();
+            return;
+          }
+
+          const fallbackProfile = {
+            id: session.user.id,
+            display_name: session.user.user_metadata?.name || 'VIA User',
+            username: session.user.user_metadata?.username || 'user',
+            city: session.user.user_metadata?.city || '',
+            avatar_emoji: '🌟',
+            xp: 0,
+            followers: 0,
+            posts: 0
+          };
+          this.user = fallbackProfile;
+          localStorage.setItem('via_user', JSON.stringify(this.user));
+          this.applyToUI();
+          return;
+        }
+      } catch (error) {
+        console.warn('VIA auth init fallback to localStorage:', error);
+      }
+    }
+
+    const stored = localStorage.getItem('via_user');
+    if (stored) {
+      try {
+        this.user = JSON.parse(stored);
+        this.applyToUI();
+        return;
+      } catch (error) {
+        console.warn('Failed to parse local VIA user:', error);
+      }
+    }
+
+    window.location.href = './auth.html';
+  },
+
+  applyToUI() {
+    if (!this.user) return;
+    const nameEl = document.querySelector('.profile-name');
+    const handleEl = document.querySelector('.profile-handle');
+    if (nameEl) nameEl.textContent = this.user.display_name || this.user.name || 'VIA User';
+    if (handleEl) {
+      handleEl.textContent =
+        '@' + (this.user.username || 'user') +
+        (this.user.city ? ' · ' + this.user.city : '');
+    }
+
+    if (typeof this.user.xp === 'number') {
+      xp = this.user.xp;
+      updateXP(xp);
+    }
+
+    const avatarEl = document.querySelector('.profile-avatar-lg');
+    if (avatarEl) avatarEl.textContent = this.user.avatar_emoji || '🌟';
+
+    const followerEl = document.getElementById('follower-count');
+    if (followerEl) followerEl.textContent = formatCount(this.user.followers || 0);
+
+    const postEl = document.querySelector('.profile-stats .pstat .pstat-n');
+    if (postEl) postEl.textContent = this.user.posts || 0;
+  },
+
+  async saveXP(newXP) {
+    if (!this.user) return;
+    this.user.xp = newXP;
+    if (supabase && this.user.id) {
+      try {
+        await supabase.from('via_users').update({ xp: newXP }).eq('id', this.user.id);
+      } catch (error) {
+        console.warn('Supabase XP save failed:', error);
+      }
+    }
+    localStorage.setItem('via_user', JSON.stringify(this.user));
+  },
+
+  async signOut() {
+    if (supabase) {
+      try { await supabase.auth.signOut(); } catch (error) { console.warn('Sign out error:', error); }
+    }
+    localStorage.removeItem('via_user');
+    localStorage.removeItem('via_session');
+    window.location.href = './auth.html';
+  }
+};
+window.VIA = VIA;
+
+function formatCount(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+  return String(n);
+}
+
 // ── DATA ──────────────────────────────────────────────────────
 const CARDS = [
   {
@@ -619,24 +756,24 @@ const CARDS = [
 ];
 
 const DISCOVER_ITEMS = [
-  {emoji:'🏏',cat:'Sport',name:'Cricket World'},
-  {emoji:'🎵',cat:'Music',name:'Desi Beats'},
-  {emoji:'🌾',cat:'Bharat',name:'Kisan Stories'},
-  {emoji:'🤖',cat:'Tech',name:'Startup India'},
-  {emoji:'🎭',cat:'Culture',name:'Rang Manch'},
-  {emoji:'🍛',cat:'Food',name:'Desi Khana'},
-  {emoji:'📚',cat:'Education',name:'Siksha'},
-  {emoji:'🌏',cat:'Travel',name:'Desh Ghoom'},
+  {emoji:'🏏',cat:'Sport',name:'Cricket World',toolPath:'./tools/context-packager/index.html'},
+  {emoji:'🎵',cat:'Music',name:'Desi Beats',toolPath:'./prompt-alchemy/index.html'},
+  {emoji:'🌾',cat:'Bharat',name:'Kisan Stories',toolPath:'./student-research/index.html'},
+  {emoji:'🤖',cat:'Tech',name:'Startup India',toolPath:'./tools/spec-builder/index.html'},
+  {emoji:'🎭',cat:'Culture',name:'Rang Manch',toolPath:'./tools/idea-remixer/index.html'},
+  {emoji:'🍛',cat:'Food',name:'Desi Khana',toolPath:'./tools/output-evaluator/index.html'},
+  {emoji:'📚',cat:'Education',name:'Siksha',toolPath:'./interview-prep/index.html'},
+  {emoji:'🌏',cat:'Travel',name:'Desh Ghoom',toolPath:'./tools/context-packager/index.html'},
 ];
 
 const PROFILE_EMOJIS = ['🌅','🎪','🌾','🤖','🏏','🎨','💡','🌟','🔥','🎵','🌺','🎭'];
 
 const REDIRECT_MAP = {
-  'viral-story':   'https://via-decide.github.io/decide.engine-tools/',
-  'bharat-story':  'https://via-decide.github.io/decide.engine-tools/',
-  'tech-story':    'https://via-decide.github.io/decide.engine-tools/',
-  'sport-story':   'https://via-decide.github.io/decide.engine-tools/',
-  'culture-story': 'https://via-decide.github.io/decide.engine-tools/',
+  'viral-story':   './student-research/index.html',
+  'bharat-story':  './interview-prep/index.html',
+  'tech-story':    './tools/spec-builder/index.html',
+  'sport-story':   './tools/context-packager/index.html',
+  'culture-story': './prompt-alchemy/index.html',
   'create':        'https://t.me/GN8RBot',
 };
 
@@ -651,15 +788,20 @@ let isDragging = false;
 let dragDeltaY = 0;
 
 // ── BOOT ─────────────────────────────────────────────────────
-window.addEventListener('load', () => {
-  setTimeout(() => {
+window.addEventListener('load', async () => {
+  setTimeout(async () => {
+    try {
+      await VIA.init();
+    } catch (error) {
+      console.warn('VIA init failed, continuing app load:', error);
+    }
     document.getElementById('boot').classList.add('exit');
     document.getElementById('app').classList.add('visible');
     buildDeck();
     buildDiscover();
     buildProfile();
     buildProgressDots();
-    updateXP(0);
+    updateXP(xp);
   }, 2600);
 });
 
@@ -854,6 +996,7 @@ function updateProgressDots() {
 function addXP(amount) {
   xp += amount;
   updateXP(xp);
+  VIA.saveXP(xp);
 }
 function updateXP(val) {
   document.getElementById('xp-counter').textContent = `${val} XP`;
@@ -879,9 +1022,18 @@ function handleLike(e, index) {
 function handleRedirect(key) {
   addXP(25);
   const url = REDIRECT_MAP[key];
-  if (url) {
-    openSheet('redirect', { url, key });
+  if (!url) return;
+
+  if (VIA.user) {
+    localStorage.setItem('via_context', JSON.stringify({
+      userId: VIA.user.id,
+      username: VIA.user.username,
+      xp: xp,
+      returnTo: './index.html'
+    }));
   }
+
+  openSheet('redirect', { url, key });
 }
 
 // ── LAYERS ───────────────────────────────────────────────────
@@ -1026,7 +1178,7 @@ function openSheet(type, extra = {}) {
       <div class="sheet-title">${item.emoji} ${item.name}</div>
       <div class="sheet-sub">${item.cat} · Trending on VIA right now</div>
       <div class="sheet-actions">
-        <div class="sheet-btn" onclick="switchLayer('feed');closeSheet()">
+        <div class="sheet-btn" onclick="${item.toolPath ? `window.location.href='${item.toolPath}';closeSheet()` : `switchLayer('feed');closeSheet()`}">
           <div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">▶</div>
           <div class="sheet-btn-text"><div class="sheet-btn-title">Watch ${item.name} Feed</div><div class="sheet-btn-sub">Top stories in this category</div></div>
           <div class="sheet-btn-arrow">›</div>
