@@ -6,29 +6,20 @@
 <meta name="description" content="VIA — Bharat's social platform. Swipe, discover, create. Powered by ViaDecide."/>
 <title>VIA · Bharat's Feed</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Serif+Display:ital@0;1&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="./onboarding/onboarding.css"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="./shared/tool-storage.js"></script>
+<script src="./shared/social-core.js"></script>
 <style>
+/* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --saffron:#FF6B00;
-  --saffron2:#FF9500;
-  --deep:#0B0B1A;
-  --deep2:#13132A;
-  --deep3:#1C1C38;
-  --indigo:#2D2B69;
-  --violet:#6C63FF;
-  --gold:#F5C518;
-  --cream:#FFF8F0;
-  --white:#FFFFFF;
-  --muted:#8B8BAD;
-  --border:rgba(255,255,255,.08);
-  --border-light:rgba(255,255,255,.15);
-  --glow-saffron:rgba(255,107,0,.4);
-  --r:20px;
+  --saffron:#FF6B00;--saffron2:#FF9500;--deep:#0B0B1A;--deep2:#13132A;--deep3:#1C1C38;
+  --indigo:#2D2B69;--violet:#6C63FF;--gold:#F5C518;--cream:#FFF8F0;--white:#FFFFFF;
+  --muted:#8B8BAD;--border:rgba(255,255,255,.08);--border-light:rgba(255,255,255,.15);
+  --glow-saffron:rgba(255,107,0,.4);--r:20px;
 }
-
 html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased;touch-action:none;overscroll-behavior:none;}
 
 /* ── BOOT ── */
@@ -53,15 +44,15 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 .status-logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.04em;background:linear-gradient(135deg,var(--saffron),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;}
 .status-actions{display:flex;align-items:center;gap:.55rem}
 .status-xp{display:flex;align-items:center;gap:.4rem;font-size:.7rem;font-weight:600;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;}
-.status-auth-btn{border:1px solid rgba(255,255,255,.12);background:rgba(11,11,26,.62);color:var(--white);border-radius:999px;padding:.42rem .8rem;font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s ease; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);}
-.status-auth-btn:active{transform:scale(.95);opacity:.92; background: rgba(255,107,0,0.15); border-color: rgba(255,107,0,0.4);}
+.status-auth-btn{border:1px solid rgba(255,255,255,.12);background:rgba(11,11,26,.62);color:var(--white);border-radius:999px;padding:.42rem .8rem;font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s ease;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);}
+.status-auth-btn:active{transform:scale(.95);background:rgba(255,107,0,0.15);border-color:rgba(255,107,0,0.4);}
 .xp-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* ── LAYER TABS ── */
-.layer-tabs{position:absolute;top:2.8rem;left:50%;transform:translateX(-50%);display:flex;gap:.4rem;z-index:50;background:rgba(11,11,26,.4);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:99px;padding:.3rem; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 24px rgba(0,0,0,0.4);}
+.layer-tabs{position:absolute;top:2.8rem;left:50%;transform:translateX(-50%);display:flex;gap:.4rem;z-index:50;background:rgba(11,11,26,.4);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:99px;padding:.3rem;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05),0 8px 24px rgba(0,0,0,0.4);}
 .layer-tab{font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.5rem 1rem;border-radius:99px;cursor:pointer;color:var(--muted);transition:all .25s cubic-bezier(.16,1,.3,1);border:none;background:transparent;font-family:'DM Sans',sans-serif;}
-.layer-tab.active{background:linear-gradient(135deg,var(--saffron),var(--saffron2));color:#fff;box-shadow:0 4px 16px var(--glow-saffron), inset 0 1px 0 rgba(255,255,255,0.3);}
+.layer-tab.active{background:linear-gradient(135deg,var(--saffron),var(--saffron2));color:#fff;box-shadow:0 4px 16px var(--glow-saffron),inset 0 1px 0 rgba(255,255,255,0.3);}
 
 /* ── SWIPE DECK ── */
 #deck{position:absolute;inset:0;overflow:hidden;}
@@ -102,14 +93,14 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 .pdot.active{height:18px;background:linear-gradient(to bottom,var(--saffron),var(--saffron2));box-shadow:0 0 8px rgba(255,107,0,.5);}
 
 /* ── BOTTOM NAV ── */
-.bottom-nav{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:space-around;padding:.75rem 1rem 1.2rem;background:linear-gradient(to top,rgba(11,11,26,.98),rgba(11,11,26,.85));backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); z-index:50;}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:.25rem;cursor:pointer;transition:all .25s cubic-bezier(.16,1,.3,1);flex:1;border:none;background:transparent; padding: 0.5rem;}
+.bottom-nav{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:space-around;padding:.75rem 1rem 1.2rem;background:linear-gradient(to top,rgba(11,11,26,.98),rgba(11,11,26,.85));backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);z-index:50;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:.25rem;cursor:pointer;transition:all .25s cubic-bezier(.16,1,.3,1);flex:1;border:none;background:transparent;padding:.5rem;}
 .nav-item:active{transform:scale(.9)}
 .nav-icon{font-size:1.3rem;filter:grayscale(1) opacity(.4);transition:filter .2s ease;}
 .nav-item.active .nav-icon{filter:none}
 .nav-label{font-size:.58rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);transition:color .2s ease;}
 .nav-item.active .nav-label{color:var(--saffron)}
-.nav-create{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--saffron),var(--saffron2));display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 8px 24px rgba(255,107,0,.45), inset 0 1px 0 rgba(255,255,255,0.2);cursor:pointer;transition:all .2s ease;border:none;margin-top:-.5rem;}
+.nav-create{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--saffron),var(--saffron2));display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 8px 24px rgba(255,107,0,.45),inset 0 1px 0 rgba(255,255,255,0.2);cursor:pointer;transition:all .2s ease;border:none;margin-top:-.5rem;}
 .nav-create:active{transform:scale(.92)}
 
 /* ── SHEET ── */
@@ -120,12 +111,11 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 .sheet.dragging{transition:none}
 .sheet-handle{width:40px;height:4px;border-radius:2px;background:rgba(255,255,255,.2);margin:0 auto 16px;cursor:grab;touch-action:none;}
 .sheet-handle:active{cursor:grabbing}
-.sheet-badge{display:inline-flex;align-items:center;padding:4px 8px;border-radius:8px;background:rgba(255,255,255,.08);font-size:11px;font-weight:700;letter-spacing:.02em;color:#fff;margin-bottom:10px;}
 .sheet-title{font-size:22px;line-height:1.2;font-weight:700;color:#fff;margin-bottom:4px;}
 .sheet-subtitle,.sheet-sub{font-size:14px;line-height:1.45;color:rgba(255,255,255,.7);margin-bottom:16px;}
 .sheet-actions{display:flex;flex-direction:column;gap:10px}
-.sheet-btn{display:flex;align-items:center;gap:.9rem;padding:1rem;border-radius:16px;cursor:pointer;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);transition:transform .2s ease,opacity .2s ease,background .2s ease;font-family:'DM Sans',sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
-.sheet-btn:active{transform:scale(.98); background:rgba(255,107,0,.06);}
+.sheet-btn{display:flex;align-items:center;gap:.9rem;padding:1rem;border-radius:16px;cursor:pointer;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);transition:transform .2s ease,background .2s ease;font-family:'DM Sans',sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+.sheet-btn:active{transform:scale(.98);background:rgba(255,107,0,.06);}
 .sheet-btn-icon{font-size:1.3rem;width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .sheet-btn-text{flex:1}
 .sheet-btn-title{font-weight:700;font-size:.9rem;color:#fff}
@@ -136,19 +126,18 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 .like-burst{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:5rem;pointer-events:none;z-index:300;animation:likeBurst .6s ease forwards;}
 @keyframes likeBurst{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}40%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}
 
-/* ── DISCOVER BENTO GRID (TOOLS) ── */
-.discover-grid{position:absolute;inset:0;padding:6rem 1rem 5rem;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:.85rem;align-content:start;}
-.discover-card{border-radius:20px;padding:1.2rem;display:flex;flex-direction:column;gap:0.5rem;background:rgba(255,255,255,0.03);position:relative;cursor:pointer;transition:transform .25s cubic-bezier(.16,1,.3,1), background .2s;border:1px solid var(--border);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 12px rgba(0,0,0,0.15);}
-.discover-card:active{transform:scale(.94); background:rgba(255,255,255,0.06); box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 6px rgba(0,0,0,0.3);}
-.discover-card-bg{font-size:2.4rem;line-height:1;margin-bottom:0.4rem;}
+/* ── DISCOVER GRID ── */
+.discover-grid{position:absolute;inset:0;padding:6rem 1rem 5rem;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.85rem;align-content:start;}
+.discover-card{border-radius:20px;padding:1.2rem;display:flex;flex-direction:column;gap:.5rem;background:rgba(255,255,255,0.03);position:relative;cursor:pointer;transition:transform .25s cubic-bezier(.16,1,.3,1),background .2s;border:1px solid var(--border);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05),0 4px 12px rgba(0,0,0,0.15);}
+.discover-card:active{transform:scale(.94);background:rgba(255,255,255,0.06);}
+.discover-card-bg{font-size:2.4rem;line-height:1;margin-bottom:.4rem;}
 .discover-card-cat{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--saffron);}
 .discover-card-name{font-size:1.05rem;font-weight:700;color:#fff;line-height:1.2;}
-.discover-card-desc{font-size:0.75rem;color:rgba(255,255,255,0.6);line-height:1.4;margin-top:0.2rem;}
-
+.discover-card-desc{font-size:.75rem;color:rgba(255,255,255,0.6);line-height:1.4;margin-top:.2rem;}
 .stagger-enter{animation:staggerFade .5s cubic-bezier(.16,1,.3,1) both;opacity:0;transform:translateY(15px);}
 @keyframes staggerFade{to{opacity:1;transform:translateY(0)}}
 
-/* ── PROFILE POSTERS (SAVED CONTENT) ── */
+/* ── PROFILE ── */
 .profile-wrap{position:absolute;inset:0;padding:4rem 1.2rem 5rem;overflow-y:auto;display:flex;flex-direction:column;align-items:center;}
 .profile-avatar-lg{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--saffron),var(--violet));display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin-bottom:1rem;border:3px solid rgba(255,107,0,.4);box-shadow:0 0 30px rgba(255,107,0,.3);}
 .profile-name{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,5vw,2rem);font-weight:700;margin-bottom:.25rem;}
@@ -159,57 +148,47 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 .pstat-l{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .xp-bar{width:100%;background:rgba(255,255,255,.07);border-radius:99px;height:6px;margin-bottom:1.5rem;overflow:hidden;}
 .xp-fill{height:100%;width:0;background:linear-gradient(90deg,var(--saffron),var(--gold));border-radius:99px;transition:width .6s ease;}
-
-.profile-grid{width:100%;display:grid;grid-template-columns:repeat(auto-fit, minmax(135px, 1fr));gap:.85rem;margin-bottom:1.5rem;}
-.pgrid-item{border-radius:20px;overflow:hidden;aspect-ratio:4/5;position:relative;cursor:pointer;transition:transform .25s cubic-bezier(.16,1,.3,1);border:1px solid var(--border);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 12px rgba(0,0,0,0.15);}
-.pgrid-item::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at top right,rgba(255,255,255,0.1),transparent);opacity:0;transition:opacity .3s;pointer-events:none;z-index:2;}
-.pgrid-item:active{transform:scale(.94); box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 6px rgba(0,0,0,0.3);}
-.pgrid-item:active::before{opacity:1;}
+.profile-grid{width:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:.85rem;margin-bottom:1.5rem;}
+.pgrid-item{border-radius:20px;overflow:hidden;aspect-ratio:4/5;position:relative;cursor:pointer;transition:transform .25s cubic-bezier(.16,1,.3,1);border:1px solid var(--border);}
+.pgrid-item:active{transform:scale(.94);}
 .pgrid-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3.5rem;background:var(--deep3);}
 .pgrid-label{position:absolute;bottom:0;left:0;right:0;padding:1.2rem .8rem .8rem;background:linear-gradient(to top,rgba(11,11,26,.95) 0%,rgba(11,11,26,.8) 40%,transparent 100%);z-index:3;}
 .pgrid-type{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--saffron);margin-bottom:.3rem;}
 .pgrid-title{font-size:.95rem;font-weight:700;color:#fff;line-height:1.25;}
-.pgrid-views{font-size:0.7rem;color:rgba(255,255,255,0.6);margin-top:0.3rem;}
-
-.signout-btn{margin-top:1rem;width:100%;padding:1rem;border-radius:16px;background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);color:#ff6b6b;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .25s cubic-bezier(.16,1,.3,1);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);}
+.pgrid-views{font-size:.7rem;color:rgba(255,255,255,.6);margin-top:.3rem;}
+.signout-btn{margin-top:1rem;width:100%;padding:1rem;border-radius:16px;background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);color:#ff6b6b;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .25s cubic-bezier(.16,1,.3,1);}
 .signout-btn.guest{background:rgba(255,107,0,.08);border-color:rgba(255,107,0,.25);color:var(--saffron);}
-.signout-btn:active{transform:scale(.97);opacity:.9}
+.signout-btn:active{transform:scale(.97)}
 
-/* ── ABOUT LAYER ── */
+/* ── ABOUT ── */
 .about-wrap{position:absolute;inset:0;padding:4rem 1.2rem 5rem;overflow-y:auto;display:flex;flex-direction:column;}
 .about-hero{text-align:center;padding:2rem 0 1.5rem;}
 .about-wordmark{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,18vw,7rem);letter-spacing:-.02em;line-height:.9;background:linear-gradient(135deg,var(--saffron),var(--gold),var(--saffron2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .about-tagline{font-family:'Noto Sans Devanagari',sans-serif;font-size:.9rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:.75rem;}
-.about-mission{background:linear-gradient(135deg,rgba(255,107,0,.08),rgba(245,197,24,.02));backdrop-filter:blur(12px);border:1px solid rgba(255,107,0,.2);border-radius:20px;padding:1.5rem;margin:1.5rem 0;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 12px 24px rgba(255,107,0,.05);}
-.about-mission-label{font-family:'DM Sans',sans-serif;font-size:.6rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--saffron);margin-bottom:.6rem;}
+.about-mission{background:linear-gradient(135deg,rgba(255,107,0,.08),rgba(245,197,24,.02));backdrop-filter:blur(12px);border:1px solid rgba(255,107,0,.2);border-radius:20px;padding:1.5rem;margin:1.5rem 0;}
+.about-mission-label{font-size:.6rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--saffron);margin-bottom:.6rem;}
 .about-mission-text{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;line-height:1.5;color:var(--white);}
 .about-mission-text em{font-style:italic;color:var(--gold);}
 .about-section{margin-bottom:1.75rem;}
 .about-section-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.06em;color:var(--white);margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem;}
 .about-section-title::after{content:'';flex:1;height:1px;background:var(--border);}
-.about-product{display:flex;align-items:center;gap:1rem;padding:.85rem 1rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:16px;margin-bottom:.6rem;cursor:pointer;transition:all .25s cubic-bezier(.16,1,.3,1);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);}
-.about-product:active{transform:scale(.97);background:rgba(255,107,0,.06);border-color:rgba(255,107,0,.25);box-shadow:inset 0 1px 0 rgba(255,107,0,0.1),0 8px 16px rgba(255,107,0,0.1);}
+.about-product{display:flex;align-items:center;gap:1rem;padding:.85rem 1rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:16px;margin-bottom:.6rem;cursor:pointer;transition:all .25s cubic-bezier(.16,1,.3,1);}
+.about-product:active{transform:scale(.97);background:rgba(255,107,0,.06);border-color:rgba(255,107,0,.25);}
 .about-product-icon{font-size:1.6rem;width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .about-product-info{flex:1}
 .about-product-name{font-weight:700;font-size:.92rem;color:var(--white);margin-bottom:.2rem;}
 .about-product-desc{font-size:.75rem;color:var(--muted);line-height:1.4;}
 .about-product-arrow{color:var(--muted);font-size:.9rem;flex-shrink:0;}
 .about-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1.5rem;}
-.about-stat{text-align:center;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:14px;padding:1rem .5rem;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);}
+.about-stat{text-align:center;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:14px;padding:1rem .5rem;}
 .about-stat-n{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.04em;color:var(--saffron);line-height:1;}
 .about-stat-l{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:.35rem;}
-.about-team{display:flex;flex-direction:column;gap:.6rem;}
-.about-team-item{display:flex;align-items:center;gap:.85rem;padding:.75rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);}
-.about-team-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--saffron),var(--violet));display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
-.about-team-name{font-weight:700;font-size:.88rem;color:var(--white);}
-.about-team-role{font-size:.7rem;color:var(--muted);}
 .about-links{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.5rem;}
 .about-link-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1rem;border-radius:99px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted);font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all .25s cubic-bezier(.16,1,.3,1);}
 .about-link-btn:active{transform:scale(0.95);background:rgba(255,107,0,.1);border-color:rgba(255,107,0,.3);color:var(--saffron);}
-.about-footer-note{text-align:center;font-size:.7rem;color:var(--muted);margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);line-height:1.6;}
 
-/* ── GESTURE CSS ── */
-.card-tilt-overlay{position:absolute;inset:0;pointer-events:none;z-index:4;border-radius:0;transition:background .08s ease;}
+/* ── GESTURE ── */
+.card-tilt-overlay{position:absolute;inset:0;pointer-events:none;z-index:4;transition:background .08s ease;}
 .card-dir-hint{position:absolute;top:50%;transform:translateY(-50%);pointer-events:none;z-index:5;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;opacity:0;padding:.5rem 1rem;border-radius:99px;border:2px solid currentColor;transition:all .2s ease;}
 .card-dir-hint.like{left:1.5rem;color:#FF6B00;background:rgba(255,107,0,.18);backdrop-filter:blur(8px);}
 .card-dir-hint.more{right:1.5rem;color:#6C63FF;background:rgba(108,99,255,.18);backdrop-filter:blur(8px);}
@@ -225,9 +204,197 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 .pull-indicator.visible{opacity:1}
 .action-ribbon{position:fixed;bottom:5rem;left:0;right:0;display:flex;justify-content:center;gap:.75rem;padding:.75rem 1.2rem;z-index:150;transform:translateX(110%);transition:transform .32s cubic-bezier(.16,1,.3,1);}
 .action-ribbon.open{transform:translateX(0)}
-.ribbon-btn{flex:1;max-width:90px;height:52px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(28,28,56,.95);color:var(--white);font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;cursor:pointer;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transition:background .25s,transform .25s cubic-bezier(.16,1,.3,1);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);}
-.ribbon-btn:active{transform:scale(.93);background:rgba(255,107,0,.18);border-color:var(--saffron);box-shadow:inset 0 1px 0 rgba(255,107,0,0.1);}
+.ribbon-btn{flex:1;max-width:90px;height:52px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(28,28,56,.95);color:var(--white);font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;cursor:pointer;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transition:background .25s,transform .25s cubic-bezier(.16,1,.3,1);}
+.ribbon-btn:active{transform:scale(.93);background:rgba(255,107,0,.18);border-color:var(--saffron);}
 .rb-icon{font-size:1.1rem}
+
+/* ══════════════════════════════════════════════════════════════
+   DEEP DIVES LAYER — all blog styles scoped under .dd-layer
+   ══════════════════════════════════════════════════════════════ */
+.dd-layer {
+  --dd-bg:      #000000;
+  --dd-bg2:     #0f0f0f;
+  --dd-bg3:     #1a1a1a;
+  --dd-border:  rgba(255,255,255,.04);
+  --acc:        #ff671f;
+  --border-hi:  rgba(255,103,31,.5);
+  --card-hi:    rgba(255,103,31,.08);
+  --dd-txt:     #ffffff;
+  --dd-txt2:    #a0a0a0;
+  --dd-txt3:    #666666;
+  --dd-r:       12px;
+  --dd-r-sm:    6px;
+  --dd-font-h:  'DM Serif Display', Georgia, serif;
+  --dd-font-ui: 'Syne', sans-serif;
+  --dd-font-m:  'JetBrains Mono', monospace;
+  position:absolute;inset:0;background:var(--dd-bg);
+}
+
+/* Back bar + story selector */
+.dd-topbar {
+  position:fixed;top:0;left:0;right:0;z-index:60;
+  display:flex;align-items:center;gap:10px;padding:10px 14px 8px;
+  background:linear-gradient(to bottom,rgba(0,0,0,.96) 30%,transparent);
+}
+.dd-back {
+  flex-shrink:0;width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+  color:#fff;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.dd-back:active{transform:scale(.9);background:rgba(255,107,0,.2);}
+.dd-story-scroll {
+  display:flex;gap:7px;flex:1;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;
+}
+.dd-story-scroll::-webkit-scrollbar{display:none}
+.dd-story-btn {
+  background:rgba(255,255,255,.06);border:1px solid transparent;
+  color:var(--dd-txt2);padding:7px 13px;border-radius:20px;
+  font-family:var(--dd-font-ui);font-size:12px;font-weight:700;
+  cursor:pointer;white-space:nowrap;transition:all .3s cubic-bezier(.22,1,.36,1);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.dd-story-btn:active{transform:scale(.95)}
+.dd-story-btn.active {
+  background:var(--card-hi);
+  color:var(--acc);
+  border-color:var(--border-hi);
+  box-shadow:0 4px 12px rgba(0,0,0,.2);
+}
+.dd-sec-pill {
+  flex-shrink:0;font-family:var(--dd-font-m);font-size:10px;
+  color:var(--dd-txt3);background:rgba(255,255,255,.05);
+  border-radius:20px;padding:5px 12px;white-space:nowrap;
+  border:1px solid rgba(255,255,255,.05);
+}
+.dd-sec-pill span{color:var(--dd-txt);font-weight:600;}
+
+/* Snap root */
+.dd-snap {
+  height:100dvh;overflow-y:scroll;
+  scroll-snap-type:y mandatory;scrollbar-width:none;
+}
+.dd-snap::-webkit-scrollbar{display:none}
+
+/* Sections */
+.dd-section {
+  scroll-snap-align:start;scroll-snap-stop:always;
+  min-height:100dvh;display:flex;align-items:center;
+  justify-content:center;padding:82px 20px 44px;position:relative;
+}
+.dd-inner {
+  width:100%;max-width:760px;
+  opacity:0;transform:translateY(26px) scale(.985);
+  transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1);
+}
+.dd-inner.vis{opacity:1;transform:translateY(0) scale(1)}
+
+/* Footer section (carousel) */
+.dd-section.dd-footer-sec {
+  align-items:flex-start;padding:90px 0 60px 20px;
+}
+.dd-section.dd-footer-sec .dd-inner{max-width:100%;padding-right:20px;}
+.dd-footer-header{max-width:760px;margin:0 auto 48px;}
+
+/* Sec label */
+.dd-label {
+  font-family:var(--dd-font-m);font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--dd-txt2);margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.dd-label::before{content:'';display:inline-block;width:16px;height:2px;background:var(--acc);transition:background .4s;}
+
+/* Headings */
+.dd-h1,.dd-h2{font-family:var(--dd-font-h);line-height:1.1;letter-spacing:-.02em;}
+.dd-h1{font-size:clamp(36px,7vw,70px);}
+.dd-h2{font-size:clamp(28px,5vw,50px);}
+.dd-h3{font-family:var(--dd-font-ui);font-size:19px;font-weight:700;}
+
+/* Body text */
+.dd-lead{font-size:clamp(16px,2.5vw,21px);color:var(--dd-txt2);line-height:1.6;margin-top:14px;font-family:var(--dd-font-ui);}
+.dd-body{font-size:15px;color:var(--dd-txt2);line-height:1.7;margin-top:12px;font-family:var(--dd-font-ui);}
+.dd-layer strong{color:var(--dd-txt);font-weight:700;}
+.dd-layer em{font-style:italic;color:var(--acc);transition:color .4s;}
+
+/* Divider + swipe hint */
+.dd-divider{width:100%;height:1px;background:var(--dd-border);margin:28px 0;}
+.dd-hint{font-family:var(--dd-font-m);color:var(--dd-txt3);font-size:12px;}
+.dd-hook-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 70% 40%,rgba(255,255,255,.02) 0%,transparent 70%);pointer-events:none;}
+
+/* Problem list */
+.dd-prob-list,.dd-checklist{margin-top:22px;display:flex;flex-direction:column;gap:8px;}
+.dd-prob-item,.dd-check-item{
+  display:flex;gap:14px;align-items:center;padding:14px 18px;
+  background:var(--dd-bg2);border-radius:var(--dd-r);
+  font-size:14px;color:var(--dd-txt2);transition:background .2s;
+  font-family:var(--dd-font-ui);
+}
+.dd-prob-item:hover,.dd-check-item:hover{background:var(--dd-bg3);color:var(--dd-txt);}
+.dd-prob-icon{font-size:18px;flex-shrink:0;}
+.dd-check-item::before{
+  content:'✓';color:var(--dd-bg);background:var(--acc);
+  font-weight:800;font-size:11px;width:19px;height:19px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .4s;
+}
+
+/* Quote block */
+.dd-quote-block{margin-top:36px;border-left:2px solid var(--acc);padding-left:22px;transition:border-color .4s;}
+.dd-quote-text{font-size:19px;font-family:var(--dd-font-h);line-height:1.4;color:var(--dd-txt);}
+
+/* Steps */
+.dd-steps{margin-top:28px;display:flex;flex-direction:column;}
+.dd-step{display:flex;gap:22px;position:relative;}
+.dd-step-num{
+  flex-shrink:0;width:38px;height:38px;border-radius:50%;
+  background:var(--dd-bg2);color:var(--acc);
+  font-family:var(--dd-font-m);font-size:13px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;z-index:1;
+  border:1px solid var(--dd-border);transition:color .4s;
+}
+.dd-step-line{position:absolute;left:18px;top:38px;width:2px;height:calc(100% - 10px);background:var(--dd-bg2);}
+.dd-step-body{padding-bottom:28px;}
+.dd-step-body h4{font-weight:700;font-size:17px;margin-bottom:5px;font-family:var(--dd-font-ui);color:var(--dd-txt);}
+.dd-step-body p{font-size:14px;color:var(--dd-txt2);line-height:1.6;font-family:var(--dd-font-ui);}
+
+/* Examples cards */
+.dd-ex-card{
+  padding:18px 0;border-bottom:1px solid var(--dd-border);
+  transition:transform .2s;cursor:default;
+}
+.dd-ex-card:last-child{border-bottom:none;}
+.dd-ex-card:hover{transform:translateX(7px);}
+.dd-ex-card h3{font-size:17px;margin-bottom:7px;font-family:var(--dd-font-ui);font-weight:700;color:var(--dd-txt);}
+.dd-ex-card p{font-size:14px;color:var(--dd-txt2);line-height:1.6;font-family:var(--dd-font-ui);}
+
+/* Footer carousels */
+.dd-info-block{margin-bottom:44px;}
+.dd-info-label{font-family:var(--dd-font-m);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dd-txt3);margin-bottom:7px;padding-left:20px;}
+.dd-info-title{font-family:var(--dd-font-ui);font-size:19px;font-weight:700;margin-bottom:14px;color:var(--dd-txt);padding-left:20px;}
+.dd-carousel{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;padding:8px 0 28px;scrollbar-width:none;}
+.dd-carousel::-webkit-scrollbar{display:none}
+.dd-car-card{
+  background:var(--dd-bg2);border-radius:var(--dd-r);padding:14px;
+  display:flex;flex-direction:column;gap:8px;min-width:240px;max-width:240px;
+  scroll-snap-align:start;flex-shrink:0;text-decoration:none;
+  transition:transform .3s cubic-bezier(.25,.8,.25,1),background .3s;
+}
+.dd-car-card:hover{transform:scale(1.04);background:var(--dd-bg3);}
+.dd-car-thumb{width:100%;height:110px;background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,0));border-radius:var(--dd-r-sm);margin-bottom:6px;}
+.dd-car-card h4{font-size:14px;font-weight:700;color:var(--dd-txt);line-height:1.3;font-family:var(--dd-font-ui);}
+.dd-car-card p{font-size:12px;color:var(--dd-txt2);line-height:1.5;flex:1;font-family:var(--dd-font-ui);}
+.dd-car-cta{font-size:11px;font-weight:700;color:var(--dd-txt);margin-top:auto;font-family:var(--dd-font-ui);}
+.dd-car-card:hover .dd-car-cta{color:var(--acc);transition:color .4s;}
+
+/* Footer dir nav */
+.dd-footer-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding-left:20px;max-width:760px;}
+.dd-fcol h5{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dd-txt3);margin-bottom:14px;font-family:var(--dd-font-ui);}
+.dd-fcol ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.dd-fcol ul a{font-size:13px;color:var(--dd-txt2);text-decoration:none;transition:color .2s;font-family:var(--dd-font-ui);}
+.dd-fcol ul a:hover{color:var(--dd-txt);}
+
+/* Fade animation on story switch */
+.dd-fade{animation:ddFadeIn .38s ease-out forwards;}
+@keyframes ddFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── RESPONSIVE ── */
 @media(min-width:500px){
@@ -235,12 +402,17 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
   .sheet{max-width:430px;left:50%;right:auto;margin:0 auto;}
   .action-ribbon{max-width:430px;left:50%;transform:translateX(-50%) translateX(110%)}
   .action-ribbon.open{transform:translateX(-50%) translateX(0)}
+  .dd-topbar{max-width:430px;left:50%;transform:translateX(-50%);right:auto;}
+}
+@media(max-width:600px){
+  .dd-footer-nav{grid-template-columns:1fr 1fr;}
+  .dd-h1{font-size:32px;}
 }
 </style>
 </head>
 <body>
 
-<!-- BOOT -->
+<!-- ── BOOT ── -->
 <div id="boot">
   <div class="boot-logo">VIA</div>
   <div class="boot-tagline">Bharat का अपना Feed</div>
@@ -251,7 +423,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
   <div class="boot-bar"><div class="boot-bar-fill"></div></div>
 </div>
 
-<!-- APP -->
+<!-- ── APP ── -->
 <div id="app">
   <div class="status-bar">
     <div class="status-logo" onclick="switchLayer('feed')">VIA</div>
@@ -261,7 +433,6 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
     </div>
   </div>
 
-  <!-- LAYER TABS -->
   <div class="layer-tabs" id="layer-tabs">
     <button class="layer-tab active" data-layer="feed">Feed</button>
     <button class="layer-tab" data-layer="discover">Discover</button>
@@ -269,7 +440,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
     <button class="layer-tab" data-layer="profile">Profile</button>
   </div>
 
-  <!-- DECK -->
+  <!-- FEED DECK -->
   <div id="deck">
     <div class="thumb-zone-guide" aria-hidden="true"></div>
     <div class="pull-indicator" id="pull-indicator">↓ release to refresh</div>
@@ -286,6 +457,114 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
     <div class="discover-grid" id="discover-grid"></div>
   </div>
 
+  <!-- ═══════════════════════════════════════════════════
+       DEEP DIVES LAYER
+  ═══════════════════════════════════════════════════ -->
+  <div id="layer-deepdives" style="display:none;position:absolute;inset:0" class="dd-layer">
+
+    <!-- Fixed top bar: back + story switcher -->
+    <div class="dd-topbar">
+      <button class="dd-back" onclick="switchLayer('feed')" title="Back to Feed">←</button>
+      <div class="dd-story-scroll" id="dd-story-scroll">
+        <button class="dd-story-btn active" data-story="food"    onclick="ddLoad('food',this)">🔥 Mumbai Food</button>
+        <button class="dd-story-btn"        data-story="drone"   onclick="ddLoad('drone',this)">🌾 Agri Drone</button>
+        <button class="dd-story-btn"        data-story="ai"      onclick="ddLoad('ai',this)">🤖 AI Doctor</button>
+        <button class="dd-story-btn"        data-story="ipl"     onclick="ddLoad('ipl',this)">🏏 IPL Economy</button>
+        <button class="dd-story-btn"        data-story="upi"     onclick="ddLoad('upi',this)">💳 UPI Global</button>
+        <button class="dd-story-btn"        data-story="ev"      onclick="ddLoad('ev',this)">⚡ EV Cities</button>
+        <button class="dd-story-btn"        data-story="creator" onclick="ddLoad('creator',this)">🎬 Creators</button>
+        <button class="dd-story-btn"        data-story="edtech"  onclick="ddLoad('edtech',this)">📚 EdTech</button>
+      </div>
+      <div class="dd-sec-pill"><span id="dd-sec-num">1</span>/<span id="dd-sec-tot">7</span></div>
+    </div>
+
+    <!-- Scroll snap container -->
+    <div class="dd-snap" id="dd-snap">
+
+      <!-- SEC 1: HOOK -->
+      <div class="dd-section" data-ddsec="1">
+        <div class="dd-hook-bg"></div>
+        <div class="dd-inner">
+          <div class="dd-label" id="dd-catLabel">· VIRAL STORY</div>
+          <h1 class="dd-h1" id="dd-hookTitle">Loading...</h1>
+          <p class="dd-lead" id="dd-hookLead"></p>
+          <div class="dd-divider"></div>
+          <div class="dd-hint">↓ SWIPE UP TO EXPLORE</div>
+        </div>
+      </div>
+
+      <!-- SEC 2: CONTEXT -->
+      <div class="dd-section" data-ddsec="2">
+        <div class="dd-inner">
+          <div class="dd-label">The Context</div>
+          <h2 class="dd-h2" id="dd-probTitle"></h2>
+          <p class="dd-body" id="dd-probBody"></p>
+          <div class="dd-prob-list" id="dd-probList"></div>
+        </div>
+      </div>
+
+      <!-- SEC 3: INSIGHT -->
+      <div class="dd-section" data-ddsec="3">
+        <div class="dd-inner">
+          <div class="dd-label">The Insight</div>
+          <h2 class="dd-h2" id="dd-insightTitle"></h2>
+          <p class="dd-body" id="dd-insightBody"></p>
+          <div class="dd-quote-block">
+            <p class="dd-quote-text" id="dd-insightQuote"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEC 4: FRAMEWORK -->
+      <div class="dd-section" data-ddsec="4">
+        <div class="dd-inner">
+          <div class="dd-label">How It Works</div>
+          <h2 class="dd-h2" id="dd-fwTitle"></h2>
+          <div class="dd-steps" id="dd-fwSteps"></div>
+        </div>
+      </div>
+
+      <!-- SEC 5: IMPACT -->
+      <div class="dd-section" data-ddsec="5">
+        <div class="dd-inner">
+          <div class="dd-label">Impact</div>
+          <h2 class="dd-h2" id="dd-exTitle"></h2>
+          <div style="display:flex;flex-direction:column;margin-top:28px;" id="dd-exList"></div>
+        </div>
+      </div>
+
+      <!-- SEC 6: TAKEAWAYS -->
+      <div class="dd-section" data-ddsec="6">
+        <div class="dd-inner">
+          <div class="dd-label">Takeaways</div>
+          <h2 class="dd-h2" id="dd-clTitle"></h2>
+          <div class="dd-checklist" id="dd-clItems"></div>
+        </div>
+      </div>
+
+      <!-- SEC 7: CONTINUE READING -->
+      <div class="dd-section dd-footer-sec" data-ddsec="7">
+        <div class="dd-inner">
+          <div class="dd-footer-header">
+            <div class="dd-label">Explore VIA Ecosystem</div>
+            <h2 class="dd-h2">Continue Reading</h2>
+          </div>
+          <div class="dd-info-block">
+            <div class="dd-info-label">01 / Engine Tools</div>
+            <div class="dd-info-title">Powering your research</div>
+            <div class="dd-carousel" id="dd-toolsGrid"></div>
+          </div>
+          <div class="dd-info-block">
+            <div class="dd-info-label">02 / Platform Map</div>
+            <div class="dd-info-title">Directory</div>
+            <div class="dd-footer-nav" id="dd-footerNav"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end dd-snap -->
+  </div><!-- end layer-deepdives -->
+
   <!-- ABOUT LAYER -->
   <div id="layer-about" style="display:none;position:absolute;inset:0">
     <div class="about-wrap">
@@ -293,57 +572,38 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
         <div class="about-wordmark">VIA</div>
         <div class="about-tagline">Bharat का अपना Platform</div>
       </div>
-
       <div class="about-mission">
         <div class="about-mission-label">// Mission</div>
-        <div class="about-mission-text">
-          Tools that help you think, build, and <em>decide.</em>
-          A sovereign, Bharat-first digital ecosystem — no data harvesting, no hidden fees.
-        </div>
+        <div class="about-mission-text">Tools that help you think, build, and <em>decide.</em> A sovereign, Bharat-first digital ecosystem — no data harvesting, no hidden fees.</div>
       </div>
-
       <div class="about-stat-row">
         <div class="about-stat"><div class="about-stat-n">44+</div><div class="about-stat-l">Live Tools</div></div>
         <div class="about-stat"><div class="about-stat-n">0</div><div class="about-stat-l">Logins Needed</div></div>
         <div class="about-stat"><div class="about-stat-n">∞</div><div class="about-stat-l">Free Forever</div></div>
       </div>
-
       <div class="about-section">
         <div class="about-section-title">🛠 Products</div>
         <div class="about-product" onclick="window.open('https://via-decide.github.io/decide.engine-tools/','_blank')">
           <div class="about-product-icon">⚙️</div>
-          <div class="about-product-info">
-            <div class="about-product-name">Decide Engine Tools</div>
-            <div class="about-product-desc">44+ browser tools for creators, coders, students & founders. No install needed.</div>
-          </div>
+          <div class="about-product-info"><div class="about-product-name">Decide Engine Tools</div><div class="about-product-desc">44+ browser tools for creators, coders, students & founders.</div></div>
           <div class="about-product-arrow">›</div>
         </div>
         <div class="about-product" onclick="window.open('https://t.me/GN8RBot','_blank')">
           <div class="about-product-icon">⚡</div>
-          <div class="about-product-info">
-            <div class="about-product-name">GN8R Bot</div>
-            <div class="about-product-desc">AI command center in Telegram. Generate real files, run GitHub pipelines.</div>
-          </div>
+          <div class="about-product-info"><div class="about-product-name">GN8R Bot</div><div class="about-product-desc">AI command center in Telegram. Generate real files, run pipelines.</div></div>
           <div class="about-product-arrow">›</div>
         </div>
         <div class="about-product" onclick="switchLayer('feed')">
           <div class="about-product-icon">📱</div>
-          <div class="about-product-info">
-            <div class="about-product-name">VIA Social Feed</div>
-            <div class="about-product-desc">Swipe-native social platform for Bharat. Stories, tools, community.</div>
-          </div>
+          <div class="about-product-info"><div class="about-product-name">VIA Social Feed</div><div class="about-product-desc">Swipe-native social platform for Bharat.</div></div>
           <div class="about-product-arrow">›</div>
         </div>
-        <div class="about-product" onclick="window.open('https://via-decide.github.io/VIA/StudyOS/','_blank')">
-          <div class="about-product-icon">📚</div>
-          <div class="about-product-info">
-            <div class="about-product-name">StudyOS</div>
-            <div class="about-product-desc">Structured learning OS for students and UPSC aspirants.</div>
-          </div>
+        <div class="about-product" onclick="switchLayer('deepdives')">
+          <div class="about-product-icon">📖</div>
+          <div class="about-product-info"><div class="about-product-name">Deep Dives</div><div class="about-product-desc">Cinematic story breakdowns on Bharat's biggest trends.</div></div>
           <div class="about-product-arrow">›</div>
         </div>
       </div>
-
       <div class="about-section">
         <div class="about-section-title">🔗 Links</div>
         <div class="about-links">
@@ -370,18 +630,13 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
         <span id="level-label">Level 1 · Explorer</span><span id="xp-bar-label">0 / 500 XP</span>
       </div>
       <div class="xp-bar"><div class="xp-fill" id="xp-fill-bar"></div></div>
-      
-      <!-- 🚀 FIX: UPGRADED BENTO PROFILE GRID -->
       <div class="profile-grid" id="profile-grid"></div>
-      
       <button class="signout-btn guest" id="profile-auth-btn" onclick="VIA.openAuth()">Sign In to Save Progress</button>
     </div>
   </div>
 
-  <!-- SWIPE HINT -->
+  <!-- SWIPE HINT + DOTS -->
   <div class="swipe-hint"><span class="hint-arrow">↑</span><span>swipe up</span></div>
-
-  <!-- PROGRESS DOTS -->
   <div class="progress-dots" id="progress-dots"></div>
 
   <!-- BOTTOM NAV -->
@@ -402,426 +657,650 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
   </nav>
 </div>
 
-<!-- SHEET OVERLAY -->
+<!-- SHEET -->
 <div id="sheet-overlay" class="sheet-overlay" onclick="closeSheet()"></div>
 <div id="sheet" class="sheet"><div class="sheet-handle"></div><div id="sheet-body"></div></div>
 
-<script src="./onboarding/onboarding.js"></script>
 <script>
-// ── SUPABASE ───────────────────────
-const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
-const SUPABASE_CONFIGURED = !SUPABASE_URL.includes('YOUR_PROJECT');
-const _sb = (typeof window.supabase !== 'undefined' && SUPABASE_CONFIGURED)
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-  : null;
+// ════════════════════════════════════════════════════════════════
+// SUPABASE + HELPERS
+// ════════════════════════════════════════════════════════════════
+const _sbConfig = window.DatabaseService && typeof window.DatabaseService.getConfig === 'function'
+  ? window.DatabaseService.getConfig()
+  : { url: 'https://bfocxgtlemhxfwfuhlxn.supabase.co', anonKey: window.ECO_SUPABASE_ANON_KEY || localStorage.getItem('eco_supabase_anon_key') || '', isConfigured: !!(window.ECO_SUPABASE_ANON_KEY || localStorage.getItem('eco_supabase_anon_key')) };
+const SUPABASE_URL = _sbConfig.url;
+const SUPABASE_ANON_KEY = _sbConfig.anonKey;
+const SUPABASE_CONFIGURED = Boolean(_sbConfig.isConfigured);
+const _sb = window.DatabaseService && typeof window.DatabaseService.getClient === 'function'
+  ? window.DatabaseService.getClient()
+  : ((typeof window.supabase !== 'undefined' && SUPABASE_CONFIGURED)
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null);
 
-// ── HELPERS ──────────────────────────────────────────────────
-function formatCount(n) {
-  if (n >= 1e6) return (n/1e6).toFixed(1)+'M';
-  if (n >= 1e3) return (n/1e3).toFixed(1)+'K';
-  return String(n);
-}
-function escapeHTML(value) {
-  return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
-function stripTags(value) {
-  return String(value ?? '').replace(/<[^>]*>/g, '').trim();
-}
-function getGuestProfile() {
-  return { id:'', username:'guest', display_name:'Guest Explorer', city:'Preview Mode', avatar_emoji:'👀', xp:0, followers:0, following:0, posts:0, is_guest:true };
-}
-function updateAuthUI(user) {
-  const guest = !user || user.is_guest || !user.id;
-  const sb = document.getElementById('status-auth-btn');
-  if (sb) { sb.textContent = guest ? 'Sign In' : 'Account'; sb.onclick = guest ? ()=>VIA.openAuth() : ()=>switchLayer('profile'); }
-  const pb = document.getElementById('profile-auth-btn');
-  if (pb) { pb.textContent = guest ? 'Sign In to Save Progress' : 'Sign Out'; pb.classList.toggle('guest', guest); pb.onclick = guest ? ()=>VIA.openAuth() : ()=>VIA.signOut(); }
+function formatCount(n){if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return String(n);}
+function escapeHTML(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function stripTags(v){return String(v??'').replace(/<[^>]*>/g,'').trim();}
+function getGuestProfile(){return{id:'',username:'guest',display_name:'Guest Explorer',city:'Preview Mode',avatar_emoji:'👀',xp:0,followers:0,following:0,posts:0,is_guest:true};}
+function updateAuthUI(user){
+  const guest=!user||user.is_guest||!user.id;
+  const sb=document.getElementById('status-auth-btn');
+  if(sb){sb.textContent=guest?'Sign In':'Account';sb.onclick=guest?()=>VIA.openAuth():()=>switchLayer('profile');}
+  const pb=document.getElementById('profile-auth-btn');
+  if(pb){pb.textContent=guest?'Sign In to Save Progress':'Sign Out';pb.classList.toggle('guest',guest);pb.onclick=guest?()=>VIA.openAuth():()=>VIA.signOut();}
 }
 
-// ── VIA AUTH ─────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
+// VIA AUTH
+// ════════════════════════════════════════════════════════════════
 const VIA = {
   user: null,
-  async init() {
-    const stored = localStorage.getItem('via_user');
-    if (stored) { try { this.user = JSON.parse(stored); return; } catch(e) {} }
-    this.user = getGuestProfile();
+  async init(){const s=localStorage.getItem('via_user');if(s){try{this.user=JSON.parse(s);return;}catch(e){}}this.user=getGuestProfile();},
+  applyToUI(){
+    if(!this.user)return;updateAuthUI(this.user);
+    const ne=document.querySelector('.profile-name'),he=document.querySelector('.profile-handle');
+    if(ne)ne.textContent=this.user.display_name||'VIA User';
+    if(he)he.textContent='@'+(this.user.username||'user')+(this.user.city?' · '+this.user.city:'');
+    if(typeof this.user.xp==='number'){xp=this.user.xp;updateXP(xp);}
+    const av=document.querySelector('.profile-avatar-lg');if(av)av.textContent=this.user.avatar_emoji||'🌟';
+    const fc=document.getElementById('follower-count');if(fc)fc.textContent=formatCount(this.user.followers||0);
+    const pp=document.getElementById('profile-posts');if(pp)pp.textContent=this.user.posts||0;
   },
-  applyToUI() {
-    if (!this.user) return;
-    updateAuthUI(this.user);
-    const ne = document.querySelector('.profile-name');
-    const he = document.querySelector('.profile-handle');
-    if (ne) ne.textContent = this.user.display_name || 'VIA User';
-    if (he) he.textContent = '@'+(this.user.username||'user')+(this.user.city?' · '+this.user.city:'');
-    if (typeof this.user.xp === 'number') { xp = this.user.xp; updateXP(xp); }
-    const av = document.querySelector('.profile-avatar-lg');
-    if (av) av.textContent = this.user.avatar_emoji || '🌟';
-    const fc = document.getElementById('follower-count');
-    if (fc) fc.textContent = formatCount(this.user.followers || 0);
-    const pp = document.getElementById('profile-posts');
-    if (pp) pp.textContent = this.user.posts || 0;
-  },
-  async saveXP(v) {
-    if (!this.user) return;
-    this.user.xp = v;
-    if (!this.user.is_guest) localStorage.setItem('via_user', JSON.stringify(this.user));
-  },
-  openAuth() { window.location.href = './auth.html'; },
-  async signOut() {
-    localStorage.removeItem('via_user');
-    this.user = getGuestProfile();
-    this.applyToUI();
-    switchLayer('feed');
-  }
+  async saveXP(v){if(!this.user)return;this.user.xp=v;if(!this.user.is_guest)localStorage.setItem('via_user',JSON.stringify(this.user));},
+  openAuth(){window.location.href='./auth.html';},
+  async signOut(){localStorage.removeItem('via_user');this.user=getGuestProfile();this.applyToUI();switchLayer('feed');}
 };
 window.VIA = VIA;
 
-// ── DATA ─────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
+// FEED DATA  (storyKey links each card to a Deep Dive)
+// ════════════════════════════════════════════════════════════════
 const DEFAULT_CARDS = [
-  { id:1, cat:'viral', catLabel:'🔥 Viral', bg:'linear-gradient(160deg,#1a0a3a 0%,#0B0B1A 60%)', emoji:'🎪',
-    title:'Mumbai की <em>street food</em> revolution जो दिल्ली तक पहुँची',
-    author:'Priya Sharma', authorEmoji:'👩‍🍳', location:'Mumbai', time:'2h ago', views:'2.4M', likes:'184K', redirect:'viral-story',
-    sourceUrl:'https://via-decide.github.io/decide.engine-tools/'},
-  { id:2, cat:'bharat', catLabel:'🇮🇳 Bharat', bg:'linear-gradient(160deg,#0a1a00 0%,#0B0B1A 60%)', emoji:'🌾',
-    title:'Bihar के किसान ने बनाया <em>drone tech</em> जो पूरे गाँव बदल रहा है',
-    author:'Rahul Kumar', authorEmoji:'👨‍🌾', location:'Patna', time:'5h ago', views:'890K', likes:'67K', redirect:'bharat-story',
-    sourceUrl:'./interview-prep/index.html' },
-  { id:3, cat:'tech', catLabel:'⚡ Tech', bg:'linear-gradient(160deg,#0a0a2a 0%,#0B0B1A 60%)', emoji:'🤖',
-    title:'IIT Bombay startup ने बनाया <em>AI doctor</em> — 5 रुपये में diagnosis',
-    author:'Dev Patel', authorEmoji:'🧑‍💻', location:'Bangalore', time:'1h ago', views:'3.1M', likes:'221K', redirect:'tech-story',
-    sourceUrl:'./tools/spec-builder/index.html' },
+  {id:1,cat:'viral',catLabel:'🔥 Viral',bg:'linear-gradient(160deg,#1a0a3a 0%,#0B0B1A 60%)',emoji:'🎪',
+   title:'Mumbai की <em>street food</em> revolution जो दिल्ली तक पहुँची',
+   author:'Priya Sharma',authorEmoji:'👩‍🍳',location:'Mumbai',time:'2h ago',views:'2.4M',likes:'184K',
+   storyKey:'food'},
+  {id:2,cat:'bharat',catLabel:'🇮🇳 Bharat',bg:'linear-gradient(160deg,#0a1a00 0%,#0B0B1A 60%)',emoji:'🌾',
+   title:'Bihar के किसान ने बनाया <em>drone tech</em> जो पूरे गाँव बदल रहा है',
+   author:'Rahul Kumar',authorEmoji:'👨‍🌾',location:'Patna',time:'5h ago',views:'890K',likes:'67K',
+   storyKey:'drone'},
+  {id:3,cat:'tech',catLabel:'⚡ Tech',bg:'linear-gradient(160deg,#0a0a2a 0%,#0B0B1A 60%)',emoji:'🤖',
+   title:'IIT Bombay startup ने बनाया <em>AI doctor</em> — 5 रुपये में diagnosis',
+   author:'Dev Patel',authorEmoji:'🧑‍💻',location:'Bangalore',time:'1h ago',views:'3.1M',likes:'221K',
+   storyKey:'ai'},
+  {id:4,cat:'sport',catLabel:'🏏 Sport',bg:'linear-gradient(160deg,#001a2a 0%,#0B0B1A 60%)',emoji:'🏏',
+   title:'IPL सिर्फ cricket नहीं — यह India की <em>biggest fintech</em> lab है',
+   author:'Arjun Singh',authorEmoji:'🏏',location:'Mumbai',time:'3h ago',views:'5.1M',likes:'412K',
+   storyKey:'ipl'},
+  {id:5,cat:'tech',catLabel:'💳 FinTech',bg:'linear-gradient(160deg,#001a10 0%,#0B0B1A 60%)',emoji:'💳',
+   title:'India का <em>UPI</em> — जो system दुनिया copy करना चाहती है',
+   author:'Neha Gupta',authorEmoji:'💼',location:'Delhi',time:'6h ago',views:'4.2M',likes:'310K',
+   storyKey:'upi'},
+  {id:6,cat:'bharat',catLabel:'⚡ Mobility',bg:'linear-gradient(160deg,#001a05 0%,#0B0B1A 60%)',emoji:'⚡',
+   title:'Tier-2 शहरों में <em>electric 2-wheelers</em> — जहाँ असली revolution है',
+   author:'Kiran Mehta',authorEmoji:'🏍',location:'Coimbatore',time:'4h ago',views:'1.9M',likes:'145K',
+   storyKey:'ev'},
+  {id:7,cat:'culture',catLabel:'🎬 Creator',bg:'linear-gradient(160deg,#1a001a 0%,#0B0B1A 60%)',emoji:'🎬',
+   title:'UP के लड़के ने बनाई <em>₹1 Cr/month</em> की content factory',
+   author:'Aakash Verma',authorEmoji:'🎥',location:'Gorakhpur',time:'8h ago',views:'3.6M',likes:'278K',
+   storyKey:'creator'},
+  {id:8,cat:'tech',catLabel:'📚 EdTech',bg:'linear-gradient(160deg,#1a000f 0%,#0B0B1A 60%)',emoji:'📚',
+   title:'BYJU\'s के बाद India ने सीखा — <em>असली edtech</em> YouTube पर है',
+   author:'Pooja Sharma',authorEmoji:'👩‍🏫',location:'Pune',time:'12h ago',views:'2.8M',likes:'193K',
+   storyKey:'edtech'},
 ];
 
 let CARDS = DEFAULT_CARDS.slice();
 
-// 🚀 UPDATED DISCOVER ITEMS
 const DISCOVER_ITEMS = [
-  {emoji:'📦', cat:'Context', name:'Context Packager', desc:'Bundle text, code, and links into a single file payload for AI models.', toolPath:'./tools/context-packager/index.html'},
-  {emoji:'⚗️', cat:'AI', name:'Prompt Alchemy', desc:'Refine and optimize raw ideas into structured, high-yield system prompts.', toolPath:'./prompt-alchemy/index.html'},
-  {emoji:'⚙️', cat:'Dev', name:'Spec Builder', desc:'Generate production-ready feature specs and architecture documents instantly.', toolPath:'./tools/spec-builder/index.html'},
-  {emoji:'🧩', cat:'Ideation', name:'Idea Remixer', desc:'Cross-pollinate business concepts to discover unique market pivots.', toolPath:'./tools/idea-remixer/index.html'},
-  {emoji:'⚖️', cat:'Audit', name:'Output Evaluator', desc:'Grade AI responses against strict rubrics and constraint checklists.', toolPath:'./tools/output-evaluator/index.html'},
-  {emoji:'🎯', cat:'Career', name:'Interview Prep', desc:'Run simulated, high-pressure technical and behavioral interviews.', toolPath:'./interview-prep/index.html'},
-  {emoji:'🔬', cat:'Academia', name:'Student Research', desc:'Deep-dive academic workflows and thesis structuring environments.', toolPath:'./student-research/index.html'},
-  {emoji:'📚', cat:'Learning', name:'StudyOS', desc:'A modular, offline learning OS for intensive UPSC and tech study.', toolPath:'../StudyOS/index.html'},
+  {emoji:'📦',cat:'Context',name:'Context Packager',desc:'Bundle text, code, and links into a single file payload for AI models.',toolPath:'./tools/context-packager/index.html'},
+  {emoji:'◂',cat:'Dives',name:'Deep Dives',desc:'Cinematic breakdowns of Bharat\'s biggest trends and innovations.',toolPath:null,isDive:true},
+  {emoji:'⚗️',cat:'AI',name:'Prompt Alchemy',desc:'Refine raw ideas into structured, high-yield system prompts.',toolPath:'./prompt-alchemy/index.html'},
+  {emoji:'⚙️',cat:'Dev',name:'Spec Builder',desc:'Generate production-ready feature specs and architecture documents.',toolPath:'./tools/spec-builder/index.html'},
+  {emoji:'🎯',cat:'Career',name:'Interview Prep',desc:'Run simulated high-pressure technical and behavioral interviews.',toolPath:'./interview-prep/index.html'},
+  {emoji:'📚',cat:'Learning',name:'StudyOS',desc:'A modular, offline learning OS for intensive UPSC and tech study.',toolPath:'./StudyOS/index.html'},
 ];
 
-// 🚀 PROFILE POSTER ITEMS
 const PROFILE_ITEMS = [
-  {emoji:'🎪', title:'Street Food Rev', type:'Saved', views: '2.4M', color: '#1a0a3a'},
-  {emoji:'🌾', title:'AgriTech Drone', type:'Liked', views: '890K', color: '#0a1a00'},
-  {emoji:'🤖', title:'AI Doctor', type:'Saved', views: '3.1M', color: '#0a0a2a'},
-  {emoji:'🏏', title:'Next Sensation', type:'Posted', views: '5.2M', color: '#001a0a'},
-  {emoji:'🎨', title:'Rajasthan Art', type:'Liked', views: '1.8M', color: '#1a001a'},
-  {emoji:'💡', title:'My First Story', type:'Draft', views: '—', color: '#1a1000'}
+  {emoji:'🎪',title:'Street Food Rev',type:'Saved',views:'2.4M',color:'#1a0a3a',storyKey:'food'},
+  {emoji:'🌾',title:'AgriTech Drone',type:'Liked',views:'890K',color:'#0a1a00',storyKey:'drone'},
+  {emoji:'🤖',title:'AI Doctor',type:'Saved',views:'3.1M',color:'#0a0a2a',storyKey:'ai'},
+  {emoji:'🏏',title:'IPL Economy',type:'Saved',views:'5.2M',color:'#001a2a',storyKey:'ipl'},
+  {emoji:'🎨',title:'Creator Economy',type:'Liked',views:'1.8M',color:'#1a001a',storyKey:'creator'},
+  {emoji:'💡',title:'My First Story',type:'Draft',views:'—',color:'#1a1000',storyKey:null}
 ];
 
-const REDIRECT_MAP = {
-  'viral-story':   './student-research/index.html',
-  'bharat-story':  './interview-prep/index.html',
-  'tech-story':    './tools/spec-builder/index.html',
-  'sport-story':   './tools/context-packager/index.html',
-  'culture-story': './prompt-alchemy/index.html',
-  'about':         null, 
-  'create':        'https://t.me/GN8RBot',
+// ════════════════════════════════════════════════════════════════
+// DEEP DIVES DATA
+// ════════════════════════════════════════════════════════════════
+const BLOG_DATA = {
+  food:{
+    theme:'#FF6B00',catLabel:'· 🔥 VIRAL TREND',
+    hookTitle:'Mumbai की <em>street food</em> revolution जो दिल्ली तक पहुँची',
+    hookLead:'Vada Pav is no longer just a Mumbai staple. It\'s a scalable food-tech phenomenon taking over North India\'s cloud kitchens, generating massive daily volumes.',
+    probTitle:'Why scaling street food usually fails',
+    probBody:'Authentic regional street food rarely scales without losing its soul or becoming overpriced in premium cafes.',
+    problems:[
+      {icon:'📉',text:'<strong>Quality Drop</strong> — Mass production kills the authentic \'thela\' taste.'},
+      {icon:'💸',text:'<strong>High Capex</strong> — Fancy restaurants inflate prices, alienating core consumers.'},
+      {icon:'🚚',text:'<strong>Supply Chain</strong> — Real ingredients (like specific pav breads) are hard to source interstate.'}
+    ],
+    insightTitle:'Decentralized Authenticity',
+    insightBody:'The best food-tech startups aren\'t reinventing the recipe. They are optimizing the logistics of authentic ingredients.',
+    insightQuote:'"The question isn\'t how to make a better Vada Pav. It\'s how to deliver the exact Dadar experience in Gurgaon at scale without raising prices."',
+    fwTitle:'The Cloud-Street Model',
+    fwSteps:[
+      {title:'Hyperlocal Sourcing',desc:'Importing core ingredients directly from regional hubs to maintain taste integrity.'},
+      {title:'Menu Standardization',desc:'Limiting the menu to high-velocity items to ensure extreme operational consistency.'},
+      {title:'Dark Kitchen Deployment',desc:'Bypassing high-rent dining spaces for optimized delivery-only output via Swiggy/Zomato.'}
+    ],
+    exTitle:'The New Players',
+    examples:[
+      {title:'Bombay Blitz',desc:'Over 50 outlets opened in 6 months using pure cloud-kitchen models.'},
+      {title:'Aamchi',desc:'Executing 1 Lakh+ daily orders exclusively through aggregator networks.'}
+    ],
+    clTitle:'Investor & Consumer Checklist',
+    checklist:['Verify the sourcing origin of the bread and critical spices.','Check the unit economics of the local cloud kitchen.','Look at repeat-order frequency, not just initial influencer hype.']
+  },
+  drone:{
+    theme:'#F5C518',catLabel:'· 🇮🇳 BHARAT INNOVATION',
+    hookTitle:'Bihar के किसान ने बनाया <em>drone tech</em> जो पूरे गाँव बदल रहा है',
+    hookLead:'A dropout from Samastipur built a \'Jugaad\' Agri-drone from scrap and 3D printed parts, turning crop spraying into a hyper-local service.',
+    probTitle:'The AgriTech Accessibility Gap',
+    probBody:'Modern agricultural technology exists, but it\'s priced for massive corporate farms, not small-hold Indian agriculture.',
+    problems:[
+      {icon:'💰',text:'<strong>Prohibitive Costs</strong> — Commercial agricultural drones cost lakhs of rupees.'},
+      {icon:'☠️',text:'<strong>Health Hazards</strong> — Manual pesticide spraying causes severe respiratory issues.'},
+      {icon:'⏱️',text:'<strong>Inefficiency</strong> — Hand spraying takes days for what a drone does in minutes.'}
+    ],
+    insightTitle:'Frugal DaaS (Drone-as-a-Service)',
+    insightBody:'Innovation in Bharat isn\'t about the shiniest hardware; it\'s about the most accessible business model.',
+    insightQuote:'"We didn\'t need to invent a better drone. We needed to invent a community-sharing model that made drones viable for a 1-acre farm."',
+    fwTitle:'The Village DaaS Framework',
+    fwSteps:[
+      {title:'Open-Source Assembly',desc:'Using Raspberry Pi and 3D printed scrap to lower manufacturing cost by 80%.'},
+      {title:'Local Pilot Training',desc:'Upskilling unemployed village youth to operate and maintain the flight fleet.'},
+      {title:'Pay-Per-Acre Rental',desc:'Farmers don\'t buy the drone; they simply hire the service for ₹200 per acre.'}
+    ],
+    exTitle:'Impact on the Ground',
+    examples:[
+      {title:'Kisan-Copter Beta',desc:'Successfully sprays 1 acre of dense crops in exactly 15 minutes.'},
+      {title:'Micro-Economies',desc:'12 neighboring villages now run entirely on this youth-led service model.'}
+    ],
+    clTitle:'Scaling Frugal Tech',
+    checklist:['Ensure 100% local repairability. No complex proprietary parts.','Keep the UI for the drone control app in regional languages.','Validate the payload capacity for different seasonal Indian crops.']
+  },
+  ai:{
+    theme:'#6C63FF',catLabel:'· ⚡ DEEP TECH',
+    hookTitle:'IIT Bombay startup ने बनाया <em>AI doctor</em> — 5 रुपये में diagnosis',
+    hookLead:'An edge-computing AI model running on basic smartphones is diagnosing early-stage diseases in rural India for just ₹5 a scan.',
+    probTitle:'The Healthcare Bottleneck',
+    probBody:'India\'s doctor-to-patient ratio in rural areas is critically low, leading to easily preventable diseases going undiagnosed until it\'s too late.',
+    problems:[
+      {icon:'🏥',text:'<strong>Infrastructure Void</strong> — Specialists are highly concentrated in Tier-1 cities.'},
+      {icon:'📶',text:'<strong>Network Dependency</strong> — Cloud-based AI fails entirely where 4G/5G connectivity drops.'},
+      {icon:'⏳',text:'<strong>Late Detection</strong> — Conditions like cataracts are often found too late to treat cheaply.'}
+    ],
+    insightTitle:'Edge Computing for Triage',
+    insightBody:'The goal isn\'t to replace the doctor. The goal is to mathematically guarantee that the doctor only spends time on the right patients.',
+    insightQuote:'"By running the AI directly on the smartphone chip, we bypassed the internet dependency entirely. It\'s offline triage at scale."',
+    fwTitle:'The 5-Rupee Triage System',
+    fwSteps:[
+      {title:'On-Device Capture',desc:'ASHA workers snap photos of retinas, skin rashes, or tongues using standard ₹8,000 Android phones.'},
+      {title:'Edge Processing',desc:'The lightweight neural network processes the image locally without sending data to a server.'},
+      {title:'Human Escalation',desc:'Only patients flagged with 80%+ risk scores are routed to district hospitals.'}
+    ],
+    exTitle:'Clinical Deployments',
+    examples:[
+      {title:'Aarogya.ai',desc:'Detecting early-stage dermatitis and ocular diseases with a proven 94% accuracy.'},
+      {title:'Cost Disruption',desc:'Cloud server costs are eliminated, bringing the per-scan expense down to just ₹5.'}
+    ],
+    clTitle:'Deploying Edge AI',
+    checklist:['Ensure the model size is under 50MB to easily fit on budget smartphones.','Train heavily on diverse, local Indian demographic datasets to avoid bias.','Build strict clinical validation loops to manage false positives.']
+  },
+  ipl:{
+    theme:'#00C2FF',catLabel:'· 🏏 SPORTS ECONOMY',
+    hookTitle:'IPL सिर्फ cricket नहीं — यह India की <em>biggest fintech</em> lab है',
+    hookLead:'The Indian Premier League generates a shadow economy worth ₹50,000 crore across fantasy sports, merchandise, short-form content and real-time betting — most of it invisible to mainstream investors.',
+    probTitle:'Why IPL\'s real value is misunderstood',
+    probBody:'Broadcast rights and stadium tickets are the visible tip. The iceberg beneath — data arbitrage, micro-transactions, and attention monetization — is where the real disruption is happening.',
+    problems:[
+      {icon:'👁️',text:'<strong>Invisible Revenue</strong> — 90% of value creation happens outside BCCI\'s books, in apps and platforms.'},
+      {icon:'🎰',text:'<strong>Regulatory Grey Zone</strong> — Fantasy sports and prediction markets operate in ambiguous legal territory.'},
+      {icon:'📱',text:'<strong>Attention Arbitrage</strong> — Platforms pay for eyeballs but can\'t yet convert IPL attention into lasting retention.'}
+    ],
+    insightTitle:'Cricket as a Data Product',
+    insightBody:'Every IPL ball generates a real-time data event. Fantasy platforms, trading apps, and content algorithms all feed on this event stream. The match itself is just the infrastructure.',
+    insightQuote:'"IPL doesn\'t sell cricket. It sells a 60-day national permission structure for micro-transactions, attention, and data collection at a scale no other Indian event can replicate."',
+    fwTitle:'The IPL Value Stack',
+    fwSteps:[
+      {title:'Layer 1 — Broadcast',desc:'JioCinema and Star Sports monetize raw viewership via ads and subscriptions. Commodity layer.'},
+      {title:'Layer 2 — Fantasy & Gaming',desc:'Dream11, MPL, and 80+ clones convert viewing intent into real-money engagement within seconds of a wicket falling.'},
+      {title:'Layer 3 — Data & Prediction',desc:'Startups are building real-time player performance APIs, sold to financial products, insurance, and sports analytics firms globally.'}
+    ],
+    exTitle:'Who\'s Winning the Meta-Game',
+    examples:[
+      {title:'Dream11\'s ₹8,000 Cr Valuation',desc:'Built entirely on IPL attention cycles — a fintech product disguised as a sports app.'},
+      {title:'JioCinema\'s Zero-Cost Experiment',desc:'Free streaming wasn\'t charity. It was a 60-day data acquisition campaign for Reliance\'s broader super-app ambitions.'}
+    ],
+    clTitle:'For Investors & Builders',
+    checklist:['Map which IPL data streams are still unmonetized — player biometrics, crowd sentiment, regional language commentary patterns.','Study the retention cliff: do fantasy users stay engaged after the IPL season ends?','Watch the regulatory calendar — GST and gambling law changes will reshape unit economics overnight.']
+  },
+  upi:{
+    theme:'#00E096',catLabel:'· 💳 FINTECH EXPORT',
+    hookTitle:'India का <em>UPI</em> — जो system दुनिया copy करना चाहती है',
+    hookLead:'What started as a domestic payments fix is now India\'s most powerful geopolitical export. Singapore, UAE, France, and 15 other nations are either live or negotiating UPI integration.',
+    probTitle:'Why legacy payment rails keep failing',
+    probBody:'SWIFT, VISA, and Mastercard were built for a world of branch banks and physical cards. Cross-border payments remain slow, expensive, and exclusionary for billions of people.',
+    problems:[
+      {icon:'🏦',text:'<strong>Correspondent Banking Tax</strong> — International wire transfers lose 6–8% to intermediary banks.'},
+      {icon:'⏰',text:'<strong>Settlement Lag</strong> — T+2 or T+3 clearing cycles make real-time global commerce impossible.'},
+      {icon:'🚫',text:'<strong>Financial Exclusion</strong> — 1.4 billion adults globally remain unbanked, invisible to traditional rails.'}
+    ],
+    insightTitle:'Interoperability as Foreign Policy',
+    insightBody:'Every bilateral UPI deal India signs is simultaneously a trade agreement, a diplomatic handshake, and a market-entry move for Indian fintechs into new geographies.',
+    insightQuote:'"UPI is India\'s TCP/IP moment. It\'s not a payment app. It\'s an open protocol for trust — and countries are realizing they need to build on it, not against it."',
+    fwTitle:'How UPI Goes Global',
+    fwSteps:[
+      {title:'Bilateral Protocol Agreements',desc:'NPCI International negotiates country-to-country API linkages that let local apps route through UPI rails.'},
+      {title:'QR Code Universalization',desc:'A single Indian UPI QR works at a Paris café or a Dubai gold souk — no new hardware required.'},
+      {title:'Remittance Disruption',desc:'Indian diaspora workers send money home at near-zero cost, bypassing Western Union and hawala networks entirely.'}
+    ],
+    exTitle:'Where UPI is Landing',
+    examples:[
+      {title:'Singapore & Malaysia',desc:'Real-time cross-border payments live since 2023 — Indian tourists and workers transact instantly without forex counters.'},
+      {title:'UAE & Middle East Expansion',desc:'Home to 3.5M Indian workers, the Gulf UPI rollout is the largest single remittance corridor digitization in history.'}
+    ],
+    clTitle:'Opportunities for Builders',
+    checklist:['Build merchant-side UPI acceptance tooling for international markets — the B2B gap is massive.','Design for diaspora use-cases: bill splits, family remittances, property payments back home.','Track NPCI International\'s licensing pipeline — each new country is a greenfield fintech market.']
+  },
+  ev:{
+    theme:'#39FF14',catLabel:'· ⚡ MOBILITY SHIFT',
+    hookTitle:'Tier-2 शहरों में <em>electric 2-wheelers</em> — जहाँ असली revolution है',
+    hookLead:'While Delhi debates charging infrastructure, cities like Coimbatore, Rajkot, and Indore have quietly crossed 35% EV penetration in two-wheelers — organically, without government mandates.',
+    probTitle:'The Misconceptions Blocking EV Adoption',
+    probBody:'India\'s EV narrative is dominated by 4-wheeler conversations — but the real volume opportunity, and the real disruption, is in the 200M+ two-wheeler market.',
+    problems:[
+      {icon:'🔌',text:'<strong>The Charging Myth</strong> — 70% of Indian 2-wheeler riders charge at home overnight. Public charging anxiety is a Tier-1 media construct.'},
+      {icon:'💰',text:'<strong>Price Anchor Bias</strong> — Buyers compare upfront EV cost to ICE, ignoring ₹40,000/year fuel savings.'},
+      {icon:'🏭',text:'<strong>Legacy OEM Delay</strong> — Hero and Bajaj\'s slow EV pivots have created a vacuum that startups are filling at speed.'}
+    ],
+    insightTitle:'The Kirana Store Charging Network',
+    insightBody:'India\'s real charging infrastructure isn\'t being built by ONGC or Tata Power. It\'s the corner kirana store with a ₹500 extension cord and a swap battery. Informal, distributed, and already nationwide.',
+    insightQuote:'"The Tier-2 EV revolution didn\'t wait for infrastructure. It built around the infrastructure it already had — which turns out to be enough."',
+    fwTitle:'Why Tier-2 Moved First',
+    fwSteps:[
+      {title:'Daily Range Reality',desc:'Average daily commute in Tier-2 cities is 18–25 km. A ₹70,000 EV\'s 80km range is more than sufficient.'},
+      {title:'TCO Education via WhatsApp',desc:'Peer-to-peer cost comparison — fuel vs. electricity — spread virally through local groups faster than any ad campaign.'},
+      {title:'Local Assembly Ecosystems',desc:'Cities like Ludhiana and Rajkot have developed local EV assembly supply chains, cutting delivery wait times from months to days.'}
+    ],
+    exTitle:'Brands Riding the Wave',
+    examples:[
+      {title:'Ola Electric S1 Pro',desc:'Achieved 30% of its total sales from non-metro markets in FY24 — a figure that shocked even their own leadership.'},
+      {title:'Yulu & BGauss in Tier-2',desc:'B2B fleet models penetrating last-mile logistics in cities where Ola/Uber have zero presence.'}
+    ],
+    clTitle:'Building for the EV Wave',
+    checklist:['Design for \'charge at home\' workflows, not public charging station dependency.','The real market is fleet operators — delivery boys, milkmen, newspaper agents — not individual enthusiasts.','Watch battery swap standardization: whoever wins the form-factor war controls the entire aftermarket.']
+  },
+  creator:{
+    theme:'#FF2D78',catLabel:'· 🎬 CREATOR ECONOMY',
+    hookTitle:'UP के लड़के ने बनाई <em>₹1 Cr/month</em> की content factory',
+    hookLead:'A 22-year-old from Gorakhpur with a ₹15,000 phone and a YouTube channel about local food is now running a 12-person studio, outearning most of his city\'s software engineers combined.',
+    probTitle:'Why Traditional Media Missed the Creator Explosion',
+    probBody:'TV channels and newspapers built content for a national average. The internet rewards hyper-specificity — and India\'s 22 official languages plus hundreds of dialects make it the most fertile creator market on earth.',
+    problems:[
+      {icon:'📺',text:'<strong>National Average Trap</strong> — Legacy media optimized for Hindi+English and ignored 600M vernacular internet users.'},
+      {icon:'🤝',text:'<strong>Brand Gatekeeping</strong> — Ad agencies historically routed budgets to reach, not relevance, blocking small regional creators.'},
+      {icon:'💡',text:'<strong>Discoverability Gap</strong> — YouTube\'s algorithm took years to reliably surface non-Hindi, non-English content to relevant audiences.'}
+    ],
+    insightTitle:'Niche × Scale = The Creator Moat',
+    insightBody:'The strongest creator businesses in India aren\'t chasing virality. They\'re building the definitive resource for one specific community — and monetizing that trust through courses, products, and events.',
+    insightQuote:'"Going viral gets you followers. Going deep gets you a business. The creators winning in 2025 chose depth over reach and are now selling ₹5,000 courses to audiences of 50,000."',
+    fwTitle:'The Vernacular Creator Flywheel',
+    fwSteps:[
+      {title:'Community Specificity',desc:'Own a niche so specific it feels wrong — \'Rajasthani wedding food recipes\' or \'UP exam prep in Bhojpuri\'.'},
+      {title:'Trust Accumulation',desc:'Consistent publishing over 18+ months converts algorithm followers into actual community members who buy.'},
+      {title:'Product Stacking',desc:'Layer revenue: ads → brand deals → digital products → live events → B2B consulting for brands wanting regional access.'}
+    ],
+    exTitle:'Blueprints from the Field',
+    examples:[
+      {title:'Dhruv Rathee Model',desc:'Long-form explainers in Hindi — 18M subscribers, but the real revenue is from course funnels and Patreon-style memberships.'},
+      {title:'Food Vlogger to FMCG Brand',desc:'Multiple regional food creators have launched their own packaged spice blends and pickle brands, using audience trust as distribution.'}
+    ],
+    clTitle:'For Aspiring Creators & Investors',
+    checklist:['Identify languages with >10M internet users but <500 credible creators — that\'s your market entry signal.','First 100 videos are user acquisition cost. Model your break-even from video 101 onwards.','The exit isn\'t AdSense. Build IP — formats, characters, community rituals — that can be licensed or acquired.']
+  },
+  edtech:{
+    theme:'#FF6FCF',catLabel:'· 📚 EDTECH REBELLION',
+    hookTitle:'BYJU\'s के बाद India ने सीखा — <em>असली edtech</em> YouTube पर है',
+    hookLead:'After the collapse of unicorn edtech valuations, a new class of lean, creator-led education platforms is capturing crores of students with ₹499 courses and WhatsApp communities.',
+    probTitle:'How Unicorn EdTech Lost the Classroom',
+    probBody:'India\'s edtech boom was built on venture-funded growth hacks — massive celebrity ads, aggressive sales teams, and EMI-heavy products students couldn\'t afford to finish.',
+    problems:[
+      {icon:'💸',text:'<strong>Debt-Fuelled Learning</strong> — Students took loans for ₹80,000 courses and never completed them due to poor pedagogy.'},
+      {icon:'🎭',text:'<strong>Bollywood Marketing</strong> — Budgets went to Shah Rukh Khan ads, not teacher quality or curriculum design.'},
+      {icon:'📉',text:'<strong>Completion Rate Crisis</strong> — Industry average course completion was under 12%, signaling fundamental engagement failure.'}
+    ],
+    insightTitle:'The ₹499 Course That Won',
+    insightBody:'The new edtech winners aren\'t platforms — they\'re individual educators who own their audience directly, charge sustainably, and deliver community alongside content.',
+    insightQuote:'"A ₹499 course that 80% of students complete is worth more to the ecosystem than a ₹80,000 course that 8% finish. Price is not the proxy for quality."',
+    fwTitle:'The Lean Creator-Edu Stack',
+    fwSteps:[
+      {title:'YouTube as Top of Funnel',desc:'Free, high-value content on YouTube builds trust and a self-qualifying audience before any money changes hands.'},
+      {title:'WhatsApp as the Classroom',desc:'Actual learning happens in tight WhatsApp cohorts of 30–50 students, with daily accountability check-ins from the teacher.'},
+      {title:'Razorpay as the Business',desc:'Payment links, subscription plans, and course bundles — zero platform fee, full margin, direct relationship with the learner.'}
+    ],
+    exTitle:'The New Educators',
+    examples:[
+      {title:'Apna College & CodeWithHarry',desc:'DSA and coding content entirely on YouTube + Discord — collectively serving 5M+ learners at zero cost for core content.'},
+      {title:'UPSC Wallah (PW)',desc:'Disrupted the ₹1.5 lakh Kota model by delivering identical exam prep at ₹2,000/year — and scaled faster than any funded competitor.'}
+    ],
+    clTitle:'Building the Next EdTech Wave',
+    checklist:['Track \'completion rate\' above all other metrics — it\'s the only honest signal of pedagogical value.','Distribution is the product. The best content with no community dies; mediocre content inside a great cohort thrives.','Don\'t build a platform. Build an educator brand. Then license the platform as infrastructure.']
+  }
 };
 
-// ── STATE ────────────────────────────────────────────────────
-let currentCard = 0, xp = 0, isAnimating = false, activeLayer = 'feed';
-let activeRibbonCard = 0;
+// ════════════════════════════════════════════════════════════════
+// DEEP DIVES ENGINE
+// ════════════════════════════════════════════════════════════════
+let ddCurrentStory = 'food';
 
-// ── DECK ─────────────────────────────────────────────────────
+function ddLoad(key, btnEl) {
+  // Update button states
+  document.querySelectorAll('.dd-story-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) {
+    btnEl.classList.add('active');
+    // Scroll the button into view in the story scroll bar
+    btnEl.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+  } else {
+    const auto = document.querySelector(`.dd-story-btn[data-story="${key}"]`);
+    if (auto) auto.classList.add('active');
+  }
+
+  const d = BLOG_DATA[key];
+  if (!d) return;
+  ddCurrentStory = key;
+
+  // Update accent color scoped to the layer element (not document root)
+  const layer = document.getElementById('layer-deepdives');
+  layer.style.setProperty('--acc', d.theme);
+  layer.style.setProperty('--border-hi', d.theme + '80');
+  layer.style.setProperty('--card-hi', d.theme + '15');
+
+  // Animate content swap
+  document.querySelectorAll('.dd-inner').forEach(el => {
+    el.classList.remove('dd-fade');
+    void el.offsetWidth;
+    el.classList.add('dd-fade');
+  });
+
+  // Inject content
+  document.getElementById('dd-catLabel').innerHTML  = d.catLabel;
+  document.getElementById('dd-hookTitle').innerHTML = d.hookTitle;
+  document.getElementById('dd-hookLead').innerHTML  = d.hookLead;
+  document.getElementById('dd-probTitle').innerHTML = d.probTitle;
+  document.getElementById('dd-probBody').innerHTML  = d.probBody;
+  document.getElementById('dd-probList').innerHTML  = d.problems.map(p =>
+    `<div class="dd-prob-item"><span class="dd-prob-icon">${p.icon}</span><p>${p.text}</p></div>`
+  ).join('');
+  document.getElementById('dd-insightTitle').innerHTML = d.insightTitle;
+  document.getElementById('dd-insightBody').innerHTML  = d.insightBody;
+  document.getElementById('dd-insightQuote').innerHTML = d.insightQuote;
+  document.getElementById('dd-fwTitle').innerHTML = d.fwTitle;
+  document.getElementById('dd-fwSteps').innerHTML = d.fwSteps.map((s, i) => `
+    <div class="dd-step">
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="dd-step-num">${i+1}</div>
+        ${i < d.fwSteps.length - 1 ? '<div class="dd-step-line"></div>' : ''}
+      </div>
+      <div class="dd-step-body" ${i===d.fwSteps.length-1?'style="padding-bottom:0"':''}>
+        <h4>${s.title}</h4><p>${s.desc}</p>
+      </div>
+    </div>`).join('');
+  document.getElementById('dd-exTitle').innerHTML = d.exTitle;
+  document.getElementById('dd-exList').innerHTML  = d.examples.map(e =>
+    `<div class="dd-ex-card"><h3>${e.title}</h3><p>${e.desc}</p></div>`
+  ).join('');
+  document.getElementById('dd-clTitle').innerHTML = d.clTitle;
+  document.getElementById('dd-clItems').innerHTML = d.checklist.map(c =>
+    `<div class="dd-check-item">${c}</div>`
+  ).join('');
+
+  // Scroll to top of deep dives
+  const snap = document.getElementById('dd-snap');
+  if (snap) snap.scrollTo({top:0, behavior:'smooth'});
+
+  addXP(10);
+}
+
+// Build static footer carousels in Deep Dives (runs once)
+let ddFooterBuilt = false;
+function ddBuildFooter() {
+  if (ddFooterBuilt) return;
+  ddFooterBuilt = true;
+
+  const tools = [
+    {title:'Context Packager', desc:'Bundle code and text into AI payloads.', cta:'Use Tool'},
+    {title:'StudyOS',          desc:'Modular, offline learning OS.',           cta:'Explore'},
+    {title:'Prompt Alchemy',   desc:'Refine ideas into strict prompts.',        cta:'Launch'}
+  ];
+  const tGrid = document.getElementById('dd-toolsGrid');
+  if (tGrid) tools.forEach(t => tGrid.innerHTML += `
+    <a href="#" class="dd-car-card">
+      <div class="dd-car-thumb"></div>
+      <h4>${t.title}</h4><p>${t.desc}</p>
+      <span class="dd-car-cta">${t.cta} →</span>
+    </a>`);
+
+  const fNav = document.getElementById('dd-footerNav');
+  if (fNav) {
+    const cols = [
+      {h:'Tools',    items:[{l:'Engine Tools',route:'#'},{l:'GN8R Bot',route:'https://t.me/GN8RBot'}]},
+      {h:'Platform', items:[{l:'VIA Social Feed',route:'#'},{l:'Discover',route:'#'}]},
+      {h:'Network',  items:[{l:'About ViaDecide',route:'https://via-decide.github.io/decide.engine-tools/'},{l:'GitHub Repo',route:'https://github.com/via-decide'}]}
+    ];
+    cols.forEach(col => {
+      fNav.innerHTML += `<div class="dd-fcol"><h5>${col.h}</h5><ul>${col.items.map(i=>`<li><a href="${i.route}" target="_blank" rel="noopener">${i.l}</a></li>`).join('')}</ul></div>`;
+    });
+  }
+}
+
+// Scroll spy for section counter inside Deep Dives
+function ddInitScrollSpy() {
+  const sections = Array.from(document.querySelectorAll('.dd-section'));
+  document.getElementById('dd-sec-tot').textContent = sections.length;
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const inner = entry.target.querySelector('.dd-inner');
+      if (entry.isIntersecting) {
+        if (inner) inner.classList.add('vis');
+        const n = entry.target.dataset.ddsec;
+        if (n) document.getElementById('dd-sec-num').textContent = n;
+      }
+    });
+  }, {threshold:0.15, root: document.getElementById('dd-snap')});
+  sections.forEach(s => obs.observe(s));
+}
+
+// ════════════════════════════════════════════════════════════════
+// FEED DECK
+// ════════════════════════════════════════════════════════════════
+let currentCard=0, xp=0, isAnimating=false, activeLayer='feed', activeRibbonCard=0;
+
 function buildDeck() {
   const deck = document.getElementById('deck');
-  Array.from(deck.children).forEach(el => { if (el.classList.contains('card')) el.remove(); });
-  for (let i = CARDS.length - 1; i >= 0; i--) deck.insertBefore(makeCard(i), deck.firstChild);
+  Array.from(deck.children).forEach(el => { if(el.classList.contains('card'))el.remove(); });
+  for(let i=CARDS.length-1;i>=0;i--) deck.insertBefore(makeCard(i),deck.firstChild);
   positionAllCards(false);
   updateProgressDots();
 }
 
 function makeCard(index) {
   const d = CARDS[index];
-  if (!d) return document.createElement('div');
+  if(!d) return document.createElement('div');
   const card = document.createElement('div');
-  card.className = 'card'; card.id = 'card-'+index; card.dataset.index = index;
-  const catClass = {viral:'cat-viral',bharat:'cat-bharat',tech:'cat-tech',
-    sport:'cat-sport',culture:'cat-culture',create:'cat-create',about:'cat-about'}[d.cat]||'cat-viral';
+  card.className='card'; card.id='card-'+index; card.dataset.index=index;
+  const catClass = {viral:'cat-viral',bharat:'cat-bharat',tech:'cat-tech',sport:'cat-sport',culture:'cat-culture',create:'cat-create',about:'cat-about'}[d.cat]||'cat-viral';
   card.innerHTML =
-    '<div class="card-tilt-overlay"></div>' +
-    '<div class="card-dir-hint like">🔥 LIKE</div>' +
-    '<div class="card-dir-hint more">📤 SHARE</div>' +
-    '<div class="card-bg" style="background:'+d.bg+'">' +
-      '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(6rem,30vw,12rem);opacity:.15;pointer-events:none">'+d.emoji+'</div>' +
-    '</div>' +
-    '<div class="card-actions">' +
-      '<div class="action-btn" onclick="likeCard('+index+')">' +
-        '<div class="action-icon">🔥</div><div class="action-label" id="like-label-'+index+'">'+d.likes+'</div>' +
-      '</div>' +
-      '<div class="action-btn" onclick="openRibbon('+index+')">' +
-        '<div class="action-icon">📤</div><div class="action-label">Share</div>' +
-      '</div>' +
-      (!d.cta ? '<div class="action-btn" onclick="openStorySheet('+index+')"><div class="action-icon">🔗</div><div class="action-label">Open</div></div>' : '') +
-    '</div>' +
-    '<div class="card-content">' +
-      '<div class="chip card-category '+catClass+'">'+d.catLabel+'</div>' +
-      '<div class="card-title">'+d.title+'</div>' +
-      '<div class="card-meta">' +
-        '<div class="card-avatar">'+d.authorEmoji+'</div>' +
-        '<span>'+d.author+'</span><div class="card-dot"></div>' +
-        '<span>'+d.location+'</span><div class="card-dot"></div>' +
-        '<span>'+d.time+'</span>' +
-      '</div>' +
+    '<div class="card-tilt-overlay"></div>'+
+    '<div class="card-dir-hint like">🔥 LIKE</div>'+
+    '<div class="card-dir-hint more">📖 READ</div>'+
+    '<div class="card-bg" style="background:'+d.bg+'">'+
+      '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(6rem,30vw,12rem);opacity:.15;pointer-events:none">'+d.emoji+'</div>'+
+    '</div>'+
+    '<div class="card-actions">'+
+      '<div class="action-btn" onclick="likeCard('+index+')"><div class="action-icon">🔥</div><div class="action-label" id="like-label-'+index+'">'+d.likes+'</div></div>'+
+      '<div class="action-btn" onclick="openRibbon('+index+')"><div class="action-icon">📤</div><div class="action-label">Share</div></div>'+
+      '<div class="action-btn" onclick="openStorySheet('+index+')"><div class="action-icon">📖</div><div class="action-label">Dive In</div></div>'+
+    '</div>'+
+    '<div class="card-content">'+
+      '<div class="chip card-category '+catClass+'">'+d.catLabel+'</div>'+
+      '<div class="card-title">'+d.title+'</div>'+
+      '<div class="card-meta">'+
+        '<div class="card-avatar">'+d.authorEmoji+'</div>'+
+        '<span>'+d.author+'</span><div class="card-dot"></div>'+
+        '<span>'+d.location+'</span><div class="card-dot"></div>'+
+        '<span>'+d.time+'</span>'+
+      '</div>'+
     '</div>';
   return card;
 }
 
 function positionAllCards(animated) {
-  const T = 'transform .34s cubic-bezier(.16,1,.3,1), opacity .28s ease';
-  for (let i = 0; i < CARDS.length; i++) {
-    const card = document.getElementById('card-'+i);
-    if (!card) continue;
-    const off = i - currentCard;
-    card.style.transition = animated ? T : 'none';
-    if (off < 0)      { card.style.transform='translateY(-110vh)'; card.style.opacity='0'; card.style.zIndex='0'; card.style.pointerEvents='none'; }
-    else if (off===0) { card.style.transform='translateY(0) scale(1)'; card.style.opacity='1'; card.style.zIndex='10'; card.style.pointerEvents='auto'; }
-    else if (off===1) { card.style.transform='translateY(16px) scale(0.96)'; card.style.opacity='0.65'; card.style.zIndex='9'; card.style.pointerEvents='none'; }
-    else if (off===2) { card.style.transform='translateY(28px) scale(0.92)'; card.style.opacity='0.35'; card.style.zIndex='8'; card.style.pointerEvents='none'; }
-    else              { card.style.transform='translateY(60px) scale(0.88)'; card.style.opacity='0'; card.style.zIndex='7'; card.style.pointerEvents='none'; }
+  const T='transform .34s cubic-bezier(.16,1,.3,1), opacity .28s ease';
+  for(let i=0;i<CARDS.length;i++){
+    const card=document.getElementById('card-'+i); if(!card)continue;
+    const off=i-currentCard;
+    card.style.transition=animated?T:'none';
+    if(off<0)     {card.style.transform='translateY(-110vh)';card.style.opacity='0';card.style.zIndex='0';card.style.pointerEvents='none';}
+    else if(off===0){card.style.transform='translateY(0) scale(1)';card.style.opacity='1';card.style.zIndex='10';card.style.pointerEvents='auto';}
+    else if(off===1){card.style.transform='translateY(16px) scale(0.96)';card.style.opacity='0.65';card.style.zIndex='9';card.style.pointerEvents='none';}
+    else if(off===2){card.style.transform='translateY(28px) scale(0.92)';card.style.opacity='0.35';card.style.zIndex='8';card.style.pointerEvents='none';}
+    else           {card.style.transform='translateY(60px) scale(0.88)';card.style.opacity='0';card.style.zIndex='7';card.style.pointerEvents='none';}
   }
 }
 
-function getTopCard() { return document.getElementById('card-'+currentCard); }
+function getTopCard(){return document.getElementById('card-'+currentCard);}
 
-// ── 🚀 GESTURE CONTROLLER (iOS Style Horizontal Physics + Auto-Close) ──
+// ════════════════════════════════════════════════════════════════
+// GESTURE CONTROLLER
+// ════════════════════════════════════════════════════════════════
 const GC = {
-  VT:0.3, LOCK:8, VTH:0.17, HTH:0.25, PF_MS:50,
-  active:false, startX:0, startY:0, startTime:0,
-  curX:0, curY:0, axis:null, pfFired:false, ribbonWasOpen: false,
+  VT:.3,LOCK:8,VTH:.17,HTH:.25,
+  active:false,startX:0,startY:0,startTime:0,curX:0,curY:0,axis:null,ribbonWasOpen:false,
 
-  init() {
-    const deck = document.getElementById('deck');
-    deck.addEventListener('touchstart', e => {
-      if (isAnimating || activeLayer !== 'feed') return;
-      const t = e.touches[0]; this.begin(t.clientX, t.clientY);
-    }, {passive:true});
-    deck.addEventListener('touchmove', e => {
-      if (!this.active) return; e.preventDefault();
-      const t = e.touches[0]; this.track(t.clientX, t.clientY);
-    }, {passive:false});
-    deck.addEventListener('touchend',    () => this.commit(), {passive:true});
-    deck.addEventListener('touchcancel', () => this.reset(),  {passive:true});
+  init(){
+    const deck=document.getElementById('deck');
+    deck.addEventListener('touchstart',e=>{if(isAnimating||activeLayer!=='feed')return;const t=e.touches[0];this.begin(t.clientX,t.clientY);},{passive:true});
+    deck.addEventListener('touchmove',e=>{if(!this.active)return;e.preventDefault();const t=e.touches[0];this.track(t.clientX,t.clientY);},{passive:false});
+    deck.addEventListener('touchend',()=>this.commit(),{passive:true});
+    deck.addEventListener('touchcancel',()=>this.reset(),{passive:true});
   },
 
-  begin(x, y) {
-    this.active=true; this.axis=null; this.pfFired=false;
-    this.startX=this.curX=x; this.startY=this.curY=y; this.startTime=Date.now();
-    const card = getTopCard(); if (card) card.style.transition='none';
-    
-    const ribbon = document.getElementById('action-ribbon');
-    this.ribbonWasOpen = ribbon.classList.contains('open');
-    if (this.ribbonWasOpen) {
-        closeRibbon();
-    }
+  begin(x,y){
+    this.active=true;this.axis=null;this.startX=this.curX=x;this.startY=this.curY=y;this.startTime=Date.now();
+    const card=getTopCard();if(card)card.style.transition='none';
+    const ribbon=document.getElementById('action-ribbon');
+    this.ribbonWasOpen=ribbon.classList.contains('open');
+    if(this.ribbonWasOpen)closeRibbon();
   },
 
-  track(x, y) {
-    if (!this.active) return;
-    this.curX=x; this.curY=y;
-    const dx=x-this.startX, dy=y-this.startY;
-    const adx=Math.abs(dx), ady=Math.abs(dy);
-    if (!this.axis && Math.max(adx,ady) > this.LOCK) this.axis = ady>adx ? 'v' : 'h';
-    if (!this.axis) return;
-    
-    const card = getTopCard(); if (!card) return;
-    
-    if (this.axis === 'v') {
-      const ty = dy>0 ? dy*0.38 : dy;
-      const op = dy<0 ? Math.max(0.35, 1+dy/(window.innerHeight*0.55)) : 1;
-      card.style.transform='translateY('+ty+'px)'; card.style.opacity=op;
-      if (currentCard===0 && dy>20) {
-        const pi=document.getElementById('pull-indicator');
-        if (pi) { pi.classList.add('visible'); pi.style.transform='translateX(-50%) translateY('+Math.min(dy*0.4,50)+'px)'; }
-      }
+  track(x,y){
+    if(!this.active)return;this.curX=x;this.curY=y;
+    const dx=x-this.startX,dy=y-this.startY,adx=Math.abs(dx),ady=Math.abs(dy);
+    if(!this.axis&&Math.max(adx,ady)>this.LOCK)this.axis=ady>adx?'v':'h';
+    if(!this.axis)return;
+    const card=getTopCard();if(!card)return;
+    if(this.axis==='v'){
+      const ty=dy>0?dy*.38:dy;
+      card.style.transform='translateY('+ty+'px)';
+      card.style.opacity=dy<0?Math.max(.35,1+dy/(window.innerHeight*.55)):1;
+      if(currentCard===0&&dy>20){const pi=document.getElementById('pull-indicator');if(pi){pi.classList.add('visible');pi.style.transform='translateX(-50%) translateY('+Math.min(dy*.4,50)+'px)';}}
     } else {
-      // 🚀 iOS list item friction (No Rotation)
-      const resistDx = dx * 0.45; 
-      card.style.transform = `translateX(${resistDx}px)`; 
-      card.style.opacity = 1; 
-
-      const ov = card.querySelector('.card-tilt-overlay');
-      if (ov) {
-        ov.style.background = (dx > 20 && !this.ribbonWasOpen) ? `linear-gradient(to right, rgba(255,107,0,${Math.min(dx/400, 0.4)}), transparent)`
-          : dx < -20 ? `linear-gradient(to left, rgba(108,99,255,${Math.min(-dx/400, 0.4)}), transparent)` : 'transparent';
-      }
-      
-      const lh = card.querySelector('.card-dir-hint.like'), mh = card.querySelector('.card-dir-hint.more');
-      if (lh) {
-        lh.style.opacity = (dx > 40 && !this.ribbonWasOpen) ? 1 : 0;
-        lh.style.transform = `translateY(-50%) scale(${dx > 100 ? 1.1 : 1})`;
-      }
-      if (mh) {
-        mh.style.opacity = dx < -40 ? 1 : 0;
-        mh.style.transform = `translateY(-50%) scale(${dx < -100 ? 1.1 : 1})`;
-      }
+      card.style.transform='translateX('+(dx*.45)+'px)';
+      const ov=card.querySelector('.card-tilt-overlay');
+      if(ov)ov.style.background=dx>20&&!this.ribbonWasOpen?`linear-gradient(to right,rgba(255,107,0,${Math.min(dx/400,.4)}),transparent)`:dx<-20?`linear-gradient(to left,rgba(108,99,255,${Math.min(-dx/400,.4)}),transparent)`:'transparent';
+      const lh=card.querySelector('.card-dir-hint.like'),mh=card.querySelector('.card-dir-hint.more');
+      if(lh)lh.style.opacity=dx>40&&!this.ribbonWasOpen?1:0;
+      if(mh)mh.style.opacity=dx<-40?1:0;
     }
   },
 
-  commit() {
-    if (!this.active) return; this.active=false;
-    this._hidePull();
-    const card=getTopCard(); if (!card) { this.reset(); return; }
-    const dx=this.curX-this.startX, dy=this.curY-this.startY;
+  commit(){
+    if(!this.active)return;this.active=false;this._hidePull();
+    const card=getTopCard();if(!card){this.reset();return;}
+    const dx=this.curX-this.startX,dy=this.curY-this.startY;
     const speed=Math.sqrt(dx*dx+dy*dy)/Math.max(1,Date.now()-this.startTime);
     this._clearOverlays(card);
-    
-    if (speed < this.VT) { this._snap(card); this.axis=null; return; }
-    
-    if (this.axis==='v') {
-      const th=window.innerHeight*this.VTH;
-      if (dy < -th) this._up(card); else if (dy > th) this._down(card); else this._snap(card);
-    } else if (this.axis==='h') {
-      const th=window.innerWidth*this.HTH;
-      if (dx > th) this._right(card); else if (dx < -th) this._left(card); else this._snap(card);
-    } else this._snap(card);
-    
+    if(speed<this.VT){this._snap(card);this.axis=null;return;}
+    if(this.axis==='v'){const th=window.innerHeight*this.VTH;if(dy<-th)this._up(card);else if(dy>th)this._down(card);else this._snap(card);}
+    else if(this.axis==='h'){const th=window.innerWidth*this.HTH;if(dx>th)this._right(card);else if(dx<-th)this._left(card);else this._snap(card);}
+    else this._snap(card);
     this.axis=null;
   },
 
-  reset() {
-    this.active=false; this.axis=null; this._hidePull();
-    const card=getTopCard(); if (card) { this._clearOverlays(card); this._snap(card); }
-  },
+  reset(){this.active=false;this.axis=null;this._hidePull();const card=getTopCard();if(card){this._clearOverlays(card);this._snap(card);}},
+  _snap(card){card.style.transition='transform .4s cubic-bezier(0.25,1,0.5,1.1),opacity .25s ease';card.style.transform='translateY(0) scale(1)';card.style.opacity='1';},
+  _clearOverlays(card){const ov=card.querySelector('.card-tilt-overlay');if(ov)ov.style.background='transparent';card.querySelectorAll('.card-dir-hint').forEach(h=>{h.style.opacity=0;h.style.transform='translateY(-50%) scale(1)';});},
+  _hidePull(){const pi=document.getElementById('pull-indicator');if(pi){pi.classList.remove('visible');pi.style.transform='translateX(-50%) translateY(-20px)';}},
 
-  _snap(card) { 
-    // 🚀 Spring snap-back
-    card.style.transition = 'transform .4s cubic-bezier(0.25, 1, 0.5, 1.1), opacity .25s ease'; 
-    card.style.transform = 'translateY(0) scale(1)'; 
-    card.style.opacity = '1'; 
-  },
-  
-  _clearOverlays(card) { 
-    const ov=card.querySelector('.card-tilt-overlay'); if(ov)ov.style.background='transparent'; 
-    card.querySelectorAll('.card-dir-hint').forEach(h=> {
-       h.style.opacity=0;
-       h.style.transform='translateY(-50%) scale(1)';
-    }); 
-  },
-  
-  _hidePull() { 
-    const pi=document.getElementById('pull-indicator'); 
-    if(pi){pi.classList.remove('visible');pi.style.transform='translateX(-50%) translateY(-20px)';} 
-  },
-
-  _up(card) {
-    if (currentCard>=CARDS.length-1) { this._snap(card); return; }
-    isAnimating=true; addXP(15);
-    card.style.transition='transform .3s cubic-bezier(.4,0,.6,1), opacity .25s ease';
-    card.style.transform='translateY(-110vh)'; card.style.opacity='0';
+  _up(card){
+    if(currentCard>=CARDS.length-1){this._snap(card);return;}
+    isAnimating=true;addXP(15);
+    card.style.transition='transform .3s cubic-bezier(.4,0,.6,1),opacity .25s ease';
+    card.style.transform='translateY(-110vh)';card.style.opacity='0';
     currentCard++;
-    setTimeout(()=>{ positionAllCards(true); updateProgressDots(); setTimeout(()=>{ isAnimating=false; },360); },80);
+    setTimeout(()=>{positionAllCards(true);updateProgressDots();setTimeout(()=>{isAnimating=false;},360);},80);
   },
-
-  _down(card) {
-    if (currentCard===0) {
-      if (this.curY-this.startY > 80) { this._snap(card); setTimeout(()=>{ currentCard=0; buildDeck(); },320); return; }
-      this._snap(card); return;
-    }
+  _down(card){
+    if(currentCard===0){if(this.curY-this.startY>80){this._snap(card);setTimeout(()=>{currentCard=0;buildDeck();},320);return;}this._snap(card);return;}
     isAnimating=true;
-    card.style.transition='transform .3s cubic-bezier(.4,0,.6,1)'; card.style.transform='translateY(110vh)';
+    card.style.transition='transform .3s cubic-bezier(.4,0,.6,1)';card.style.transform='translateY(110vh)';
     currentCard--;
     const prev=getTopCard();
-    if (prev) { prev.style.transition='none'; prev.style.transform='translateY(-40px)'; prev.style.opacity='0'; prev.style.zIndex='11'; }
-    requestAnimationFrame(()=>{ requestAnimationFrame(()=>{
-      if (prev) { prev.style.transition='transform .34s cubic-bezier(.16,1,.3,1), opacity .28s ease'; prev.style.transform='translateY(0) scale(1)'; prev.style.opacity='1'; prev.style.pointerEvents='auto'; }
-      positionAllCards(true); updateProgressDots(); setTimeout(()=>{ isAnimating=false; },380);
-    }); });
+    if(prev){prev.style.transition='none';prev.style.transform='translateY(-40px)';prev.style.opacity='0';prev.style.zIndex='11';}
+    requestAnimationFrame(()=>{requestAnimationFrame(()=>{
+      if(prev){prev.style.transition='transform .34s cubic-bezier(.16,1,.3,1),opacity .28s ease';prev.style.transform='translateY(0) scale(1)';prev.style.opacity='1';prev.style.pointerEvents='auto';}
+      positionAllCards(true);updateProgressDots();setTimeout(()=>{isAnimating=false;},380);
+    });});
   },
-
-  _right(card) { 
-    if (!this.ribbonWasOpen) {
-        likeCard(currentCard); 
-    }
-    this._snap(card); 
-  },
-  _left(card)  { openRibbon(currentCard); this._snap(card); }
+  _right(card){if(!this.ribbonWasOpen)likeCard(currentCard);this._snap(card);},
+  // Swipe left → open the Deep Dive for this card
+  _left(card){
+    const c=CARDS[currentCard];
+    if(c&&c.storyKey){switchLayer('deepdives',c.storyKey);}
+    else{openRibbon(currentCard);}
+    this._snap(card);
+  }
 };
 
-function nextCard() { if(isAnimating||currentCard>=CARDS.length-1)return; const c=getTopCard(); if(c)GC._up(c); }
-function prevCard() { if(isAnimating||currentCard<=0)return; const c=getTopCard(); if(c)GC._down(c); }
-
-function openDiscoverTool(toolPath) {
-  closeSheet();
-  if (toolPath) {
-    if (toolPath.startsWith('http')) {
-      window.open(toolPath, '_blank');
-    } else {
-      window.location.href = toolPath;
-    }
-  } else {
-    switchLayer('feed');
-  }
-}
-
-function resolveCardUrl(card) {
-  if (!card) return '';
-  if (card.sourceUrl) return card.sourceUrl;
-  return REDIRECT_MAP[card.redirect] || '';
-}
-
-function openStorySheet(index) {
-  const card = CARDS[index];
-  if (!card) return;
-  addXP(25);
-  openSheet('story', { cardIndex: index });
-}
-
-function likeCard(index) {
-  addXP(5);
-  const wrap=document.createElement('div'); wrap.className='affirmation-ripple'; wrap.style.left='50%'; wrap.style.top='50%';
-  for(let i=0;i<3;i++){const r=document.createElement('div');r.className='ripple-ring';wrap.appendChild(r);}
-  const b=document.createElement('div'); b.className='ripple-burst'; b.textContent='🔥'; wrap.appendChild(b);
-  document.body.appendChild(wrap); setTimeout(()=>wrap.remove(),850);
-}
-
-function openRibbon(index) { activeRibbonCard = index; document.getElementById('action-ribbon').classList.add('open'); }
-function closeRibbon() { 
-  const ribbon = document.getElementById('action-ribbon');
-  ribbon.style.transform = '';
-  ribbon.classList.remove('open'); 
-}
-function ribbonAction(type) {
-  closeRibbon();
-  addXP(5);
-  if (type === 'share') openSheet('share', { cardIndex: activeRibbonCard });
-  else if (type === 'save') openStorySheet(activeRibbonCard);
-  else openSheet('comment');
-}
-
-function addXP(n) { xp+=n; updateXP(xp); VIA.saveXP(xp); }
-function updateXP(v) {
-  const xc=document.getElementById('xp-counter'); if(xc)xc.textContent=v+' XP';
-  const xp2=document.getElementById('xp-profile'); if(xp2)xp2.textContent=v;
-  const xl=document.getElementById('xp-bar-label'); if(xl)xl.textContent=v+' / 500 XP';
-  const fill=document.getElementById('xp-fill-bar'); if(fill)fill.style.width=Math.min(100,(v/500)*100)+'%';
-  const lv=Math.floor(v/500)+1;
-  const ll=document.getElementById('level-label'); if(ll)ll.textContent='Level '+lv+' · '+(lv<3?'Explorer':lv<5?'Storyteller':'Creator');
-}
-
-function switchLayer(layer) {
-  activeLayer=layer;
+// ════════════════════════════════════════════════════════════════
+// LAYER SWITCHER
+// ════════════════════════════════════════════════════════════════
+function switchLayer(layer, storyKey) {
+  activeLayer = layer;
   const deck=document.getElementById('deck');
-  const els={discover:document.getElementById('layer-discover'), about:document.getElementById('layer-about'), profile:document.getElementById('layer-profile')};
-  deck.style.display = layer==='feed' ? 'block' : 'none';
-  Object.entries(els).forEach(([k,el])=>{ if(el) el.style.display = layer===k ? 'block' : 'none'; });
+  const layerEls={discover:'layer-discover',deepdives:'layer-deepdives',about:'layer-about',profile:'layer-profile'};
+  deck.style.display = layer==='feed'?'block':'none';
+  Object.entries(layerEls).forEach(([k,id])=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display = layer===k?'block':'none';
+  });
   const dots=document.getElementById('progress-dots');
   const hint=document.querySelector('.swipe-hint');
-  if(dots) dots.style.display = layer==='feed' ? 'flex' : 'none';
-  if(hint) hint.style.display = layer==='feed' ? 'flex' : 'none';
+  if(dots) dots.style.display = layer==='feed'?'flex':'none';
+  if(hint) hint.style.display = layer==='feed'?'flex':'none';
+
+  // Keep tab + nav in sync
   document.querySelectorAll('.layer-tab').forEach(t=>t.classList.toggle('active',t.dataset.layer===layer));
-  
-  if (layer === 'discover') buildDiscover(); 
-  if (layer === 'profile') buildProfile(); 
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.nav===layer));
+
+  // Deep Dives: init once, then load the requested story
+  if (layer==='deepdives') {
+    ddBuildFooter();
+    ddInitScrollSpy(); // safe to call multiple times, observer just re-attaches
+    ddLoad(storyKey||ddCurrentStory, null);
+  }
+  if (layer==='discover') buildDiscover();
+  if (layer==='profile')  buildProfile();
 }
 
 document.querySelectorAll('.layer-tab').forEach(tab=>tab.addEventListener('click',()=>switchLayer(tab.dataset.layer)));
@@ -829,59 +1308,105 @@ document.querySelectorAll('.layer-tab').forEach(tab=>tab.addEventListener('click
 function switchNav(name, el) {
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   el.classList.add('active');
-  if (name==='notifications') openSheet('notif');
-  else switchLayer(name);
+  switchLayer(name);
 }
 
-// ── BENTO GRIDS ──
+// ════════════════════════════════════════════════════════════════
+// CARD INTERACTIONS
+// ════════════════════════════════════════════════════════════════
+
+// 🔑 KEY INTEGRATION: tapping "Dive In" on a feed card opens the matching Deep Dive
+function openStorySheet(index) {
+  const card = CARDS[index];
+  if (!card) return;
+  addXP(25);
+  if (card.storyKey) {
+    switchLayer('deepdives', card.storyKey);
+    // Sync nav button
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.nav==='deepdives'));
+  } else {
+    openSheet('story', {cardIndex:index});
+  }
+}
+
+function likeCard(index) {
+  addXP(5);
+  const wrap=document.createElement('div');wrap.className='affirmation-ripple';wrap.style.left='50%';wrap.style.top='50%';
+  for(let i=0;i<3;i++){const r=document.createElement('div');r.className='ripple-ring';wrap.appendChild(r);}
+  const b=document.createElement('div');b.className='ripple-burst';b.textContent='🔥';wrap.appendChild(b);
+  document.body.appendChild(wrap);setTimeout(()=>wrap.remove(),850);
+}
+
+function openRibbon(index){activeRibbonCard=index;document.getElementById('action-ribbon').classList.add('open');}
+function closeRibbon(){const r=document.getElementById('action-ribbon');r.style.transform='';r.classList.remove('open');}
+function ribbonAction(type){
+  closeRibbon();addXP(5);
+  if(type==='share')openSheet('share',{cardIndex:activeRibbonCard});
+  else if(type==='save'){
+    const c=CARDS[activeRibbonCard];
+    if(c&&c.storyKey)switchLayer('deepdives',c.storyKey);
+  }
+  else openSheet('comment');
+}
+
+// ════════════════════════════════════════════════════════════════
+// XP
+// ════════════════════════════════════════════════════════════════
+function addXP(n){xp+=n;updateXP(xp);VIA.saveXP(xp);}
+function updateXP(v){
+  const xc=document.getElementById('xp-counter');if(xc)xc.textContent=v+' XP';
+  const xp2=document.getElementById('xp-profile');if(xp2)xp2.textContent=v;
+  const xl=document.getElementById('xp-bar-label');if(xl)xl.textContent=v+' / 500 XP';
+  const fill=document.getElementById('xp-fill-bar');if(fill)fill.style.width=Math.min(100,(v/500)*100)+'%';
+  const lv=Math.floor(v/500)+1;
+  const ll=document.getElementById('level-label');if(ll)ll.textContent='Level '+lv+' · '+(lv<3?'Explorer':lv<5?'Storyteller':'Creator');
+}
+
+// ════════════════════════════════════════════════════════════════
+// BENTO GRIDS
+// ════════════════════════════════════════════════════════════════
 function buildDiscover() {
-  const grid=document.getElementById('discover-grid'); grid.innerHTML='';
+  const grid=document.getElementById('discover-grid');grid.innerHTML='';
   DISCOVER_ITEMS.forEach((item,i)=>{
-    const card=document.createElement('div'); 
+    const card=document.createElement('div');
     card.className='discover-card stagger-enter';
-    card.style.animationDelay = (i * 0.04) + 's';
-    card.innerHTML=`
-      <div class="discover-card-bg">${item.emoji}</div>
-      <div>
-        <div class="discover-card-cat">${item.cat}</div>
-        <div class="discover-card-name">${item.name}</div>
-        <div class="discover-card-desc">${item.desc}</div>
-      </div>
-    `;
-    card.addEventListener('click',()=>{ addXP(10); openSheet('discover-detail',{item}); });
+    card.style.animationDelay=(i*.04)+'s';
+    card.innerHTML=`<div class="discover-card-bg">${item.emoji}</div><div><div class="discover-card-cat">${item.cat}</div><div class="discover-card-name">${item.name}</div><div class="discover-card-desc">${item.desc}</div></div>`;
+    card.addEventListener('click',()=>{
+      addXP(10);
+      if(item.isDive){switchLayer('deepdives');return;}
+      openSheet('discover-detail',{item});
+    });
     grid.appendChild(card);
   });
 }
 
-// 🚀 PROFILE GRID UPGRADED TO POSTER STYLE
-function buildProfile() {
-  const grid=document.getElementById('profile-grid'); grid.innerHTML='';
-  PROFILE_ITEMS.forEach((item, i)=>{ 
-      const div=document.createElement('div'); 
-      div.className='pgrid-item stagger-enter'; 
-      div.style.animationDelay = (i * 0.04) + 's';
-      div.innerHTML=`
-        <div class="pgrid-bg" style="background:${item.color}">${item.emoji}</div>
-        <div class="pgrid-label">
-            <div class="pgrid-type">${item.type}</div>
-            <div class="pgrid-title">${item.title}</div>
-            <div class="pgrid-views">${item.views === '—' ? 'Draft' : item.views + ' views'}</div>
-        </div>
-      `;
-      div.addEventListener('click',()=>{
-          addXP(5);
-          openSheet('profile-detail', { item });
-      }); 
-      grid.appendChild(div); 
+function buildProfile(){
+  const grid=document.getElementById('profile-grid');grid.innerHTML='';
+  PROFILE_ITEMS.forEach((item,i)=>{
+    const div=document.createElement('div');
+    div.className='pgrid-item stagger-enter';
+    div.style.animationDelay=(i*.04)+'s';
+    div.innerHTML=`<div class="pgrid-bg" style="background:${item.color}">${item.emoji}</div><div class="pgrid-label"><div class="pgrid-type">${item.type}</div><div class="pgrid-title">${item.title}</div><div class="pgrid-views">${item.views==='—'?'Draft':item.views+' views'}</div></div>`;
+    div.addEventListener('click',()=>{
+      addXP(5);
+      // Tapping a saved story in profile opens the Deep Dive
+      if(item.storyKey){switchLayer('deepdives',item.storyKey);}
+      else{openSheet('profile-detail',{item});}
+    });
+    grid.appendChild(div);
   });
 }
 
-function buildProgressDots() {
-  const wrap=document.getElementById('progress-dots'); wrap.innerHTML='';
-  CARDS.forEach((_,i)=>{ const d=document.createElement('div'); d.className='pdot'+(i===currentCard?' active':''); wrap.appendChild(d); });
+function buildProgressDots(){
+  const wrap=document.getElementById('progress-dots');wrap.innerHTML='';
+  CARDS.forEach((_,i)=>{const d=document.createElement('div');d.className='pdot'+(i===currentCard?' active':'');wrap.appendChild(d);});
 }
-function updateProgressDots() { document.querySelectorAll('.pdot').forEach((d,i)=>d.classList.toggle('active',i===currentCard)); }
+function updateProgressDots(){document.querySelectorAll('.pdot').forEach((d,i)=>d.classList.toggle('active',i===currentCard));}
 
+// ════════════════════════════════════════════════════════════════
+// SHEETS
+// ════════════════════════════════════════════════════════════════
 const SHEETS = {
   create:{title:'Create on VIA',sub:'Share your story with Bharat',actions:[
     {icon:'📹',iconBg:'rgba(255,107,0,.15)',title:'Video',sub:'Short film, reel, vlog',url:'https://t.me/GN8RBot'},
@@ -891,114 +1416,56 @@ const SHEETS = {
 };
 
 function openSheet(type, extra={}) {
-  const overlay=document.getElementById('sheet-overlay'), sheet=document.getElementById('sheet'), body=document.getElementById('sheet-body');
+  const overlay=document.getElementById('sheet-overlay'),sheet=document.getElementById('sheet'),body=document.getElementById('sheet-body');
   let html='';
-  
-  if (type==='story' && extra.cardIndex !== undefined) {
-    const card = CARDS[extra.cardIndex];
-    const targetUrl = resolveCardUrl(card);
-    const safeTitle = escapeHTML(stripTags(card && card.title ? card.title : 'Story'));
-    html = '<div class="sheet-title">Story Actions</div><div class="sheet-sub">'+safeTitle+'</div><div class="sheet-actions">';
-    if (targetUrl) {
-      const openAction = targetUrl.startsWith('http') ? 'window.open(\''+targetUrl+'\',\'_blank\');closeSheet();addXP(30)' : 'window.location.href=\''+targetUrl+'\';closeSheet();addXP(30)';
-      html += '<div class="sheet-btn" onclick="'+openAction+'"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">🔗</div><div class="sheet-btn-text"><div class="sheet-btn-title">Open Link</div><div class="sheet-btn-sub">Jump to the linked feed destination</div></div><div class="sheet-btn-arrow">›</div></div>';
-    }
-    html += '<div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Stay here</div><div class="sheet-btn-sub">Continue browsing the feed</div></div><div class="sheet-btn-arrow">›</div></div></div>';
-  } else if (type==='discover-detail'&&extra.item) {
-    const { item } = extra;
-    const safePath = (item.toolPath || '').replace(/'/g, "\\'");
-    const isTool = !!item.toolPath;
-    html = `
-      <div class="sheet-title">${item.emoji} ${item.name}</div>
-      <div class="sheet-sub">${item.cat} · ${isTool ? 'Built by ViaDecide' : 'Saved in Profile'}</div>
-      <div class="sheet-actions">
-        ${isTool ? `
-        <div class="sheet-btn" onclick="openDiscoverTool('${safePath}')">
-          <div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">▶</div>
-          <div class="sheet-btn-text"><div class="sheet-btn-title">Launch Tool</div><div class="sheet-btn-sub">Open ${item.name}</div></div>
-          <div class="sheet-btn-arrow">›</div>
-        </div>` : ``}
-      </div>`;
-  } else if (type==='profile-detail'&&extra.item) {
-    const { item } = extra;
-    html = `
-      <div class="sheet-title">${item.emoji} ${item.title}</div>
-      <div class="sheet-sub">${item.type} · ${item.views === '—' ? 'Not Published' : item.views + ' views'}</div>
-      <div class="sheet-actions">
-        <div class="sheet-btn" onclick="closeSheet()">
-          <div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">▶</div>
-          <div class="sheet-btn-text"><div class="sheet-btn-title">Open Story</div><div class="sheet-btn-sub">View in Feed</div></div>
-          <div class="sheet-btn-arrow">›</div>
-        </div>
-        ${item.type === 'Draft' ? `
-        <div class="sheet-btn" onclick="closeSheet()">
-          <div class="sheet-btn-icon" style="background:rgba(108,99,255,.15)">✍️</div>
-          <div class="sheet-btn-text"><div class="sheet-btn-title">Edit Draft</div><div class="sheet-btn-sub">Continue writing</div></div>
-          <div class="sheet-btn-arrow">›</div>
-        </div>` : `
-        <div class="sheet-btn" onclick="closeSheet()">
-          <div class="sheet-btn-icon" style="background:rgba(255,255,255,.08)">📤</div>
-          <div class="sheet-btn-text"><div class="sheet-btn-title">Share</div><div class="sheet-btn-sub">Send to friends</div></div>
-          <div class="sheet-btn-arrow">›</div>
-        </div>`}
-      </div>`;
+  if(type==='discover-detail'&&extra.item){
+    const {item}=extra;const safe=(item.toolPath||'').replace(/'/g,"\\'");
+    html=`<div class="sheet-title">${item.emoji} ${item.name}</div><div class="sheet-sub">${item.cat}</div><div class="sheet-actions">${item.toolPath?`<div class="sheet-btn" onclick="window.location.href='${safe}';closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">▶</div><div class="sheet-btn-text"><div class="sheet-btn-title">Launch Tool</div><div class="sheet-btn-sub">Open ${item.name}</div></div><div class="sheet-btn-arrow">›</div></div>`:''}</div>`;
+  } else if(type==='profile-detail'&&extra.item){
+    const {item}=extra;
+    html=`<div class="sheet-title">${item.emoji} ${item.title}</div><div class="sheet-sub">${item.type}</div><div class="sheet-actions"><div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Close</div></div><div class="sheet-btn-arrow">›</div></div></div>`;
   } else {
-    const s=SHEETS[type]; if(!s)return;
-    html='<div class="sheet-title">'+s.title+'</div><div class="sheet-sub">'+s.sub+'</div><div class="sheet-actions">'+
-      s.actions.map(a=>'<div class="sheet-btn" onclick="'+(a.url?'window.open(\''+a.url+'\',\'_blank\');closeSheet()':'addXP(5);closeSheet()')+'"><div class="sheet-btn-icon" style="background:'+a.iconBg+'">'+a.icon+'</div><div class="sheet-btn-text"><div class="sheet-btn-title">'+a.title+'</div><div class="sheet-btn-sub">'+a.sub+'</div></div><div class="sheet-btn-arrow">›</div></div>').join('')+'</div>';
+    const s=SHEETS[type];if(!s)return;
+    html='<div class="sheet-title">'+s.title+'</div><div class="sheet-sub">'+s.sub+'</div><div class="sheet-actions">'+s.actions.map(a=>'<div class="sheet-btn" onclick="'+(a.url?'window.open(\''+a.url+'\',\'_blank\');closeSheet()':'addXP(5);closeSheet()')+'"><div class="sheet-btn-icon" style="background:'+a.iconBg+'">'+a.icon+'</div><div class="sheet-btn-text"><div class="sheet-btn-title">'+a.title+'</div><div class="sheet-btn-sub">'+a.sub+'</div></div><div class="sheet-btn-arrow">›</div></div>').join('')+'</div>';
   }
-  
-  body.innerHTML=html;
-  sheet.scrollTop = 0; sheet.style.transform = '';
-  overlay.classList.add('open'); sheet.classList.add('open');
+  body.innerHTML=html;sheet.scrollTop=0;sheet.style.transform='';
+  overlay.classList.add('open');sheet.classList.add('open');
 }
-function closeSheet() {
-  const overlay = document.getElementById('sheet-overlay');
-  const sheet = document.getElementById('sheet');
-  sheet.style.transform = '';
-  overlay.classList.remove('open'); sheet.classList.remove('open');
+function closeSheet(){
+  document.getElementById('sheet-overlay').classList.remove('open');
+  document.getElementById('sheet').classList.remove('open');
 }
 
-// 🚀 Ribbon close gestures
-(function initRibbonGestures() {
-  const ribbon = document.getElementById('action-ribbon');
-  let rStartX = 0;
-  let rActive = false;
-  ribbon.addEventListener('touchstart', e => {
-    rStartX = e.touches[0].clientX;
-    rActive = true;
-    ribbon.style.transition = 'none';
-  }, {passive: true});
-  ribbon.addEventListener('touchmove', e => {
-    if (!rActive) return;
-    const dx = e.touches[0].clientX - rStartX;
-    if (dx > 0) ribbon.style.transform = `translateX(${dx}px)`;
-  }, {passive: true});
-  ribbon.addEventListener('touchend', e => {
-    if (!rActive) return;
-    rActive = false;
-    ribbon.style.transition = ''; 
-    const dx = e.changedTouches ? e.changedTouches[0].clientX - rStartX : 0;
-    if (dx > 40) closeRibbon();
-    else ribbon.style.transform = ''; 
+// Ribbon swipe-to-close
+(function(){
+  const ribbon=document.getElementById('action-ribbon');
+  let rsx=0,ra=false;
+  ribbon.addEventListener('touchstart',e=>{rsx=e.touches[0].clientX;ra=true;ribbon.style.transition='none';},{passive:true});
+  ribbon.addEventListener('touchmove',e=>{if(!ra)return;const dx=e.touches[0].clientX-rsx;if(dx>0)ribbon.style.transform=`translateX(${dx}px)`;},{passive:true});
+  ribbon.addEventListener('touchend',e=>{
+    if(!ra)return;ra=false;ribbon.style.transition='';
+    const dx=e.changedTouches?e.changedTouches[0].clientX-rsx:0;
+    if(dx>40)closeRibbon();else ribbon.style.transform='';
   });
 })();
 
+// ════════════════════════════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════════════════════════════
 let appStarted=false;
-function startApp() {
-  if (appStarted) return; appStarted=true;
-  setTimeout(async ()=>{
-    try { await VIA.init(); } catch(e) {}
+function startApp(){
+  if(appStarted)return;appStarted=true;
+  setTimeout(async()=>{
+    try{await VIA.init();}catch(e){}
     document.getElementById('boot').classList.add('exit');
     document.getElementById('app').classList.add('visible');
-    buildProgressDots(); buildDeck(); GC.init(); buildDiscover(); buildProfile();
-    updateXP(xp); updateAuthUI(VIA.user); VIA.applyToUI();
-  }, 2600);
+    buildProgressDots();buildDeck();GC.init();buildDiscover();buildProfile();
+    updateXP(xp);updateAuthUI(VIA.user);VIA.applyToUI();
+  },2600);
 }
-document.addEventListener('DOMContentLoaded', startApp, {once:true});
-window.addEventListener('load', startApp, {once:true});
+document.addEventListener('DOMContentLoaded',startApp,{once:true});
+window.addEventListener('load',startApp,{once:true});
 </script>
+<script src="./onboarding/onboarding.js"></script>
 </body>
 </html>
-
-
