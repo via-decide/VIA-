@@ -2,7 +2,7 @@
 SETUP CHECKLIST
 1) Create a Supabase project
 2) Run the SQL migration below in Supabase SQL Editor
-3) Replace SUPABASE_URL and SUPABASE_ANON_KEY in this file
+3) Set window.ECO_SUPABASE_ANON_KEY (or localStorage eco_supabase_anon_key) before using live auth
 -->
 <!--
 Run this in Supabase SQL editor:
@@ -26,6 +26,87 @@ ALTER TABLE via_users ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can read all profiles" ON via_users FOR SELECT USING (true);
 CREATE POLICY "Users can update own profile" ON via_users FOR UPDATE USING (auth.uid() = id);
 CREATE POLICY "Users can insert own profile" ON via_users FOR INSERT WITH CHECK (auth.uid() = id);
+
+CREATE TABLE via_activity_log (
+  id TEXT PRIMARY KEY,
+  event_type TEXT NOT NULL,
+  source TEXT NOT NULL,
+  page_path TEXT NOT NULL,
+  payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE via_activity_log ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Authenticated users can insert activity logs" ON via_activity_log FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "Authenticated users can read activity logs" ON via_activity_log FOR SELECT TO authenticated USING (true);
+
+CREATE TABLE via_posts (
+  id TEXT PRIMARY KEY,
+  author_id UUID REFERENCES via_users(id) NOT NULL,
+  body TEXT NOT NULL,
+  visibility TEXT NOT NULL DEFAULT 'public',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE via_follows (
+  id TEXT PRIMARY KEY,
+  actor_user_id UUID REFERENCES via_users(id) NOT NULL,
+  target_user_id UUID REFERENCES via_users(id) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE via_reactions (
+  id TEXT PRIMARY KEY,
+  post_id TEXT REFERENCES via_posts(id) NOT NULL,
+  actor_user_id UUID REFERENCES via_users(id) NOT NULL,
+  emoji TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE via_circles (
+  id TEXT PRIMARY KEY,
+  owner_id UUID REFERENCES via_users(id) NOT NULL,
+  name TEXT NOT NULL,
+  description TEXT DEFAULT '',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE via_circle_members (
+  id BIGSERIAL PRIMARY KEY,
+  circle_id TEXT REFERENCES via_circles(id) NOT NULL,
+  user_id UUID REFERENCES via_users(id) NOT NULL,
+  role TEXT NOT NULL DEFAULT 'member',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE via_moderation_queue (
+  id TEXT PRIMARY KEY,
+  reporter_user_id UUID REFERENCES via_users(id) NOT NULL,
+  entity_type TEXT NOT NULL,
+  entity_id TEXT NOT NULL,
+  reason TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'open',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE via_posts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE via_follows ENABLE ROW LEVEL SECURITY;
+ALTER TABLE via_reactions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE via_circles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE via_circle_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE via_moderation_queue ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can read posts" ON via_posts FOR SELECT USING (true);
+CREATE POLICY "Users can insert own posts" ON via_posts FOR INSERT WITH CHECK (auth.uid() = author_id);
+CREATE POLICY "Users can read follows" ON via_follows FOR SELECT USING (true);
+CREATE POLICY "Users can insert own follows" ON via_follows FOR INSERT WITH CHECK (auth.uid() = actor_user_id);
+CREATE POLICY "Users can read reactions" ON via_reactions FOR SELECT USING (true);
+CREATE POLICY "Users can insert own reactions" ON via_reactions FOR INSERT WITH CHECK (auth.uid() = actor_user_id);
+CREATE POLICY "Users can read circles" ON via_circles FOR SELECT USING (true);
+CREATE POLICY "Users can create circles" ON via_circles FOR INSERT WITH CHECK (auth.uid() = owner_id);
+CREATE POLICY "Users can read circle members" ON via_circle_members FOR SELECT USING (true);
+CREATE POLICY "Users can join circles they belong to" ON via_circle_members FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can create moderation flags" ON via_moderation_queue FOR INSERT WITH CHECK (auth.uid() = reporter_user_id);
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -36,6 +117,8 @@ CREATE POLICY "Users can insert own profile" ON via_users FOR INSERT WITH CHECK 
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="./shared/tool-storage.js"></script>
+<script src="./shared/social-core.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--saffron:#FF6B00;--saffron2:#FF9500;--deep:#0B0B1A;--deep2:#13132A;--deep3:#1C1C38;--gold:#F5C518;--white:#fff;--muted:#8B8BAD;--border:rgba(255,255,255,.08)}
@@ -127,14 +210,23 @@ input.error,select.error{border-color:#ff6b6b}
 </div>
 
 <script>
-// ── REPLACE THESE WITH YOUR SUPABASE PROJECT CREDENTIALS ──
-// Get them at: https://app.supabase.com → Settings → API
-const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
-const SUPABASE_CONFIGURED = !SUPABASE_URL.includes('YOUR_PROJECT') && SUPABASE_ANON_KEY !== 'YOUR_ANON_KEY';
-const supabase = (typeof window.supabase !== 'undefined' && SUPABASE_CONFIGURED)
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-  : null;
+// ── SUPABASE CONFIGURATION ──
+// Prefer window.ECO_SUPABASE_ANON_KEY (or localStorage eco_supabase_anon_key) so the same backend wiring can be reused across VIA tools.
+const supabaseConfig = window.DatabaseService && typeof window.DatabaseService.getConfig === 'function'
+  ? window.DatabaseService.getConfig()
+  : {
+      url: 'https://YOUR_PROJECT.supabase.co',
+      anonKey: 'YOUR_ANON_KEY',
+      isConfigured: false
+    };
+const SUPABASE_URL = supabaseConfig.url;
+const SUPABASE_ANON_KEY = supabaseConfig.anonKey;
+const SUPABASE_CONFIGURED = Boolean(supabaseConfig.isConfigured);
+const supabase = window.DatabaseService && typeof window.DatabaseService.getClient === 'function'
+  ? window.DatabaseService.getClient()
+  : ((typeof window.supabase !== 'undefined' && SUPABASE_CONFIGURED)
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    : null);
 
 const state = { authMode:'signin', loginType:'email' };
 const usernameRe = /^[a-z0-9_.]{3,20}$/;
@@ -144,8 +236,20 @@ function setInputError(id, on) { const el=document.getElementById(id); if (el) e
 function phoneToPseudoEmail(phone){ return `via_${phone}@phone.via.local`; }
 function parsePhone(raw){ const digits=(raw||'').replace(/\D/g,''); return digits.length===10?digits:null; }
 
+function prepareProfile(profile){
+  if (window.SocialCore && typeof window.SocialCore.bootstrapProfile === 'function') {
+    return window.SocialCore.bootstrapProfile(profile) || profile;
+  }
+  return profile;
+}
+
 function saveLocalUser(profile){
-  localStorage.setItem('via_user', JSON.stringify(profile));
+  const nextProfile = prepareProfile(profile);
+  if (window.DatabaseService && typeof window.DatabaseService.saveLocalUser === 'function') {
+    window.DatabaseService.saveLocalUser(nextProfile);
+  } else {
+    localStorage.setItem('via_user', JSON.stringify(nextProfile));
+  }
   localStorage.setItem('via_session', JSON.stringify({ mode: SUPABASE_CONFIGURED ? 'supabase' : 'offline', at: Date.now() }));
 }
 
@@ -226,6 +330,7 @@ async function signInHandler(e){
     city:data.user.user_metadata?.city || '',
     avatar_emoji:'🌟', xp:0, level:1, followers:0, following:0, posts:0
   };
+  profile = prepareProfile(profile);
   saveLocalUser(profile);
   window.location.href='./index.html';
 }
@@ -257,7 +362,7 @@ async function signUpHandler(e){
 
   if(document.querySelectorAll('input.error,select.error').length) return;
 
-  const offlineProfile = {
+  const offlineProfile = prepareProfile({
     id: `offline_${Date.now()}`,
     name,
     display_name: name,
@@ -269,7 +374,7 @@ async function signUpHandler(e){
     followers:0,
     following:0,
     posts:0
-  };
+  });
 
   if(!supabase){
     saveLocalUser(offlineProfile);
@@ -284,7 +389,7 @@ async function signUpHandler(e){
   });
   if(error || !data?.user){ setErr('signup-main-err', error?.message || 'Could not create account.'); return; }
 
-  const profile = {
+  const profile = prepareProfile({
     id: data.user.id,
     username,
     display_name: name,
@@ -295,7 +400,7 @@ async function signUpHandler(e){
     followers:0,
     following:0,
     posts:0
-  };
+  });
 
   const { error: insertError } = await supabase.from('via_users').upsert(profile, { onConflict:'id' });
   if(insertError){ setErr('signup-main-err', insertError.message); return; }

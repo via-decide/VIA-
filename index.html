@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="./shared/tool-storage.js"></script>
+<script src="./shared/social-core.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -572,17 +574,29 @@ html,body{
 
 <script>
 // ── VIA AUTH LAYER ──────────────────────────────────────────
-// ── REPLACE THESE WITH YOUR SUPABASE PROJECT CREDENTIALS ──
-// Get them at: https://app.supabase.com → Settings → API
-const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
-const SUPABASE_CONFIGURED =
-  !SUPABASE_URL.includes('YOUR_PROJECT') &&
-  SUPABASE_ANON_KEY !== 'YOUR_ANON_KEY';
+const supabaseConfig = window.DatabaseService && typeof window.DatabaseService.getConfig === 'function'
+  ? window.DatabaseService.getConfig()
+  : {
+      url: 'https://YOUR_PROJECT.supabase.co',
+      anonKey: 'YOUR_ANON_KEY',
+      isConfigured: false
+    };
+const SUPABASE_URL = supabaseConfig.url;
+const SUPABASE_ANON_KEY = supabaseConfig.anonKey;
+const SUPABASE_CONFIGURED = Boolean(supabaseConfig.isConfigured);
 
-const supabase = (typeof window.supabase !== 'undefined' && SUPABASE_CONFIGURED)
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-  : null;
+const supabase = window.DatabaseService && typeof window.DatabaseService.getClient === 'function'
+  ? window.DatabaseService.getClient()
+  : ((typeof window.supabase !== 'undefined' && SUPABASE_CONFIGURED)
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    : null);
+
+function prepareSocialProfile(profile) {
+  if (window.SocialCore && typeof window.SocialCore.bootstrapProfile === 'function') {
+    return window.SocialCore.bootstrapProfile(profile) || profile;
+  }
+  return profile;
+}
 
 const VIA = {
   user: null,
@@ -600,13 +614,13 @@ const VIA = {
             .single();
 
           if (!error && profile) {
-            this.user = profile;
+            this.user = prepareSocialProfile(profile);
             localStorage.setItem('via_user', JSON.stringify(this.user));
             this.applyToUI();
             return;
           }
 
-          const fallbackProfile = {
+          const fallbackProfile = prepareSocialProfile({
             id: session.user.id,
             display_name: session.user.user_metadata?.name || 'VIA User',
             username: session.user.user_metadata?.username || 'user',
@@ -614,8 +628,9 @@ const VIA = {
             avatar_emoji: '🌟',
             xp: 0,
             followers: 0,
+            following: 0,
             posts: 0
-          };
+          });
           this.user = fallbackProfile;
           localStorage.setItem('via_user', JSON.stringify(this.user));
           this.applyToUI();
@@ -629,7 +644,7 @@ const VIA = {
     const stored = localStorage.getItem('via_user');
     if (stored) {
       try {
-        this.user = JSON.parse(stored);
+        this.user = prepareSocialProfile(JSON.parse(stored));
         this.applyToUI();
         return;
       } catch (error) {
@@ -642,6 +657,7 @@ const VIA = {
 
   applyToUI() {
     if (!this.user) return;
+    this.user = prepareSocialProfile(this.user);
     const nameEl = document.querySelector('.profile-name');
     const handleEl = document.querySelector('.profile-handle');
     if (nameEl) nameEl.textContent = this.user.display_name || this.user.name || 'VIA User';
@@ -676,6 +692,7 @@ const VIA = {
         console.warn('Supabase XP save failed:', error);
       }
     }
+    this.user = prepareSocialProfile(this.user);
     localStorage.setItem('via_user', JSON.stringify(this.user));
   },
 
