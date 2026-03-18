@@ -1,0 +1,152 @@
+.via-onboarding-reset {
+  position: fixed;
+  right: 12px;
+  bottom: calc(84px + env(safe-area-inset-bottom));
+  z-index: 9998;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.92);
+  color: #e2e8f0;
+  padding: 8px 12px;
+  font: 600 12px/1 'DM Sans', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.via-onboarding-reset:active {
+  transform: scale(0.97);
+}
+
+.via-onboarding-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 9999;
+}
+
+.via-onboarding-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 16px;
+  background: #0F172A;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+}
+
+.via-onboarding-step {
+  font: 700 12px/1 'DM Sans', sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #f59e0b;
+}
+
+.via-onboarding-title {
+  margin-top: 10px;
+  font: 700 28px/1.2 'DM Sans', sans-serif;
+  color: #f8fafc;
+}
+
+.via-onboarding-copy {
+  margin-top: 10px;
+  font: 400 14px/1.5 'DM Sans', sans-serif;
+  color: #94a3b8;
+}
+
+.via-onboarding-options,
+.via-onboarding-actions {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.via-onboarding-option,
+.via-onboarding-action,
+.via-onboarding-next {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 14px;
+  background: rgba(30, 41, 59, 0.8);
+  color: #f8fafc;
+  padding: 14px 16px;
+  text-align: left;
+  font: 600 15px/1.3 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+
+.via-onboarding-option small,
+.via-onboarding-action small {
+  display: block;
+  margin-top: 4px;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.via-onboarding-option.is-selected,
+.via-onboarding-option:focus-visible,
+.via-onboarding-action:focus-visible,
+.via-onboarding-next:focus-visible,
+.via-onboarding-action.is-primary,
+.via-onboarding-next {
+  outline: none;
+  border-color: rgba(249, 115, 22, 0.72);
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.24), rgba(234, 179, 8, 0.16));
+  box-shadow: 0 10px 30px rgba(249, 115, 22, 0.16);
+}
+
+.via-onboarding-plan {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(30, 41, 59, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.via-onboarding-plan strong {
+  display: block;
+  margin-bottom: 10px;
+  color: #f8fafc;
+  font: 700 16px/1.3 'DM Sans', sans-serif;
+}
+
+.via-onboarding-plan ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #cbd5e1;
+  font: 400 14px/1.6 'DM Sans', sans-serif;
+}
+
+.via-onboarding-plan li + li {
+  margin-top: 8px;
+}
+
+.via-onboarding-progress {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.via-onboarding-progress span {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.2);
+}
+
+.via-onboarding-progress span.is-active {
+  background: linear-gradient(90deg, #f97316, #facc15);
+}
+
+@media (min-width: 480px) {
+  .via-onboarding-reset {
+    bottom: 20px;
+  }
+}
