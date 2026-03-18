@@ -1,0 +1,342 @@
+<!--
+SETUP CHECKLIST
+1) Create a Supabase project
+2) Run the SQL migration below in Supabase SQL Editor
+3) Replace SUPABASE_URL and SUPABASE_ANON_KEY in this file
+-->
+<!--
+Run this in Supabase SQL editor:
+
+CREATE TABLE via_users (
+  id UUID REFERENCES auth.users PRIMARY KEY,
+  username TEXT UNIQUE NOT NULL,
+  display_name TEXT NOT NULL,
+  city TEXT,
+  avatar_emoji TEXT DEFAULT '🌟',
+  xp INTEGER DEFAULT 0,
+  level INTEGER DEFAULT 1,
+  followers INTEGER DEFAULT 0,
+  following INTEGER DEFAULT 0,
+  posts INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Row Level Security
+ALTER TABLE via_users ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can read all profiles" ON via_users FOR SELECT USING (true);
+CREATE POLICY "Users can update own profile" ON via_users FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Users can insert own profile" ON via_users FOR INSERT WITH CHECK (auth.uid() = id);
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>VIA · Auth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--saffron:#FF6B00;--saffron2:#FF9500;--deep:#0B0B1A;--deep2:#13132A;--deep3:#1C1C38;--gold:#F5C518;--white:#fff;--muted:#8B8BAD;--border:rgba(255,255,255,.08)}
+html,body{height:100%;background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif}
+body{overflow:hidden}
+#boot{position:fixed;inset:0;background:var(--deep);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5;transition:opacity .6s,transform .6s}
+#boot.exit{opacity:0;transform:scale(1.03);pointer-events:none}
+.boot-logo{font-family:'Bebas Neue',sans-serif;font-size:clamp(5rem,20vw,8rem);background:linear-gradient(135deg,var(--saffron),var(--gold),var(--saffron2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.boot-tagline{font-family:'Noto Sans Devanagari',sans-serif;font-size:.92rem;color:var(--muted);margin-top:1rem;letter-spacing:.12em;text-transform:uppercase}
+.boot-line{font-size:.7rem;color:rgba(255,107,0,.6);margin-top:1.1rem;opacity:0;animation:fade .4s forwards}
+.boot-line:nth-child(3){animation-delay:.3s}.boot-line:nth-child(4){animation-delay:.7s}.boot-line:nth-child(5){animation-delay:1.1s}
+@keyframes fade{to{opacity:1}}
+.boot-bar{width:220px;height:2px;background:rgba(255,255,255,.08);border-radius:99px;margin-top:1.3rem;overflow:hidden}
+.boot-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--saffron),var(--gold));animation:fill 1.6s ease forwards 1.2s}
+@keyframes fill{to{width:100%}}
+#auth-app{position:fixed;inset:0;display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .5s}
+#auth-app.visible{opacity:1}
+.panel{width:min(430px,100%);min-height:72vh;background:linear-gradient(to bottom,var(--deep2),var(--deep));border-top:1px solid var(--border);border-top-left-radius:22px;border-top-right-radius:22px;padding:1.2rem}
+.banner{display:none;background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.3);color:var(--gold);padding:.6rem .7rem;border-radius:10px;font-size:.72rem;margin-bottom:.8rem}
+.tabs{display:flex;background:rgba(255,255,255,.04);border-radius:12px;padding:.25rem;margin-bottom:.9rem}
+.tab{flex:1;padding:.62rem;border:none;border-radius:9px;background:transparent;color:var(--muted);font-weight:700;cursor:pointer}
+.tab.active{background:linear-gradient(135deg,var(--saffron),var(--saffron2));color:#fff}
+.mode-toggle{display:flex;gap:.4rem;margin-bottom:.8rem}
+.pill{border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);padding:.38rem .65rem;border-radius:99px;font-size:.72rem;cursor:pointer}
+.pill.active{border-color:rgba(255,107,0,.45);color:var(--saffron)}
+.field{margin-bottom:.75rem}
+label{display:block;font-size:.72rem;color:var(--muted);margin-bottom:.35rem}
+input,select{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:#fff;padding:.72rem .8rem;font-family:'DM Sans',sans-serif}
+input.error,select.error{border-color:#ff6b6b}
+.err{font-size:.68rem;color:#ff8c8c;min-height:1rem;margin-top:.2rem}
+.btn{width:100%;padding:.78rem;border:0;border-radius:10px;background:linear-gradient(135deg,var(--saffron),var(--gold));font-weight:800;cursor:pointer}
+.link{display:inline-block;margin:.2rem 0 .8rem;font-size:.72rem;color:var(--gold);text-decoration:none}
+.social{display:grid;gap:.5rem;margin-top:.9rem}
+.sbtn{width:100%;padding:.72rem;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:#fff;cursor:pointer;font-weight:700}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div id="boot">
+  <div class="boot-logo">VIA</div>
+  <div class="boot-tagline">Bharat का अपना Feed</div>
+  <div class="boot-line">> INITIALIZING VIA AUTH...</div>
+  <div class="boot-line">> LOADING IDENTITY LAYER...</div>
+  <div class="boot-line">> READY ✦</div>
+  <div class="boot-bar"><div class="boot-bar-fill"></div></div>
+</div>
+
+<div id="auth-app">
+  <div class="panel">
+    <div id="offline-banner" class="banner">Running in offline mode — configure Supabase for full features.</div>
+    <div class="tabs">
+      <button id="signin-tab" class="tab active" type="button">Sign In</button>
+      <button id="signup-tab" class="tab" type="button">Join VIA</button>
+    </div>
+
+    <div class="mode-toggle">
+      <button id="mode-email" class="pill active" type="button">Use Email</button>
+      <button id="mode-phone" class="pill" type="button">Use Phone (+91)</button>
+    </div>
+
+    <form id="signin-form">
+      <div class="field"><label id="signin-id-label">Email</label><input id="signin-id" type="email" autocomplete="username"/><div class="err" id="signin-id-err"></div></div>
+      <div class="field"><label>Password</label><input id="signin-password" type="password" autocomplete="current-password"/><div class="err" id="signin-pass-err"></div></div>
+      <a href="#" id="forgot-link" class="link">Forgot Password?</a>
+      <div class="field hidden" id="reset-wrap"><label>Reset email</label><input id="reset-email" type="email"/><div class="err" id="reset-err"></div></div>
+      <button class="btn" type="submit">Sign In</button>
+      <div class="err" id="signin-main-err"></div>
+    </form>
+
+    <form id="signup-form" class="hidden">
+      <div class="field"><label>Full name</label><input id="up-name" type="text"/><div class="err" id="up-name-err"></div></div>
+      <div class="field"><label>Username (@handle)</label><input id="up-username" type="text" placeholder="lowercase, no spaces"/><div class="err" id="up-username-err"></div></div>
+      <div class="field"><label id="signup-id-label">Email</label><input id="up-id" type="email"/><div class="err" id="up-id-err"></div></div>
+      <div class="field"><label>Password</label><input id="up-password" type="password"/><div class="err" id="up-password-err"></div></div>
+      <div class="field"><label>City</label>
+        <select id="up-city">
+          <option value="">Select city</option><option>Mumbai</option><option>Delhi</option><option>Bengaluru</option><option>Hyderabad</option><option>Chennai</option><option>Kolkata</option><option>Pune</option><option>Jaipur</option><option>Patna</option><option>Lucknow</option><option>Other</option>
+        </select><div class="err" id="up-city-err"></div>
+      </div>
+      <button class="btn" type="submit">Create Account</button>
+      <div class="err" id="signup-main-err"></div>
+    </form>
+
+    <div class="social">
+      <button id="google-btn" class="sbtn" type="button">Continue with Google</button>
+      <button id="telegram-btn" class="sbtn" type="button">Continue with Telegram</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── REPLACE THESE WITH YOUR SUPABASE PROJECT CREDENTIALS ──
+// Get them at: https://app.supabase.com → Settings → API
+const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
+const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
+const SUPABASE_CONFIGURED = !SUPABASE_URL.includes('YOUR_PROJECT') && SUPABASE_ANON_KEY !== 'YOUR_ANON_KEY';
+const supabase = (typeof window.supabase !== 'undefined' && SUPABASE_CONFIGURED)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+
+const state = { authMode:'signin', loginType:'email' };
+const usernameRe = /^[a-z0-9_.]{3,20}$/;
+
+function setErr(id, msg='') { const el=document.getElementById(id); if (el) el.textContent=msg; }
+function setInputError(id, on) { const el=document.getElementById(id); if (el) el.classList.toggle('error', !!on); }
+function phoneToPseudoEmail(phone){ return `via_${phone}@phone.via.local`; }
+function parsePhone(raw){ const digits=(raw||'').replace(/\D/g,''); return digits.length===10?digits:null; }
+
+function saveLocalUser(profile){
+  localStorage.setItem('via_user', JSON.stringify(profile));
+  localStorage.setItem('via_session', JSON.stringify({ mode: SUPABASE_CONFIGURED ? 'supabase' : 'offline', at: Date.now() }));
+}
+
+function showTab(mode){
+  state.authMode=mode;
+  document.getElementById('signin-tab').classList.toggle('active', mode==='signin');
+  document.getElementById('signup-tab').classList.toggle('active', mode==='signup');
+  document.getElementById('signin-form').classList.toggle('hidden', mode!=='signin');
+  document.getElementById('signup-form').classList.toggle('hidden', mode!=='signup');
+}
+
+function setLoginType(type){
+  state.loginType=type;
+  document.getElementById('mode-email').classList.toggle('active', type==='email');
+  document.getElementById('mode-phone').classList.toggle('active', type==='phone');
+  const signInInput=document.getElementById('signin-id');
+  const signUpInput=document.getElementById('up-id');
+  const signInLabel=document.getElementById('signin-id-label');
+  const signUpLabel=document.getElementById('signup-id-label');
+  if(type==='phone'){
+    signInInput.type='tel'; signInInput.placeholder='10-digit mobile number'; signInLabel.textContent='Phone (+91)';
+    signUpInput.type='tel'; signUpInput.placeholder='10-digit mobile number'; signUpLabel.textContent='Phone (+91)';
+  } else {
+    signInInput.type='email'; signInInput.placeholder='you@example.com'; signInLabel.textContent='Email';
+    signUpInput.type='email'; signUpInput.placeholder='you@example.com'; signUpLabel.textContent='Email';
+  }
+}
+
+async function trySessionRedirect(){
+  if(supabase){
+    try{
+      const { data:{ session } } = await supabase.auth.getSession();
+      if(session){ window.location.href='./index.html'; return true; }
+    }catch(_e){}
+  }
+  const stored=localStorage.getItem('via_user');
+  if(stored){ window.location.href='./index.html'; return true; }
+  return false;
+}
+
+async function signInHandler(e){
+  e.preventDefault();
+  ['signin-id-err','signin-pass-err','signin-main-err'].forEach(id=>setErr(id,''));
+  setInputError('signin-id',false); setInputError('signin-password',false);
+
+  const rawId=document.getElementById('signin-id').value.trim();
+  const password=document.getElementById('signin-password').value;
+  let email='';
+
+  if(state.loginType==='phone'){
+    const phone=parsePhone(rawId);
+    if(!phone){ setErr('signin-id-err','Enter a valid 10-digit number after +91.'); setInputError('signin-id',true); return; }
+    email=phoneToPseudoEmail(phone);
+  } else {
+    if(!rawId || !/^\S+@\S+\.\S+$/.test(rawId)){ setErr('signin-id-err','Enter a valid email.'); setInputError('signin-id',true); return; }
+    email=rawId;
+  }
+
+  if(password.length<8){ setErr('signin-pass-err','Password must be at least 8 characters.'); setInputError('signin-password',true); return; }
+
+  if(!supabase){
+    const raw=localStorage.getItem('via_user');
+    if(!raw){ setErr('signin-main-err','No offline user found. Please create an account.'); return; }
+    window.location.href='./index.html';
+    return;
+  }
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if(error || !data?.user){ setErr('signin-main-err','Invalid credentials.'); return; }
+  localStorage.setItem('via_session', JSON.stringify(data.session || {}));
+
+  let profile=null;
+  const { data: row } = await supabase.from('via_users').select('*').eq('id', data.user.id).single();
+  profile=row || {
+    id:data.user.id,
+    display_name:data.user.user_metadata?.name || 'VIA User',
+    username:data.user.user_metadata?.username || 'user',
+    city:data.user.user_metadata?.city || '',
+    avatar_emoji:'🌟', xp:0, level:1, followers:0, following:0, posts:0
+  };
+  saveLocalUser(profile);
+  window.location.href='./index.html';
+}
+
+async function signUpHandler(e){
+  e.preventDefault();
+  ['up-name-err','up-username-err','up-id-err','up-password-err','up-city-err','signup-main-err'].forEach(id=>setErr(id,''));
+  ['up-name','up-username','up-id','up-password','up-city'].forEach(id=>setInputError(id,false));
+
+  const name=document.getElementById('up-name').value.trim();
+  const username=document.getElementById('up-username').value.trim();
+  const rawId=document.getElementById('up-id').value.trim();
+  const password=document.getElementById('up-password').value;
+  const city=document.getElementById('up-city').value;
+
+  let email='';
+  if(!name){ setErr('up-name-err','Full name is required.'); setInputError('up-name',true); }
+  if(!usernameRe.test(username)){ setErr('up-username-err','Use 3–20 chars: lowercase letters, numbers, _ or .'); setInputError('up-username',true); }
+  if(state.loginType==='phone'){
+    const phone=parsePhone(rawId);
+    if(!phone){ setErr('up-id-err','Enter a valid 10-digit number after +91.'); setInputError('up-id',true); }
+    else email=phoneToPseudoEmail(phone);
+  } else {
+    if(!rawId || !/^\S+@\S+\.\S+$/.test(rawId)){ setErr('up-id-err','Enter a valid email.'); setInputError('up-id',true); }
+    else email=rawId;
+  }
+  if(password.length<8){ setErr('up-password-err','Password must be at least 8 characters.'); setInputError('up-password',true); }
+  if(!city){ setErr('up-city-err','Please select a city.'); setInputError('up-city',true); }
+
+  if(document.querySelectorAll('input.error,select.error').length) return;
+
+  const offlineProfile = {
+    id: `offline_${Date.now()}`,
+    name,
+    display_name: name,
+    username,
+    city,
+    avatar_emoji:'🌟',
+    xp:0,
+    level:1,
+    followers:0,
+    following:0,
+    posts:0
+  };
+
+  if(!supabase){
+    saveLocalUser(offlineProfile);
+    window.location.href='./index.html';
+    return;
+  }
+
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options:{ data:{ name, username, city } }
+  });
+  if(error || !data?.user){ setErr('signup-main-err', error?.message || 'Could not create account.'); return; }
+
+  const profile = {
+    id: data.user.id,
+    username,
+    display_name: name,
+    city,
+    avatar_emoji:'🌟',
+    xp:0,
+    level:1,
+    followers:0,
+    following:0,
+    posts:0
+  };
+
+  const { error: insertError } = await supabase.from('via_users').upsert(profile, { onConflict:'id' });
+  if(insertError){ setErr('signup-main-err', insertError.message); return; }
+
+  saveLocalUser(profile);
+  window.location.href='./index.html';
+}
+
+async function resetPassword(){
+  const email=document.getElementById('reset-email').value.trim();
+  setErr('reset-err','');
+  if(!/^\S+@\S+\.\S+$/.test(email)){ setErr('reset-err','Enter a valid email for reset link.'); return; }
+  if(!supabase){ setErr('reset-err','Configure Supabase to enable password reset.'); return; }
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + window.location.pathname });
+  setErr('reset-err', error ? error.message : 'Reset email sent. Check your inbox.');
+}
+
+document.getElementById('signin-tab').addEventListener('click',()=>showTab('signin'));
+document.getElementById('signup-tab').addEventListener('click',()=>showTab('signup'));
+document.getElementById('mode-email').addEventListener('click',()=>setLoginType('email'));
+document.getElementById('mode-phone').addEventListener('click',()=>setLoginType('phone'));
+document.getElementById('signin-form').addEventListener('submit', signInHandler);
+document.getElementById('signup-form').addEventListener('submit', signUpHandler);
+document.getElementById('forgot-link').addEventListener('click',(e)=>{ e.preventDefault(); document.getElementById('reset-wrap').classList.toggle('hidden'); });
+document.getElementById('reset-email').addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ e.preventDefault(); resetPassword(); }});
+document.getElementById('google-btn').addEventListener('click', async ()=>{
+  if(!supabase){ setErr('signin-main-err','Configure Supabase for Google OAuth.'); return; }
+  await supabase.auth.signInWithOAuth({ provider:'google', options:{ redirectTo:'https://via-decide.github.io/VIA/' } });
+});
+document.getElementById('telegram-btn').addEventListener('click', ()=> window.open('https://t.me/GN8RBot?start=via_auth','_blank'));
+
+window.addEventListener('load', async ()=>{
+  if(!SUPABASE_CONFIGURED) document.getElementById('offline-banner').style.display='block';
+  setLoginType('email');
+  const redirected=await trySessionRedirect();
+  if(redirected) return;
+  setTimeout(()=>{
+    document.getElementById('boot').classList.add('exit');
+    document.getElementById('auth-app').classList.add('visible');
+  }, 2200);
+});
+</script>
+</body>
+</html>
