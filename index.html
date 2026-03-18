@@ -4,6 +4,8 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
 <title>VIA · Bharat's Feed</title>
+<link rel="manifest" href="./manifest.json"/>
+<meta name="theme-color" content="#FF6B00"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -682,6 +684,78 @@ body.a11y-mode .card-actions { opacity: 0; pointer-events: none; }
     <div class="discover-grid" id="discover-grid"></div>
   </div>
 
+
+
+  <!-- ABOUT LAYER -->
+  <div id="layer-about" style="display:none;position:absolute;inset:0;overflow:auto">
+    <div class="about-wrap" style="padding:6rem 1.2rem 7rem;display:flex;flex-direction:column;gap:1rem">
+      <div class="about-stat-row" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem">
+        <div class="about-stat" style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:16px;padding:1rem;text-align:center">
+          <div class="about-stat-n">73+</div>
+          <div class="about-stat-l">Live Tools</div>
+        </div>
+        <div class="about-stat" style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:16px;padding:1rem;text-align:center">
+          <div class="about-stat-n">0</div>
+          <div class="about-stat-l">Logins Needed</div>
+        </div>
+        <div class="about-stat" style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:16px;padding:1rem;text-align:center">
+          <div class="about-stat-n">∞</div>
+          <div class="about-stat-l">Free Forever</div>
+        </div>
+      </div>
+      <div class="about-products" style="display:flex;flex-direction:column;gap:.75rem">
+        <div class="about-product" onclick="window.open('./tools/spec-builder/index.html','_blank')" style="display:flex;align-items:center;gap:.9rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:16px;padding:1rem;cursor:pointer">
+          <div class="about-product-icon">⚙️</div>
+          <div class="about-product-info" style="flex:1">
+            <div class="about-product-name">Decide Engine Tools</div>
+            <div class="about-product-desc">Explore the core tool suite that powers structured thinking and building.</div>
+          </div>
+          <div class="about-product-arrow">›</div>
+        </div>
+        <div class="about-product" onclick="window.open('./StudyOS/index.html','_blank')" style="display:flex;align-items:center;gap:.9rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:16px;padding:1rem;cursor:pointer">
+          <div class="about-product-icon">📚</div>
+          <div class="about-product-info" style="flex:1">
+            <div class="about-product-name">StudyOS</div>
+            <div class="about-product-desc">Structured learning platform for focused student growth.</div>
+          </div>
+          <div class="about-product-arrow">›</div>
+        </div>
+        <div class="about-product" onclick="switchLayer('feed')" style="display:flex;align-items:center;gap:.9rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:16px;padding:1rem;cursor:pointer">
+          <div class="about-product-icon">📱</div>
+          <div class="about-product-info" style="flex:1">
+            <div class="about-product-name">VIA Social Feed</div>
+            <div class="about-product-desc">Swipe through Bharat's stories, tools, and ideas.</div>
+          </div>
+          <div class="about-product-arrow">›</div>
+        </div>
+        <div class="about-product" onclick="window.open('https://t.me/GN8RBot','_blank')" style="display:flex;align-items:center;gap:.9rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:16px;padding:1rem;cursor:pointer">
+          <div class="about-product-icon">💡</div>
+          <div class="about-product-info" style="flex:1">
+            <div class="about-product-name">GN8R Bot</div>
+            <div class="about-product-desc">AI command center for creating tools, apps, and stories.</div>
+          </div>
+          <div class="about-product-arrow">›</div>
+        </div>
+        <div class="about-product" onclick="window.open('./tools/games/hex-wars/index.html','_blank')" style="display:flex;align-items:center;gap:.9rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:16px;padding:1rem;cursor:pointer">
+          <div class="about-product-icon">⚔️</div>
+          <div class="about-product-info" style="flex:1">
+            <div class="about-product-name">Hex Wars</div>
+            <div class="about-product-desc">Strategic territory game. Free to play, no account needed.</div>
+          </div>
+          <div class="about-product-arrow">›</div>
+        </div>
+        <div class="about-product" onclick="window.open('./tools/promptalchemy/index.html','_blank')" style="display:flex;align-items:center;gap:.9rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:16px;padding:1rem;cursor:pointer">
+          <div class="about-product-icon">🔬</div>
+          <div class="about-product-info" style="flex:1">
+            <div class="about-product-name">Prompt Alchemy</div>
+            <div class="about-product-desc">Transform rough AI prompts into precision-engineered commands.</div>
+          </div>
+          <div class="about-product-arrow">›</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- PROFILE LAYER -->
   <div id="layer-profile" style="display:none;position:absolute;inset:0">
     <div class="profile-wrap">
@@ -948,55 +1022,65 @@ function formatCount(n) {
 // ── DATA ──────────────────────────────────────────────────────
 const CARDS = [
   {
-    id:1, cat:'viral', catLabel:'🔥 Viral',
-    bg:'linear-gradient(160deg,#1a0a3a 0%,#0B0B1A 60%)',
-    emoji:'🎪',
-    title:'Mumbai की <em>street food</em> revolution जो दिल्ली तक पहुँची',
-    author:'Priya Sharma', authorEmoji:'👩‍🍳', location:'Mumbai',
-    time:'2h ago', views:'2.4M', likes:'184K',
-    redirect:'viral-story',
+    id:1, cat:'tech', catLabel:'⚡ Tech',
+    bg:'linear-gradient(160deg,#0a0a2a 0%,#0B0B1A 60%)',
+    emoji:'🤖',
+    title:'Build your next app — <em>AI spec generator</em> in 60 seconds',
+    author:'ViaDecide', authorEmoji:'⚙️', location:'Bharat',
+    time:'Live', views:'—', likes:'—',
+    redirect:'app-generator',
   },
   {
     id:2, cat:'bharat', catLabel:'🇮🇳 Bharat',
     bg:'linear-gradient(160deg,#0a1a00 0%,#0B0B1A 60%)',
-    emoji:'🌾',
-    title:'Bihar के किसान ने बनाया <em>drone tech</em> जो पूरे गाँव बदल रहा है',
-    author:'Rahul Kumar', authorEmoji:'👨‍🌾', location:'Patna',
-    time:'5h ago', views:'890K', likes:'67K',
-    redirect:'bharat-story',
+    emoji:'📚',
+    title:'<em>StudyOS</em> — structured learning for every Bhartiya student',
+    author:'ViaDecide', authorEmoji:'📖', location:'India',
+    time:'Live', views:'—', likes:'—',
+    redirect:'studyos',
   },
   {
-    id:3, cat:'tech', catLabel:'⚡ Tech',
-    bg:'linear-gradient(160deg,#0a0a2a 0%,#0B0B1A 60%)',
-    emoji:'🤖',
-    title:'IIT Bombay startup ने बनाया <em>AI doctor</em> — 5 रुपये में diagnosis',
-    author:'Dev Patel', authorEmoji:'🧑‍💻', location:'Bangalore',
-    time:'1h ago', views:'3.1M', likes:'221K',
-    redirect:'tech-story',
+    id:3, cat:'viral', catLabel:'🔥 Trending',
+    bg:'linear-gradient(160deg,#1a0a00 0%,#0B0B1A 60%)',
+    emoji:'🎯',
+    title:'Crack your next interview — <em>AI-powered prep</em> in Hindi & English',
+    author:'ViaDecide', authorEmoji:'🎙️', location:'India',
+    time:'Live', views:'—', likes:'—',
+    redirect:'interview-prep',
   },
   {
-    id:4, cat:'sport', catLabel:'🏏 Sport',
-    bg:'linear-gradient(160deg,#001a0a 0%,#0B0B1A 60%)',
-    emoji:'🏏',
-    title:'15 साल की <em>Riya Singh</em> — India की next batting sensation',
-    author:'Sports VIA', authorEmoji:'🎙️', location:'Hyderabad',
-    time:'3h ago', views:'5.2M', likes:'412K',
-    redirect:'sport-story',
+    id:4, cat:'tech', catLabel:'⚡ Dev Tools',
+    bg:'linear-gradient(160deg,#0a0a1a 0%,#0B0B1A 60%)',
+    emoji:'🧠',
+    title:'<em>Prompt Alchemy</em> — turn rough prompts into production-grade AI commands',
+    author:'ViaDecide', authorEmoji:'🔬', location:'Bharat',
+    time:'Live', views:'—', likes:'—',
+    redirect:'prompt-alchemy',
   },
   {
-    id:5, cat:'culture', catLabel:'🎨 Culture',
-    bg:'linear-gradient(160deg,#1a001a 0%,#0B0B1A 60%)',
-    emoji:'🎭',
-    title:'Rajasthan की <em>folk art</em> जो NFT market में छा गई',
-    author:'Meera Joshi', authorEmoji:'🎨', location:'Jaipur',
-    time:'8h ago', views:'1.8M', likes:'93K',
-    redirect:'culture-story',
+    id:5, cat:'culture', catLabel:'🎮 Games',
+    bg:'linear-gradient(160deg,#1a000a 0%,#0B0B1A 60%)',
+    emoji:'⚔️',
+    title:'<em>Hex Wars</em> — strategic territory game. Play now, free forever.',
+    author:'ViaDecide', authorEmoji:'🎮', location:'India',
+    time:'Live', views:'—', likes:'—',
+    redirect:'hex-wars',
   },
   {
-    id:6, cat:'create', catLabel:'✦ Create',
+    id:6, cat:'about', catLabel:'✦ ViaDecide',
+    bg:'linear-gradient(160deg,#1a1000 0%,#0B0B1A 60%)',
+    emoji:'⚡',
+    title:'<em>73 tools</em> that help you think, build, and decide — free forever',
+    author:'ViaDecide', authorEmoji:'✦', location:'Bharat',
+    time:'Always', views:'—', likes:'—',
+    redirect:'about',
+    cta: true,
+  },
+  {
+    id:7, cat:'create', catLabel:'✦ Create',
     bg:'linear-gradient(160deg,#001a1a 0%,#0B0B1A 60%)',
     emoji:'💡',
-    title:'अपनी story VIA पर शेयर करो — <em>Bharat सुनेगा</em>',
+    title:'अपना tool, app, या story बनाओ — <em>GN8R Bot</em> से',
     author:'VIA Team', authorEmoji:'✦', location:'India',
     time:'Now', views:'—', likes:'—',
     redirect:'create',
@@ -1005,25 +1089,26 @@ const CARDS = [
 ];
 
 const DISCOVER_ITEMS = [
-  {emoji:'🏏',cat:'Sport',name:'Cricket World',toolPath:'./tools/context-packager/index.html'},
-  {emoji:'🎵',cat:'Music',name:'Desi Beats',toolPath:'./prompt-alchemy/index.html'},
-  {emoji:'🌾',cat:'Bharat',name:'Kisan Stories',toolPath:'./student-research/index.html'},
-  {emoji:'🤖',cat:'Tech',name:'Startup India',toolPath:'./tools/spec-builder/index.html'},
-  {emoji:'🎭',cat:'Culture',name:'Rang Manch',toolPath:'./tools/idea-remixer/index.html'},
-  {emoji:'🍛',cat:'Food',name:'Desi Khana',toolPath:'./tools/output-evaluator/index.html'},
-  {emoji:'📚',cat:'Education',name:'Siksha',toolPath:'./interview-prep/index.html'},
-  {emoji:'🌏',cat:'Travel',name:'Desh Ghoom',toolPath:'./tools/context-packager/index.html'},
+  {emoji:'⚙️', cat:'Dev',      name:'App Generator',    toolPath:'./app-generator/index.html'},
+  {emoji:'📚', cat:'Education', name:'StudyOS',          toolPath:'./StudyOS/index.html'},
+  {emoji:'🎯', cat:'Career',    name:'Interview Prep',   toolPath:'./interview-prep/index.html'},
+  {emoji:'🔬', cat:'AI',       name:'Prompt Alchemy',   toolPath:'./prompt-alchemy/index.html'},
+  {emoji:'📊', cat:'Business',  name:'Sales Dashboard',  toolPath:'./sales-dashboard/index.html'},
+  {emoji:'🧑‍💻', cat:'Founders', name:'Founder Tools',   toolPath:'./founder/index.html'},
+  {emoji:'⚔️', cat:'Games',    name:'Hex Wars',         toolPath:'./tools/games/hex-wars/index.html'},
+  {emoji:'🐍', cat:'Games',    name:'Snake Game',       toolPath:'./tools/games/snake-game/index.html'},
 ];
 
 const PROFILE_EMOJIS = ['🌅','🎪','🌾','🤖','🏏','🎨','💡','🌟','🔥','🎵','🌺','🎭'];
 
 const REDIRECT_MAP = {
-  'viral-story':   './student-research/index.html',
-  'bharat-story':  './interview-prep/index.html',
-  'tech-story':    './tools/spec-builder/index.html',
-  'sport-story':   './tools/context-packager/index.html',
-  'culture-story': './prompt-alchemy/index.html',
-  'create':        'https://t.me/GN8RBot',
+  'app-generator':   './app-generator/index.html',
+  'studyos':         './StudyOS/index.html',
+  'interview-prep':  './interview-prep/index.html',
+  'prompt-alchemy':  './prompt-alchemy/index.html',
+  'hex-wars':        './tools/games/hex-wars/index.html',
+  'about':           null,
+  'create':          'https://t.me/GN8RBot',
 };
 
 // ── STATE ────────────────────────────────────────────────────

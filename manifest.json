@@ -1,0 +1,87 @@
+{
+  "name": "VIA — Bharat's Feed",
+  "short_name": "VIA",
+  "description": "Bharat's swipe-native social platform. 73+ free tools for students, builders, and creators.",
+  "lang": "hi-IN",
+  "dir": "ltr",
+  "start_url": "./index.html?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0B0B1A",
+  "theme_color": "#FF6B00",
+  "categories": [
+    "social",
+    "productivity",
+    "education",
+    "utilities"
+  ],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./screenshots/via-feed.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "VIA swipe feed — Bharat's stories"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Explore Tools",
+      "short_name": "Tools",
+      "description": "Browse 73+ free tools",
+      "url": "./tools/spec-builder/index.html",
+      "icons": [
+        {
+          "src": "./icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "StudyOS",
+      "short_name": "Study",
+      "description": "Structured learning platform",
+      "url": "./StudyOS/index.html",
+      "icons": [
+        {
+          "src": "./icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "GN8R Bot",
+      "short_name": "GN8R",
+      "description": "AI command center on Telegram",
+      "url": "https://t.me/GN8RBot",
+      "icons": [
+        {
+          "src": "./icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
