@@ -1,6 +1,7 @@
 {
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
+  "branch": "simba/implement-a-core-backend-module-called-via-swarm",
   "branch": "simba/implement-a-core-backend-module-called-via-self-",
   "branch": "simba/implement-a-core-backend-module-called-via-perso",
   "branch": "simba/implement-a-core-backend-module-called-via-budge",

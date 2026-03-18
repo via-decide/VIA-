@@ -1,3 +1,9 @@
+Branch: simba/implement-a-core-backend-module-called-via-swarm
+Title: Implement a core backend module called via-swarm-security-sandbox to ...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Enable "Permissionless Innovation." In a decentralized ecosystem, developers may want to contribute new agents or tools. This sandbox ensures that the VIA backend can run third-party code with total confidence, knowing that a malicious or poorly written agent cannot steal user data, crash the server, or escalate its privileges.
 Branch: simba/implement-a-core-backend-module-called-via-self-
 Title: Implement a core backend module called via-self-evolution-monitor to ...
 
