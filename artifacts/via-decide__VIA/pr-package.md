@@ -1,3 +1,9 @@
+Branch: simba/implement-contentfreshnessscorer-for-feed-rankin
+Title: Implement ContentFreshnessScorer for feed ranking.
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Keep feed dynamic.
 Branch: simba/implement-postremixengine-for-forking-content
 Title: Implement PostRemixEngine for forking content.
 

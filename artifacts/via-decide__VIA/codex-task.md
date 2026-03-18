@@ -1,6 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
+Implement ContentFreshnessScorer for feed ranking.
+
+CONSTRAINTS
+No external libs.
 Implement PostRemixEngine for forking content.
 
 CONSTRAINTS

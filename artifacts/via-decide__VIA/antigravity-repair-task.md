@@ -4,6 +4,7 @@ TARGET
 Validate and repair only the files touched by the previous implementation.
 
 TASK
+Implement ContentFreshnessScorer for feed ranking.
 Implement PostRemixEngine for forking content.
 Implement ContextMemoryLayer for session continuity.
 Implement ToolOutputNormalizer for standardizing tool outputs.

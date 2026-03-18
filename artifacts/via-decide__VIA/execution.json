@@ -1,6 +1,7 @@
 {
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
+  "branch": "simba/implement-contentfreshnessscorer-for-feed-rankin",
   "branch": "simba/implement-postremixengine-for-forking-content",
   "branch": "simba/implement-contextmemorylayer-for-session-continu",
   "branch": "simba/implement-tooloutputnormalizer-for-standardizing",
