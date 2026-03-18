@@ -1,9 +1,9 @@
-Branch: simba/we-need-to-replace-the-external-tool-redirects-o
-Title: We need to replace the external tool redirects on the social feed car...
+Branch: simba/we-need-to-transform-the-single-player-swipe-dec
+Title: We need to transform the single-player swipe deck into a synchronous,...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Keep the user inside the VIA ecosystem. When they swipe right or click "Open" on a viral story card, they should get a seamless, instant, full-screen reading experience populated with realistic localized data, rather than being bounced to an external tool URL.
+- Goal: Make the VIA platform feel "Alive." Even if a user is just passively reading the Bihar AgriTech story, seeing a sudden burst of 🚀 and 🔥 emojis float up their screen from other users across Bharat creates an immediate, visceral sense of community and synchronous presence.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
