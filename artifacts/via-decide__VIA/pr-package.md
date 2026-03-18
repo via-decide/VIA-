@@ -1,3 +1,9 @@
+Branch: simba/implement-tooloutputnormalizer-for-standardizing
+Title: Implement ToolOutputNormalizer for standardizing tool outputs.
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Ensure compatibility across all tools and feed.
 Branch: simba/implement-decisionconfidencemeter-to-score-conte
 Title: Implement DecisionConfidenceMeter to score content quality.
 

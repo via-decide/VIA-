@@ -1,6 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
+Implement ToolOutputNormalizer for standardizing tool outputs.
+
+CONSTRAINTS
+Max nesting depth = 3
 Implement DecisionConfidenceMeter to score content quality.
 
 CONSTRAINTS

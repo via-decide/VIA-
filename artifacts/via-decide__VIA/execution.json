@@ -1,6 +1,7 @@
 {
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
+  "branch": "simba/implement-tooloutputnormalizer-for-standardizing",
   "branch": "simba/implement-decisionconfidencemeter-to-score-conte",
   "branch": "simba/implement-progressivefeedengine-for-content-prio",
   "branch": "simba/implement-executionhooksengine-to-attach-actions",
