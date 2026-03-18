@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="./shared/tool-storage.js"></script>
+<script src="./shared/social-core.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -152,7 +154,6 @@ html,body{
   border-radius:0;
   overflow:hidden;
   cursor:grab;
-  transition:transform .35s cubic-bezier(.16,1,.3,1), opacity .35s ease;
   will-change:transform;
   touch-action:none;
 }
@@ -351,17 +352,7 @@ html,body{
 .sheet-btn-arrow{color:var(--muted);font-size:.9rem}
 
 /* ── LAYER TRANSITION ── */
-.layer-enter{animation:layerIn .4s cubic-bezier(.16,1,.3,1) forwards}
-.layer-exit{animation:layerOut .3s ease forwards}
-@keyframes layerIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes layerOut{from{opacity:1}to{opacity:0;transform:translateY(-10px)}}
-
 /* ── CARD SWIPE STATES ── */
-.card.swipe-up{animation:swipeUp .35s ease forwards}
-.card.swipe-prev{animation:swipePrev .35s ease forwards}
-@keyframes swipeUp{to{transform:translateY(-110vh);opacity:0}}
-@keyframes swipePrev{to{transform:translateY(110vh);opacity:0}}
-
 /* ── LIKE BURST ── */
 .like-burst{
   position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
@@ -475,6 +466,148 @@ html,body{
   .sheet.open{transform:translateX(-50%) translateY(0)}
   .sheet-overlay{background:rgba(0,0,0,.7)}
 }
+
+/* ── GESTURE ENGINE CSS ── */
+
+/* Tilt color overlay — liquid feedback during horizontal drag */
+.card-tilt-overlay {
+  position: absolute; inset: 0; pointer-events: none;
+  z-index: 4; border-radius: 0;
+  transition: background .08s ease;
+}
+
+/* Direction hint labels */
+.card-dir-hint {
+  position: absolute; top: 5rem; pointer-events: none;
+  z-index: 5; font-family: 'DM Sans', sans-serif;
+  font-size: .75rem; font-weight: 900; letter-spacing: .14em;
+  text-transform: uppercase; opacity: 0;
+  padding: .35rem .85rem; border-radius: 8px;
+  border: 2px solid currentColor;
+  transition: opacity .08s ease;
+}
+.card-dir-hint.like  { left: 1.2rem; color: #FF6B00;
+  background: rgba(255,107,0,.18); }
+.card-dir-hint.more  { right: 1.2rem; color: #6C63FF;
+  background: rgba(108,99,255,.18); }
+
+/* Affirmation ripple */
+.affirmation-ripple {
+  position: fixed; pointer-events: none; z-index: 500;
+  transform: translate(-50%, -50%);
+}
+.ripple-ring {
+  position: absolute; border-radius: 50%;
+  border: 2.5px solid #FF6B00; opacity: 0;
+  animation: rippleExpand .65s ease-out forwards;
+}
+.ripple-ring:nth-child(2) { animation-delay: .12s; }
+.ripple-ring:nth-child(3) { animation-delay: .24s; }
+@keyframes rippleExpand {
+  from { width: 0; height: 0; opacity: .9;
+         left: 50%; top: 50%; }
+  to   { width: 220px; height: 220px; opacity: 0;
+         left: calc(50% - 110px); top: calc(50% - 110px); }
+}
+.ripple-burst {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3.5rem;
+  animation: burstScale .55s ease-out forwards;
+}
+@keyframes burstScale {
+  0%   { opacity: 0; transform: translate(-50%,-50%) scale(.3); }
+  50%  { opacity: 1; transform: translate(-50%,-50%) scale(1.4); }
+  100% { opacity: 0; transform: translate(-50%,-50%) scale(1.1); }
+}
+
+/* Thumb zone radial guide */
+.thumb-zone-guide {
+  position: absolute; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 320px; height: 200px;
+  background: radial-gradient(
+    ellipse at 50% 100%,
+    rgba(255,107,0,.065) 0%,
+    rgba(255,107,0,.02) 45%,
+    transparent 70%
+  );
+  pointer-events: none; z-index: 1;
+  border-radius: 50% 50% 0 0;
+  animation: thumbPulse 4s ease-in-out infinite;
+}
+@keyframes thumbPulse {
+  0%, 100% { opacity: .55; }
+  50%       { opacity: 1; }
+}
+
+/* Pull-to-refresh indicator */
+.pull-indicator {
+  position: absolute; top: 4rem; left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  color: var(--saffron, #FF6B00); font-size: 1.4rem;
+  pointer-events: none; z-index: 30; opacity: 0;
+  transition: opacity .2s ease;
+}
+.pull-indicator.visible { opacity: 1; }
+
+/* Action ribbon (left swipe) */
+.action-ribbon {
+  position: fixed; bottom: 5rem; left: 0; right: 0;
+  display: flex; justify-content: center; gap: .75rem;
+  padding: .75rem 1.2rem; z-index: 150;
+  transform: translateX(110%);
+  transition: transform .32s cubic-bezier(.16,1,.3,1);
+}
+.action-ribbon.open { transform: translateX(0); }
+.ribbon-btn {
+  flex: 1; max-width: 90px; height: 52px;
+  border-radius: 14px; border: 1px solid rgba(255,255,255,.12);
+  background: rgba(28,28,56,.95);
+  color: var(--tx, #e8f4f8);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .68rem; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: .2rem;
+  cursor: pointer; backdrop-filter: blur(16px);
+  transition: background .15s, transform .15s;
+}
+.ribbon-btn:active { transform: scale(.93);
+  background: rgba(255,107,0,.18); }
+.ribbon-btn .rb-icon { font-size: 1.1rem; }
+
+/* Accessible mode toggle */
+.a11y-toggle {
+  background: transparent; border: none; cursor: pointer;
+  font-size: .95rem; opacity: .35; transition: opacity .2s;
+  padding: .2rem; line-height: 1;
+}
+.a11y-toggle.active { opacity: 1; }
+
+/* Accessible mode big buttons */
+.card-a11y-actions {
+  display: none; position: absolute;
+  bottom: 5.5rem; left: 0; right: 0;
+  justify-content: center; gap: 1rem;
+  padding: 0 1.5rem; z-index: 5;
+}
+body.a11y-mode .card-a11y-actions { display: flex !important; }
+body.a11y-mode .card-actions { opacity: 0; pointer-events: none; }
+.a11y-btn {
+  width: 64px; height: 64px; border-radius: 16px;
+  border: 2px solid rgba(255,255,255,.25);
+  background: rgba(11,11,26,.88);
+  color: #fff; font-size: 1.6rem;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-family: inherit;
+  box-shadow: 0 4px 16px rgba(0,0,0,.5);
+  backdrop-filter: blur(12px);
+}
+.a11y-btn:focus-visible {
+  outline: 3px solid #F5C518; outline-offset: 3px;
+}
+
 </style>
 </head>
 <body>
@@ -495,6 +628,7 @@ html,body{
   <div class="status-bar">
     <div class="status-logo">VIA</div>
     <div class="status-xp"><div class="xp-dot"></div><span id="xp-counter">0 XP</span></div>
+    <button class="a11y-toggle" id="a11y-toggle" onclick="toggleA11y()" aria-label="Toggle accessible mode">♿</button>
   </div>
 
   <!-- LAYER TABS -->
@@ -505,7 +639,24 @@ html,body{
   </div>
 
   <!-- DECK -->
-  <div id="deck"></div>
+  <div id="deck">
+    <div class="thumb-zone-guide" aria-hidden="true"></div>
+    <div class="pull-indicator" id="pull-indicator">↓ release to refresh</div>
+    <div class="action-ribbon" id="action-ribbon">
+      <button class="ribbon-btn" onclick="ribbonAction('share')">
+        <span class="rb-icon">📤</span>Share
+      </button>
+      <button class="ribbon-btn" onclick="ribbonAction('save')">
+        <span class="rb-icon">🔖</span>Save
+      </button>
+      <button class="ribbon-btn" onclick="ribbonAction('report')">
+        <span class="rb-icon">🚩</span>Report
+      </button>
+      <button class="ribbon-btn" onclick="closeRibbon()">
+        <span class="rb-icon">✕</span>Close
+      </button>
+    </div>
+  </div>
 
   <!-- DISCOVER LAYER -->
   <div id="layer-discover" style="display:none;position:absolute;inset:0">
@@ -572,17 +723,29 @@ html,body{
 
 <script>
 // ── VIA AUTH LAYER ──────────────────────────────────────────
-// ── REPLACE THESE WITH YOUR SUPABASE PROJECT CREDENTIALS ──
-// Get them at: https://app.supabase.com → Settings → API
-const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
-const SUPABASE_CONFIGURED =
-  !SUPABASE_URL.includes('YOUR_PROJECT') &&
-  SUPABASE_ANON_KEY !== 'YOUR_ANON_KEY';
+const supabaseConfig = window.DatabaseService && typeof window.DatabaseService.getConfig === 'function'
+  ? window.DatabaseService.getConfig()
+  : {
+      url: 'https://YOUR_PROJECT.supabase.co',
+      anonKey: 'YOUR_ANON_KEY',
+      isConfigured: false
+    };
+const SUPABASE_URL = supabaseConfig.url;
+const SUPABASE_ANON_KEY = supabaseConfig.anonKey;
+const SUPABASE_CONFIGURED = Boolean(supabaseConfig.isConfigured);
 
-const supabase = (typeof window.supabase !== 'undefined' && SUPABASE_CONFIGURED)
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-  : null;
+const supabase = window.DatabaseService && typeof window.DatabaseService.getClient === 'function'
+  ? window.DatabaseService.getClient()
+  : ((typeof window.supabase !== 'undefined' && SUPABASE_CONFIGURED)
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    : null);
+
+function prepareSocialProfile(profile) {
+  if (window.SocialCore && typeof window.SocialCore.bootstrapProfile === 'function') {
+    return window.SocialCore.bootstrapProfile(profile) || profile;
+  }
+  return profile;
+}
 
 const VIA = {
   user: null,
@@ -600,13 +763,13 @@ const VIA = {
             .single();
 
           if (!error && profile) {
-            this.user = profile;
+            this.user = prepareSocialProfile(profile);
             localStorage.setItem('via_user', JSON.stringify(this.user));
             this.applyToUI();
             return;
           }
 
-          const fallbackProfile = {
+          const fallbackProfile = prepareSocialProfile({
             id: session.user.id,
             display_name: session.user.user_metadata?.name || 'VIA User',
             username: session.user.user_metadata?.username || 'user',
@@ -614,8 +777,9 @@ const VIA = {
             avatar_emoji: '🌟',
             xp: 0,
             followers: 0,
+            following: 0,
             posts: 0
-          };
+          });
           this.user = fallbackProfile;
           localStorage.setItem('via_user', JSON.stringify(this.user));
           this.applyToUI();
@@ -629,7 +793,7 @@ const VIA = {
     const stored = localStorage.getItem('via_user');
     if (stored) {
       try {
-        this.user = JSON.parse(stored);
+        this.user = prepareSocialProfile(JSON.parse(stored));
         this.applyToUI();
         return;
       } catch (error) {
@@ -642,6 +806,7 @@ const VIA = {
 
   applyToUI() {
     if (!this.user) return;
+    this.user = prepareSocialProfile(this.user);
     const nameEl = document.querySelector('.profile-name');
     const handleEl = document.querySelector('.profile-handle');
     if (nameEl) nameEl.textContent = this.user.display_name || this.user.name || 'VIA User';
@@ -676,6 +841,7 @@ const VIA = {
         console.warn('Supabase XP save failed:', error);
       }
     }
+    this.user = prepareSocialProfile(this.user);
     localStorage.setItem('via_user', JSON.stringify(this.user));
   },
 
@@ -782,10 +948,393 @@ let currentCard = 0;
 let xp = 0;
 let isAnimating = false;
 let activeLayer = 'feed';
-let touchStartY = 0;
-let touchStartX = 0;
-let isDragging = false;
-let dragDeltaY = 0;
+
+// ── DECK — pre-render all cards once ────────────────────────
+function buildDeck() {
+  const deck = document.getElementById('deck');
+  // Remove only card elements, preserve thumb-zone, pull-indicator, ribbon
+  Array.from(deck.children).forEach(el => {
+    if (el.classList.contains('card')) el.remove();
+  });
+  for (let i = CARDS.length - 1; i >= 0; i--) {
+    deck.insertBefore(makeCard(i), deck.firstChild);
+  }
+  positionAllCards(false);
+  updateProgressDots();
+}
+
+function makeCard(index) {
+  const d = CARDS[index];
+  if (!d) return document.createElement('div');
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.id = 'card-' + index;
+  card.dataset.index = index;
+  const catClass = {
+    viral:'cat-viral', bharat:'cat-bharat', tech:'cat-tech',
+    sport:'cat-sport', culture:'cat-culture', create:'cat-create'
+  }[d.cat] || 'cat-viral';
+  card.innerHTML =
+    '<div class="card-tilt-overlay"></div>' +
+    '<div class="card-dir-hint like">❤ LIKE</div>' +
+    '<div class="card-dir-hint more">⚡ MORE</div>' +
+    '<div class="card-bg" style="background:' + d.bg + '">' +
+      '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(6rem,30vw,12rem);opacity:.15;pointer-events:none">' + d.emoji + '</div>' +
+    '</div>' +
+    '<div class="card-actions">' +
+      '<div class="action-btn" onclick="likeCard(' + index + ')">' +
+        '<div class="action-icon">🔥</div>' +
+        '<div class="action-label" id="like-label-' + index + '">' + d.likes + '</div>' +
+      '</div>' +
+      '<div class="action-btn" onclick="openRibbon(' + index + ')">' +
+        '<div class="action-icon">📤</div>' +
+        '<div class="action-label">More</div>' +
+      '</div>' +
+      '<div class="action-btn" onclick="openSheet(\'comment\')">' +
+        '<div class="action-icon">💬</div>' +
+        '<div class="action-label">Discuss</div>' +
+      '</div>' +
+      (!d.cta ? '<div class="action-btn" onclick="handleRedirect(\'' + d.redirect + '\')"><div class="action-icon">🔗</div><div class="action-label">Open</div></div>' : '') +
+    '</div>' +
+    '<div class="card-a11y-actions">' +
+      '<button class="a11y-btn" onclick="likeCard(' + index + ')" aria-label="Like">❤️</button>' +
+      '<button class="a11y-btn" onclick="openRibbon(' + index + ')" aria-label="Options">⚡</button>' +
+      '<button class="a11y-btn" onclick="nextCard()" aria-label="Next">↑</button>' +
+    '</div>' +
+    '<div class="card-content">' +
+      '<div class="chip card-category ' + catClass + '">' + d.catLabel + '</div>' +
+      '<div class="card-title">' + d.title + '</div>' +
+      '<div class="card-meta">' +
+        '<div class="card-avatar">' + d.authorEmoji + '</div>' +
+        '<span>' + d.author + '</span>' +
+        '<div class="card-dot"></div>' +
+        '<span>' + d.location + '</span>' +
+        '<div class="card-dot"></div>' +
+        '<span>' + d.time + '</span>' +
+      '</div>' +
+    '</div>';
+  return card;
+}
+
+function positionAllCards(animated) {
+  const T = 'transform .34s cubic-bezier(.16,1,.3,1), opacity .28s ease';
+  for (let i = 0; i < CARDS.length; i++) {
+    const card = document.getElementById('card-' + i);
+    if (!card) continue;
+    const off = i - currentCard;
+    card.style.transition = animated ? T : 'none';
+    if (off < 0) {
+      card.style.transform = 'translateY(-110vh)';
+      card.style.opacity = '0'; card.style.zIndex = '0';
+      card.style.pointerEvents = 'none';
+    } else if (off === 0) {
+      card.style.transform = 'translateY(0) scale(1)';
+      card.style.opacity = '1'; card.style.zIndex = '10';
+      card.style.pointerEvents = 'auto';
+    } else if (off === 1) {
+      card.style.transform = 'translateY(16px) scale(0.96)';
+      card.style.opacity = '0.65'; card.style.zIndex = '9';
+      card.style.pointerEvents = 'none';
+    } else if (off === 2) {
+      card.style.transform = 'translateY(28px) scale(0.92)';
+      card.style.opacity = '0.35'; card.style.zIndex = '8';
+      card.style.pointerEvents = 'none';
+    } else {
+      card.style.transform = 'translateY(60px) scale(0.88)';
+      card.style.opacity = '0'; card.style.zIndex = '7';
+      card.style.pointerEvents = 'none';
+    }
+  }
+}
+
+function getTopCard() {
+  return document.getElementById('card-' + currentCard);
+}
+
+// ── GESTURE CONTROLLER ───────────────────────────────────────
+const GC = {
+  VT: 0.3,
+  LOCK: 8,
+  VTH: 0.17,
+  HTH: 0.22,
+  PF_MS: 50,
+  active: false, startX: 0, startY: 0, startTime: 0,
+  curX: 0, curY: 0, axis: null, pfFired: false,
+
+  init() {
+    const deck = document.getElementById('deck');
+    deck.addEventListener('touchstart', e => {
+      if (isAnimating || activeLayer !== 'feed') return;
+      const t = e.touches[0];
+      this.begin(t.clientX, t.clientY);
+    }, { passive: true });
+    deck.addEventListener('touchmove', e => {
+      if (!this.active) return;
+      e.preventDefault();
+      const t = e.touches[0];
+      this.track(t.clientX, t.clientY);
+    }, { passive: false });
+    deck.addEventListener('touchend', () => this.commit(), { passive: true });
+    deck.addEventListener('touchcancel', () => this.reset(), { passive: true });
+    deck.addEventListener('mousedown', e => {
+      if (e.target.closest('.action-btn,.a11y-btn,.action-ribbon,.ribbon-btn')) return;
+      if (isAnimating || activeLayer !== 'feed') return;
+      this.begin(e.clientX, e.clientY);
+      const mv = ev => this.track(ev.clientX, ev.clientY);
+      const up = () => {
+        this.commit();
+        window.removeEventListener('mousemove', mv);
+        window.removeEventListener('mouseup', up);
+      };
+      window.addEventListener('mousemove', mv);
+      window.addEventListener('mouseup', up);
+    });
+  },
+
+  begin(x, y) {
+    this.active = true; this.axis = null; this.pfFired = false;
+    this.startX = this.curX = x;
+    this.startY = this.curY = y;
+    this.startTime = Date.now();
+    const card = getTopCard();
+    if (card) card.style.transition = 'none';
+  },
+
+  track(x, y) {
+    if (!this.active) return;
+    this.curX = x; this.curY = y;
+    const dx = x - this.startX, dy = y - this.startY;
+    const adx = Math.abs(dx), ady = Math.abs(dy);
+
+    if (!this.axis && Math.max(adx, ady) > this.LOCK) {
+      this.axis = ady > adx ? 'v' : 'h';
+    }
+    if (!this.axis) return;
+
+    if (!this.pfFired && (Date.now() - this.startTime) >= this.PF_MS) {
+      const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+      const dom = this._dominant(angle);
+      if (dom) { this._prefetch(dom); this.pfFired = true; }
+    }
+
+    const card = getTopCard();
+    if (!card) return;
+
+    if (this.axis === 'v') {
+      const ty = dy > 0 ? dy * 0.38 : dy;
+      const op = dy < 0 ? Math.max(0.35, 1 + dy / (window.innerHeight * 0.55)) : 1;
+      card.style.transform = 'translateY(' + ty + 'px)';
+      card.style.opacity = op;
+
+      if (currentCard === 0 && dy > 20) {
+        const pi = document.getElementById('pull-indicator');
+        if (pi) {
+          pi.classList.add('visible');
+          pi.style.transform = 'translateX(-50%) translateY(' + Math.min(dy * 0.4, 50) + 'px)';
+        }
+      }
+
+    } else {
+      const tx = dx;
+      const rot = Math.max(-8, Math.min(8, dx * 0.06));
+      const op = Math.max(0.4, 1 - Math.abs(dx) / (window.innerWidth * 0.7));
+      card.style.transform = 'translateX(' + tx + 'px) rotate(' + rot + 'deg)';
+      card.style.opacity = op;
+
+      const overlay = card.querySelector('.card-tilt-overlay');
+      if (overlay) {
+        if (dx > 30) {
+          overlay.style.background = 'rgba(255,107,0,' + Math.min(dx / window.innerWidth * 0.6, 0.32) + ')';
+        } else if (dx < -30) {
+          overlay.style.background = 'rgba(108,99,255,' + Math.min(-dx / window.innerWidth * 0.6, 0.32) + ')';
+        } else {
+          overlay.style.background = 'transparent';
+        }
+      }
+
+      const likeHint = card.querySelector('.card-dir-hint.like');
+      const moreHint = card.querySelector('.card-dir-hint.more');
+      if (likeHint) likeHint.style.opacity = dx > 0 ? Math.min(dx / 80, 1) : 0;
+      if (moreHint) moreHint.style.opacity = dx < 0 ? Math.min(-dx / 80, 1) : 0;
+    }
+  },
+
+  commit() {
+    if (!this.active) return;
+    this.active = false;
+    this._hidePullIndicator();
+    const card = getTopCard();
+    if (!card) { this.reset(); return; }
+
+    const dx = this.curX - this.startX;
+    const dy = this.curY - this.startY;
+    const dt = Math.max(1, Date.now() - this.startTime);
+    const speed = Math.sqrt(dx * dx + dy * dy) / dt;
+
+    this._clearOverlays(card);
+
+    if (speed < this.VT) { this._snapBack(card); this.axis = null; return; }
+
+    if (this.axis === 'v') {
+      const th = window.innerHeight * this.VTH;
+      if (dy < -th) this._commitUp(card);
+      else if (dy > th) this._commitDown(card);
+      else this._snapBack(card);
+    } else if (this.axis === 'h') {
+      const th = window.innerWidth * this.HTH;
+      if (dx > th) this._commitRight(card);
+      else if (dx < -th) this._commitLeft(card);
+      else this._snapBack(card);
+    } else {
+      this._snapBack(card);
+    }
+    this.axis = null;
+  },
+
+  reset() {
+    this.active = false; this.axis = null;
+    this._hidePullIndicator();
+    const card = getTopCard();
+    if (card) { this._clearOverlays(card); this._snapBack(card); }
+  },
+
+  _dominant(angle) {
+    if (angle > -45 && angle <= 45) return 'right';
+    if (angle > 45 && angle <= 135) return 'down';
+    if (angle > 135 || angle <= -135) return 'left';
+    if (angle > -135 && angle <= -45) return 'up';
+    return null;
+  },
+
+  _prefetch(direction) {
+    const hash = (s => { let h = 0; for (let c of s) h = ((h << 5) - h) + c.charCodeAt(0) | 0; return (h >>> 0).toString(16); })
+      (direction + ':' + currentCard + ':' + Math.floor(Date.now() / 1000));
+    sessionStorage.setItem('via_prefetch', JSON.stringify(
+      { direction, index: currentCard, hash, ts: Date.now() }
+    ));
+  },
+
+  _snapBack(card) {
+    card.style.transition = 'transform .3s cubic-bezier(.16,1,.3,1), opacity .25s ease';
+    card.style.transform = 'translateY(0) scale(1)';
+    card.style.opacity = '1';
+  },
+
+  _clearOverlays(card) {
+    const ov = card.querySelector('.card-tilt-overlay');
+    if (ov) ov.style.background = 'transparent';
+    card.querySelectorAll('.card-dir-hint').forEach(h => h.style.opacity = 0);
+  },
+
+  _hidePullIndicator() {
+    const pi = document.getElementById('pull-indicator');
+    if (pi) {
+      pi.classList.remove('visible');
+      pi.style.transform = 'translateX(-50%) translateY(-20px)';
+    }
+  },
+
+  _commitUp(card) {
+    if (currentCard >= CARDS.length - 1) { this._snapBack(card); return; }
+    isAnimating = true; addXP(15);
+    card.style.transition = 'transform .3s cubic-bezier(.4,0,.6,1), opacity .25s ease';
+    card.style.transform = 'translateY(-110vh)';
+    card.style.opacity = '0';
+    currentCard++;
+    setTimeout(() => {
+      positionAllCards(true); updateProgressDots();
+      setTimeout(() => { isAnimating = false; }, 360);
+    }, 80);
+  },
+
+  _commitDown(card) {
+    if (currentCard === 0) {
+      const dy = this.curY - this.startY;
+      if (dy > 80) {
+        this._snapBack(card);
+        setTimeout(() => { currentCard = 0; buildDeck(); }, 320);
+        return;
+      }
+      this._snapBack(card); return;
+    }
+    isAnimating = true;
+    card.style.transition = 'transform .3s cubic-bezier(.4,0,.6,1)';
+    card.style.transform = 'translateY(110vh)';
+    currentCard--;
+    const prev = getTopCard();
+    if (prev) {
+      prev.style.transition = 'none';
+      prev.style.transform = 'translateY(-40px)';
+      prev.style.opacity = '0'; prev.style.zIndex = '11';
+    }
+    requestAnimationFrame(() => { requestAnimationFrame(() => {
+      if (prev) {
+        prev.style.transition = 'transform .34s cubic-bezier(.16,1,.3,1), opacity .28s ease';
+        prev.style.transform = 'translateY(0) scale(1)';
+        prev.style.opacity = '1'; prev.style.pointerEvents = 'auto';
+      }
+      positionAllCards(true); updateProgressDots();
+      setTimeout(() => { isAnimating = false; }, 380);
+    }); });
+  },
+
+  _commitRight(card) {
+    likeCard(currentCard);
+    this._snapBack(card);
+  },
+
+  _commitLeft(card) {
+    this._snapBack(card);
+    openRibbon(currentCard);
+  }
+};
+
+// ── NAVIGATION ───────────────────────────────────────────────
+function nextCard() {
+  if (isAnimating || currentCard >= CARDS.length - 1) return;
+  const card = getTopCard(); if (card) GC._commitUp(card);
+}
+function prevCard() {
+  if (isAnimating || currentCard <= 0) return;
+  const card = getTopCard(); if (card) GC._commitDown(card);
+}
+
+// ── LIKE ─────────────────────────────────────────────────────
+function likeCard(index) {
+  addXP(5);
+  const wrap = document.createElement('div');
+  wrap.className = 'affirmation-ripple';
+  wrap.style.left = '50%'; wrap.style.top = '50%';
+  for (let i = 0; i < 3; i++) {
+    const r = document.createElement('div'); r.className = 'ripple-ring';
+    wrap.appendChild(r);
+  }
+  const b = document.createElement('div'); b.className = 'ripple-burst';
+  b.textContent = '🔥'; wrap.appendChild(b);
+  document.body.appendChild(wrap);
+  setTimeout(() => wrap.remove(), 850);
+}
+
+// ── ACTION RIBBON ────────────────────────────────────────────
+function openRibbon(index) {
+  document.getElementById('action-ribbon').classList.add('open');
+}
+function closeRibbon() {
+  document.getElementById('action-ribbon').classList.remove('open');
+}
+function ribbonAction(type) {
+  closeRibbon(); addXP(5);
+  openSheet(type === 'share' ? 'share' : type === 'save' ? 'comment' : 'comment');
+}
+
+// ── ACCESSIBLE MODE ──────────────────────────────────────────
+let a11yMode = false;
+function toggleA11y() {
+  a11yMode = !a11yMode;
+  document.body.classList.toggle('a11y-mode', a11yMode);
+  document.getElementById('a11y-toggle').classList.toggle('active', a11yMode);
+  localStorage.setItem('via_a11y', a11yMode);
+}
 
 // ── BOOT ─────────────────────────────────────────────────────
 window.addEventListener('load', async () => {
@@ -798,6 +1347,7 @@ window.addEventListener('load', async () => {
     document.getElementById('boot').classList.add('exit');
     document.getElementById('app').classList.add('visible');
     buildDeck();
+    GC.init();
     buildDiscover();
     buildProfile();
     buildProgressDots();
@@ -805,174 +1355,18 @@ window.addEventListener('load', async () => {
   }, 2600);
 });
 
-// ── DECK ─────────────────────────────────────────────────────
-function buildDeck() {
-  const deck = document.getElementById('deck');
-  deck.innerHTML = '';
-  // Render next 3 cards stacked
-  for (let i = Math.min(currentCard + 2, CARDS.length - 1); i >= currentCard; i--) {
-    deck.appendChild(makeCard(i));
-  }
-  updateProgressDots();
-}
-
-function makeCard(index) {
-  const d = CARDS[index];
-  if (!d) return document.createDocumentFragment();
-
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.dataset.index = index;
-
-  const scale = index === currentCard ? 1 : 0.96 - (index - currentCard) * 0.02;
-  const ty = index === currentCard ? 0 : (index - currentCard) * 12;
-  card.style.transform = `scale(${scale}) translateY(${ty}px)`;
-  card.style.zIndex = CARDS.length - index;
-
-  const catClass = {'viral':'cat-viral','bharat':'cat-bharat','tech':'cat-tech','sport':'cat-sport','culture':'cat-culture','create':'cat-create'}[d.cat];
-
-  card.innerHTML = `
-    <div class="card-bg" style="background:${d.bg}">
-      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(6rem,30vw,12rem);opacity:.15;pointer-events:none">${d.emoji}</div>
-    </div>
-    <div class="card-actions">
-      <div class="action-btn" onclick="handleLike(event,${index})">
-        <div class="action-icon">🔥</div>
-        <div class="action-label">${d.likes}</div>
-      </div>
-      <div class="action-btn" onclick="openSheet('share')">
-        <div class="action-icon">📤</div>
-        <div class="action-label">Share</div>
-      </div>
-      <div class="action-btn" onclick="openSheet('comment')">
-        <div class="action-icon">💬</div>
-        <div class="action-label">Discuss</div>
-      </div>
-      ${d.cta ? '' : `<div class="action-btn" onclick="handleRedirect('${d.redirect}')"><div class="action-icon">🔗</div><div class="action-label">Open</div></div>`}
-    </div>
-    <div class="card-content">
-      <div class="chip card-category ${catClass}">${d.catLabel}</div>
-      <div class="card-title">${d.title}</div>
-      <div class="card-meta">
-        <div class="card-avatar">${d.authorEmoji}</div>
-        <span>${d.author}</span>
-        <div class="card-dot"></div>
-        <span>${d.location}</span>
-        <div class="card-dot"></div>
-        <span>${d.time}</span>
-      </div>
-    </div>
-  `;
-
-  // Touch events
-  card.addEventListener('touchstart', onTouchStart, {passive:true});
-  card.addEventListener('touchmove', onTouchMove, {passive:false});
-  card.addEventListener('touchend', onTouchEnd);
-  // Mouse events
-  card.addEventListener('mousedown', onMouseDown);
-
-  return card;
-}
-
-// ── SWIPE LOGIC ───────────────────────────────────────────────
-function onTouchStart(e) {
-  if (isAnimating) return;
-  touchStartY = e.touches[0].clientY;
-  touchStartX = e.touches[0].clientX;
-  isDragging = true;
-  dragDeltaY = 0;
-}
-function onTouchMove(e) {
-  if (!isDragging) return;
-  e.preventDefault();
-  dragDeltaY = e.touches[0].clientY - touchStartY;
-  const deltaX = Math.abs(e.touches[0].clientX - touchStartX);
-  if (Math.abs(dragDeltaY) < deltaX) return;
-  const card = getTopCard();
-  if (card) {
-    const progress = Math.max(0, -dragDeltaY / window.innerHeight);
-    card.style.transform = `translateY(${Math.min(0, dragDeltaY)}px) rotate(${dragDeltaY * 0.01}deg)`;
-    card.style.opacity = 1 - progress * 0.5;
-  }
-}
-function onTouchEnd() {
-  if (!isDragging) return;
-  isDragging = false;
-  if (dragDeltaY < -80) {
-    nextCard();
-  } else if (dragDeltaY > 80) {
-    prevCard();
-  } else {
-    const card = getTopCard();
-    if (card) {
-      card.style.transition = 'transform .3s ease, opacity .3s ease';
-      card.style.transform = 'translateY(0) rotate(0deg)';
-      card.style.opacity = '1';
-    }
-  }
-}
-
-// Mouse drag
-let mouseStart = 0;
-function onMouseDown(e) {
-  mouseStart = e.clientY;
-  const move = (ev) => {
-    const delta = ev.clientY - mouseStart;
-    const card = getTopCard();
-    if (card) card.style.transform = `translateY(${Math.min(0,delta)}px)`;
-  };
-  const up = (ev) => {
-    const delta = ev.clientY - mouseStart;
-    if (delta < -80) nextCard();
-    else if (delta > 80) prevCard();
-    else { const card = getTopCard(); if (card) { card.style.transition = 'transform .3s ease'; card.style.transform = 'translateY(0)'; }}
-    window.removeEventListener('mousemove', move);
-    window.removeEventListener('mouseup', up);
-  };
-  window.addEventListener('mousemove', move);
-  window.addEventListener('mouseup', up);
-}
-
-function getTopCard() {
-  return document.querySelector(`.card[data-index="${currentCard}"]`);
-}
-
-function nextCard() {
-  if (isAnimating || currentCard >= CARDS.length - 1) return;
-  isAnimating = true;
-  const card = getTopCard();
-  if (card) {
-    card.classList.add('swipe-up');
-    addXP(15);
-    setTimeout(() => {
-      currentCard++;
-      buildDeck();
-      isAnimating = false;
-    }, 350);
-  }
-}
-
-function prevCard() {
-  if (isAnimating || currentCard <= 0) return;
-  isAnimating = true;
-  currentCard--;
-  buildDeck();
-  const card = getTopCard();
-  if (card) {
-    card.style.transform = 'translateY(110vh)';
-    requestAnimationFrame(() => {
-      card.style.transition = 'transform .4s cubic-bezier(.16,1,.3,1)';
-      card.style.transform = 'translateY(0)';
-    });
-  }
-  setTimeout(() => { isAnimating = false; }, 400);
+if (localStorage.getItem('via_a11y') === 'true') {
+  a11yMode = true;
+  document.body.classList.add('a11y-mode');
+  const btn = document.getElementById('a11y-toggle');
+  if (btn) btn.classList.add('active');
 }
 
 // ── KEYBOARD ─────────────────────────────────────────────────
 document.addEventListener('keydown', e => {
   if (activeLayer !== 'feed') return;
-  if (e.key === 'ArrowUp' || e.key === 'ArrowRight') nextCard();
-  if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') prevCard();
+  if (e.key === 'ArrowUp'   || e.key === 'ArrowRight') nextCard();
+  if (e.key === 'ArrowDown' || e.key === 'ArrowLeft')  prevCard();
 });
 
 // ── PROGRESS DOTS ─────────────────────────────────────────────
