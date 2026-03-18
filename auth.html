@@ -215,9 +215,9 @@ input.error,select.error{border-color:#ff6b6b}
 const supabaseConfig = window.DatabaseService && typeof window.DatabaseService.getConfig === 'function'
   ? window.DatabaseService.getConfig()
   : {
-      url: 'https://YOUR_PROJECT.supabase.co',
-      anonKey: 'YOUR_ANON_KEY',
-      isConfigured: false
+      url: window.ECO_SUPABASE_URL || localStorage.getItem('eco_supabase_url') || 'https://bfocxgtlemhxfwfuhlxn.supabase.co',
+      anonKey: window.ECO_SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY || localStorage.getItem('eco_supabase_anon_key') || '',
+      isConfigured: !!(window.ECO_SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY || localStorage.getItem('eco_supabase_anon_key'))
     };
 const SUPABASE_URL = supabaseConfig.url;
 const SUPABASE_ANON_KEY = supabaseConfig.anonKey;
@@ -230,11 +230,15 @@ const supabase = window.DatabaseService && typeof window.DatabaseService.getClie
 
 const state = { authMode:'signin', loginType:'email' };
 const usernameRe = /^[a-z0-9_.]{3,20}$/;
+let currentUser = null;
+let authReady = false;
 
 function setErr(id, msg='') { const el=document.getElementById(id); if (el) el.textContent=msg; }
 function setInputError(id, on) { const el=document.getElementById(id); if (el) el.classList.toggle('error', !!on); }
 function phoneToPseudoEmail(phone){ return `via_${phone}@phone.via.local`; }
 function parsePhone(raw){ const digits=(raw||'').replace(/\D/g,''); return digits.length===10?digits:null; }
+function logAuthSnapshot(){ console.log('Auth Ready:', authReady); console.log('Current User:', currentUser); }
+function clearCachedProfile(){ localStorage.removeItem('via_user'); localStorage.removeItem('via_session'); }
 
 function prepareProfile(profile){
   if (window.SocialCore && typeof window.SocialCore.bootstrapProfile === 'function') {
@@ -243,11 +247,9 @@ function prepareProfile(profile){
   return profile;
 }
 
-function saveLocalUser(profile) {
-  const localUserKey = 'via_user';
-
-  if (!profile || typeof profile !== 'object') {
-    localStorage.removeItem(localUserKey);
+function saveProfileCache(profile) {
+  if (!profile || typeof profile !== 'object' || !profile.id) {
+    clearCachedProfile();
     return null;
   }
 
@@ -264,15 +266,108 @@ function saveLocalUser(profile) {
   if (window.DatabaseService && typeof window.DatabaseService.saveLocalUser === 'function') {
     window.DatabaseService.saveLocalUser(nextProfile);
   } else {
-    localStorage.setItem(localUserKey, JSON.stringify(nextProfile));
+    localStorage.setItem('via_user', JSON.stringify(nextProfile));
   }
 
-  localStorage.setItem('via_session', JSON.stringify({
-    mode: SUPABASE_CONFIGURED ? 'supabase' : 'offline',
-    at: nextProfile.updatedAt
-  }));
-
   return nextProfile;
+}
+
+async function restoreSession() {
+  if (!supabase || !supabase.auth || typeof supabase.auth.getSession !== 'function') {
+    return null;
+  }
+
+  try {
+    const { data, error } = await supabase.auth.getSession();
+
+    if (error) {
+      console.error('Session error:', error);
+      return null;
+    }
+
+    return data?.session || null;
+  } catch (err) {
+    console.error('Restore failed:', err);
+    return null;
+  }
+}
+
+async function buildCurrentUser(session, fallbackProfile) {
+  const authUser = session?.user;
+  if (!authUser) return null;
+
+  let profile = fallbackProfile && fallbackProfile.id === authUser.id ? fallbackProfile : null;
+  if (!profile && window.DatabaseService && typeof window.DatabaseService.getLocalUserProfile === 'function') {
+    const cachedProfile = window.DatabaseService.getLocalUserProfile();
+    if (cachedProfile?.id === authUser.id) profile = cachedProfile;
+  }
+
+  if (supabase && typeof supabase.from === 'function') {
+    try {
+      const { data, error } = await supabase.from('via_users').select('*').eq('id', authUser.id).single();
+      if (error) {
+        console.error('Profile fetch error:', error);
+      } else if (data) {
+        profile = data;
+      }
+    } catch (err) {
+      console.error('Profile restore failed:', err);
+    }
+  }
+
+  profile = prepareProfile(profile && profile.id === authUser.id ? profile : {
+    id: authUser.id,
+    email: authUser.email || '',
+    display_name: authUser.user_metadata?.name || authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'VIA User',
+    username: authUser.user_metadata?.username || 'user',
+    city: authUser.user_metadata?.city || '',
+    avatar_emoji: '🌟',
+    xp: 0,
+    level: 1,
+    followers: 0,
+    following: 0,
+    posts: 0
+  });
+
+  currentUser = profile;
+  saveProfileCache(profile);
+  return currentUser;
+}
+
+async function initApp() {
+  const session = await restoreSession();
+
+  if (session) {
+    currentUser = await buildCurrentUser(session);
+  } else {
+    currentUser = null;
+    clearCachedProfile();
+  }
+
+  authReady = true;
+  renderApp();
+  return currentUser;
+}
+
+function renderUserUI() {
+  if (currentUser) {
+    window.location.href = './index.html';
+  }
+}
+
+function renderGuestUI() {
+  document.getElementById('auth-app').classList.add('visible');
+}
+
+function renderApp() {
+  if (!authReady) return;
+  logAuthSnapshot();
+
+  if (currentUser) {
+    renderUserUI(currentUser);
+  } else {
+    renderGuestUI();
+  }
 }
 
 function showTab(mode){
@@ -300,16 +395,23 @@ function setLoginType(type){
   }
 }
 
-async function trySessionRedirect(){
-  if(supabase){
-    try{
-      const { data:{ session } } = await supabase.auth.getSession();
-      if(session){ window.location.href='./index.html'; return true; }
-    }catch(_e){}
+async function signIn(email, password) {
+  if (!supabase || !supabase.auth || typeof supabase.auth.signInWithPassword !== 'function') {
+    throw new Error('Supabase auth is not configured.');
   }
-  const stored=localStorage.getItem('via_user');
-  if(stored){ window.location.href='./index.html'; return true; }
-  return false;
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    console.error('Login error:', error);
+    alert('Login failed');
+    throw error;
+  }
+
+  currentUser = await buildCurrentUser(data.session || { user: data.user });
+  authReady = true;
+  renderApp();
+  return data;
 }
 
 async function signInHandler(e){
@@ -331,30 +433,13 @@ async function signInHandler(e){
   }
 
   if(password.length<8){ setErr('signin-pass-err','Password must be at least 8 characters.'); setInputError('signin-password',true); return; }
+  if(!supabase){ setErr('signin-main-err','Configure Supabase to sign in.'); return; }
 
-  if(!supabase){
-    const raw=localStorage.getItem('via_user');
-    if(!raw){ setErr('signin-main-err','No offline user found. Please create an account.'); return; }
-    window.location.href='./index.html';
-    return;
+  try {
+    await signIn(email, password);
+  } catch (error) {
+    setErr('signin-main-err', error?.message || 'Invalid credentials.');
   }
-
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if(error || !data?.user){ setErr('signin-main-err','Invalid credentials.'); return; }
-  localStorage.setItem('via_session', JSON.stringify(data.session || {}));
-
-  let profile=null;
-  const { data: row } = await supabase.from('via_users').select('*').eq('id', data.user.id).single();
-  profile=row || {
-    id:data.user.id,
-    display_name:data.user.user_metadata?.name || 'VIA User',
-    username:data.user.user_metadata?.username || 'user',
-    city:data.user.user_metadata?.city || '',
-    avatar_emoji:'🌟', xp:0, level:1, followers:0, following:0, posts:0
-  };
-  profile = prepareProfile(profile);
-  saveLocalUser(profile);
-  window.location.href='./index.html';
 }
 
 async function signUpHandler(e){
@@ -384,23 +469,8 @@ async function signUpHandler(e){
 
   if(document.querySelectorAll('input.error,select.error').length) return;
 
-  const offlineProfile = prepareProfile({
-    id: `offline_${Date.now()}`,
-    name,
-    display_name: name,
-    username,
-    city,
-    avatar_emoji:'🌟',
-    xp:0,
-    level:1,
-    followers:0,
-    following:0,
-    posts:0
-  });
-
   if(!supabase){
-    saveLocalUser(offlineProfile);
-    window.location.href='./index.html';
+    setErr('signup-main-err','Configure Supabase to create an account.');
     return;
   }
 
@@ -427,7 +497,7 @@ async function signUpHandler(e){
   const { error: insertError } = await supabase.from('via_users').upsert(profile, { onConflict:'id' });
   if(insertError){ setErr('signup-main-err', insertError.message); return; }
 
-  saveLocalUser(profile);
+  saveProfileCache(profile);
   window.location.href='./index.html';
 }
 
@@ -454,14 +524,28 @@ document.getElementById('google-btn').addEventListener('click', async ()=>{
 });
 document.getElementById('telegram-btn').addEventListener('click', ()=> window.open('https://t.me/GN8RBot?start=via_auth','_blank'));
 
+if (supabase && supabase.auth && typeof supabase.auth.onAuthStateChange === 'function') {
+  supabase.auth.onAuthStateChange(async (event, session) => {
+    console.log('Auth event:', event);
+
+    if (session) {
+      currentUser = await buildCurrentUser(session);
+    } else {
+      currentUser = null;
+      clearCachedProfile();
+    }
+
+    authReady = true;
+    renderApp();
+  });
+}
+
 window.addEventListener('load', async ()=>{
   if(!SUPABASE_CONFIGURED) document.getElementById('offline-banner').style.display='block';
   setLoginType('email');
-  const redirected=await trySessionRedirect();
-  if(redirected) return;
-  setTimeout(()=>{
+  setTimeout(async ()=>{
     document.getElementById('boot').classList.add('exit');
-    document.getElementById('auth-app').classList.add('visible');
+    await initApp();
   }, 2200);
 });
 </script>

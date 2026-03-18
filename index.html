@@ -688,17 +688,52 @@ const _sb = window.DatabaseService && typeof window.DatabaseService.getClient ==
   ? window.DatabaseService.getClient()
   : ((typeof window.supabase !== 'undefined' && SUPABASE_CONFIGURED)
     ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null);
+let currentUser = null;
+let authReady = false;
 
 function formatCount(n){if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return String(n);}
 function escapeHTML(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function stripTags(v){return String(v??'').replace(/<[^>]*>/g,'').trim();}
 function getGuestProfile(){return{id:'',username:'guest',display_name:'Guest Explorer',city:'Preview Mode',avatar_emoji:'👀',xp:0,followers:0,following:0,posts:0,is_guest:true};}
+function clearCachedProfile(){localStorage.removeItem('via_user');localStorage.removeItem('via_session');}
+function logAuthSnapshot(){console.log('Auth Ready:', authReady);console.log('Current User:', currentUser);}
 function updateAuthUI(user){
   const guest=!user||user.is_guest||!user.id;
   const sb=document.getElementById('status-auth-btn');
   if(sb){sb.textContent=guest?'Sign In':'Account';sb.onclick=guest?()=>VIA.openAuth():()=>switchLayer('profile');}
   const pb=document.getElementById('profile-auth-btn');
   if(pb){pb.textContent=guest?'Sign In to Save Progress':'Sign Out';pb.classList.toggle('guest',guest);pb.onclick=guest?()=>VIA.openAuth():()=>VIA.signOut();}
+}
+function renderUserUI(user){
+  const resolvedUser=user&&typeof user==='object'?user:getGuestProfile();
+  updateAuthUI(resolvedUser);
+  const ne=document.querySelector('.profile-name'),he=document.querySelector('.profile-handle');
+  if(ne)ne.textContent=resolvedUser.display_name||'VIA User';
+  if(he)he.textContent='@'+(resolvedUser.username||'user')+(resolvedUser.city?' · '+resolvedUser.city:'');
+  if(typeof resolvedUser.xp==='number'){xp=resolvedUser.xp;updateXP(xp);}
+  const av=document.querySelector('.profile-avatar-lg');if(av)av.textContent=resolvedUser.avatar_emoji||'🌟';
+  const fc=document.getElementById('follower-count');if(fc)fc.textContent=formatCount(resolvedUser.followers||0);
+  const pp=document.getElementById('profile-posts');if(pp)pp.textContent=resolvedUser.posts||0;
+}
+function renderGuestUI(){
+  const guestProfile=getGuestProfile();
+  updateAuthUI(guestProfile);
+  const ne=document.querySelector('.profile-name'),he=document.querySelector('.profile-handle');
+  if(ne)ne.textContent=guestProfile.display_name;
+  if(he)he.textContent='@'+guestProfile.username+(guestProfile.city?' · '+guestProfile.city:'');
+  xp=0;updateXP(xp);
+  const av=document.querySelector('.profile-avatar-lg');if(av)av.textContent=guestProfile.avatar_emoji;
+  const fc=document.getElementById('follower-count');if(fc)fc.textContent=formatCount(0);
+  const pp=document.getElementById('profile-posts');if(pp)pp.textContent='0';
+}
+function renderApp(){
+  if(!authReady)return;
+  logAuthSnapshot();
+  if(currentUser){
+    renderUserUI(currentUser);
+  }else{
+    renderGuestUI();
+  }
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -707,8 +742,8 @@ function updateAuthUI(user){
 const VIA = {
   user: null,
   authSubscription: null,
-  saveLocalProfile(profile){
-    if(!profile||typeof profile!=='object')return null;
+  async saveLocalProfile(profile){
+    if(!profile||typeof profile!=='object'||!profile.id)return null;
     if(window.DatabaseService&&typeof window.DatabaseService.saveLocalUser==='function'){
       return window.DatabaseService.saveLocalUser(profile);
     }
@@ -716,22 +751,44 @@ const VIA = {
     return profile;
   },
   async hydrateUser(profile){
-    const normalized=profile&&typeof profile==='object'?{...getGuestProfile(),...profile,is_guest:!profile.id&&profile.is_guest!==false}:getGuestProfile();
+    const normalized=profile&&typeof profile==='object'?{...getGuestProfile(),...profile,is_guest:false}:null;
+    currentUser=normalized;
     this.user=normalized;
-    if(!normalized.is_guest){this.saveLocalProfile(normalized);}
+    if(normalized&&normalized.id){await this.saveLocalProfile(normalized);}
     return normalized;
   },
-  async restoreSessionUser(session){
+  async restoreSession(){
+    if(!_sb||!_sb.auth||typeof _sb.auth.getSession!=='function')return null;
+    try{
+      const { data, error } = await _sb.auth.getSession();
+      if(error){
+        console.error('Session error:', error);
+        return null;
+      }
+      return data?.session||null;
+    }catch(err){
+      console.error('Restore failed:', err);
+      return null;
+    }
+  },
+  async resolveProfile(session){
     const authUser=session?.user;
     if(!authUser)return null;
     let profile=window.DatabaseService&&typeof window.DatabaseService.getLocalUserProfile==='function'
       ? window.DatabaseService.getLocalUserProfile()
       : null;
-    if(profile?.id!==authUser.id&&_sb){
+    if(profile?.id!==authUser.id){profile=null;}
+    if(_sb&&typeof _sb.from==='function'){
       try{
         const { data, error } = await _sb.from('via_users').select('*').eq('id', authUser.id).single();
-        if(!error&&data){profile=data;}
-      }catch(_error){}
+        if(error){
+          console.error('Profile sync error:', error);
+        }else if(data){
+          profile=data;
+        }
+      }catch(err){
+        console.error('Profile restore failed:', err);
+      }
     }
     profile=profile&&profile.id===authUser.id?profile:{
       id:authUser.id||'',
@@ -748,47 +805,49 @@ const VIA = {
     return this.hydrateUser(profile);
   },
   async init(){
-    if(_sb){
-      try{
-        const { data:{ session } } = await _sb.auth.getSession();
+    const session=await this.restoreSession();
+    if(session){
+      await this.resolveProfile(session);
+    }else{
+      currentUser=null;
+      this.user=null;
+      clearCachedProfile();
+    }
+    authReady=true;
+    renderApp();
+    if(_sb&&_sb.auth&&!this.authSubscription&&typeof _sb.auth.onAuthStateChange==='function'){
+      const { data } = _sb.auth.onAuthStateChange(async(event,session)=>{
+        console.log('Auth event:', event);
         if(session){
-          await this.restoreSessionUser(session);
+          await this.resolveProfile(session);
+        }else{
+          currentUser=null;
+          this.user=null;
+          clearCachedProfile();
         }
-      }catch(_error){}
-      if(!this.authSubscription&&typeof _sb.auth.onAuthStateChange==='function'){
-        const { data } = _sb.auth.onAuthStateChange(async(event,session)=>{
-          if(event==='SIGNED_OUT'||!session){
-            localStorage.removeItem('via_user');
-            this.user=getGuestProfile();
-            this.applyToUI();
-            return;
-          }
-          await this.restoreSessionUser(session);
-          this.applyToUI();
-        });
-        this.authSubscription=data?.subscription||null;
-      }
+        authReady=true;
+        renderApp();
+      });
+      this.authSubscription=data?.subscription||null;
     }
-    if(!this.user){
-      const stored=window.DatabaseService&&typeof window.DatabaseService.getLocalUserProfile==='function'
-        ? window.DatabaseService.getLocalUserProfile()
-        : (()=>{const s=localStorage.getItem('via_user');if(!s)return null;try{return JSON.parse(s);}catch(_error){return null;}})();
-      this.user=stored||getGuestProfile();
-    }
+    return currentUser;
   },
   applyToUI(){
-    if(!this.user)return;updateAuthUI(this.user);
-    const ne=document.querySelector('.profile-name'),he=document.querySelector('.profile-handle');
-    if(ne)ne.textContent=this.user.display_name||'VIA User';
-    if(he)he.textContent='@'+(this.user.username||'user')+(this.user.city?' · '+this.user.city:'');
-    if(typeof this.user.xp==='number'){xp=this.user.xp;updateXP(xp);}
-    const av=document.querySelector('.profile-avatar-lg');if(av)av.textContent=this.user.avatar_emoji||'🌟';
-    const fc=document.getElementById('follower-count');if(fc)fc.textContent=formatCount(this.user.followers||0);
-    const pp=document.getElementById('profile-posts');if(pp)pp.textContent=this.user.posts||0;
+    renderApp();
   },
-  async saveXP(v){if(!this.user)return;this.user.xp=v;if(!this.user.is_guest)this.saveLocalProfile(this.user);},
+  async saveXP(v){if(!currentUser)return;currentUser.xp=v;this.user=currentUser;if(!currentUser.is_guest)await this.saveLocalProfile(currentUser);renderApp();},
   openAuth(){window.location.href='./auth.html';},
-  async signOut(){if(_sb&&_sb.auth&&typeof _sb.auth.signOut==='function'){try{await _sb.auth.signOut();}catch(_error){}}localStorage.removeItem('via_user');localStorage.removeItem('via_session');this.user=getGuestProfile();this.applyToUI();switchLayer('feed');}
+  async signOut(){
+    if(_sb&&_sb.auth&&typeof _sb.auth.signOut==='function'){
+      try{await _sb.auth.signOut();}catch(error){console.error('Sign out error:', error);}
+    }
+    currentUser=null;
+    this.user=null;
+    clearCachedProfile();
+    authReady=true;
+    renderApp();
+    switchLayer('feed');
+  }
 };
 window.VIA = VIA;
 
@@ -1780,11 +1839,11 @@ let appStarted=false;
 function startApp(){
   if(appStarted)return;appStarted=true;
   setTimeout(async()=>{
-    try{await VIA.init();}catch(e){}
+    try{await VIA.init();}catch(error){console.error('Auth init failed:', error);currentUser=null;authReady=true;renderApp();}
     document.getElementById('boot').classList.add('exit');
     document.getElementById('app').classList.add('visible');
     syncCreatorContentSurface();GC.init();buildDiscover();buildProfile();
-    updateXP(xp);updateAuthUI(VIA.user);VIA.applyToUI();
+    renderApp();
     await initMicroFrontendArchitecture();
     await initFederatedRuntime();
   },2600);
