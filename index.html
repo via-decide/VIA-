@@ -807,7 +807,6 @@ function startApp() {
     } catch (error) {
       console.warn('VIA init failed, continuing app load:', error);
       VIA.user = getGuestProfile();
-      VIA.applyToUI();
     }
     document.getElementById('boot').classList.add('exit');
     document.getElementById('app').classList.add('visible');
@@ -818,6 +817,7 @@ function startApp() {
     buildProgressDots();
     updateXP(xp);
     updateAuthUI(VIA.user);
+    VIA.applyToUI();
   }, 2600);
 }
 
@@ -1518,24 +1518,6 @@ function toggleA11y() {
 // ── BOOT ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', startApp, { once: true });
 window.addEventListener('load', startApp, { once: true });
-window.addEventListener('load', async () => {
-  setTimeout(async () => {
-    try {
-      await VIA.init();
-    } catch (error) {
-      console.warn('VIA init failed, continuing app load:', error);
-    }
-    document.getElementById('boot').classList.add('exit');
-    document.getElementById('app').classList.add('visible');
-    buildDeck();
-    GC.init();
-    buildDiscover();
-    buildProfile();
-    buildProgressDots();
-    updateXP(xp);
-  }, 2600);
-});
-
 if (localStorage.getItem('via_a11y') === 'true') {
   a11yMode = true;
   document.body.classList.add('a11y-mode');
