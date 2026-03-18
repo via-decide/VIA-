@@ -844,6 +844,76 @@ const PROFILE_ITEMS = [
   {emoji:'💡',title:'My First Story',type:'Draft',views:'—',color:'#1a1000',storyKey:null}
 ];
 
+const CREATOR_PUBLISHED_KEY = 'via_creator_published_drafts';
+const MICRO_FRONTEND_LAYER_MAP = {
+  feed: 'feed_surface',
+  discover: 'discover_surface',
+  about: 'about_surface',
+  profile: 'profile_surface'
+};
+
+function safeParseJSON(rawValue, fallback) {
+  try {
+    return JSON.parse(rawValue);
+  } catch (_error) {
+    return fallback;
+  }
+}
+
+function getPublishedCreatorDrafts() {
+  const raw = localStorage.getItem(CREATOR_PUBLISHED_KEY);
+  const published = safeParseJSON(raw || '[]', []);
+  return Array.isArray(published) ? published : [];
+}
+
+function getPublishedCreatorCards() {
+  return getPublishedCreatorDrafts().slice(0, 4).map((draft, index) => ({
+    id: `creator-draft-${draft.id || index}`,
+    cat: 'create',
+    catLabel: '✍️ Creator',
+    bg: 'linear-gradient(160deg,#240b36 0%,#0B0B1A 60%)',
+    emoji: draft.type === 'Video Script' ? '🎬' : draft.type === 'Thread' ? '🧵' : '✍️',
+    title: `${draft.title || 'Creator Draft'} — <em>${draft.author || 'VIA Creator'}</em>`,
+    author: draft.author || 'VIA Creator',
+    authorEmoji: '✍️',
+    location: 'Creator Studio',
+    time: 'Just now',
+    views: 'New',
+    likes: '0',
+    storyKey: 'creator'
+  }));
+}
+
+function getProfileItems() {
+  const draftItems = getPublishedCreatorDrafts().slice(0, 4).map((draft, index) => ({
+    emoji: draft.type === 'Video Script' ? '🎬' : '✍️',
+    title: draft.title || `Creator Draft ${index + 1}`,
+    type: 'Published',
+    views: 'Fresh',
+    color: '#240b36',
+    storyKey: 'creator'
+  }));
+  return draftItems.concat(PROFILE_ITEMS);
+}
+
+function syncCreatorContentSurface() {
+  CARDS = getPublishedCreatorCards().concat(DEFAULT_CARDS.slice());
+  if (currentCard >= CARDS.length) currentCard = 0;
+  if (document.getElementById('deck')) {
+    buildProgressDots();
+    buildDeck();
+  }
+  if (document.getElementById('profile-grid')) {
+    buildProfile();
+  }
+}
+
+window.addEventListener('storage', (event) => {
+  if (event.key === CREATOR_PUBLISHED_KEY) {
+    syncCreatorContentSurface();
+  }
+});
+
 // ════════════════════════════════════════════════════════════════
 // DEEP DIVES DATA
 // ════════════════════════════════════════════════════════════════
@@ -1459,7 +1529,7 @@ function buildDiscover() {
 
 function buildProfile(){
   const grid=document.getElementById('profile-grid');grid.innerHTML='';
-  PROFILE_ITEMS.forEach((item,i)=>{
+  getProfileItems().forEach((item,i)=>{
     const div=document.createElement('div');
     div.className='pgrid-item stagger-enter';
     div.style.animationDelay=(i*.04)+'s';
@@ -1479,6 +1549,67 @@ function buildProgressDots(){
   CARDS.forEach((_,i)=>{const d=document.createElement('div');d.className='pdot'+(i===currentCard?' active':'');wrap.appendChild(d);});
 }
 function updateProgressDots(){document.querySelectorAll('.pdot').forEach((d,i)=>d.classList.toggle('active',i===currentCard));}
+
+window.__viaLegacySwitchLayer = switchLayer;
+window.__viaLegacyBuildDiscover = buildDiscover;
+window.__viaLegacyBuildProfile = buildProfile;
+
+function applySurfaceFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const surface = params.get('surface');
+  const storyKey = params.get('storyKey');
+  if (!surface) return;
+  if (surface === 'deepdives') {
+    window.__viaLegacySwitchLayer('deepdives', storyKey || undefined);
+    return;
+  }
+  const targetLayer = ['feed', 'discover', 'about', 'profile'].includes(surface) ? surface : 'feed';
+  switchLayer(targetLayer, storyKey || undefined);
+}
+
+async function initMicroFrontendArchitecture() {
+  try {
+    const microFrontendModule = await import('./src/core/frontend/micro-frontend-architecture/index.js');
+    const architecture = await microFrontendModule.createMicroFrontendArchitecture({
+      openHandler(name, params) {
+        const layer = Object.keys(MICRO_FRONTEND_LAYER_MAP).find((key) => MICRO_FRONTEND_LAYER_MAP[key] === name);
+        if (!layer) return false;
+        window.__viaLegacySwitchLayer(layer, params && params.storyKey ? params.storyKey : undefined);
+        return true;
+      }
+    });
+
+    window.VIAMicroFrontendArchitecture = architecture;
+    architecture.runtime.subscribe('content_events', () => {
+      syncCreatorContentSurface();
+    });
+
+    const legacySwitchLayer = window.__viaLegacySwitchLayer;
+    switchLayer = function (layer, storyKey) {
+      if (!storyKey && MICRO_FRONTEND_LAYER_MAP[layer]) {
+        const surfaceName = MICRO_FRONTEND_LAYER_MAP[layer];
+        const moduleDef = architecture.registry.get(surfaceName);
+        const target = moduleDef ? document.querySelector(moduleDef.mountSelector) : document.getElementById('app');
+        return architecture.loader.mountSurface(surfaceName, target);
+      }
+      return legacySwitchLayer(layer, storyKey);
+    };
+
+    window.switchLayer = switchLayer;
+
+    const eagerSurfaces = architecture.registry.getAll().filter((surface) => surface.loadingStrategy === 'eager');
+    for (const surface of eagerSurfaces) {
+      await architecture.loader.prefetchSurface(surface.name);
+    }
+
+    const prefetchSurfaces = architecture.registry.getAll().filter((surface) => surface.loadingStrategy === 'prefetch');
+    prefetchSurfaces.forEach((surface) => {
+      architecture.loader.prefetchSurface(surface.name);
+    });
+  } catch (_error) {}
+
+  applySurfaceFromUrl();
+}
 
 // ════════════════════════════════════════════════════════════════
 // SHEETS
@@ -1535,8 +1666,9 @@ function startApp(){
     try{await VIA.init();}catch(e){}
     document.getElementById('boot').classList.add('exit');
     document.getElementById('app').classList.add('visible');
-    buildProgressDots();buildDeck();GC.init();buildDiscover();buildProfile();
+    syncCreatorContentSurface();GC.init();buildDiscover();buildProfile();
     updateXP(xp);updateAuthUI(VIA.user);VIA.applyToUI();
+    await initMicroFrontendArchitecture();
   },2600);
 }
 document.addEventListener('DOMContentLoaded',startApp,{once:true});

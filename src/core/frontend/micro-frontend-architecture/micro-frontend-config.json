@@ -1,0 +1,68 @@
+{
+  "architecture": "via-micro-frontend-architecture",
+  "frontendSurfaceModules": [
+    {
+      "name": "feed_surface",
+      "entryPath": "./surfaces/feedSurface.module.js",
+      "mountSelector": "#deck",
+      "loadingStrategy": "eager",
+      "dependencies": ["navigation", "storage", "telemetry", "content_events"]
+    },
+    {
+      "name": "discover_surface",
+      "entryPath": "./surfaces/discoverSurface.module.js",
+      "mountSelector": "#layer-discover",
+      "loadingStrategy": "prefetch",
+      "dependencies": ["navigation", "storage", "theme", "telemetry"]
+    },
+    {
+      "name": "creator_surface",
+      "entryPath": "./surfaces/creatorSurface.module.js",
+      "mountSelector": "body",
+      "loadingStrategy": "on_demand",
+      "dependencies": ["navigation", "storage", "auth_state", "content_events"]
+    },
+    {
+      "name": "story_surface",
+      "entryPath": "./surfaces/storySurface.module.js",
+      "mountSelector": "body",
+      "loadingStrategy": "lazy",
+      "dependencies": ["navigation", "theme", "telemetry"]
+    },
+    {
+      "name": "profile_surface",
+      "entryPath": "./surfaces/profileSurface.module.js",
+      "mountSelector": "#layer-profile",
+      "loadingStrategy": "lazy",
+      "dependencies": ["navigation", "storage", "auth_state", "content_events"]
+    },
+    {
+      "name": "about_surface",
+      "entryPath": "./surfaces/aboutSurface.module.js",
+      "mountSelector": "#layer-about",
+      "loadingStrategy": "lazy",
+      "dependencies": ["navigation", "theme", "telemetry"]
+    },
+    {
+      "name": "engine_tools_surface",
+      "entryPath": "./surfaces/engineToolsSurface.module.js",
+      "mountSelector": "body",
+      "loadingStrategy": "on_demand",
+      "dependencies": ["navigation", "telemetry"]
+    }
+  ],
+  "moduleLoadingStrategies": [
+    "eager",
+    "lazy",
+    "on_demand",
+    "prefetch"
+  ],
+  "sharedSystemContracts": [
+    "navigation",
+    "storage",
+    "auth_state",
+    "theme",
+    "telemetry",
+    "content_events"
+  ]
+}

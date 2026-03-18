@@ -515,7 +515,7 @@
           </div>
 
           <div class="helper-links">
-            <a class="helper-link" href="./index.html">Open VIA Main App</a>
+            <a class="helper-link" href="./index.html?surface=feed" onclick="event.preventDefault(); openMainFeed();">Open VIA Main App</a>
             <a class="helper-link" href="./creator-story.html">Read Creator Story Again</a>
           </div>
         </div>
@@ -547,6 +547,9 @@
       const stepName = document.getElementById("stepName");
       const outputEl = document.getElementById("output");
       const statusEl = document.getElementById("status");
+      let microFrontendRuntime = null;
+      let microFrontendNavigation = null;
+
 
       const stepNames = {
         1: "Identity",
@@ -580,6 +583,9 @@
 
       function saveState() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        if (microFrontendRuntime) {
+          microFrontendRuntime.setStorage('creator_onboarding', state);
+        }
       }
 
       function hydrateUI() {
@@ -746,9 +752,16 @@ Ask the audience to respond, test, remix, or apply the framework inside VIA.`;
         });
 
         localStorage.setItem(PUBLISHED_KEY, JSON.stringify(published));
+        if (microFrontendRuntime) {
+          microFrontendRuntime.setStorage('creator_published_drafts', published);
+          microFrontendRuntime.emit('content_events', {
+            type: 'creator_draft_published',
+            draft: published[0]
+          });
+        }
         saveState();
 
-        statusEl.textContent = "Draft published to local VIA feed storage. Connect this key to your feed renderer to show real creator output.";
+        statusEl.textContent = "Draft published to local VIA feed storage. Feed and profile surfaces can now hydrate this draft through the shared runtime.";
         statusEl.style.display = "block";
       };
 
@@ -767,7 +780,33 @@ Ask the audience to respond, test, remix, or apply the framework inside VIA.`;
         });
       });
 
+      async function initMicroFrontendBridge() {
+        try {
+          const microFrontendModule = await import('./src/core/frontend/micro-frontend-architecture/index.js');
+          const architecture = await microFrontendModule.createMicroFrontendArchitecture();
+          microFrontendRuntime = architecture.runtime;
+          microFrontendNavigation = architecture.navigation;
+          window.VIAMicroFrontendPage = architecture;
+          const savedAuth = microFrontendRuntime.getAuthState();
+          if (!savedAuth && state.email) {
+            microFrontendRuntime.setAuthState({
+              email: state.email,
+              creator_name: state.name || ''
+            });
+          }
+        } catch (_error) {}
+      }
+
+      window.openMainFeed = function () {
+        if (microFrontendNavigation) {
+          microFrontendNavigation.openSurface('feed_surface');
+          return;
+        }
+        window.location.href = './index.html?surface=feed';
+      };
+
       loadState();
+      initMicroFrontendBridge();
     })();
   </script>
 </body>

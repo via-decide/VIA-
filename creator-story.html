@@ -364,8 +364,8 @@
       </p>
 
       <div class="button-group">
-        <a class="btn btn-primary" href="./creator-onboarding.html?source=story">Start Creator Setup →</a>
-        <a class="btn btn-secondary" href="./index.html">Explore as Reader</a>
+        <a class="btn btn-primary" data-surface-open="creator_surface" href="./creator-onboarding.html?source=story">Start Creator Setup →</a>
+        <a class="btn btn-secondary" data-surface-open="feed_surface" href="./index.html?surface=feed">Explore as Reader</a>
       </div>
 
       <div class="footer-note">
@@ -373,5 +373,28 @@
       </div>
     </section>
   </div>
+
+  <script>
+    (function () {
+      async function initMicroFrontendBridge() {
+        try {
+          const microFrontendModule = await import('./src/core/frontend/micro-frontend-architecture/index.js');
+          const architecture = await microFrontendModule.createMicroFrontendArchitecture();
+          window.VIAMicroFrontendPage = architecture;
+          document.querySelectorAll('[data-surface-open]').forEach((link) => {
+            link.addEventListener('click', function (event) {
+              const surfaceName = link.getAttribute('data-surface-open');
+              if (!surfaceName || !architecture || !architecture.navigation) return;
+              event.preventDefault();
+              const params = surfaceName === 'creator_surface' ? { source: 'story' } : {};
+              architecture.navigation.openSurface(surfaceName, params);
+            });
+          });
+        } catch (_error) {}
+      }
+
+      initMicroFrontendBridge();
+    })();
+  </script>
 </body>
 </html>
