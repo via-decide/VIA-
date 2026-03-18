@@ -1,10 +1,7 @@
 {
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
-  "branch": "simba/we-need-to-finalize-the-content-layer-by-replaci",
-  "branch": "simba/implement-a-core-backend-module-called-via-resou",
-  "branch": "simba/we-need-to-replace-the-static-cards-array-with-a",
-  "branch": "simba/based-on-ux-review-of-the-live-feed-we-need-to-e",
+  "branch": "simba/implement-contentfreshnessscorer-for-feed-rankin",
   "files_to_create": [
     "codex-task.md",
     "antigravity-repair-task.md",
