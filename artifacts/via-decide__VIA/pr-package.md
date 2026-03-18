@@ -1,9 +1,9 @@
-Branch: simba/implement-a-core-backend-module-called-via-gestu
-Title: Implement a core backend module called via-gestural-intent-engine to ...
+Branch: simba/we-need-to-replace-the-external-tool-redirects-o
+Title: We need to replace the external tool redirects on the social feed car...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Power the backend for a purely gesture-native social platform. By predicting user intent in the first few milliseconds of a thumb movement, the VIA swarm can pre-calculate engagement results and warm caches, creating the "Liquid" zero-latency experience described in the research.
+- Goal: Keep the user inside the VIA ecosystem. When they swipe right or click "Open" on a viral story card, they should get a seamless, instant, full-screen reading experience populated with realistic localized data, rather than being bounced to an external tool URL.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
