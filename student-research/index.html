@@ -514,6 +514,178 @@ function nowIST(){
   return new Date().toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', timeZone:'Asia/Kolkata' });
 }
 
+const VIA_RUNTIME = window.VIAFederatedRuntime || null;
+let currentDisplayLang = document.documentElement.lang || navigator.language || 'en';
+let voiceRecognition = null;
+let voiceListening = false;
+let lastVoiceTranscript = '';
+
+function getVIARuntime(){
+  return window.VIAFederatedRuntime || VIA_RUNTIME || null;
+}
+
+function calculateCartTotals() {
+  const nodes = Array.isArray(ENGINE_STATE?.research_nodes) ? ENGINE_STATE.research_nodes : [];
+  const items = nodes.map((node, index) => ({
+    id: node?.title || `node_${index + 1}`,
+    name: node?.title || `Research Node ${index + 1}`,
+    source: node?.sourceName || node?.source || 'Local',
+    confidence: node?.confidence || confidenceFor(node?.source),
+    summary: node?.summary || '',
+    url: node?.url || '',
+    decisionMeta: node?.decisionMeta || {}
+  }));
+  return { items, total: items.length };
+}
+
+function routeToVIAAgent(rawText) {
+  const runtime = getVIARuntime();
+  if (!runtime || typeof runtime.handoffToAgent !== 'function') return;
+
+  runtime.handoffToAgent({
+    type: "voice_intent",
+    message: rawText,
+    context: {
+      page: "voice_ui",
+      state: ENGINE_STATE,
+      language: currentDisplayLang
+    }
+  });
+}
+
+function generateContentFromState() {
+  const { items, total } = calculateCartTotals();
+  const primaryNode = items[0];
+  const synthesis = ENGINE_STATE?.synthesis || {};
+  const contextParts = items.map(i => i.name).filter(Boolean);
+
+  return {
+    hook: primaryNode?.decisionMeta?.decision || "What we decided to research today",
+    context: contextParts.join(", "),
+    insight: synthesis.thesis || "Decision-based ordering reduces friction",
+    structure: items,
+    cta: synthesis.next || `What would you pick from these ${total || 0} ideas?`
+  };
+}
+
+function sendToContentSystem() {
+  const runtime = getVIARuntime();
+  if (!runtime || typeof runtime.handoffToContent !== 'function') return;
+
+  const content = generateContentFromState();
+  runtime.handoffToContent({
+    type: "creator_draft",
+    payload: content,
+    source: "voice_ui"
+  });
+}
+
+function createVIAPost() {
+  const content = generateContentFromState();
+  const runtime = getVIARuntime();
+
+  if (runtime && typeof runtime.emit === 'function') {
+    runtime.emit("draft_generate", content);
+    sendToContentSystem();
+    showToast("Draft sent to VIA");
+  } else {
+    console.log("Draft:", content);
+    showToast("Draft generated (local)");
+  }
+}
+
+function detectVoiceIntent(raw) {
+  const text = normalizeText(raw).toLowerCase();
+  if (!text) return 'unknown';
+  if (/home|welcome|start over|reset/.test(text)) return 'home';
+  if (/open tool|open research|research mode|start research/.test(text)) return 'open_tool';
+  if (/search|find|look up|lookup|research/.test(text)) return 'search';
+  if (/synthesis|summary|thesis/.test(text)) return 'synthesis';
+  if (/decision pdf|export decision|brief pdf/.test(text)) return 'decision_pdf';
+  if (/research pdf|export pdf|download pdf/.test(text)) return 'research_pdf';
+  if (/quiz|alchemist/.test(text)) return 'quiz';
+  if (/new search|another topic/.test(text)) return 'new_search';
+  if (/create post|draft|publish/.test(text)) return 'create_post';
+  return 'unknown';
+}
+
+function extractVoiceSearchQuery(raw) {
+  const text = normalizeText(raw);
+  return text
+    .replace(/^(please\s+)?(search|find|look up|lookup|research)\s+/i, '')
+    .replace(/\s+(for me|please)$/i, '')
+    .trim();
+}
+
+function dispatchVoice(raw) {
+  const text = normalizeText(raw);
+  if (!text) return showToast("NO VOICE INPUT");
+
+  lastVoiceTranscript = text;
+  routeToVIAAgent(text);
+
+  const intent = detectVoiceIntent(text);
+  switch(intent) {
+    case 'home':
+      goHome();
+      showToast("VOICE → WELCOME");
+      break;
+    case 'open_tool':
+      openTool();
+      showToast("VOICE → TOOL");
+      break;
+    case 'search': {
+      const query = extractVoiceSearchQuery(text) || text;
+      if (document.getElementById('search-input')) {
+        document.getElementById('search-input').value = query;
+      } else {
+        CUSTOM_TOPIC = query;
+        renderSearchSlide();
+        const nextFrame = () => {
+          const input = document.getElementById('search-input');
+          if (input) input.value = query;
+          handleSearch();
+        };
+        return window.requestAnimationFrame(nextFrame);
+      }
+      handleSearch();
+      showToast(`VOICE → SEARCH: ${query.slice(0, 24).toUpperCase()}`);
+      break;
+    }
+    case 'synthesis':
+      openSynthesisSlide();
+      showToast("VOICE → SYNTHESIS");
+      break;
+    case 'research_pdf':
+      generateResearchPDF();
+      break;
+    case 'decision_pdf':
+      generateDecisionProUIPDF();
+      break;
+    case 'quiz':
+      launchAlchemistQuiz();
+      break;
+    case 'new_search':
+      renderSearchSlide();
+      showToast("VOICE → NEW SEARCH");
+      break;
+    case 'create_post':
+      createVIAPost();
+      break;
+    default:
+      showToast(`VOICE: ${text.slice(0, 28).toUpperCase()}`);
+      break;
+  }
+}
+
+function stopVoiceRecognition(){
+  if (!voiceRecognition) return;
+  voiceListening = false;
+  const mic = document.getElementById('mic-toggle');
+  if (mic) mic.classList.remove('listening');
+  try { voiceRecognition.stop(); } catch (_error) {}
+}
+
 /* ---------- toast ---------- */
 function showToast(m) {
   const t = document.getElementById('toast');
@@ -525,8 +697,81 @@ function showToast(m) {
 }
 
 /* ---------- Voice stubs ---------- */
-function toggleListenMode(){ showToast("VOICE: NOT IMPLEMENTED"); }
-function initVoice(){}
+function toggleListenMode(){
+  if (!voiceRecognition) {
+    initVoice();
+  }
+  if (!voiceRecognition) return showToast("VOICE UNAVAILABLE");
+  if (voiceListening) {
+    stopVoiceRecognition();
+    showToast("VOICE OFF");
+    return;
+  }
+  try {
+    voiceListening = true;
+    voiceRecognition.lang = currentDisplayLang || 'en-US';
+    voiceRecognition.start();
+    const mic = document.getElementById('mic-toggle');
+    if (mic) mic.classList.add('listening');
+    showToast("VOICE ON");
+  } catch (error) {
+    voiceListening = false;
+    console.error(error);
+    showToast("VOICE FAILED");
+  }
+}
+function initVoice(){
+  if (voiceRecognition) return voiceRecognition;
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) return null;
+
+  voiceRecognition = new SpeechRecognition();
+  voiceRecognition.lang = currentDisplayLang || 'en-US';
+  voiceRecognition.continuous = true;
+  voiceRecognition.interimResults = false;
+  voiceRecognition.maxAlternatives = 1;
+
+  voiceRecognition.onstart = () => {
+    voiceListening = true;
+    const mic = document.getElementById('mic-toggle');
+    if (mic) mic.classList.add('listening');
+  };
+
+  voiceRecognition.onresult = (event) => {
+    const transcript = Array.from(event.results || [])
+      .slice(event.resultIndex || 0)
+      .map(result => result?.[0]?.transcript || '')
+      .join(' ')
+      .trim();
+    if (transcript) dispatchVoice(transcript);
+  };
+
+  voiceRecognition.onerror = (event) => {
+    console.error('Voice recognition error:', event);
+    if (event?.error !== 'no-speech') showToast("VOICE ERROR");
+  };
+
+  voiceRecognition.onend = () => {
+    const mic = document.getElementById('mic-toggle');
+    if (mic) mic.classList.remove('listening');
+    const shouldRestart = voiceListening;
+    if (!shouldRestart) return;
+    try {
+      voiceRecognition.start();
+    } catch (_error) {
+      voiceListening = false;
+    }
+  };
+
+  return voiceRecognition;
+}
+
+const initialVIARuntime = getVIARuntime();
+if (initialVIARuntime && typeof initialVIARuntime.subscribe === 'function') {
+  initialVIARuntime.subscribe("agent_reply", (data) => {
+    showToast("🤖 " + (data?.message || "Agent responded"));
+  });
+}
 
 /* ---------- Quick Panel ---------- */
 function isUIPanelOpen(){
@@ -1721,6 +1966,7 @@ function renderEndSlide(){
         <button class="btn btn-full btn-pro" onclick="openSynthesisSlide()">SYNTHESIS</button>
         <button class="btn btn-full btn-pdf" onclick="generateResearchPDF()">RESEARCH PDF</button>
         <button class="btn btn-full btn-pro" onclick="generateDecisionProUIPDF()">DECISION PDF</button>
+        <button class="btn btn-full" onclick="createVIAPost()">Create Post →</button>
         <button class="btn btn-full btn-pro" onclick="launchAlchemistQuiz()">QUIZ (ALCHEMIST)</button>
         <button class="btn btn-full" onclick="renderSearchSlide()">NEW SEARCH</button>
         <button class="btn btn-full btn-muted" onclick="goHome()">← WELCOME</button>
@@ -1741,6 +1987,7 @@ function sanitizeForPDF(text){
 }
 async function generateResearchPDF() {
   if (!ENGINE_STATE.research_nodes || ENGINE_STATE.research_nodes.length === 0) return showToast("NO RESEARCH TO EXPORT");
+  sendToContentSystem();
   showToast("GENERATING PDF...");
   try {
     const { jsPDF } = window.jspdf;
@@ -2108,6 +2355,7 @@ function renderDecisionProDocHTML(model) {
 }
 async function generateDecisionProUIPDF() {
   if (!ENGINE_STATE.research_nodes || ENGINE_STATE.research_nodes.length === 0) return showToast("NO NODES");
+  sendToContentSystem();
   if (!ENGINE_STATE.synthesis) {
     const aggregated = [];
     ENGINE_STATE.research_nodes.forEach(n => aggregated.push(...extractTakeaways(n.summary || "", 4)));
