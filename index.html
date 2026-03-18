@@ -616,6 +616,11 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
           <div class="about-product-info"><div class="about-product-name">Deep Dives</div><div class="about-product-desc">Cinematic story breakdowns on Bharat's biggest trends.</div></div>
           <div class="about-product-arrow">›</div>
         </div>
+        <div class="about-product" onclick="window.location.href='./creator-onboarding.html'">
+          <div class="about-product-icon">🎬</div>
+          <div class="about-product-info"><div class="about-product-name">Creator Setup</div><div class="about-product-desc">Start the creator onboarding flow and set up your VIA publishing path.</div></div>
+          <div class="about-product-arrow">›</div>
+        </div>
       </div>
       <div class="about-section">
         <div class="about-section-title">🔗 Links</div>
@@ -1361,11 +1366,14 @@ function ddBuildFooter() {
   if (fNav) {
     const cols = [
       {h:'Tools',    items:[{l:'Engine Tools',route:'#'},{l:'GN8R Bot',route:'https://t.me/GN8RBot'}]},
-      {h:'Platform', items:[{l:'VIA Social Feed',route:'#'},{l:'Discover',route:'#'}]},
+      {h:'Platform', items:[{l:'VIA Social Feed',route:'#'},{l:'Discover',route:'#'},{l:'Creator Setup',route:'./creator-onboarding.html'}]},
       {h:'Network',  items:[{l:'About ViaDecide',route:'https://via-decide.github.io/decide.engine-tools/'},{l:'GitHub Repo',route:'https://github.com/via-decide'}]}
     ];
     cols.forEach(col => {
-      fNav.innerHTML += `<div class="dd-fcol"><h5>${col.h}</h5><ul>${col.items.map(i=>`<li><a href="${i.route}" target="_blank" rel="noopener">${i.l}</a></li>`).join('')}</ul></div>`;
+      fNav.innerHTML += `<div class="dd-fcol"><h5>${col.h}</h5><ul>${col.items.map(i=>{
+        const external = /^https?:\/\//.test(i.route);
+        return `<li><a href="${i.route}"${external ? ' target="_blank" rel="noopener"' : ''}>${i.l}</a></li>`;
+      }).join('')}</ul></div>`;
     });
   }
 }
