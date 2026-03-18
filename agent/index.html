@@ -120,10 +120,10 @@
       <a href="https://via-decide.github.io/decide.engine-tools/prompt-alchemy/">Alchemist</a>
       <a href="https://via-decide.github.io/decide.engine-tools/app-generator/">App Generator</a>
       <a href="https://via-decide.github.io/decide.engine-tools/sales-dashboard/">Sales Dashboard</a>
-      <a href="/alchemist">Alchemist</a>
-      <a href="/app-generator">App Generator</a>
-      <a href="/sales-dashboard">Sales Dashboard</a>
-      <a href="/finance-dashboard-msme">Finance Dashboard</a>
+      <a href="../prompt-alchemy/">Alchemist</a>
+      <a href="../app-generator/">App Generator</a>
+      <a href="../sales-dashboard/">Sales Dashboard</a>
+      <a href="../tools/engine/balance-dashboard/">Finance Dashboard</a>
     </div>
   </nav>
 
@@ -133,7 +133,7 @@
       <h1>Global widget.<br>Safe by default.</h1>
       <p>
         This page embeds the production-ready ViaDecide Agent widget via
-        <span class="kbd">/js/viadecide-agent.js</span>.
+        <span class="kbd">../js/viadecide-agent.js</span>.
         Drop the same script tag into any ViaDecide page &mdash; no extra markup needed.
       </p>
     </section>
@@ -149,6 +149,7 @@
           <li>Lazy DOCX export &mdash; document library loads only when you click export.</li>
           <li>Fresh page context on every send: pathname, title, and meta description.</li>
           <li>All interactions bound via <span class="kbd">addEventListener</span> &mdash; no global onclick attributes.</li>
+          <li>Internal debug access via <span class="kbd">window.VIAAgentDebug</span> for session, tasks, messages, and telemetry.</li>
         </ul>
       </article>
 
@@ -180,6 +181,6 @@
     </p>
   </div>
 
-  <script src="/js/viadecide-agent.js"></script>
+  <script src="../js/viadecide-agent.js"></script>
 </body>
 </html>
