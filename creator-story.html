@@ -376,6 +376,71 @@
 
   <script>
     (function () {
+      let federatedRuntime = null;
+
+      function buildStoryContext() {
+        const title = document.querySelector('h1');
+        const heroCopy = document.querySelector('.hero-copy');
+        const sections = Array.from(document.querySelectorAll('.section-card')).map((section) => ({
+          heading: (section.querySelector('h2') || {}).textContent || '',
+          text: Array.from(section.querySelectorAll('p, .point-text, .quote')).map((node) => node.textContent.trim()).filter(Boolean).join(' ')
+        })).filter((section) => section.heading || section.text);
+
+        return {
+          title: title ? title.textContent.trim() : document.title,
+          body: heroCopy ? heroCopy.textContent.trim() : '',
+          sections,
+          origin: 'imported_story',
+          surface: 'story_surface',
+          tags: ['creator_story', 'via', 'activation']
+        };
+      }
+
+      async function initFederatedRuntime() {
+        try {
+          const runtimeModule = await import('./src/core/runtime/federated-agent-content-runtime/index.js');
+          federatedRuntime = await runtimeModule.createFederatedAgentContentRuntime();
+          federatedRuntime.emit('surface_open', {
+            surfaceName: 'story_surface',
+            pageContext: {
+              pathname: window.location.pathname,
+              title: document.title,
+              description: document.querySelector('meta[name="description"]') ? document.querySelector('meta[name="description"]').getAttribute('content') || '' : ''
+            }
+          });
+          window.VIAStoryRuntimeBridge = {
+            getStoryContext: buildStoryContext,
+            requestContentDecomposition(mode) {
+              return federatedRuntime.handoffToContent({
+                surfaceName: 'story_surface',
+                mode: mode || 'creator_draft',
+                input: buildStoryContext()
+              });
+            },
+            requestCreatorDraft() {
+              return federatedRuntime.handoffToAgent({
+                surfaceName: 'story_surface',
+                message: 'make this a creator draft',
+                input: buildStoryContext(),
+                pageContext: {
+                  pathname: window.location.pathname,
+                  title: document.title
+                },
+                openSurface: false
+              });
+            }
+          };
+          document.addEventListener('via:story:decompose', function (event) {
+            if (!federatedRuntime) return;
+            federatedRuntime.handoffToContent({
+              surfaceName: 'story_surface',
+              mode: event.detail && event.detail.mode ? event.detail.mode : 'creator_draft',
+              input: buildStoryContext()
+            });
+          });
+        } catch (_error) {}
+      }
+
       async function initMicroFrontendBridge() {
         try {
           const microFrontendModule = await import('./src/core/frontend/micro-frontend-architecture/index.js');
@@ -387,12 +452,20 @@
               if (!surfaceName || !architecture || !architecture.navigation) return;
               event.preventDefault();
               const params = surfaceName === 'creator_surface' ? { source: 'story' } : {};
+              if (federatedRuntime) {
+                federatedRuntime.emit('surface_open', {
+                  surfaceName: 'story_surface',
+                  targetSurface: surfaceName,
+                  storyContext: buildStoryContext()
+                });
+              }
               architecture.navigation.openSurface(surfaceName, params);
             });
           });
         } catch (_error) {}
       }
 
+      initFederatedRuntime();
       initMicroFrontendBridge();
     })();
   </script>

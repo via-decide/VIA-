@@ -558,6 +558,7 @@
       const statusEl = document.getElementById("status");
       let microFrontendRuntime = null;
       let microFrontendNavigation = null;
+      let federatedRuntime = null;
 
 
       const stepNames = {
@@ -567,11 +568,33 @@
         4: "Output"
       };
 
+      function loadRuntimeDraft() {
+        const runtimeDraftKeys = [
+          'via.runtime.storage.federated_runtime.creator_draft',
+          'via.runtime.storage.federated_runtime.story_surface.creator_draft'
+        ];
+
+        for (let index = 0; index < runtimeDraftKeys.length; index += 1) {
+          try {
+            const raw = localStorage.getItem(runtimeDraftKeys[index]);
+            if (!raw) continue;
+            const parsed = JSON.parse(raw);
+            if (!parsed || !parsed.draft) continue;
+            state.outputStructured = parsed;
+            state.output = formatStructuredDraft(parsed.draft);
+            state.step = 4;
+            return true;
+          } catch (_) {}
+        }
+
+        return false;
+      }
+
       function loadState() {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) {
           if (source === "story") {
-            state.step = 1;
+            state.step = loadRuntimeDraft() ? 4 : 1;
           }
           hydrateUI();
           updateProgress();
@@ -583,6 +606,10 @@
           Object.assign(state, saved);
         } catch (_) {
           localStorage.removeItem(STORAGE_KEY);
+        }
+
+        if ((!state.output || !state.outputStructured) && source === "story") {
+          loadRuntimeDraft();
         }
 
         hydrateUI();
@@ -726,10 +753,23 @@
         if (!validateStep(4)) return;
 
         const draftPayload = buildDraftPayload();
-        const parsed = microContentArchitecture ? microContentArchitecture.parseAndRegister(draftPayload) : null;
-        const creatorDraft = parsed ? microContentArchitecture.composer.composeCreatorDraft(parsed.units) : null;
-        const socialPreview = parsed ? microContentArchitecture.composer.composeSocialPreview(parsed.units) : null;
-        const feedCard = parsed ? microContentArchitecture.composer.composeFeedCard(parsed.units) : null;
+        const runtimeDraft = federatedRuntime
+          ? federatedRuntime.handoffToContent({
+              surfaceName: 'creator_surface',
+              mode: 'creator_draft',
+              input: draftPayload
+            })
+          : null;
+        const parsed = runtimeDraft && runtimeDraft.units
+          ? { units: runtimeDraft.units, contentMap: runtimeDraft.contentMap || {} }
+          : microContentArchitecture ? microContentArchitecture.parseAndRegister(draftPayload) : null;
+        const creatorDraft = runtimeDraft && runtimeDraft.draft
+          ? runtimeDraft.draft
+          : parsed ? microContentArchitecture.composer.composeCreatorDraft(parsed.units) : null;
+        const socialPreview = parsed && microContentArchitecture ? microContentArchitecture.composer.composeSocialPreview(parsed.units) : null;
+        const feedCard = runtimeDraft && runtimeDraft.preview
+          ? runtimeDraft.preview
+          : parsed && microContentArchitecture ? microContentArchitecture.composer.composeFeedCard(parsed.units) : null;
         const draft = creatorDraft ? formatStructuredDraft(creatorDraft) :
 `Title:
 ${draftPayload.title}
@@ -757,9 +797,16 @@ Ask the audience to respond, test, remix, or apply the framework inside VIA.`;
           draft: creatorDraft,
           socialPreview,
           feedCard,
-          units: parsed.units,
-          contentMap: parsed.contentMap
+          units: parsed ? parsed.units : [],
+          contentMap: parsed ? parsed.contentMap : {}
         } : null;
+        if (federatedRuntime) {
+          federatedRuntime.emit('draft_generate', {
+            surfaceName: 'creator_surface',
+            creatorType: state.creatorType,
+            contentType: state.contentType
+          });
+        }
         outputEl.textContent = draft;
         saveState();
         showStep(4);
@@ -811,6 +858,12 @@ Ask the audience to respond, test, remix, or apply the framework inside VIA.`;
             draft: published[0]
           });
         }
+        if (federatedRuntime) {
+          federatedRuntime.emit('content_published', {
+            surfaceName: 'creator_surface',
+            draft: published[0]
+          });
+        }
         saveState();
 
         statusEl.textContent = "Draft published to local VIA feed storage. Feed and profile surfaces can now hydrate this draft through the shared runtime.";
@@ -831,6 +884,46 @@ Ask the audience to respond, test, remix, or apply the framework inside VIA.`;
           saveState();
         });
       });
+
+      async function initFederatedRuntime() {
+        try {
+          const runtimeModule = await import('./src/core/runtime/federated-agent-content-runtime/index.js');
+          federatedRuntime = await runtimeModule.createFederatedAgentContentRuntime();
+          federatedRuntime.emit('surface_open', {
+            surfaceName: 'creator_surface',
+            pageContext: {
+              pathname: window.location.pathname,
+              title: document.title,
+              description: document.querySelector('meta[name="description"]') ? document.querySelector('meta[name="description"]').getAttribute('content') || '' : ''
+            }
+          });
+          federatedRuntime.subscribe('content_request', function (payload) {
+            if (!payload || !payload.result || !payload.result.draft || payload.surfaceName !== 'creator_surface') return;
+            state.outputStructured = payload.result;
+            state.output = formatStructuredDraft(payload.result.draft);
+            outputEl.textContent = state.output;
+            saveState();
+          });
+          window.VIACreatorOnboardingRuntime = {
+            getState: function () {
+              return JSON.parse(JSON.stringify(state));
+            },
+            requestAgentHelp: function (message) {
+              if (!federatedRuntime) return Promise.resolve(null);
+              return federatedRuntime.handoffToAgent({
+                surfaceName: 'creator_surface',
+                message: message || 'save this for later',
+                input: buildDraftPayload(),
+                pageContext: {
+                  pathname: window.location.pathname,
+                  title: document.title
+                },
+                openSurface: false
+              });
+            }
+          };
+        } catch (_error) {}
+      }
 
       async function initMicroFrontendBridge() {
         try {
@@ -858,6 +951,7 @@ Ask the audience to respond, test, remix, or apply the framework inside VIA.`;
       };
 
       loadState();
+      initFederatedRuntime();
       initMicroFrontendBridge();
     })();
   </script>

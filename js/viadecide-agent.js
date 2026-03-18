@@ -20,17 +20,48 @@
 
   const state = {
     core: null,
+    runtime: null,
     elements: {},
     pageContext: buildPageContext(),
     typing: false
   };
 
+  function inferSurfaceName() {
+    if (document.body && document.body.dataset && document.body.dataset.viaSurface) {
+      return document.body.dataset.viaSurface;
+    }
+    if (/creator-story\.html$/i.test(window.location.pathname)) return 'story_surface';
+    if (/creator-onboarding\.html$/i.test(window.location.pathname)) return 'creator_surface';
+    if (/\/agent\//i.test(window.location.pathname)) return 'agent_surface';
+    const params = new URLSearchParams(window.location.search);
+    const surface = params.get('surface');
+    if (surface === 'discover') return 'discover_surface';
+    if (surface === 'profile') return 'profile_surface';
+    if (surface === 'about') return 'about_surface';
+    return 'feed_surface';
+  }
+
+  function getRuntimePageContext() {
+    const runtimeFacade = global.VIAFederatedRuntime;
+    const runtime = runtimeFacade && runtimeFacade.runtime ? runtimeFacade.runtime : null;
+    if (!runtime || typeof runtime.getSnapshot !== 'function') return null;
+    try {
+      const snapshot = runtime.getSnapshot();
+      return snapshot && snapshot.pageContext ? snapshot.pageContext : null;
+    } catch (_error) {
+      return null;
+    }
+  }
+
   function buildPageContext() {
     const metaDescription = document.querySelector('meta[name="description"]');
+    const runtimePageContext = getRuntimePageContext();
     return {
       pathname: window.location.pathname,
       title: document.title || 'ViaDecide',
-      description: metaDescription ? metaDescription.getAttribute('content') || '' : ''
+      description: metaDescription ? metaDescription.getAttribute('content') || '' : '',
+      surfaceName: inferSurfaceName(),
+      runtimePageContext: runtimePageContext || undefined
     };
   }
 
@@ -96,6 +127,28 @@
       await loadScript(new URL(file, CORE_BASE_URL).href);
     }
     return global.VIAAgentCommunicationCore;
+  }
+
+
+  async function ensureFederatedRuntimeLoaded() {
+    if (state.runtime) {
+      return state.runtime;
+    }
+
+    try {
+      const runtimeModule = await import(new URL('../src/core/runtime/federated-agent-content-runtime/index.js', SCRIPT_URL).href);
+      state.runtime = await runtimeModule.createFederatedAgentContentRuntime();
+      if (state.runtime && typeof state.runtime.emit === 'function') {
+        state.runtime.emit('surface_open', {
+          surfaceName: inferSurfaceName(),
+          pageContext: buildPageContext()
+        });
+      }
+      return state.runtime;
+    } catch (_error) {
+      state.runtime = null;
+      return null;
+    }
   }
 
   function getStoredApiKey() {
@@ -333,7 +386,9 @@
       getTaskList: () => state.core.tasks.listTasks(),
       getRecentMessages: (channel) => state.core.bus.getHistory(channel || 'chat_channel'),
       getTelemetrySnapshot: () => state.core.telemetry.getSnapshot(),
-      core: state.core
+      getRuntimeSnapshot: () => state.runtime && typeof state.runtime.getSnapshot === 'function' ? state.runtime.getSnapshot() : null,
+      core: state.core,
+      runtime: state.runtime
     };
   }
 
@@ -432,10 +487,26 @@
       target: 'chat_channel'
     });
 
-    const suggestion = state.core.routes.suggestRoute(prompt, buildPageContext());
+    let runtimeResult = null;
+    if (state.runtime && typeof state.runtime.handoffToAgent === 'function') {
+      runtimeResult = await state.runtime.handoffToAgent({
+        surfaceName: inferSurfaceName(),
+        message: prompt,
+        pageContext: buildPageContext(),
+        input: buildPageContext(),
+        openSurface: false
+      });
+    }
+
+    const suggestion = runtimeResult && runtimeResult.routeSuggestion
+      ? runtimeResult.routeSuggestion
+      : state.core.routes.suggestRoute(prompt, buildPageContext());
     appendRouteSuggestion(suggestion);
 
-    if (/create task|add task|follow up|todo|to-do|next step/i.test(prompt)) {
+    if (runtimeResult && runtimeResult.task) {
+      captureTaskReference(runtimeResult.task);
+      state.core.telemetry.track('task_create', { taskId: runtimeResult.task.id, source: 'federated-runtime' });
+    } else if (/create task|add task|follow up|todo|to-do|next step/i.test(prompt)) {
       const task = state.core.tasks.createTask({
         title: prompt.replace(/^(create task|add task)\s*/i, '').trim() || prompt,
         origin: 'agent-chat',
@@ -448,17 +519,28 @@
     }
 
     try {
-      const reply = await generateAgentReply(prompt);
+      let reply = '';
+      if (!getStoredApiKey() && runtimeResult && runtimeResult.agentResponseText) {
+        reply = runtimeResult.agentResponseText;
+      } else {
+        reply = await generateAgentReply(prompt);
+      }
       state.core.session.appendTurn({ role: 'agent', text: reply, pageContext: buildPageContext() });
       await state.core.bus.publish('chat_channel', {
         type: 'agent_reply',
         priority: 'normal',
-        payload: { text: reply },
-        source: 'gemini',
+        payload: {
+          text: reply,
+          routeSuggestion: suggestion,
+          runtimeResult: runtimeResult
+        },
+        source: reply === (runtimeResult && runtimeResult.agentResponseText) ? 'federated-runtime' : 'gemini',
         target: 'chat_channel'
       });
     } catch (error) {
-      const fallback = `I hit an error while talking to Gemini: ${error.message}. You can still use Tasks, Setup, Export, and route suggestions.`;
+      const fallback = runtimeResult && runtimeResult.agentResponseText
+        ? runtimeResult.agentResponseText
+        : `I hit an error while talking to Gemini: ${error.message}. You can still use Tasks, Setup, Export, and route suggestions.`;
       state.core.session.appendTurn({ role: 'agent', text: fallback, pageContext: buildPageContext() });
       state.core.telemetry.track('system_notice_message', { error: error.message });
       await state.core.bus.publish('chat_channel', {
@@ -645,9 +727,16 @@
   async function init() {
     injectMarkup();
     const comms = await ensureCoreLoaded();
+    state.runtime = await ensureFederatedRuntimeLoaded();
     state.core = await comms.createAgentCommunicationCore({
       configUrl: new URL('agent-communication-config.json', CORE_BASE_URL).href
     });
+    if (state.runtime && typeof state.runtime.emit === 'function') {
+      state.runtime.emit('surface_open', {
+        surfaceName: inferSurfaceName(),
+        pageContext: buildPageContext()
+      });
+    }
     if (!state.core.session.getSession().id) {
       state.core.session.startSession({
         pageContext: buildPageContext(),
@@ -667,6 +756,24 @@
     state.core.bus.subscribe('export_channel', (message) => {
       state.core.telemetry.track(message.type || 'export_event', { channel: message.channel });
     });
+    if (state.runtime && typeof state.runtime.subscribe === 'function') {
+      state.runtime.subscribe('content_request', (payload) => {
+        if (!payload || !payload.result) return;
+        state.core.telemetry.track('draft_generate', { source: 'federated-runtime', hasDraft: Boolean(payload.result.draft) });
+      });
+    }
+    global.VIAAgentRuntime = {
+      getPageContext: () => buildPageContext(),
+      handoff: (payload) => state.runtime && typeof state.runtime.handoffToAgent === 'function'
+        ? state.runtime.handoffToAgent({
+            surfaceName: inferSurfaceName(),
+            pageContext: buildPageContext(),
+            openSurface: false,
+            ...(payload || {})
+          })
+        : Promise.resolve(null),
+      runtime: () => state.runtime
+    };
     bindEvents();
     syncDerivedState();
     setWidgetStatus('Ready');

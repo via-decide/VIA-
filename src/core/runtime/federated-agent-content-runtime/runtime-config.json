@@ -1,0 +1,35 @@
+{
+  "surfaceModules": [
+    "feed_surface",
+    "discover_surface",
+    "creator_surface",
+    "story_surface",
+    "profile_surface",
+    "about_surface",
+    "engine_tools_surface",
+    "agent_surface"
+  ],
+  "agentEvents": [
+    "user_message",
+    "agent_reply",
+    "task_create",
+    "task_update",
+    "route_suggestion",
+    "content_request",
+    "draft_generate",
+    "surface_open",
+    "surface_prefetch",
+    "system_notice"
+  ],
+  "contentUnitTypes": [
+    "hook",
+    "context",
+    "insight",
+    "how_it_works",
+    "impact",
+    "takeaway",
+    "cta",
+    "creator_draft",
+    "route_prompt"
+  ]
+}

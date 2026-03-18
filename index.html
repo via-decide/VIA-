@@ -1674,6 +1674,60 @@ async function initMicroFrontendArchitecture() {
   applySurfaceFromUrl();
 }
 
+let federatedRuntime=null;
+async function initFederatedRuntime(){
+  try {
+    const runtimeModule = await import('./src/core/runtime/federated-agent-content-runtime/index.js');
+    federatedRuntime = await runtimeModule.createFederatedAgentContentRuntime({
+      deps: {
+        pageContext: {
+          pathname: window.location.pathname,
+          title: document.title,
+          description: document.querySelector('meta[name="description"]') ? document.querySelector('meta[name="description"]').getAttribute('content') || '' : ''
+        }
+      }
+    });
+    federatedRuntime.emit('surface_open', {
+      surfaceName: 'feed_surface',
+      pageContext: {
+        pathname: window.location.pathname,
+        title: document.title,
+        description: document.querySelector('meta[name="description"]') ? document.querySelector('meta[name="description"]').getAttribute('content') || '' : ''
+      }
+    });
+    window.VIAFeedRuntimeBridge = {
+      getSnapshot(){
+        return federatedRuntime ? federatedRuntime.getSnapshot() : null;
+      },
+      requestRouteSuggestion(message){
+        if(!federatedRuntime)return Promise.resolve(null);
+        return federatedRuntime.handoffToAgent({
+          surfaceName:'feed_surface',
+          message:message || 'where should I go next?',
+          pageContext:{ pathname: window.location.pathname, title: document.title },
+          openSurface:false
+        });
+      },
+      requestContentPreview(input){
+        if(!federatedRuntime)return null;
+        return federatedRuntime.handoffToContent({
+          surfaceName:'feed_surface',
+          mode:'feed_units',
+          input:input || { title: document.title, body: document.querySelector('meta[name="description"]') ? document.querySelector('meta[name="description"]').getAttribute('content') || '' : '' }
+        });
+      }
+    };
+    federatedRuntime.subscribe('route_suggestion',function(payload){
+      window.__viaFeedRouteSuggestion = payload;
+    });
+    federatedRuntime.subscribe('content_request',function(payload){
+      if(payload && payload.surfaceName==='feed_surface'){
+        window.__viaFeedContentPreview = payload.result;
+      }
+    });
+  } catch (_error) {}
+}
+
 // ════════════════════════════════════════════════════════════════
 // SHEETS
 // ════════════════════════════════════════════════════════════════
@@ -1732,6 +1786,7 @@ function startApp(){
     syncCreatorContentSurface();GC.init();buildDiscover();buildProfile();
     updateXP(xp);updateAuthUI(VIA.user);VIA.applyToUI();
     await initMicroFrontendArchitecture();
+    await initFederatedRuntime();
   },2600);
 }
 document.addEventListener('DOMContentLoaded',startApp,{once:true});
