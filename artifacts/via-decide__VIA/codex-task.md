@@ -1,6 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
+Implement ContentOriginTracker for tagging and tracking post origin.
+
+CONSTRAINTS
+Must remain stateless.
 Implement FeedComposer module for normalizing all content into a unified feed schema.
 
 CONSTRAINTS

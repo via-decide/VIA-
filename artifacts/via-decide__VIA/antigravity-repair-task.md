@@ -4,6 +4,7 @@ TARGET
 Validate and repair only the files touched by the previous implementation.
 
 TASK
+Implement ContentOriginTracker for tagging and tracking post origin.
 Implement FeedComposer module for normalizing all content into a unified feed schema.
 Create "Agent Injection Interface". Create src/core/agents/injection-layer/. Define API for GN8R to push content into feed. Support draft → review → publish flow.
 Implement "Content Freshness Scorer". Create src/core/feed/freshness/. Score posts based on recency + interaction velocity. Decay older posts dynamically.

@@ -1,3 +1,9 @@
+Branch: simba/implement-contentorigintracker-for-tagging-and-t
+Title: Implement ContentOriginTracker for tagging and tracking post origin.
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Track evolution from human → user → agent content.
 Branch: simba/implement-feedcomposer-module-for-normalizing-al
 Title: Implement FeedComposer module for normalizing all content into a unif...
 
