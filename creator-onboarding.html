@@ -523,6 +523,10 @@
     </section>
   </div>
 
+  <script src="./src/core/content/micro-content-architecture/MicroContentParser.js"></script>
+  <script src="./src/core/content/micro-content-architecture/MicroContentComposer.js"></script>
+  <script src="./src/core/content/micro-content-architecture/MicroContentRegistry.js"></script>
+  <script src="./src/core/content/micro-content-architecture/index.js"></script>
   <script>
     (function () {
       const STORAGE_KEY = "via_creator_onboarding";
@@ -539,8 +543,13 @@
         niche: "",
         audience: "",
         idea: "",
-        output: ""
+        output: "",
+        outputStructured: null
       };
+
+      const microContentArchitecture = typeof window.createMicroContentArchitecture === "function"
+        ? window.createMicroContentArchitecture()
+        : null;
 
       const progressFill = document.getElementById("progressFill");
       const progressLabel = document.getElementById("progressLabel");
@@ -674,15 +683,50 @@
         showStep(step);
       };
 
+      function buildDraftPayload() {
+        return {
+          title: `${state.contentType}: ${state.niche}`,
+          body: `${state.idea}\n\nThis matters for ${state.audience}.`,
+          origin: "user_generated",
+          surface: "creator_workspace",
+          tags: [state.creatorType, state.contentType, state.niche, state.audience],
+          sections: [
+            { heading: "Context", text: `Why now: ${state.idea}` },
+            { heading: "Insight", text: `The angle is built for ${state.audience}.` },
+            { heading: "How It Works", text: `Translate the idea into a ${state.contentType.toLowerCase()} with a clear structure and proof points.` },
+            { heading: "Takeaway", text: "Give the audience one clear next move they can test immediately." },
+            { heading: "CTA", text: "Ask the audience to respond, test, remix, or publish their version inside VIA." }
+          ]
+        };
+      }
+
+      function formatStructuredDraft(structuredDraft) {
+        const sections = Array.isArray(structuredDraft.sections) ? structuredDraft.sections : [];
+        const takeaways = Array.isArray(structuredDraft.takeaways) ? structuredDraft.takeaways : [];
+        return [
+          `Title:\n${structuredDraft.title}`,
+          `Summary:\n${structuredDraft.summary || ""}`.trim(),
+          `Hook:\n${structuredDraft.hook || state.idea}`.trim(),
+          "Structure:",
+          sections.map((section, index) => `- ${index + 1}. ${section.heading}: ${section.body}`).join("\n"),
+          takeaways.length ? `Takeaways:\n${takeaways.map((item) => `- ${item}`).join("\n")}` : "",
+          `CTA:\n${structuredDraft.cta || "Ask the audience to apply the framework inside VIA."}`
+        ].filter(Boolean).join("\n\n");
+      }
+
       window.generateDraft = function () {
         statusEl.style.display = "none";
 
         if (!validateStep(4)) return;
 
-        const title = `${state.contentType}: ${state.niche}`;
-        const draft =
+        const draftPayload = buildDraftPayload();
+        const parsed = microContentArchitecture ? microContentArchitecture.parseAndRegister(draftPayload) : null;
+        const creatorDraft = parsed ? microContentArchitecture.composer.composeCreatorDraft(parsed.units) : null;
+        const socialPreview = parsed ? microContentArchitecture.composer.composeSocialPreview(parsed.units) : null;
+        const feedCard = parsed ? microContentArchitecture.composer.composeFeedCard(parsed.units) : null;
+        const draft = creatorDraft ? formatStructuredDraft(creatorDraft) :
 `Title:
-${title}
+${draftPayload.title}
 
 Creator Type:
 ${state.creatorType}
@@ -703,6 +747,13 @@ CTA:
 Ask the audience to respond, test, remix, or apply the framework inside VIA.`;
 
         state.output = draft;
+        state.outputStructured = creatorDraft ? {
+          draft: creatorDraft,
+          socialPreview,
+          feedCard,
+          units: parsed.units,
+          contentMap: parsed.contentMap
+        } : null;
         outputEl.textContent = draft;
         saveState();
         showStep(4);
@@ -741,6 +792,7 @@ Ask the audience to respond, test, remix, or apply the framework inside VIA.`;
           audience: state.audience,
           idea: state.idea,
           body: state.output,
+          microContent: state.outputStructured,
           createdAt: new Date().toISOString(),
           source: "creator-onboarding"
         });

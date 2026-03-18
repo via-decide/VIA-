@@ -18,6 +18,10 @@
 <script src="./shared/tool-storage.js"></script>
 <script src="./shared/social-core.js"></script>
 <script src="./onboarding/onboarding.js"></script>
+<script src="./src/core/content/micro-content-architecture/MicroContentParser.js"></script>
+<script src="./src/core/content/micro-content-architecture/MicroContentComposer.js"></script>
+<script src="./src/core/content/micro-content-architecture/MicroContentRegistry.js"></script>
+<script src="./src/core/content/micro-content-architecture/index.js"></script>
 <style>
 /* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -78,6 +82,8 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 .cat-about{background:rgba(245,197,24,.15);color:var(--gold);border:1px solid rgba(245,197,24,.3)}
 .card-title{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,5vw,2.2rem);font-weight:700;line-height:1.15;margin-bottom:.6rem;color:#fff;}
 .card-title em{font-style:italic;color:var(--saffron2);}
+.card-summary{margin:0 0 .8rem;font-size:.88rem;line-height:1.45;color:rgba(255,255,255,.78);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:calc(100% - 5.75rem);}
+.card-cta{display:inline-flex;align-items:center;gap:.35rem;margin-bottom:.7rem;font-size:.62rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);}
 .card-meta{display:flex;align-items:center;gap:.75rem;font-size:.75rem;color:rgba(255,255,255,.6);font-weight:500;}
 .card-avatar{width:28px;height:28px;border-radius:50%;border:2px solid var(--saffron);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;background:var(--deep3);}
 .card-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.3)}
@@ -824,6 +830,48 @@ const DEFAULT_CARDS = [
    storyKey:'edtech'},
 ];
 
+const VIA_MICRO_CONTENT = typeof window.createMicroContentArchitecture === 'function'
+  ? window.createMicroContentArchitecture()
+  : null;
+const STORY_MICRO_CACHE = {};
+
+function getStoryMicroPackage(key) {
+  if (!VIA_MICRO_CONTENT || !key || !BLOG_DATA[key]) return null;
+  if (STORY_MICRO_CACHE[key]) return STORY_MICRO_CACHE[key];
+
+  const storyPayload = {
+    ...BLOG_DATA[key],
+    storyKey: key,
+    origin: 'human_seeded',
+    surface: 'trend_stack',
+    tags: [key, BLOG_DATA[key].catLabel || '', 'via-story']
+  };
+  const parsed = VIA_MICRO_CONTENT.parseAndRegister(storyPayload);
+  const packageData = {
+    parsed,
+    feedCard: VIA_MICRO_CONTENT.composer.composeFeedCard(parsed.units),
+    trendStack: VIA_MICRO_CONTENT.composer.composeTrendStack(parsed.units),
+    creatorDraft: VIA_MICRO_CONTENT.composer.composeCreatorDraft(parsed.units),
+    socialPreview: VIA_MICRO_CONTENT.composer.composeSocialPreview(parsed.units)
+  };
+  STORY_MICRO_CACHE[key] = packageData;
+  return packageData;
+}
+
+function hydrateFeedCardsWithMicroContent(cards) {
+  return cards.map((card) => {
+    if (!card || !card.storyKey) return card;
+    const microPackage = getStoryMicroPackage(card.storyKey);
+    if (!microPackage || !microPackage.feedCard) return card;
+    return {
+      ...card,
+      microSummary: microPackage.feedCard.body || '',
+      microCTA: microPackage.feedCard.ctaText || '',
+      microUnitIds: microPackage.feedCard.unitIds || []
+    };
+  });
+}
+
 let CARDS = DEFAULT_CARDS.slice();
 
 const DISCOVER_ITEMS = [
@@ -1074,6 +1122,8 @@ const BLOG_DATA = {
   }
 };
 
+CARDS = hydrateFeedCardsWithMicroContent(DEFAULT_CARDS.slice());
+
 // ════════════════════════════════════════════════════════════════
 // DEEP DIVES ENGINE
 // ════════════════════════════════════════════════════════════════
@@ -1093,6 +1143,8 @@ function ddLoad(key, btnEl) {
 
   const d = BLOG_DATA[key];
   if (!d) return;
+  const microPackage = getStoryMicroPackage(key);
+  const trendStack = microPackage ? microPackage.trendStack : null;
   ddCurrentStory = key;
 
   // Update accent color scoped to the layer element (not document root)
@@ -1112,16 +1164,19 @@ function ddLoad(key, btnEl) {
   document.getElementById('dd-catLabel').innerHTML  = d.catLabel;
   document.getElementById('dd-hookTitle').innerHTML = d.hookTitle;
   document.getElementById('dd-hookLead').innerHTML  = d.hookLead;
-  document.getElementById('dd-probTitle').innerHTML = d.probTitle;
-  document.getElementById('dd-probBody').innerHTML  = d.probBody;
+  document.getElementById('dd-probTitle').innerHTML = trendStack && trendStack.context && trendStack.context.title ? trendStack.context.title : d.probTitle;
+  document.getElementById('dd-probBody').innerHTML  = trendStack && trendStack.context && trendStack.context.body ? trendStack.context.body : d.probBody;
   document.getElementById('dd-probList').innerHTML  = d.problems.map(p =>
     `<div class="dd-prob-item"><span class="dd-prob-icon">${p.icon}</span><p>${p.text}</p></div>`
   ).join('');
-  document.getElementById('dd-insightTitle').innerHTML = d.insightTitle;
-  document.getElementById('dd-insightBody').innerHTML  = d.insightBody;
+  document.getElementById('dd-insightTitle').innerHTML = trendStack && trendStack.insight && trendStack.insight.title ? trendStack.insight.title : d.insightTitle;
+  document.getElementById('dd-insightBody').innerHTML  = trendStack && trendStack.insight && trendStack.insight.body ? trendStack.insight.body : d.insightBody;
   document.getElementById('dd-insightQuote').innerHTML = d.insightQuote;
-  document.getElementById('dd-fwTitle').innerHTML = d.fwTitle;
-  document.getElementById('dd-fwSteps').innerHTML = d.fwSteps.map((s, i) => `
+  const trendSteps = trendStack && trendStack.howItWorks && Array.isArray(trendStack.howItWorks.items) && trendStack.howItWorks.items.length
+    ? trendStack.howItWorks.items.map((item) => ({ title: item.title, desc: item.body }))
+    : d.fwSteps;
+  document.getElementById('dd-fwTitle').innerHTML = trendStack && trendStack.howItWorks && trendStack.howItWorks.title ? trendStack.howItWorks.title : d.fwTitle;
+  document.getElementById('dd-fwSteps').innerHTML = trendSteps.map((s, i) => `
     <div class="dd-step">
       <div style="display:flex;flex-direction:column;align-items:center;">
         <div class="dd-step-num">${i+1}</div>
@@ -1131,12 +1186,18 @@ function ddLoad(key, btnEl) {
         <h4>${s.title}</h4><p>${s.desc}</p>
       </div>
     </div>`).join('');
-  document.getElementById('dd-exTitle').innerHTML = d.exTitle;
-  document.getElementById('dd-exList').innerHTML  = d.examples.map(e =>
+  const trendImpact = trendStack && trendStack.impact && Array.isArray(trendStack.impact.items) && trendStack.impact.items.length
+    ? trendStack.impact.items.map((item) => ({ title: item.title, desc: item.body }))
+    : d.examples;
+  const trendTakeaways = trendStack && trendStack.takeaways && Array.isArray(trendStack.takeaways.items) && trendStack.takeaways.items.length
+    ? trendStack.takeaways.items.map((item) => item.body)
+    : d.checklist;
+  document.getElementById('dd-exTitle').innerHTML = trendStack && trendStack.impact && trendStack.impact.title ? trendStack.impact.title : d.exTitle;
+  document.getElementById('dd-exList').innerHTML  = trendImpact.map(e =>
     `<div class="dd-ex-card"><h3>${e.title}</h3><p>${e.desc}</p></div>`
   ).join('');
-  document.getElementById('dd-clTitle').innerHTML = d.clTitle;
-  document.getElementById('dd-clItems').innerHTML = d.checklist.map(c =>
+  document.getElementById('dd-clTitle').innerHTML = trendStack && trendStack.takeaways && trendStack.takeaways.title ? trendStack.takeaways.title : d.clTitle;
+  document.getElementById('dd-clItems').innerHTML = trendTakeaways.map(c =>
     `<div class="dd-check-item">${c}</div>`
   ).join('');
 
@@ -1230,6 +1291,8 @@ function makeCard(index) {
     '<div class="card-content">'+
       '<div class="chip card-category '+catClass+'">'+d.catLabel+'</div>'+
       '<div class="card-title">'+d.title+'</div>'+
+      (d.microSummary?'<div class="card-summary">'+d.microSummary+'</div>':'')+
+      (d.microCTA?'<div class="card-cta">✦ '+d.microCTA+'</div>':'')+
       '<div class="card-meta">'+
         '<div class="card-avatar">'+d.authorEmoji+'</div>'+
         '<span>'+d.author+'</span><div class="card-dot"></div>'+
