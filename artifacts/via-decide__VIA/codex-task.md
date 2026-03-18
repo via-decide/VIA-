@@ -1,118 +1,258 @@
-You are working in repository via-decide/VIA on branch main.
+You are working in the `via-decide/VIA` repository.
 
-MISSION
-Implement ContentFreshnessScorer for feed ranking.
+This is a vanilla HTML/CSS/JavaScript website, not a React app.
 
-CONSTRAINTS
-No external libs.
-Implement PostRemixEngine for forking content.
+Task:
+Integrate locally published creator drafts into the main VIA feed.
 
-CONSTRAINTS
-Store only diffs.
-Implement ContextMemoryLayer for session continuity.
+The creator onboarding flow already stores published drafts in browser localStorage under this key:
 
-CONSTRAINTS
-In-memory only.
-Implement ToolOutputNormalizer for standardizing tool outputs.
+`via_creator_published_drafts`
 
-CONSTRAINTS
-Max nesting depth = 3
-Implement DecisionConfidenceMeter to score content quality.
+You need to make the main feed read those drafts and render them automatically.
 
-CONSTRAINTS
-Use rule-based scoring only.
-Implement ProgressiveFeedEngine for content prioritization.
+==================================================
+GOAL
+==================================================
 
-CONSTRAINTS
-No ML models. Deterministic scoring only.
-Implement ExecutionHooksEngine to attach actions to posts.
+When a creator publishes from `creator-onboarding.html`, the main VIA feed should display those drafts on the same device/browser.
 
-CONSTRAINTS
-Hooks must be idempotent.
-Implement ContentOriginTracker for tagging and tracking post origin.
+This is a local preview system only.
+Do NOT build backend publishing yet.
+Do NOT add Supabase for this task.
 
-CONSTRAINTS
-Must remain stateless.
-Implement FeedComposer module for normalizing all content into a unified feed schema.
+==================================================
+FILES TO CREATE / MODIFY
+==================================================
 
-CONSTRAINTS
-Use native JS only. No external libraries.
-Create "Agent Injection Interface". Create src/core/agents/injection-layer/. Define API for GN8R to push content into feed. Support draft → review → publish flow.
+1. CREATE:
+- `social-core.js`
 
-CONSTRAINTS
-Must support manual override for safety.
-Implement "Content Freshness Scorer". Create src/core/feed/freshness/. Score posts based on recency + interaction velocity. Decay older posts dynamically.
+2. MODIFY:
+- the main feed page file that renders the VIA feed
+  (likely `index.html`, unless the repo structure clearly uses another main homepage file)
 
-CONSTRAINTS
-Simple exponential decay function only.
-Build "Lightweight Notification Engine". Create src/core/notifications/. Trigger events for likes, saves, forks. Batch notifications to avoid spam.
+Do NOT modify unrelated files.
 
-CONSTRAINTS
-No push infra yet. Use in-app only.
-Implement "Decision Confidence Meter". Create src/core/decision/confidence/. Score outputs based on clarity, constraints, and completeness. Expose score visually in feed.
+==================================================
+FUNCTIONAL REQUIREMENTS
+==================================================
 
-CONSTRAINTS
-Use deterministic scoring rules.
-Implement "User Action Heatmap Tracker". Create src/core/analytics/heatmap/. Track clicks, scroll depth, execution triggers. Aggregate into interaction zones. Expose data to feed ranking logic.
+A. In `social-core.js`, implement a standalone local feed renderer.
 
-CONSTRAINTS
-Batch processing only. No real-time streaming yet.
-Build "Insight Compression Engine". Create src/core/insight/compression-engine/. Convert long outputs into concise summaries + key bullets. Add Expand/Collapse support. Implement CompressionRatio tracking.
+Requirements:
 
-CONSTRAINTS
-No external summarization APIs. Rule-based only.
-Implement "Context Memory Layer". Create src/core/memory/context-layer/. Store short-lived session context for users. Enable cross-tool continuity (Decision → Study → Execution). Add MemoryPruner.js for cleanup.
+1. Read localStorage key:
+   `via_creator_published_drafts`
 
-CONSTRAINTS
-Use lightweight in-memory store. No heavy DB dependency.
-Create "Tool Output Normalizer". Create src/core/tools/output-normalizer/. Standardize outputs from all tools into a unified schema. Support text, structured JSON, and hybrid outputs. Implement OutputFormatter.js.
+2. Safely parse it:
+   - if missing → use empty array
+   - if invalid JSON → fail safely and log warning
+   - if not an array → use empty array
 
-CONSTRAINTS
-Avoid deep nesting beyond 3 levels.
-Implement "StudyOS Adaptive Path Engine". Create src/modules/studyos/adaptive-engine/. Track user progress and dynamically adjust learning sequences. Use difficulty scaling + time-to-completion heuristics. Add "Knowledge Retention Score" metric.
+3. Sort posts newest first using `createdAt`
 
-CONSTRAINTS
-No ML models. Use deterministic heuristics only.
-Build "Execution Hooks Engine" to make every post actionable. Create src/core/execution/hooks-engine/.
+4. Render posts into a mount element:
+   `#viaCreatorFeedMount`
 
-CONSTRAINTS
-Hooks must remain stateless and idempotent.
-Implement a "Decision Graph Engine" to convert all user inputs into structured reasoning trees. Create src/core/decision/graph-engine/. Define decision-graph.schema.json with nodes: Problem, Options, Constraints, Outcomes. Each node must support weighted edges for probabilistic reasoning. Implement GraphBuilder.js to parse raw prompts into graph structures. Add "Path Confidence Scoring" using weighted traversal logic.
+5. Each rendered card must show:
+   - title
+   - author
+   - creatorType
+   - type
+   - audience
+   - extracted hook
+   - extracted structure bullets (up to 4)
+   - relative time / createdAt label
 
-CONSTRAINTS
-No external graph libraries. Use adjacency lists with optimized traversal.
-Implement the foundational "Feed Intelligence Layer" for VIA to transition from manually curated content to a self-evolving social system. Create directory src/core/feed/intelligence-layer/. Create feed-schema.json defining core post types aligned with VIA's Decision OS: - post_Decision (structured reasoning outputs) - post_StudyPlan (StudyOS generated learning flows) - post_ToolOutput (GN8R-generated execution artifacts) - post_Insight (human-authored frameworks and breakdowns) Implement FeedComposer.js. This module must: - Normalize all incoming content (manual + tool-generated) into a unified post schema - Support expandable structured blocks (sections, steps, code, reasoning layers) - Assign "Execution Hooks" to each post (Run, Modify, Fork actions) Implement ContentOriginTracker.js.
+6. Add two actions per card:
+   - `Copy Draft`
+   - `Open Creator Flow`
 
-CONSTRAINTS
-Do NOT over-engineer real-time infra yet. Use simple JSON store or Supabase-lite mock for persistence. All modules must remain stateless and composable for future agent injection. Feed rendering must support structured content (not plain text blobs).
+7. `Copy Draft`:
+   - copies the post body to clipboard
+   - temporary button label becomes `Copied`
 
-PROCESS (MANDATORY)
-1. Read README.md and AGENTS.md before editing.
-2. Audit architecture before coding. Summarize current behavior.
-3. Preserve unrelated working code. Prefer additive modular changes.
-4. Implement the smallest safe change set for the stated goal.
-5. Run validation commands and fix discovered issues.
-6. Self-review for regressions, missing env wiring, and docs drift.
-7. Return complete final file contents for every modified or created file.
+8. `Open Creator Flow`:
+   - navigates to:
+     `./creator-onboarding.html?source=feed`
 
-REPO AUDIT CONTEXT
-- Description: 
-- Primary language: HTML
-- README snippet:
-not found
+9. Add empty state UI:
+   - If no local creator posts exist, show a simple message explaining that posts published from creator onboarding will appear here on this device.
 
-- AGENTS snippet:
-not found
+10. Expose helper on `window`:
+   - `window.VIASocialCore.renderLocalCreatorFeed`
+   - `window.VIASocialCore.readPublishedDrafts`
+
+11. Auto-render on page load
+
+12. Refresh on `storage` event when possible
+
+==================================================
+DATA ASSUMPTIONS
+==================================================
+
+Each local published draft may look like:
+
+{
+  id: "draft_123",
+  title: "Decision Post: Creator Strategy",
+  type: "Decision Post",
+  creatorType: "Writer",
+  author: "Name",
+  email: "name@example.com",
+  audience: "Founders",
+  idea: "Core thesis",
+  body: "Full generated draft text",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  source: "creator-onboarding"
+}
+
+Handle missing fields safely.
+
+==================================================
+UI REQUIREMENTS
+==================================================
+
+Use lightweight embedded styles inside `social-core.js` via injected `<style>` tag.
+
+Style should match VIA:
+- dark
+- rounded cards
+- subtle borders
+- orange accent
+- mobile friendly
+
+Do NOT redesign the whole site.
+Only style the local creator feed block and its cards.
+
+==================================================
+INDEX / MAIN FEED PAGE INTEGRATION
+==================================================
+
+Modify the main feed page so it includes a mount point:
+
+```html
+<div id="viaCreatorFeedMount"></div>
+```
+
+Place it in a logical feed section where creator content preview should appear.
+
+Also load:
+
+<script src="./social-core.js"></script>
+
+Do NOT duplicate the script if already present. Do NOT remove existing feed logic. Do NOT replace the homepage. Only augment it.
+
+If the repo already has a feed section, add this mount inside that section. If not, create a small “Creator Feed Preview” block with:
+
+heading
+
+short description
+
+mount div
 
 
-SOP: PRE-MODIFICATION PROTOCOL (MANDATORY)
-1. Adherence to Instructions: No deviations without explicit user approval.
-2. Mandatory Clarification: Immediately ask if instructions are ambiguous or incomplete.
-3. Proposal First: Always propose optimizations or fixes before implementing them.
-4. Scope Discipline: Do not add unrequested features or modify unrelated code.
-5. Vulnerability Check: Immediately flag and explain security risks.
+================================================== IMPLEMENTATION CONSTRAINTS
 
-OUTPUT REQUIREMENTS
-- Include: implementation summary, checks run, risks, rollback notes.
-- Generate branch + PR package.
-- Keep prompts deterministic and preservation-first.
+1. Do NOT use frameworks.
+
+
+2. Do NOT add npm dependencies.
+
+
+3. Do NOT rewrite existing feed architecture.
+
+
+4. Do NOT change backend/auth logic.
+
+
+5. Do NOT rename the localStorage key.
+
+
+6. Do NOT break current feed/discover/about/profile UI.
+
+
+7. Prefer surgical edits.
+
+
+
+================================================== HELPER LOGIC DETAILS
+
+In social-core.js, include helper functions like:
+
+escapeHtml(value)
+
+readPublishedDrafts()
+
+extractHook(body)
+
+extractStructure(body)
+
+formatTime(value)
+
+renderLocalCreatorFeed(mountId)
+
+attachActions(mount, posts)
+
+ensureStyleTag()
+
+
+extractHook(body):
+
+try to extract text after Hook:
+
+fallback to first ~180 chars
+
+
+extractStructure(body):
+
+try to parse lines under Structure:
+
+stop near CTA:
+
+limit to 4 items
+
+
+================================================== SELF-CHECK BEFORE FINISHING
+
+Before returning final code, verify:
+
+social-core.js exists
+
+main feed page includes #viaCreatorFeedMount
+
+main feed page includes ./social-core.js
+
+no framework code was introduced
+
+no backend code was introduced
+
+local drafts render newest first
+
+empty state works
+
+copy button works
+
+onboarding navigation works
+
+current feed page is still intact
+
+
+================================================== OUTPUT FORMAT
+
+Return FULL final contents of every modified/created file only.
+
+Use this exact format:
+
+FILE: relative/path/to/file
+
+<full file contents>
+
+or
+
+FILE: relative/path/to/file
+
+<full file contents>
+
+Do not explain anything. Do not summarize. Do not use diffs. Only return final file contents.
