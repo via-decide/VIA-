@@ -12,6 +12,12 @@ Title: We need to replace the static CARDS array with a dynamic, self-learni...
 ## Summary
 - Repo orchestration task for via-decide/VIA
 - Goal: Hydrate the VIA ecosystem with a massive, structured dataset. By mapping a secure Supabase backend to our fast DOM-recycling frontend, we ensure that as the user swipes, they get a continuous, highly performant stream of authentic Bharat stories that VibeRank can seamlessly sort.
+Branch: simba/based-on-ux-review-of-the-live-feed-we-need-to-e
+Title: Based on UX review of the live feed, we need to execute a "Cinematic ...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Eliminate all UI clipping on standard mobile viewports. By moving the progress indicator to the top (Story style) and pushing the action buttons up, we give the user's thumb more breathing room and create a polished, clutter-free reading experience that rivals native iOS apps.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
