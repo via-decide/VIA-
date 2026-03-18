@@ -1,3 +1,9 @@
+Branch: simba/implement-a-core-backend-module-called-via-ident
+Title: Implement a core backend module called via-identity-resolver to bridg...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Unify the "Fragmented User." In the decentralized world, a single human often has five different IDs across five different apps. By resolving these into a single internal GlobalID, the VIA engine can maintain a persistent understanding of a user's context and reputation, regardless of which "social window" they are looking through.
 Branch: simba/implement-a-core-backend-module-called-via-predi
 Title: Implement a core backend module called via-predictive-personalization...
 
