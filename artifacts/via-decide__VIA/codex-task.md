@@ -1,6 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
+Implement FeedComposer module for normalizing all content into a unified feed schema.
+
+CONSTRAINTS
+Use native JS only. No external libraries.
 Create "Agent Injection Interface". Create src/core/agents/injection-layer/. Define API for GN8R to push content into feed. Support draft → review → publish flow.
 
 CONSTRAINTS
