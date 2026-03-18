@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="./shared/tool-storage.js"></script>
+<script src="./shared/social-core.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -434,6 +436,17 @@ function formatCount(n) {
   if (n >= 1e3) return (n/1e3).toFixed(1)+'K';
   return String(n);
 }
+function escapeHTML(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+function stripTags(value) {
+  return String(value ?? '').replace(/<[^>]*>/g, '').trim();
+}
 function getGuestProfile() {
   return { id:'', username:'guest', display_name:'Guest Explorer',
     city:'Preview Mode', avatar_emoji:'👀', xp:0,
@@ -513,22 +526,47 @@ const VIA = {
 window.VIA = VIA;
 
 // ── DATA ─────────────────────────────────────────────────────
-const CARDS = [
+const DEFAULT_CARDS = [
   { id:1, cat:'viral', catLabel:'🔥 Viral', bg:'linear-gradient(160deg,#1a0a3a 0%,#0B0B1A 60%)', emoji:'🎪',
     title:'Mumbai की <em>street food</em> revolution जो दिल्ली तक पहुँची',
-    author:'Priya Sharma', authorEmoji:'👩‍🍳', location:'Mumbai', time:'2h ago', views:'2.4M', likes:'184K', redirect:'viral-story' },
+    author:'Priya Sharma', authorEmoji:'👩‍🍳', location:'Mumbai', time:'2h ago', views:'2.4M', likes:'184K', redirect:'viral-story',
+    sourceUrl:'https://via-decide.github.io/decide.engine-tools/', feedContext:{
+      title:'Why this is trending',
+      summary:'Street vendors in Mumbai are blending digital discovery, delivery, and local recipes into a creator-led food economy.',
+      bullets:['Hyperlocal menus are turning into shareable short-form stories.','Affordable pricing plus visual branding is pulling in Gen Z audiences.','Delhi creators are copying the format, pushing the trend nationwide.']
+    } },
   { id:2, cat:'bharat', catLabel:'🇮🇳 Bharat', bg:'linear-gradient(160deg,#0a1a00 0%,#0B0B1A 60%)', emoji:'🌾',
     title:'Bihar के किसान ने बनाया <em>drone tech</em> जो पूरे गाँव बदल रहा है',
-    author:'Rahul Kumar', authorEmoji:'👨‍🌾', location:'Patna', time:'5h ago', views:'890K', likes:'67K', redirect:'bharat-story' },
+    author:'Rahul Kumar', authorEmoji:'👨‍🌾', location:'Patna', time:'5h ago', views:'890K', likes:'67K', redirect:'bharat-story',
+    sourceUrl:'./interview-prep/index.html', feedContext:{
+      title:'Ground context',
+      summary:'A low-cost drone workflow is helping nearby farms reduce pesticide waste and monitor crop health faster than manual scouting.',
+      bullets:['Shared ownership keeps the operating cost within village budgets.','Local repairability makes the drone practical beyond pilot demos.','The model spreads because neighbouring farmers can see output differences quickly.']
+    } },
   { id:3, cat:'tech', catLabel:'⚡ Tech', bg:'linear-gradient(160deg,#0a0a2a 0%,#0B0B1A 60%)', emoji:'🤖',
     title:'IIT Bombay startup ने बनाया <em>AI doctor</em> — 5 रुपये में diagnosis',
-    author:'Dev Patel', authorEmoji:'🧑‍💻', location:'Bangalore', time:'1h ago', views:'3.1M', likes:'221K', redirect:'tech-story' },
+    author:'Dev Patel', authorEmoji:'🧑‍💻', location:'Bangalore', time:'1h ago', views:'3.1M', likes:'221K', redirect:'tech-story',
+    sourceUrl:'./tools/spec-builder/index.html', feedContext:{
+      title:'Startup context',
+      summary:'The promise is not just cheaper diagnosis — it is triage at scale for clinics that cannot keep specialist staff on-site.',
+      bullets:['The first win is routing patients faster, not replacing doctors.','Low-ticket screening expands access in tier-2 and tier-3 cities.','Regulatory trust and clinical validation will decide adoption speed.']
+    } },
   { id:4, cat:'sport', catLabel:'🏏 Sport', bg:'linear-gradient(160deg,#001a0a 0%,#0B0B1A 60%)', emoji:'🏏',
     title:'15 साल की <em>Riya Singh</em> — India की next batting sensation',
-    author:'Sports VIA', authorEmoji:'🎙️', location:'Hyderabad', time:'3h ago', views:'5.2M', likes:'412K', redirect:'sport-story' },
+    author:'Sports VIA', authorEmoji:'🎙️', location:'Hyderabad', time:'3h ago', views:'5.2M', likes:'412K', redirect:'sport-story',
+    sourceUrl:'./tools/context-packager/index.html', feedContext:{
+      title:'Performance context',
+      summary:'Selectors are noticing game awareness, timing under pressure, and unusually calm finishing in youth tournaments.',
+      bullets:['Her shot selection stands out more than raw power.','Coaches are tracking consistency across back-to-back fixtures.','Regional clips are accelerating her visibility far beyond local circuits.']
+    } },
   { id:5, cat:'culture', catLabel:'🎨 Culture', bg:'linear-gradient(160deg,#1a001a 0%,#0B0B1A 60%)', emoji:'🎭',
     title:'Rajasthan की <em>folk art</em> जो NFT market में छा गई',
-    author:'Meera Joshi', authorEmoji:'🎨', location:'Jaipur', time:'8h ago', views:'1.8M', likes:'93K', redirect:'culture-story' },
+    author:'Meera Joshi', authorEmoji:'🎨', location:'Jaipur', time:'8h ago', views:'1.8M', likes:'93K', redirect:'culture-story',
+    sourceUrl:'./prompt-alchemy/index.html', feedContext:{
+      title:'Creator context',
+      summary:'Collectors are responding to the story around preservation, provenance, and digital ownership — not only the art itself.',
+      bullets:['Traditional motifs gain reach when artists explain meaning in simple language.','Digital drops create recurring revenue for artisans beyond festival seasons.','Authenticity and artist credit remain the main trust signals for buyers.']
+    } },
   { id:6, cat:'about', catLabel:'✦ ViaDecide', bg:'linear-gradient(160deg,#1a1000 0%,#0B0B1A 60%)', emoji:'⚡',
     title:'<em>44+ tools</em> that help you think, build, decide — free forever',
     author:'ViaDecide', authorEmoji:'✦', location:'Bharat', time:'Always', views:'—', likes:'—', redirect:'about', cta:true },
@@ -536,6 +574,8 @@ const CARDS = [
     title:'अपनी story VIA पर शेयर करो — <em>Bharat सुनेगा</em>',
     author:'VIA Team', authorEmoji:'✦', location:'India', time:'Now', views:'—', likes:'—', redirect:'create', cta:true },
 ];
+
+let CARDS = DEFAULT_CARDS.slice();
 
 const DISCOVER_ITEMS = [
   {emoji:'🏏',cat:'Sport',name:'Cricket World',toolPath:'./tools/context-packager/index.html'},
@@ -594,7 +634,7 @@ function makeCard(index) {
       '<div class="action-btn" onclick="openRibbon('+index+')">' +
         '<div class="action-icon">📤</div><div class="action-label">Share</div>' +
       '</div>' +
-      (!d.cta ? '<div class="action-btn" onclick="handleRedirect(\''+d.redirect+'\')"><div class="action-icon">🔗</div><div class="action-label">Open</div></div>' : '') +
+      (!d.cta ? '<div class="action-btn" onclick="openStorySheet('+index+')"><div class="action-icon">🔗</div><div class="action-label">Open</div></div>' : '') +
     '</div>' +
     '<div class="card-a11y-actions">' +
       '<button class="a11y-btn" onclick="likeCard('+index+')" aria-label="Like">❤️</button>' +
@@ -778,6 +818,74 @@ function openDiscoverTool(toolPath) {
     switchLayer('feed');
   }
 }
+function resolveCardUrl(card) {
+  if (!card) return '';
+  if (card.sourceUrl) return card.sourceUrl;
+  return REDIRECT_MAP[card.redirect] || '';
+}
+
+function buildCardContext(card) {
+  if (!card) return null;
+  const ctx = card.feedContext || {};
+  const summary = String(ctx.summary || card.context || card.body || '').trim();
+  const bullets = Array.isArray(ctx.bullets)
+    ? ctx.bullets.map(item => String(item || '').trim()).filter(Boolean)
+    : [];
+  const title = String(ctx.title || 'Feed context').trim();
+  if (!summary && !bullets.length) return null;
+  return { title, summary, bullets };
+}
+
+function openStorySheet(index) {
+  const card = CARDS[index];
+  if (!card) return;
+  addXP(25);
+  openSheet('story', { cardIndex: index });
+}
+
+function hydrateFeedCards() {
+  if (!window.SocialCore || typeof window.SocialCore.listFeed !== 'function') return;
+  const feed = window.SocialCore.listFeed(5);
+  if (!Array.isArray(feed) || !feed.length) return;
+
+  const dynamicCards = feed.map((post, index) => {
+    const body = String(post.title || post.body || '').trim();
+    if (!body) return null;
+    const sourceUrl = String(post.source_url || post.sourceUrl || post.link_url || post.linkUrl || post.url || '').trim();
+    const contextSummary = String(post.context_summary || post.contextSummary || post.summary || '').trim();
+    const bulletSource = post.context_points || post.contextPoints || post.bullets || [];
+    const bullets = Array.isArray(bulletSource)
+      ? bulletSource.map(item => String(item || '').trim()).filter(Boolean)
+      : String(bulletSource || '').split(/\n+/).map(item => item.replace(/^[-•]\s*/, '').trim()).filter(Boolean);
+    const author = post.author || {};
+    return {
+      id: post.id || 'social-' + index,
+      cat: String(post.category || 'viral').toLowerCase(),
+      catLabel: post.category_label || '📰 Community',
+      bg: 'linear-gradient(160deg,#1a0f33 0%,#0B0B1A 60%)',
+      emoji: post.emoji || '📰',
+      title: escapeHTML(body),
+      author: author.display_name || author.username || post.author_name || 'VIA Community',
+      authorEmoji: author.avatar_emoji || post.author_emoji || '🌟',
+      location: post.location || post.visibility || 'Community',
+      time: post.relative_time || post.time || 'Now',
+      views: post.views || 'Live',
+      likes: post.reaction_count ? formatCount(post.reaction_count) : 'New',
+      redirect: sourceUrl ? null : 'about',
+      sourceUrl,
+      feedContext: {
+        title: post.context_title || 'Feed context',
+        summary: contextSummary || body,
+        bullets
+      }
+    };
+  }).filter(Boolean);
+
+  if (!dynamicCards.length) return;
+  const fallbackCards = DEFAULT_CARDS.filter(card => card.cta);
+  CARDS = dynamicCards.concat(fallbackCards);
+}
+
 
 function copyShareLink(url) {
   if (navigator.clipboard) {
@@ -813,6 +921,8 @@ function ribbonAction(type) {
   addXP(5);
   if (type === 'share') {
     openSheet('share', { cardIndex: activeRibbonCard });
+  } else if (type === 'save') {
+    openStorySheet(activeRibbonCard);
   } else {
     openSheet('comment');
   }
@@ -938,7 +1048,31 @@ const SHEETS = {
 function openSheet(type, extra={}) {
   const overlay=document.getElementById('sheet-overlay'), sheet=document.getElementById('sheet'), body=document.getElementById('sheet-body');
   let html='';
-  if (type==='redirect'&&extra.url) {
+  if (type==='story' && extra.cardIndex !== undefined) {
+    const card = CARDS[extra.cardIndex];
+    const context = buildCardContext(card);
+    const targetUrl = resolveCardUrl(card);
+    const safeTitle = escapeHTML(stripTags(card && card.title ? card.title : 'Story'));
+    html = '<div class="sheet-title">Story Actions</div><div class="sheet-sub">'+safeTitle+'</div><div class="sheet-actions">';
+    if (context) {
+      html += '<div class="sheet-btn" onclick="openSheet(\'story-context\',{cardIndex:'+extra.cardIndex+'})"><div class="sheet-btn-icon" style="background:rgba(108,99,255,.15)">🧠</div><div class="sheet-btn-text"><div class="sheet-btn-title">Open Feed Context</div><div class="sheet-btn-sub">Read why this story matters</div></div><div class="sheet-btn-arrow">›</div></div>';
+    }
+    if (targetUrl) {
+      const openAction = targetUrl.startsWith('http')
+        ? 'window.open(\''+targetUrl+'\',\'_blank\');closeSheet();addXP(30)'
+        : 'window.location.href=\''+targetUrl+'\';closeSheet();addXP(30)';
+      html += '<div class="sheet-btn" onclick="'+openAction+'"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">🔗</div><div class="sheet-btn-text"><div class="sheet-btn-title">Open Link</div><div class="sheet-btn-sub">Jump to the linked feed destination</div></div><div class="sheet-btn-arrow">›</div></div>';
+    }
+    html += '<div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Stay here</div><div class="sheet-btn-sub">Continue browsing the feed</div></div><div class="sheet-btn-arrow">›</div></div></div>';
+  } else if (type==='story-context' && extra.cardIndex !== undefined) {
+    const card = CARDS[extra.cardIndex];
+    const context = buildCardContext(card);
+    const safeTitle = escapeHTML(stripTags(card && card.title ? card.title : 'Story'));
+    const bulletHtml = context && context.bullets.length
+      ? '<div class="sheet-sub" style="margin-top:10px">'+context.bullets.map(item => '• ' + escapeHTML(item)).join('<br/>')+'</div>'
+      : '';
+    html = '<div class="sheet-title">'+escapeHTML(context ? context.title : 'Feed context')+'</div><div class="sheet-sub">'+safeTitle+'</div><div class="sheet-actions"><div class="sheet-btn" style="align-items:flex-start;cursor:default"><div class="sheet-btn-icon" style="background:rgba(108,99,255,.15)">📝</div><div class="sheet-btn-text"><div class="sheet-btn-title">Context</div><div class="sheet-btn-sub">'+escapeHTML(context && context.summary ? context.summary : 'No extra context available yet.')+bulletHtml+'</div></div></div>' + (resolveCardUrl(card) ? '<div class="sheet-btn" onclick="openSheet(\'story\',{cardIndex:'+extra.cardIndex+'})"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">🔗</div><div class="sheet-btn-text"><div class="sheet-btn-title">Open Link</div><div class="sheet-btn-sub">Go to the feed link for this story</div></div><div class="sheet-btn-arrow">›</div></div>' : '') + '<div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Close</div><div class="sheet-btn-sub">Return to the feed</div></div><div class="sheet-btn-arrow">›</div></div></div>';
+  } else if (type==='redirect'&&extra.url) {
     const redirectAction = extra.url.startsWith('http')
       ? 'window.open(\''+extra.url+'\',\'_blank\');closeSheet();addXP(30)'
       : 'window.location.href=\''+extra.url+'\';closeSheet();addXP(30)';
@@ -1029,9 +1163,10 @@ function startApp() {
   if (appStarted) return; appStarted=true;
   setTimeout(async ()=>{
     try { await VIA.init(); } catch(e) { console.warn('VIA init:',e); VIA.user=getGuestProfile(); }
+    hydrateFeedCards();
     document.getElementById('boot').classList.add('exit');
     document.getElementById('app').classList.add('visible');
-    buildDeck(); GC.init(); buildDiscover(); buildProfile(); buildProgressDots();
+    buildProgressDots(); buildDeck(); GC.init(); buildDiscover(); buildProfile();
     updateXP(xp); updateAuthUI(VIA.user); VIA.applyToUI();
   }, 2600);
 }
