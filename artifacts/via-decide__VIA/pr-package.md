@@ -3,7 +3,7 @@ Title: Implement a core backend module called via-gestural-intent-engine to ...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Power the backend for a purely gesture-native social platform. By predicting user intent in the first few milliseconds of a thumb movement, the VIA swarm can pre-calculate engagement results and warm caches, creating the "Liquid" zero-latency experience described in the research.
+- Goal: Power the backend (Bacon) for a purely gesture-native social platform. By predicting user intent in the first few milliseconds of a thumb movement, the VIA swarm can pre-calculate engagement results, hit APIs, and warm caches before the user's thumb leaves the glass, creating a "Liquid" zero-latency architecture.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
