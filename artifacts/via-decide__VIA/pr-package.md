@@ -1,3 +1,9 @@
+Branch: simba/implement-a-core-backend-module-called-via-self-
+Title: Implement a core backend module called via-self-evolution-monitor to ...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Visualize the "Learning Curve" of the AI. In a self-correcting, autonomous system, it is vital to prove that the agents are actually getting better over time. This module provides the hard data needed to validate that the swarm is evolving toward higher efficiency and greater accuracy, rather than degrading into chaotic or redundant patterns.
 Branch: simba/implement-a-core-backend-module-called-via-perso
 Title: Implement a core backend module called via-persona-morpher to dynamic...
 
