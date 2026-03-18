@@ -646,6 +646,8 @@ body.a11y-mode .card-actions { opacity: 0; pointer-events: none; }
       <button class="status-auth-btn" id="status-auth-btn" onclick="VIA.openAuth()">Sign In</button>
       <button class="a11y-toggle" id="a11y-toggle" onclick="toggleA11y()" aria-label="Toggle accessible mode">♿</button>
     </div>
+    <div class="status-xp"><div class="xp-dot"></div><span id="xp-counter">0 XP</span></div>
+    <button class="a11y-toggle" id="a11y-toggle" onclick="toggleA11y()" aria-label="Toggle accessible mode">♿</button>
   </div>
 
   <!-- LAYER TABS -->
@@ -1192,6 +1194,102 @@ const GC = {
     }
     if (!this.axis) return;
 
+
+function positionAllCards(animated) {
+  const T = 'transform .34s cubic-bezier(.16,1,.3,1), opacity .28s ease';
+  for (let i = 0; i < CARDS.length; i++) {
+    const card = document.getElementById('card-' + i);
+    if (!card) continue;
+    const off = i - currentCard;
+    card.style.transition = animated ? T : 'none';
+    if (off < 0) {
+      card.style.transform = 'translateY(-110vh)';
+      card.style.opacity = '0'; card.style.zIndex = '0';
+      card.style.pointerEvents = 'none';
+    } else if (off === 0) {
+      card.style.transform = 'translateY(0) scale(1)';
+      card.style.opacity = '1'; card.style.zIndex = '10';
+      card.style.pointerEvents = 'auto';
+    } else if (off === 1) {
+      card.style.transform = 'translateY(16px) scale(0.96)';
+      card.style.opacity = '0.65'; card.style.zIndex = '9';
+      card.style.pointerEvents = 'none';
+    } else if (off === 2) {
+      card.style.transform = 'translateY(28px) scale(0.92)';
+      card.style.opacity = '0.35'; card.style.zIndex = '8';
+      card.style.pointerEvents = 'none';
+    } else {
+      card.style.transform = 'translateY(60px) scale(0.88)';
+      card.style.opacity = '0'; card.style.zIndex = '7';
+      card.style.pointerEvents = 'none';
+    }
+  }
+}
+
+function getTopCard() {
+  return document.getElementById('card-' + currentCard);
+}
+
+// ── GESTURE CONTROLLER ───────────────────────────────────────
+const GC = {
+  VT: 0.3,
+  LOCK: 8,
+  VTH: 0.17,
+  HTH: 0.22,
+  PF_MS: 50,
+  active: false, startX: 0, startY: 0, startTime: 0,
+  curX: 0, curY: 0, axis: null, pfFired: false,
+
+  init() {
+    const deck = document.getElementById('deck');
+    deck.addEventListener('touchstart', e => {
+      if (isAnimating || activeLayer !== 'feed') return;
+      const t = e.touches[0];
+      this.begin(t.clientX, t.clientY);
+    }, { passive: true });
+    deck.addEventListener('touchmove', e => {
+      if (!this.active) return;
+      e.preventDefault();
+      const t = e.touches[0];
+      this.track(t.clientX, t.clientY);
+    }, { passive: false });
+    deck.addEventListener('touchend', () => this.commit(), { passive: true });
+    deck.addEventListener('touchcancel', () => this.reset(), { passive: true });
+    deck.addEventListener('mousedown', e => {
+      if (e.target.closest('.action-btn,.a11y-btn,.action-ribbon,.ribbon-btn')) return;
+      if (isAnimating || activeLayer !== 'feed') return;
+      this.begin(e.clientX, e.clientY);
+      const mv = ev => this.track(ev.clientX, ev.clientY);
+      const up = () => {
+        this.commit();
+        window.removeEventListener('mousemove', mv);
+        window.removeEventListener('mouseup', up);
+      };
+      window.addEventListener('mousemove', mv);
+      window.addEventListener('mouseup', up);
+    });
+  },
+
+  begin(x, y) {
+    this.active = true; this.axis = null; this.pfFired = false;
+    this.startX = this.curX = x;
+    this.startY = this.curY = y;
+    this.startTime = Date.now();
+    const card = getTopCard();
+    if (card) card.style.transition = 'none';
+  },
+
+  track(x, y) {
+    if (!this.active) return;
+    this.curX = x; this.curY = y;
+    const dx = x - this.startX, dy = y - this.startY;
+    const adx = Math.abs(dx), ady = Math.abs(dy);
+
+    if (!this.axis && Math.max(adx, ady) > this.LOCK) {
+      this.axis = ady > adx ? 'v' : 'h';
+    }
+    if (!this.axis) return;
+
     if (!this.pfFired && (Date.now() - this.startTime) >= this.PF_MS) {
       const angle = Math.atan2(dy, dx) * 180 / Math.PI;
       const dom = this._dominant(angle);
@@ -1420,6 +1518,23 @@ function toggleA11y() {
 // ── BOOT ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', startApp, { once: true });
 window.addEventListener('load', startApp, { once: true });
+window.addEventListener('load', async () => {
+  setTimeout(async () => {
+    try {
+      await VIA.init();
+    } catch (error) {
+      console.warn('VIA init failed, continuing app load:', error);
+    }
+    document.getElementById('boot').classList.add('exit');
+    document.getElementById('app').classList.add('visible');
+    buildDeck();
+    GC.init();
+    buildDiscover();
+    buildProfile();
+    buildProgressDots();
+    updateXP(xp);
+  }, 2600);
+});
 
 if (localStorage.getItem('via_a11y') === 'true') {
   a11yMode = true;

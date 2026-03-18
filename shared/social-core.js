@@ -133,6 +133,15 @@
     storeUserProfile(state, merged);
     writeState(state);
     saveLocalUserIfCurrent(merged);
+    state.users[merged.id] = {
+      id: merged.id,
+      username: merged.username,
+      display_name: merged.display_name,
+      city: merged.city,
+      avatar_emoji: merged.avatar_emoji
+    };
+    writeState(state);
+    saveLocalUser(merged);
     return merged;
   }
 
@@ -141,6 +150,13 @@
     if (!normalized || !normalized.id) return normalized;
     const state = readState();
     storeUserProfile(state, normalized);
+    state.users[normalized.id] = {
+      id: normalized.id,
+      username: normalized.username,
+      display_name: normalized.display_name,
+      city: normalized.city,
+      avatar_emoji: normalized.avatar_emoji
+    };
     writeState(state);
     return syncProfileCounts(normalized);
   }
@@ -184,6 +200,20 @@
       visibility: post.visibility,
       created_at: post.created_at
     });
+    const client = getClient();
+    if (client) {
+      try {
+        await client.from('via_posts').insert({
+          id: post.id,
+          author_id: post.author_id,
+          body: post.body,
+          visibility: post.visibility,
+          created_at: post.created_at
+        });
+      } catch (_error) {
+        // local-first fallback
+      }
+    }
 
     return { ...post, author: merged };
   }
@@ -210,6 +240,14 @@
     syncProfileCounts(target);
 
     await insertRemote('via_follows', relation);
+    const client = getClient();
+    if (client) {
+      try {
+        await client.from('via_follows').insert(relation);
+      } catch (_error) {
+        // local-first fallback
+      }
+    }
 
     return relation;
   }
@@ -234,6 +272,14 @@
     writeState(state);
 
     await insertRemote('via_reactions', entry);
+    const client = getClient();
+    if (client) {
+      try {
+        await client.from('via_reactions').insert(entry);
+      } catch (_error) {
+        // local-first fallback
+      }
+    }
 
     return entry;
   }
@@ -275,6 +321,19 @@
     const createdCircle = await insertRemote('via_circles', circle);
     if (createdCircle) {
       await insertRemote('via_circle_members', member);
+    const client = getClient();
+    if (client) {
+      try {
+        await client.from('via_circles').insert(circle);
+        await client.from('via_circle_members').insert({
+          circle_id: circle.id,
+          user_id: owner.id,
+          role: 'owner',
+          created_at: circle.created_at
+        });
+      } catch (_error) {
+        // local-first fallback
+      }
     }
 
     return circle;
@@ -300,6 +359,14 @@
     writeState(state);
 
     await insertRemote('via_moderation_queue', flag);
+    const client = getClient();
+    if (client) {
+      try {
+        await client.from('via_moderation_queue').insert(flag);
+      } catch (_error) {
+        // local-first fallback
+      }
+    }
 
     return flag;
   }

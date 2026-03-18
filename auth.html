@@ -249,6 +249,10 @@ function saveLocalUser(profile){
     window.DatabaseService.saveLocalUser(nextProfile);
   } else {
     localStorage.setItem('via_user', JSON.stringify(nextProfile));
+  if (window.DatabaseService && typeof window.DatabaseService.saveLocalUser === 'function') {
+    window.DatabaseService.saveLocalUser(profile);
+  } else {
+    localStorage.setItem('via_user', JSON.stringify(profile));
   }
   localStorage.setItem('via_session', JSON.stringify({ mode: SUPABASE_CONFIGURED ? 'supabase' : 'offline', at: Date.now() }));
 }
