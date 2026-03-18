@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="./shared/tool-storage.js"></script>
+<script src="./shared/social-core.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -821,6 +823,8 @@ function resolveCardUrl(card) {
   if (card.redirect && REDIRECT_MAP[card.redirect]) return REDIRECT_MAP[card.redirect];
   if (card.sourceUrl) return card.sourceUrl;
   return '';
+  if (card.sourceUrl) return card.sourceUrl;
+  return REDIRECT_MAP[card.redirect] || '';
 }
 
 function buildCardContext(card) {
@@ -872,6 +876,7 @@ function hydrateFeedCards() {
       views: post.views || 'Live',
       likes: post.reaction_count ? formatCount(post.reaction_count) : 'New',
       redirect: redirectKey || (sourceUrl ? null : 'about'),
+      redirect: sourceUrl ? null : 'about',
       sourceUrl,
       feedContext: {
         title: post.context_title || 'Feed context',
@@ -1163,6 +1168,7 @@ function startApp() {
   if (appStarted) return; appStarted=true;
   setTimeout(async ()=>{
     try { await VIA.init(); } catch(e) { console.warn('VIA init:',e); VIA.user=getGuestProfile(); }
+    hydrateFeedCards();
     document.getElementById('boot').classList.add('exit');
     document.getElementById('app').classList.add('visible');
     buildProgressDots(); buildDeck(); GC.init(); buildDiscover(); buildProfile();
