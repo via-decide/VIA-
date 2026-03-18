@@ -115,21 +115,36 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 .nav-create:active{transform:scale(.92)}
 
 /* ── SHEET ── */
-.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s ease;}
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s ease-out;}
 .sheet-overlay.open{opacity:1;pointer-events:auto}
-.sheet{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(19,19,42,0.95),rgba(28,28,56,0.95));backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border-light);border-radius:24px 24px 0 0;padding:1.25rem 1.2rem 2.5rem;z-index:201;transform:translateY(100%);transition:transform .4s cubic-bezier(.16,1,.3,1);max-height:80vh;overflow-y:auto;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05),0 -10px 40px rgba(0,0,0,0.5);}
+.sheet{position:fixed;bottom:0;left:0;right:0;width:100%;max-height:85vh;padding:20px 16px 24px;background:#0F172A;border-radius:20px 20px 0 0;z-index:201;transform:translateY(100%);transition:transform .25s ease-out;overflow-y:auto;overscroll-behavior:contain;box-shadow:0 -8px 30px rgba(0,0,0,.4);will-change:transform;}
 .sheet.open{transform:translateY(0)}
-.sheet-handle{width:36px;height:4px;border-radius:99px;background:rgba(255,255,255,.2);margin:0 auto 1.2rem;}
-.sheet-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;margin-bottom:.4rem;}
-.sheet-sub{font-size:.82rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.6}
-.sheet-actions{display:flex;flex-direction:column;gap:.75rem}
-.sheet-btn{display:flex;align-items:center;gap:.9rem;padding:1rem;border-radius:16px;cursor:pointer;background:rgba(255,255,255,.03);border:1px solid var(--border);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);transition:all .25s cubic-bezier(.16,1,.3,1);font-family:'DM Sans',sans-serif;}
-.sheet-btn:active{transform:scale(.96);background:rgba(255,107,0,.08);border-color:rgba(255,107,0,.3);box-shadow:inset 0 1px 0 rgba(255,107,0,0.1),0 8px 16px rgba(255,107,0,0.1);}
+.sheet.dragging{transition:none}
+.sheet-handle{width:40px;height:4px;border-radius:2px;background:rgba(255,255,255,.2);margin:0 auto 16px;cursor:grab;touch-action:none;}
+.sheet-handle:active{cursor:grabbing}
+.sheet-badge{display:inline-flex;align-items:center;padding:4px 8px;border-radius:8px;background:rgba(255,255,255,.08);font-size:11px;font-weight:700;letter-spacing:.02em;color:#fff;margin-bottom:10px;}
+.sheet-title{font-size:22px;line-height:1.2;font-weight:700;color:#fff;margin-bottom:4px;}
+.sheet-subtitle,.sheet-sub{font-size:14px;line-height:1.45;color:rgba(255,255,255,.7);margin-bottom:16px;}
+.sheet-actions{display:flex;flex-direction:column;gap:10px}
+.sheet-context-card{background:rgba(255,255,255,.04);border-radius:16px;padding:14px;margin-bottom:16px;}
+.sheet-context-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:8px;}
+.sheet-context-list{list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;margin:0;}
+.sheet-context-item{position:relative;padding-left:16px;font-size:13px;line-height:1.5;color:rgba(255,255,255,.8);}
+.sheet-context-item::before{content:'•';position:absolute;left:0;top:0;color:rgba(255,255,255,.65);}
+.sheet-context-summary{font-size:13px;line-height:1.5;color:rgba(255,255,255,.8);margin-bottom:8px;}
+.sheet-btn{display:flex;align-items:center;gap:.9rem;padding:1rem;border-radius:16px;cursor:pointer;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);transition:transform .2s ease,opacity .2s ease,background .2s ease;border-radius:16px;font-family:'DM Sans',sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+.sheet-btn:active{transform:scale(.98)}
+.sheet-btn-primary,.sheet-btn-secondary,.sheet-btn-tertiary{justify-content:center;width:100%;gap:0;border:none;box-shadow:none;}
+.sheet-btn-primary{height:48px;padding:0;background:linear-gradient(135deg,#6366F1,#8B5CF6);font-size:15px;font-weight:600;color:#fff;border-radius:12px;}
+.sheet-btn-secondary{height:44px;padding:0;background:rgba(255,255,255,.08);font-size:14px;font-weight:500;color:#fff;border-radius:12px;}
+.sheet-btn-tertiary{background:transparent;color:rgba(255,255,255,.6);font-size:13px;font-weight:500;padding:6px 0 0;border-radius:0;}
+.sheet-btn-tertiary:active{opacity:.82}
+.sheet-btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
 .sheet-btn-icon{font-size:1.3rem;width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .sheet-btn-text{flex:1}
 .sheet-btn-title{font-weight:700;font-size:.9rem;color:#fff}
-.sheet-btn-sub{font-size:.75rem;color:var(--muted);margin-top:2px}
-.sheet-btn-arrow{color:var(--muted);font-size:.9rem}
+.sheet-btn-sub{font-size:.75rem;color:rgba(255,255,255,.6);margin-top:2px}
+.sheet-btn-arrow{color:rgba(255,255,255,.45);font-size:.9rem}
 
 /* ── LIKE BURST ── */
 .like-burst{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:5rem;pointer-events:none;z-index:300;animation:likeBurst .6s ease forwards;}
@@ -233,8 +248,7 @@ body.a11y-mode .card-actions{opacity:0;pointer-events:none}
 /* ── RESPONSIVE ── */
 @media(min-width:500px){
   #app{max-width:430px;left:50%;transform:translateX(-50%);right:auto;width:430px}
-  .sheet{max-width:430px;left:50%;transform:translateX(-50%) translateY(100%);right:auto;width:430px}
-  .sheet.open{transform:translateX(-50%) translateY(0)}
+  .sheet{max-width:430px;left:50%;right:auto;margin:0 auto;}
   .action-ribbon{max-width:430px;left:50%;transform:translateX(-50%) translateX(110%)}
   .action-ribbon.open{transform:translateX(-50%) translateX(0)}
 }
@@ -832,11 +846,58 @@ function buildCardContext(card) {
   const ctx = card.feedContext || {};
   const summary = String(ctx.summary || card.context || card.body || '').trim();
   const bullets = Array.isArray(ctx.bullets)
-    ? ctx.bullets.map(item => String(item || '').trim()).filter(Boolean)
+    ? ctx.bullets.map(item => String(item || '').trim()).filter(Boolean).slice(0, 4)
     : [];
   const title = String(ctx.title || 'Feed context').trim();
-  if (!summary && !bullets.length) return null;
   return { title, summary, bullets };
+}
+
+function buildTrendingInsightText(card, context) {
+  const safeTitle = stripTags(card && card.title ? card.title : 'Story');
+  const lines = [safeTitle];
+  if (context && context.summary) lines.push(context.summary);
+  if (context && context.bullets && context.bullets.length) {
+    context.bullets.forEach(item => lines.push('• ' + item));
+  }
+  return lines.filter(Boolean).join('\n');
+}
+
+function handleExplore(cardIndex) {
+  const card = CARDS[cardIndex];
+  const targetUrl = resolveCardUrl(card);
+  if (!targetUrl) return;
+  closeSheet();
+  addXP(30);
+  if (targetUrl.startsWith('http')) window.open(targetUrl, '_blank');
+  else window.location.href = targetUrl;
+}
+
+async function handleUseInsight(cardIndex) {
+  const card = CARDS[cardIndex];
+  const context = buildCardContext(card);
+  const insightText = buildTrendingInsightText(card, context);
+  if (!insightText) return;
+  try {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      await navigator.clipboard.writeText(insightText);
+    }
+    addXP(20);
+  } catch (err) {
+    console.warn('Clipboard unavailable', err);
+  }
+}
+
+function handleGenerateSimilar(cardIndex) {
+  const card = CARDS[cardIndex];
+  if (!card) return;
+  const nextMatch = CARDS.findIndex((item, index) => index !== cardIndex && item && item.cat === card.cat);
+  closeSheet();
+  if (nextMatch >= 0) {
+    currentCard = nextMatch;
+    buildDeck();
+    return;
+  }
+  if (cardIndex < CARDS.length - 1) nextCard();
 }
 
 function openStorySheet(index) {
@@ -1073,10 +1134,24 @@ function openSheet(type, extra={}) {
     const card = CARDS[extra.cardIndex];
     const context = buildCardContext(card);
     const safeTitle = escapeHTML(stripTags(card && card.title ? card.title : 'Story'));
-    const bulletHtml = context && context.bullets.length
-      ? '<div class="sheet-sub" style="margin-top:10px">'+context.bullets.map(item => '• ' + escapeHTML(item)).join('<br/>')+'</div>'
-      : '';
-    html = '<div class="sheet-title">'+escapeHTML(context ? context.title : 'Feed context')+'</div><div class="sheet-sub">'+safeTitle+'</div><div class="sheet-actions"><div class="sheet-btn" style="align-items:flex-start;cursor:default"><div class="sheet-btn-icon" style="background:rgba(108,99,255,.15)">📝</div><div class="sheet-btn-text"><div class="sheet-btn-title">Context</div><div class="sheet-btn-sub">'+escapeHTML(context && context.summary ? context.summary : 'No extra context available yet.')+bulletHtml+'</div></div></div>' + (resolveCardUrl(card) ? '<div class="sheet-btn" onclick="openSheet(\'story\',{cardIndex:'+extra.cardIndex+'})"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">🔗</div><div class="sheet-btn-text"><div class="sheet-btn-title">Open Link</div><div class="sheet-btn-sub">Go to the feed link for this story</div></div><div class="sheet-btn-arrow">›</div></div>' : '') + '<div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Close</div><div class="sheet-btn-sub">Return to the feed</div></div><div class="sheet-btn-arrow">›</div></div></div>';
+    const safeSummary = escapeHTML(context && context.summary ? context.summary : 'No extra context available yet.');
+    const contextItems = context && context.bullets.length
+      ? context.bullets.map(item => '<li class="sheet-context-item">'+escapeHTML(item)+'</li>').join('')
+      : '<li class="sheet-context-item">'+safeSummary+'</li>';
+    const disabledAttr = resolveCardUrl(card) ? '' : ' disabled';
+    html = '<div class="sheet-badge">🔥 Trend Signal</div>' +
+      '<div class="sheet-title">Why this is trending</div>' +
+      '<div class="sheet-subtitle">'+safeTitle+'</div>' +
+      '<div class="sheet-context-card">' +
+        '<div class="sheet-context-title">Context</div>' +
+        (context && context.summary ? '<div class="sheet-context-summary">'+safeSummary+'</div>' : '') +
+        '<ul class="sheet-context-list">'+contextItems+'</ul>' +
+      '</div>' +
+      '<div class="sheet-actions">' +
+        '<button class="sheet-btn sheet-btn-primary" onclick="handleExplore('+extra.cardIndex+')"'+disabledAttr+'>Explore this →</button>' +
+        '<button class="sheet-btn sheet-btn-secondary" onclick="handleUseInsight('+extra.cardIndex+')">Use this insight</button>' +
+        '<button class="sheet-btn sheet-btn-tertiary" onclick="handleGenerateSimilar('+extra.cardIndex+')">Generate similar</button>' +
+      '</div>';
   } else if (type==='redirect'&&extra.url) {
     const redirectAction = extra.url.startsWith('http')
       ? 'window.open(\''+extra.url+'\',\'_blank\');closeSheet();addXP(30)'
@@ -1158,9 +1233,79 @@ function openSheet(type, extra={}) {
     html='<div class="sheet-title">'+s.title+'</div><div class="sheet-sub">'+s.sub+'</div><div class="sheet-actions">'+
       s.actions.map(a=>'<div class="sheet-btn" onclick="'+(a.url?'window.open(\''+a.url+'\',\'_blank\');closeSheet()':'addXP(5);closeSheet()')+'"><div class="sheet-btn-icon" style="background:'+a.iconBg+'">'+a.icon+'</div><div class="sheet-btn-text"><div class="sheet-btn-title">'+a.title+'</div><div class="sheet-btn-sub">'+a.sub+'</div></div><div class="sheet-btn-arrow">›</div></div>').join('')+'</div>';
   }
-  body.innerHTML=html; overlay.classList.add('open'); sheet.classList.add('open');
+  body.innerHTML=html;
+  sheet.scrollTop = 0;
+  sheet.style.transform = '';
+  overlay.classList.add('open');
+  sheet.classList.add('open');
 }
-function closeSheet() { document.getElementById('sheet-overlay').classList.remove('open'); document.getElementById('sheet').classList.remove('open'); }
+function closeSheet() {
+  const overlay = document.getElementById('sheet-overlay');
+  const sheet = document.getElementById('sheet');
+  sheet.classList.remove('dragging');
+  sheet.style.transform = '';
+  overlay.classList.remove('open');
+  sheet.classList.remove('open');
+}
+
+const sheetGesture = { active:false, startY:0, deltaY:0 };
+
+function updateSheetDrag(deltaY) {
+  const sheet = document.getElementById('sheet');
+  const nextDelta = Math.max(0, deltaY);
+  sheetGesture.deltaY = nextDelta;
+  if (!sheet.classList.contains('open')) return;
+  sheet.style.transform = 'translateY(' + nextDelta + 'px)';
+}
+
+function startSheetDrag(clientY) {
+  const sheet = document.getElementById('sheet');
+  if (!sheet.classList.contains('open')) return;
+  sheetGesture.active = true;
+  sheetGesture.startY = clientY;
+  sheetGesture.deltaY = 0;
+  sheet.classList.add('dragging');
+}
+
+function moveSheetDrag(clientY) {
+  if (!sheetGesture.active) return;
+  updateSheetDrag(clientY - sheetGesture.startY);
+}
+
+function endSheetDrag() {
+  const sheet = document.getElementById('sheet');
+  if (!sheetGesture.active) return;
+  const shouldClose = sheetGesture.deltaY > 120;
+  sheetGesture.active = false;
+  sheet.classList.remove('dragging');
+  if (shouldClose) {
+    closeSheet();
+    return;
+  }
+  sheet.style.transform = '';
+}
+
+(function initSheetGestures(){
+  const sheet = document.getElementById('sheet');
+  const handle = sheet.querySelector('.sheet-handle');
+  if (!handle) return;
+  handle.addEventListener('touchstart', event => {
+    const touch = event.touches[0];
+    if (!touch) return;
+    startSheetDrag(touch.clientY);
+  }, { passive:true });
+  handle.addEventListener('touchmove', event => {
+    if (!sheetGesture.active) return;
+    const touch = event.touches[0];
+    if (!touch) return;
+    moveSheetDrag(touch.clientY);
+    event.preventDefault();
+  }, { passive:false });
+  handle.addEventListener('touchend', endSheetDrag);
+  handle.addEventListener('mousedown', event => startSheetDrag(event.clientY));
+  document.addEventListener('mousemove', event => moveSheetDrag(event.clientY));
+  document.addEventListener('mouseup', endSheetDrag);
+})();
 
 // ── BOOT ─────────────────────────────────────────────────────
 let appStarted=false;
