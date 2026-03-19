@@ -70,6 +70,7 @@ import Navigation from './components/Navigation';
 import ProfileView from './components/ProfileView';
 import DiscoverView from './components/DiscoverView';
 import GamesView from './components/GamesView';
+import OnboardingFlow from './components/OnboardingFlow';
 import CreatePostModal from './components/CreatePostModal';
 import CommentsModal from './components/CommentsModal';
 
@@ -113,6 +114,9 @@ const App: React.FC = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'feed' | 'dives' | 'games' | 'discover' | 'profile'>('feed');
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingInitialName, setOnboardingInitialName] = useState('');
+  const [onboardingInitialUsername, setOnboardingInitialUsername] = useState('');
   const [posts, setPosts] = useState<Post[]>(INITIAL_POSTS);
   const [dives, setDives] = useState<DeepDive[]>(INITIAL_DEEP_DIVES);
   const [activePostIndex, setActivePostIndex] = useState(0);
@@ -173,42 +177,15 @@ const App: React.FC = () => {
           const userSnap = await getDoc(userRef);
 
           if (!userSnap.exists()) {
-            addLog('Initializing new user profile...');
+            addLog('New user — starting onboarding...');
             const identifier = firebaseUser.email || firebaseUser.phoneNumber || 'user';
-            const newProfile: UserProfile = {
-              uid: firebaseUser.uid,
-              username: identifier.split('@')[0].replace(/[^a-zA-Z0-9]/g, '') + Math.floor(Math.random() * 1000),
-              displayName: firebaseUser.displayName || (firebaseUser.phoneNumber ? `User ${firebaseUser.phoneNumber.slice(-4)}` : 'Bharat Explorer'),
-              city: 'New Delhi',
-              avatarEmoji: '🇮🇳',
-              bio: "Digital explorer navigating Bharat's social landscape. 🇮🇳",
-              credits: 1000,
-              xp: 0,
-              level: 1,
-              followers: 0,
-              following: 0,
-              posts: 0,
-              createdAt: new Date().toISOString()
-            };
-
-            const profileData: UserProfile = {
-              ...newProfile,
-              ...(firebaseUser.email != null ? { email: firebaseUser.email } : {}),
-              ...(firebaseUser.phoneNumber != null ? { phoneNumber: firebaseUser.phoneNumber } : {}),
-            };
-
-            await setDoc(userRef, profileData);
-            const syncedProfile = { ...profileData, id: profileData.uid };
-            profileSystemRef.current.updateProfile({
-              id: syncedProfile.uid,
-              username: syncedProfile.username,
-              displayName: syncedProfile.displayName,
-              avatarEmoji: syncedProfile.avatarEmoji,
-              isGuest: false,
-              email: syncedProfile.email,
-              phoneNumber: syncedProfile.phoneNumber
-            });
-            setProfile(syncedProfile);
+            const suggestedUsername = identifier.split('@')[0].replace(/[^a-zA-Z0-9]/g, '') + Math.floor(Math.random() * 1000);
+            const suggestedName = firebaseUser.displayName || (firebaseUser.phoneNumber ? `User ${firebaseUser.phoneNumber.slice(-4)}` : '');
+            setOnboardingInitialName(suggestedName);
+            setOnboardingInitialUsername(suggestedUsername);
+            // Store firebase user ref for onboarding completion
+            (window as any).__viaNewUserRef = { uid: firebaseUser.uid, email: firebaseUser.email, phoneNumber: firebaseUser.phoneNumber };
+            setShowOnboarding(true);
           } else {
             const storedProfile = userSnap.data() as UserProfile;
             const syncedProfile = { ...storedProfile, id: storedProfile.uid };
@@ -484,6 +461,44 @@ const App: React.FC = () => {
     }
   };
 
+  const handleOnboardingComplete = async (onboardingData: { displayName: string; username: string; avatarEmoji: string; bio: string; city: string }) => {
+    const newUserRef = (window as any).__viaNewUserRef;
+    if (!newUserRef) return;
+    const userRef = doc(db, 'users', newUserRef.uid);
+    const newProfile: UserProfile = {
+      uid: newUserRef.uid,
+      username: onboardingData.username || onboardingInitialUsername,
+      displayName: onboardingData.displayName || 'Bharat Explorer',
+      city: onboardingData.city || 'India',
+      avatarEmoji: onboardingData.avatarEmoji || '🇮🇳',
+      bio: onboardingData.bio || "Digital explorer navigating Bharat's social landscape. 🇮🇳",
+      credits: 1000,
+      xp: 0,
+      level: 1,
+      followers: 0,
+      following: 0,
+      posts: 0,
+      createdAt: new Date().toISOString(),
+      ...(newUserRef.email != null ? { email: newUserRef.email } : {}),
+      ...(newUserRef.phoneNumber != null ? { phoneNumber: newUserRef.phoneNumber } : {}),
+    };
+    await setDoc(userRef, newProfile);
+    const syncedProfile = { ...newProfile, id: newProfile.uid };
+    profileSystemRef.current.updateProfile({
+      id: syncedProfile.uid,
+      username: syncedProfile.username,
+      displayName: syncedProfile.displayName,
+      avatarEmoji: syncedProfile.avatarEmoji,
+      isGuest: false,
+      email: syncedProfile.email,
+      phoneNumber: syncedProfile.phoneNumber,
+    });
+    setProfile(syncedProfile);
+    setShowOnboarding(false);
+    delete (window as any).__viaNewUserRef;
+    addLog('Onboarding complete — welcome to VIA!');
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-via-dark">
@@ -624,7 +639,18 @@ const App: React.FC = () => {
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-via-dark text-white font-sans selection:bg-via-accent selection:text-white">
-        
+
+        {/* Onboarding overlay for new users */}
+        <AnimatePresence>
+          {showOnboarding && (
+            <OnboardingFlow
+              initialDisplayName={onboardingInitialName}
+              initialUsername={onboardingInitialUsername}
+              onComplete={handleOnboardingComplete}
+            />
+          )}
+        </AnimatePresence>
+
         {/* Main Content Area */}
         <main className="relative h-screen overflow-hidden">
           <AnimatePresence mode="wait">
