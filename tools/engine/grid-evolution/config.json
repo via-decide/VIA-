@@ -1,8 +1,0 @@
-{
-  "id": "grid-evolution",
-  "name": "Grid Evolution",
-  "description": "Cellular automata sandbox for experimenting with simple evolution rules.",
-  "category": "engine",
-  "entry": "tools/engine/grid-evolution/index.html",
-  "tags": ["simulation", "cellular-automata", "engine", "standalone"]
-}

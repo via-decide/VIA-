@@ -1,1 +1,0 @@
-{ "name": "Pomodoro Timer", "cat": "misc", "desc": "Classic focus timer with session counter.", "icon": "🍅", "entry": "tools/pomodoro/index.html", "engine": false }

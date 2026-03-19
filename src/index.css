@@ -1,0 +1,56 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Serif+Display:ital@0;1&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-bebas: "Bebas Neue", sans-serif;
+  --font-noto: "Noto Sans Devanagari", sans-serif;
+  --font-playfair: "Playfair Display", serif;
+  --font-serif-display: "DM Serif Display", serif;
+  --font-syne: "Syne", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-via-dark: #0B0B1A;
+  --color-via-accent: #FF3D00;
+  --color-via-gold: #FFD700;
+}
+
+@layer base {
+  body {
+    @apply bg-via-dark text-white font-sans overflow-hidden select-none;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+  }
+  
+  .feed-container {
+    @apply h-screen w-full snap-y snap-mandatory overflow-y-scroll scroll-smooth;
+    scrollbar-width: none;
+  }
+  
+  .feed-container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .post-card {
+    @apply h-screen w-full snap-start relative flex flex-col justify-end p-6 pb-24;
+  }
+  
+  .nav-blur {
+    @apply fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-via-dark to-transparent pointer-events-none z-40;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+

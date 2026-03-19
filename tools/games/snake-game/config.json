@@ -1,7 +1,0 @@
-{
-  "id": "snake-game",
-  "name": "Decision Snake",
-  "description": "Navigate the path of choices. A classic reborn with decision logic.",
-  "category": "games",
-  "entry": "tools/games/snake-game/index.html"
-}

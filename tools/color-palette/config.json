@@ -1,1 +1,0 @@
-{ "name": "Color Palette Generator", "cat": "creators", "desc": "Extract and generate accessible UI palettes.", "icon": "🎨", "entry": "tools/color-palette/index.html", "engine": false }

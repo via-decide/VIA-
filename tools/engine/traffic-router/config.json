@@ -1,8 +1,0 @@
-{
-  "id": "traffic-router",
-  "name": "Traffic Router",
-  "description": "Road routing puzzle for building a connected path across a city grid.",
-  "category": "engine",
-  "entry": "tools/engine/traffic-router/index.html",
-  "tags": ["simulation", "routing", "puzzle", "standalone"]
-}
