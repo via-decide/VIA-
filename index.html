@@ -1803,7 +1803,43 @@ function buildProfile(){
     });
     grid.appendChild(div);
   });
-}
+};
+
+window.publishComposerPost = async function(){
+  const social=getSocialCore();
+  const textarea=document.getElementById('composer-body');
+  const status=document.getElementById('composer-status');
+  if(!social||!textarea) return;
+  if(!isSignedInUser(currentUser)){
+    openSheet('auth-required',{ action:'publish on VIA' });
+    return;
+  }
+  const body=String(textarea.value||'').trim();
+  if(!body){
+    if(status) status.textContent='Write something before publishing.';
+    return;
+  }
+  if(status) status.textContent='Publishing…';
+  const created=await social.createPost({ body, visibility:'public' }, currentUser);
+  if(!created){
+    if(status) status.textContent='Unable to publish right now.';
+    return;
+  }
+  addXP(40);
+  closeSheet();
+  currentCard=0;
+  refreshSocialSurfaces({ keepIndex:false });
+  switchLayer('feed');
+};
+
+window.copyFeedHeadline = function(index){
+  const card=CARDS[index];
+  const text=card?stripTags(card.title||'VIA story'):'VIA story';
+  if(navigator.clipboard&&typeof navigator.clipboard.writeText==='function'){
+    navigator.clipboard.writeText(text).catch(()=>{});
+  }
+  closeSheet();
+};
 
 function buildProgressDots(){
   const wrap=document.getElementById('progress-dots');wrap.innerHTML='';
