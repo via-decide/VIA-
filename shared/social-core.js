@@ -34,11 +34,8 @@
     }
   }
 
-  function getClient() {
-    if (global.DatabaseService && typeof global.DatabaseService.getClient === 'function') {
-      return global.DatabaseService.getClient();
-    }
-    return null;
+  function getDb() {
+    return global.viaFirebase && global.viaFirebase.db ? global.viaFirebase.db : null;
   }
 
   function getCurrentUser() {
@@ -84,18 +81,14 @@
     return profile;
   }
 
-  async function insertRemote(table, payload) {
-    const client = getClient();
-    if (!client) return false;
+  async function insertRemote(collection, payload) {
+    const db = getDb();
+    if (!db || !payload || !payload.id) return false;
     try {
-      const { error } = await client.from(table).insert(payload);
-      if (error) {
-        console.warn('SocialCore remote insert failed:', table, error.message || error);
-        return false;
-      }
+      await db.collection(collection).doc(String(payload.id)).set(payload);
       return true;
     } catch (error) {
-      console.warn('SocialCore remote insert failed:', table, error && error.message ? error.message : error);
+      console.warn('SocialCore Firestore insert failed:', collection, error && error.message ? error.message : error);
       return false;
     }
   }
@@ -174,6 +167,46 @@
       }));
   }
 
+  function listPostsByAuthor(authorId, limit = 20) {
+    const state = readState();
+    return state.posts
+      .filter((item) => item.author_id === authorId)
+      .slice()
+      .sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')))
+      .slice(0, limit)
+      .map((post) => ({
+        ...post,
+        reaction_count: state.reactions.filter((item) => item.post_id === post.id).length,
+        author: state.users[post.author_id] || null
+      }));
+  }
+
+  function listProfiles() {
+    const state = readState();
+    return Object.keys(state.users)
+      .map((userId) => {
+        const profile = state.users[userId];
+        return profile && profile.id ? syncProfileCounts(profile) : null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => String(a.display_name || '').localeCompare(String(b.display_name || '')));
+  }
+
+  function searchProfiles(query) {
+    const term = String(query || '').trim().toLowerCase();
+    if (!term) return listProfiles();
+    return listProfiles().filter((profile) => {
+      return [profile.display_name, profile.username, profile.city]
+        .filter(Boolean)
+        .some((value) => String(value).toLowerCase().includes(term));
+    });
+  }
+
+  function isFollowing(actorUserId, targetUserId, state = readState()) {
+    if (!actorUserId || !targetUserId) return false;
+    return state.follows.some((item) => item.actor_user_id === actorUserId && item.target_user_id === targetUserId);
+  }
+
   async function createPost(input, actor = getCurrentUser()) {
     const author = normalizeProfile(actor);
     if (!author || !author.id) return null;
@@ -193,27 +226,13 @@
     writeState(state);
 
     const merged = syncProfileCounts(author);
-    await insertRemote('via_posts', {
+    await insertRemote('posts', {
       id: post.id,
       author_id: post.author_id,
       body: post.body,
       visibility: post.visibility,
       created_at: post.created_at
     });
-    const client = getClient();
-    if (client) {
-      try {
-        await client.from('via_posts').insert({
-          id: post.id,
-          author_id: post.author_id,
-          body: post.body,
-          visibility: post.visibility,
-          created_at: post.created_at
-        });
-      } catch (_error) {
-        // local-first fallback
-      }
-    }
 
     return { ...post, author: merged };
   }
@@ -239,15 +258,7 @@
     syncProfileCounts(source);
     syncProfileCounts(target);
 
-    await insertRemote('via_follows', relation);
-    const client = getClient();
-    if (client) {
-      try {
-        await client.from('via_follows').insert(relation);
-      } catch (_error) {
-        // local-first fallback
-      }
-    }
+    await insertRemote('follows', relation);
 
     return relation;
   }
@@ -271,15 +282,7 @@
     state.reactions.push(entry);
     writeState(state);
 
-    await insertRemote('via_reactions', entry);
-    const client = getClient();
-    if (client) {
-      try {
-        await client.from('via_reactions').insert(entry);
-      } catch (_error) {
-        // local-first fallback
-      }
-    }
+    await insertRemote('reactions', entry);
 
     return entry;
   }
@@ -302,38 +305,20 @@
       description: String(input && input.description ? input.description : '').trim(),
       created_at: new Date().toISOString()
     };
-    state.circles.push(circle);
-    state.memberships.push({
+    const member = {
       id: `membership-${Date.now()}`,
       circle_id: circle.id,
       user_id: owner.id,
       role: 'owner',
       created_at: circle.created_at
-    });
+    };
+    state.circles.push(circle);
+    state.memberships.push(member);
     writeState(state);
 
-    const member = {
-      circle_id: circle.id,
-      user_id: owner.id,
-      role: 'owner',
-      created_at: circle.created_at
-    };
-    const createdCircle = await insertRemote('via_circles', circle);
+    const createdCircle = await insertRemote('circles', circle);
     if (createdCircle) {
-      await insertRemote('via_circle_members', member);
-    const client = getClient();
-    if (client) {
-      try {
-        await client.from('via_circles').insert(circle);
-        await client.from('via_circle_members').insert({
-          circle_id: circle.id,
-          user_id: owner.id,
-          role: 'owner',
-          created_at: circle.created_at
-        });
-      } catch (_error) {
-        // local-first fallback
-      }
+      await insertRemote('circle_members', member);
     }
 
     return circle;
@@ -358,15 +343,7 @@
     state.moderation_flags.push(flag);
     writeState(state);
 
-    await insertRemote('via_moderation_queue', flag);
-    const client = getClient();
-    if (client) {
-      try {
-        await client.from('via_moderation_queue').insert(flag);
-      } catch (_error) {
-        // local-first fallback
-      }
-    }
+    await insertRemote('moderation_flags', flag);
 
     return flag;
   }
@@ -379,6 +356,10 @@
     syncProfileCounts,
     getProfileCounts,
     listFeed,
+    listPostsByAuthor,
+    listProfiles,
+    searchProfiles,
+    isFollowing,
     createPost,
     followUser,
     reactToPost,

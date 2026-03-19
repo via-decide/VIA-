@@ -13,11 +13,22 @@
 <link rel="manifest" href="./manifest.json"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Serif+Display:ital@0;1&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
-window.ECO_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtsenJkZHZvY3N1dGRlaXd2cmhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NzAzNDAsImV4cCI6MjA4OTM0NjM0MH0.4oLh-_y0MkgdO6F98Y4D8FTwy4pOTAjc1eeERkjkQJk";
+// VIA Firebase config — set real values via Cloudflare Pages env vars
+// or replace the values below for local dev only (never commit real keys)
+window.VIA_FIREBASE_CONFIG = {
+  apiKey:            "REPLACE_ME",
+  authDomain:        "REPLACE_ME.firebaseapp.com",
+  projectId:         "REPLACE_ME",
+  storageBucket:     "REPLACE_ME.appspot.com",
+  messagingSenderId: "REPLACE_ME",
+  appId:             "REPLACE_ME"
+};
 </script>
-<script src="./shared/eco-supabase-config.js"></script>
+<script src="./shared/firebase-config.js"></script>
 <script src="./shared/tool-storage.js"></script>
 <script src="./shared/social-core.js"></script>
 <style>
@@ -691,18 +702,9 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 
 <script>
 // ════════════════════════════════════════════════════════════════
-// SUPABASE + HELPERS
+// REMOTE AUTH + HELPERS
 // ════════════════════════════════════════════════════════════════
-const _sbConfig = window.DatabaseService && typeof window.DatabaseService.getConfig === 'function'
-  ? window.DatabaseService.getConfig()
-  : { url: window.ECO_SUPABASE_CONFIG?.url || 'https://klzrddvocsutdeiwvrhs.supabase.co', anonKey: window.ECO_SUPABASE_CONFIG?.anonKey || window.ECO_SUPABASE_ANON_KEY || '', isConfigured: !!(window.ECO_SUPABASE_CONFIG?.anonKey || window.ECO_SUPABASE_ANON_KEY) };
-const SUPABASE_URL = _sbConfig.url;
-const SUPABASE_ANON_KEY = _sbConfig.anonKey;
-const SUPABASE_CONFIGURED = Boolean(_sbConfig.isConfigured);
-const _sb = window.DatabaseService && typeof window.DatabaseService.getClient === 'function'
-  ? window.DatabaseService.getClient()
-  : ((typeof window.supabase !== 'undefined' && SUPABASE_CONFIGURED)
-    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null);
+const _remoteAuth = window.viaFirebase && window.viaFirebase.auth ? window.viaFirebase.auth : null;
 let currentUser = null;
 let authReady = false;
 
@@ -773,14 +775,10 @@ const VIA = {
     return normalized;
   },
   async restoreSession(){
-    if(!_sb||!_sb.auth||typeof _sb.auth.getSession!=='function')return null;
+    if(!_remoteAuth)return null;
     try{
-      const { data, error } = await _sb.auth.getSession();
-      if(error){
-        console.error('Session error:', error);
-        return null;
-      }
-      return data?.session||null;
+      const authUser=_remoteAuth.currentUser||null;
+      return authUser?{ user: authUser }:null;
     }catch(err){
       console.error('Restore failed:', err);
       return null;
@@ -793,12 +791,10 @@ const VIA = {
       ? window.DatabaseService.getLocalUserProfile()
       : null;
     if(profile?.id!==authUser.id){profile=null;}
-    if(_sb&&typeof _sb.from==='function'){
+    if(window.DatabaseService&&typeof window.DatabaseService.getUserProfile==='function'){
       try{
-        const { data, error } = await _sb.from('via_users').select('*').eq('id', authUser.id).single();
-        if(error){
-          console.error('Profile sync error:', error);
-        }else if(data){
+        const data=await window.DatabaseService.getUserProfile(authUser.id);
+        if(data&&data.id===authUser.id){
           profile=data;
         }
       }catch(err){
@@ -830,11 +826,11 @@ const VIA = {
     }
     authReady=true;
     renderApp();
-    if(_sb&&_sb.auth&&!this.authSubscription&&typeof _sb.auth.onAuthStateChange==='function'){
-      const { data } = _sb.auth.onAuthStateChange(async(event,session)=>{
-        console.log('Auth event:', event);
-        if(session){
-          await this.resolveProfile(session);
+    if(_remoteAuth&&!this.authSubscription&&typeof _remoteAuth.onAuthStateChanged==='function'){
+      this.authSubscription=_remoteAuth.onAuthStateChanged(async(user)=>{
+        console.log('Auth event:', user ? 'signed-in' : 'signed-out');
+        if(user){
+          await this.resolveProfile({ user });
         }else{
           currentUser=null;
           this.user=null;
@@ -843,7 +839,6 @@ const VIA = {
         authReady=true;
         renderApp();
       });
-      this.authSubscription=data?.subscription||null;
     }
     return currentUser;
   },
@@ -853,8 +848,8 @@ const VIA = {
   async saveXP(v){if(!currentUser)return;currentUser.xp=v;this.user=currentUser;if(!currentUser.is_guest)await this.saveLocalProfile(currentUser);renderApp();},
   openAuth(){window.location.href='./auth.html';},
   async signOut(){
-    if(_sb&&_sb.auth&&typeof _sb.auth.signOut==='function'){
-      try{await _sb.auth.signOut();}catch(error){console.error('Sign out error:', error);}
+    if(_remoteAuth&&typeof _remoteAuth.signOut==='function'){
+      try{await _remoteAuth.signOut();}catch(error){console.error('Sign out error:', error);}
     }
     currentUser=null;
     this.user=null;
