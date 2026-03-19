@@ -7,6 +7,39 @@
   'use strict';
 
   // ─────────────────────────────────────────────────────────────
+  // REACT HANDLER REGISTRY
+  //
+  // App.tsx calls VIARouter.registerReact(handlers) on mount so
+  // the router can delegate to React (primary system).
+  //
+  // When a React sub-view component crashes, its SubViewErrorBoundary:
+  //   1. Calls VIARouter.deregisterReact('openProfile') → removes handler
+  //   2. Calls VIARouter.navigate('#/user/<uid>') → router has no React
+  //      handler → uses hard fallback (profile.html redirect)
+  //
+  // Supported React handlers:
+  //   setTab(tab)        → switch main tab (feed/discover/games/dives/profile)
+  //   openProfile(uid)   → open UserProfileSheet overlay
+  //   openDive(id)       → open DiveDetailSheet overlay
+  // ─────────────────────────────────────────────────────────────
+  let _reactHandlers = {};
+
+  // Hard fallbacks used when React handler is absent or threw
+  const _reactFallback = {
+    openProfile(uid) {
+      // Redirect to standalone profile page.
+      // Create /profile.html for a full non-React fallback view.
+      window.location.href = './profile.html?uid=' + encodeURIComponent(uid);
+    },
+    openDive(id) {
+      // Scroll to the dive card if it's on the page, else just close the hash.
+      const el = document.getElementById('dive-' + id);
+      if (el) { el.scrollIntoView({ behavior: 'smooth' }); }
+      else { history.replaceState(null, '', window.location.pathname); }
+    },
+  };
+
+  // ─────────────────────────────────────────────────────────────
   // ROUTE MAP — SPA layers (handled inside index.html)
   // ─────────────────────────────────────────────────────────────
   const SPA_LAYERS = {
@@ -172,6 +205,33 @@
     const key = normalizePath(route);
     if (!key) return switchToLayer('feed');
 
+    // 0. React sub-view: user profile (#/user/:uid)
+    //    Distinct from SPA layers — opens an overlay in the React app.
+    const _userMatch = key.match(/^user\/(.+)$/);
+    if (_userMatch) {
+      const uid = decodeURIComponent(_userMatch[1]);
+      if (typeof _reactHandlers.openProfile === 'function') {
+        try   { _reactHandlers.openProfile(uid); return; }
+        catch (e) { console.warn('[VIARouter] React openProfile threw, using hard fallback:', e); }
+      }
+      // React unavailable or threw → hard fallback
+      _reactFallback.openProfile(uid);
+      return;
+    }
+
+    // 0b. React sub-view: deep dive article (#/rdive/:id)
+    //     Uses 'rdive' prefix to avoid collision with legacy #dive/story-key routes.
+    const _rdiveMatch = key.match(/^rdive\/(.+)$/);
+    if (_rdiveMatch) {
+      const id = decodeURIComponent(_rdiveMatch[1]);
+      if (typeof _reactHandlers.openDive === 'function') {
+        try   { _reactHandlers.openDive(id); return; }
+        catch (e) { console.warn('[VIARouter] React openDive threw, using hard fallback:', e); }
+      }
+      _reactFallback.openDive(id);
+      return;
+    }
+
     // 1. SPA layer?
     if (SPA_LAYERS[key]) {
       const storyKey = opts.storyKey || null;
@@ -209,9 +269,19 @@
     switchToLayer('feed');
   }
 
-  // Thin wrapper around index.html's switchLayer
-  // Works whether switchLayer is already defined or deferred
+  // Thin wrapper around index.html's switchLayer.
+  // Prefers React (primary) → falls back to legacy switchLayer.
   function switchToLayer(layer, storyKey) {
+    // PRIMARY: React is mounted and registered — delegate to it
+    if (typeof _reactHandlers.setTab === 'function') {
+      try {
+        _reactHandlers.setTab(layer);
+        return;
+      } catch (e) {
+        console.warn('[VIARouter] React setTab threw, falling back to switchLayer:', e);
+      }
+    }
+    // FALLBACK: legacy index.html switchLayer
     if (typeof window.switchLayer === 'function') {
       window.switchLayer(layer, storyKey || undefined);
     } else {
@@ -358,6 +428,41 @@
     SPA_LAYERS,
     SUBPAGES,
     STORY_KEYS,
+
+    // ── React integration ────────────────────────────────────────
+    /**
+     * Register React navigation handlers (called from App.tsx on mount).
+     *
+     * Once registered, React becomes the PRIMARY system:
+     *   - setTab(tab)      → handleTabChange in React
+     *   - openProfile(uid) → openUserProfile in React
+     *   - openDive(id)     → openDive in React (by dive.id)
+     *
+     * @param {{ setTab?, openProfile?, openDive? }} handlers
+     */
+    registerReact(handlers) {
+      Object.assign(_reactHandlers, handlers);
+    },
+
+    /**
+     * Remove a single React handler key.
+     * Called by SubViewErrorBoundary BEFORE navigate(), so the router
+     * skips the broken React path and goes straight to hard fallback.
+     *
+     * @param {'setTab'|'openProfile'|'openDive'} key
+     */
+    deregisterReact(key) {
+      delete _reactHandlers[key];
+    },
+
+    /**
+     * Clear all React handlers (called from App.tsx useEffect cleanup).
+     * After this, all navigation uses legacy switchLayer / hard fallbacks.
+     */
+    unregisterReact() {
+      _reactHandlers = {};
+    },
+
     // Shorthand helpers
     toFeed:     () => navigate('feed'),
     toDiscover: () => navigate('discover'),
@@ -365,6 +470,9 @@
     toProfile:  () => navigate('profile'),
     toDive:     (key) => navigate('deepdives', { storyKey: key }),
     toTool:     (slug) => navigate(slug),
+    // React-specific shorthands (preferred over hash manipulation)
+    toUser:     (uid) => navigate('user/' + uid),
+    toReactDive:(id)  => navigate('rdive/' + id),
   };
 
   // Also expose legacy toolPathStaticMap for backwards compat with old callers

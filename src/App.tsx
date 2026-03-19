@@ -1,19 +1,20 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  LayoutGrid, 
-  Compass, 
-  Plus, 
-  ShoppingBag, 
-  User, 
-  Search, 
-  Bell, 
-  TrendingUp, 
+import {
+  LayoutGrid,
+  Compass,
+  Plus,
+  ShoppingBag,
+  User,
+  Search,
+  Bell,
+  TrendingUp,
   Sparkles,
   AlertCircle,
   Loader2,
   ChevronRight,
   ArrowRight,
+  ArrowLeft,
   Heart,
   MessageCircle,
   Share2,
@@ -28,7 +29,8 @@ import {
   Bookmark,
   MapPin,
   Link as LinkIcon,
-  Calendar
+  Calendar,
+  X
 } from 'lucide-react';
 import { 
   auth, 
@@ -55,6 +57,7 @@ import {
   writeBatch,
   getDoc,
   getDocFromServer,
+  deleteDoc,
   limit,
   orderBy
 } from 'firebase/firestore';
@@ -75,7 +78,252 @@ import OnboardingFlow from './components/OnboardingFlow';
 import CreatePostModal from './components/CreatePostModal';
 import CommentsModal from './components/CommentsModal';
 
-// Error Boundary Component
+// ─── Sub-view types ─────────────────────────────────────────────────────────
+type SubView =
+  | { type: 'user-profile'; uid: string }
+  | { type: 'dive-detail'; dive: DeepDive };
+
+// ─── VIARouter ambient type (router.js, loaded before React) ─────────────────
+declare global {
+  interface Window {
+    VIARouter?: {
+      navigate:         (path: string) => void;
+      registerReact:    (h: Partial<{ setTab: (t: string) => void; openProfile: (uid: string) => void; openDive: (id: string) => void }>) => void;
+      deregisterReact:  (key: 'setTab' | 'openProfile' | 'openDive') => void;
+      unregisterReact:  () => void;
+      resolve:          (hash: string) => boolean;
+      toUser:           (uid: string) => void;
+      toReactDive:      (id: string) => void;
+    };
+  }
+}
+
+// ─── SubViewErrorBoundary ─────────────────────────────────────────────────────
+// Wraps each sub-view overlay. On a React component crash:
+//   1. Deregisters its broken handler from VIARouter (prevents loops)
+//   2. For UserProfileSheet: calls VIARouter.navigate → hard redirect to profile.html
+//   3. For DiveDetailSheet:  closes the overlay (no standalone fallback page)
+//   4. Calls onCrash() to clear subView state in App
+
+interface SubViewErrorBoundaryProps {
+  children: React.ReactNode;
+  handlerKey?: 'openProfile' | 'openDive';
+  fallbackHash?: string;         // set for user-profile; omit for dive-detail
+  onCrash: () => void;
+}
+
+class SubViewErrorBoundary extends React.Component<
+  SubViewErrorBoundaryProps,
+  { crashed: boolean }
+> {
+  constructor(props: SubViewErrorBoundaryProps) {
+    super(props);
+    this.state = { crashed: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { crashed: true };
+  }
+
+  componentDidCatch(error: Error) {
+    console.error('[SubView] Component crashed — engaging router.js fallback:', error);
+
+    // Step 1: Remove the broken React handler so the router uses hard fallback
+    if (this.props.handlerKey) {
+      window.VIARouter?.deregisterReact(this.props.handlerKey);
+    }
+
+    // Step 2: For user profiles — navigate via router (goes to profile.html)
+    //         For dives — no standalone page exists; just close the overlay
+    if (this.props.fallbackHash) {
+      window.VIARouter?.navigate(this.props.fallbackHash);
+    }
+
+    // Step 3: Clean up React state
+    this.props.onCrash();
+  }
+
+  render() {
+    if (this.state.crashed) return null;
+    return this.props.children;
+  }
+}
+
+// ─── UserProfileSheet ────────────────────────────────────────────────────────
+const UserProfileSheet: React.FC<{
+  uid: string;
+  currentUserUid: string;
+  onClose: () => void;
+}> = ({ uid, currentUserUid, onClose }) => {
+  const [person, setPerson] = useState<UserProfile | null>(null);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const snap = await getDoc(doc(db, 'users', uid));
+        if (snap.exists()) setPerson(snap.data() as UserProfile);
+        const fSnap = await getDocs(query(
+          collection(db, 'follows'),
+          where('followerId', '==', currentUserUid),
+          where('followingId', '==', uid)
+        ));
+        setIsFollowing(!fSnap.empty);
+      } catch (err) {
+        console.error('Failed to load profile:', err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [uid, currentUserUid]);
+
+  const handleFollow = async () => {
+    if (busy || !person) return;
+    setBusy(true);
+    const followId = `${currentUserUid}_${uid}`;
+    const followRef = doc(db, 'follows', followId);
+    try {
+      if (isFollowing) {
+        await deleteDoc(followRef);
+        await updateDoc(doc(db, 'users', currentUserUid), { following: increment(-1) });
+        await updateDoc(doc(db, 'users', uid), { followers: increment(-1) });
+        setIsFollowing(false);
+      } else {
+        await setDoc(followRef, { followerId: currentUserUid, followingId: uid, createdAt: new Date().toISOString() });
+        await updateDoc(doc(db, 'users', currentUserUid), { following: increment(1) });
+        await updateDoc(doc(db, 'users', uid), { followers: increment(1) });
+        setIsFollowing(true);
+      }
+    } catch (err) {
+      console.error('Follow error:', err);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: '100%' }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: '100%' }}
+      transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+      className="fixed inset-0 z-50 bg-via-dark flex flex-col"
+    >
+      {/* Header */}
+      <div className="flex items-center px-6 pt-14 pb-4 border-b border-white/5 shrink-0">
+        <button onClick={onClose} className="w-10 h-10 rounded-xl glass-panel flex items-center justify-center mr-4 hover:bg-white/10 transition-colors">
+          <ArrowLeft size={20} />
+        </button>
+        <span className="font-syne font-bold text-lg">Profile</span>
+      </div>
+
+      {loading ? (
+        <div className="flex-1 flex items-center justify-center">
+          <Loader2 className="animate-spin text-via-accent" size={32} />
+        </div>
+      ) : person ? (
+        <div className="flex-1 overflow-y-auto pb-32">
+          <div className="h-32 bg-gradient-to-br from-via-accent/30 to-via-gold/20" />
+          <div className="px-6 -mt-10 relative z-10">
+            <div className="flex items-end justify-between mb-6">
+              <div className="w-20 h-20 rounded-2xl glass-panel flex items-center justify-center text-4xl border-4 border-via-dark shadow-2xl">
+                {person.avatarEmoji || '🇮🇳'}
+              </div>
+              {currentUserUid !== uid && (
+                <button
+                  onClick={handleFollow}
+                  disabled={busy}
+                  className={`px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${
+                    isFollowing ? 'bg-white/10 text-white/60' : 'bg-via-accent text-white shadow-lg shadow-via-accent/20'
+                  } disabled:opacity-50`}
+                >
+                  {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : isFollowing ? 'Following' : 'Follow'}
+                </button>
+              )}
+            </div>
+            <h1 className="font-syne font-bold text-2xl">{person.displayName}</h1>
+            <p className="text-white/40 text-sm font-mono">@{person.username}</p>
+            {person.city && <p className="text-white/30 text-xs mt-1 flex items-center gap-1"><MapPin size={10} />{person.city}</p>}
+            {person.bio && <p className="text-white/70 text-sm mt-3 leading-relaxed">{person.bio}</p>}
+            <div className="flex gap-6 mt-6 pb-6 border-b border-white/5">
+              <div className="text-center">
+                <div className="font-syne font-bold text-xl">{person.followers || 0}</div>
+                <div className="text-white/40 text-[10px] uppercase tracking-widest">Followers</div>
+              </div>
+              <div className="text-center">
+                <div className="font-syne font-bold text-xl">{person.following || 0}</div>
+                <div className="text-white/40 text-[10px] uppercase tracking-widest">Following</div>
+              </div>
+              <div className="text-center">
+                <div className="font-syne font-bold text-xl text-via-accent">{person.level || 1}</div>
+                <div className="text-white/40 text-[10px] uppercase tracking-widest">Level</div>
+              </div>
+              <div className="text-center">
+                <div className="font-syne font-bold text-xl text-via-gold">{person.xp || 0}</div>
+                <div className="text-white/40 text-[10px] uppercase tracking-widest">XP</div>
+              </div>
+            </div>
+            <div className="pt-6 space-y-2">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Member since</p>
+              <p className="text-white/60 text-sm">{person.createdAt ? new Date(person.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long' }) : 'VIA Member'}</p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="flex-1 flex flex-col items-center justify-center text-white/40 gap-3">
+          <Users size={48} />
+          <p className="text-sm uppercase tracking-widest font-bold">User not found</p>
+        </div>
+      )}
+    </motion.div>
+  );
+};
+
+// ─── DiveDetailSheet ─────────────────────────────────────────────────────────
+const DiveDetailSheet: React.FC<{
+  dive: DeepDive;
+  onClose: () => void;
+}> = ({ dive, onClose }) => (
+  <motion.div
+    initial={{ opacity: 0, x: '100%' }}
+    animate={{ opacity: 1, x: 0 }}
+    exit={{ opacity: 0, x: '100%' }}
+    transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+    className="fixed inset-0 z-50 bg-via-dark flex flex-col"
+  >
+    <div className="flex items-center px-6 pt-14 pb-4 border-b border-white/5 shrink-0">
+      <button onClick={onClose} className="w-10 h-10 rounded-xl glass-panel flex items-center justify-center mr-4 hover:bg-white/10 transition-colors">
+        <ArrowLeft size={20} />
+      </button>
+      <span className="font-syne font-bold text-lg">Deep Dive</span>
+    </div>
+    <div className="flex-1 overflow-y-auto px-6 pt-8 pb-32 space-y-6">
+      <div className="space-y-2">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-via-accent">{dive.category}</span>
+        <h1 className="font-syne font-bold text-3xl leading-tight">{dive.title}</h1>
+        <p className="text-white/40 text-sm">{dive.subtitle}</p>
+        <div className="flex items-center gap-3 text-white/30 text-xs">
+          <span className="flex items-center gap-1"><Clock size={12} />{dive.readTime} min read</span>
+          <span className="flex items-center gap-1"><Users size={12} />{dive.participants} exploring</span>
+        </div>
+      </div>
+      {dive.imageUrl && (
+        <div className="h-52 rounded-3xl overflow-hidden">
+          <img src={dive.imageUrl} alt={dive.title} className="w-full h-full object-cover" />
+        </div>
+      )}
+      <p className="text-white/80 text-base leading-relaxed">{dive.summary}</p>
+      <div className="glass-panel rounded-2xl p-6 space-y-3">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-via-accent">Full Content</p>
+        <p className="text-white/70 text-sm leading-relaxed">{dive.content || 'Full article coming soon. This deep dive is being curated by our editorial team.'}</p>
+      </div>
+    </div>
+  </motion.div>
+);
+
+// ─── Error Boundary Component
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean, errorInfo: string }> {
   constructor(props: { children: React.ReactNode }) {
     super(props);
@@ -115,6 +363,7 @@ const App: React.FC = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'feed' | 'dives' | 'games' | 'discover' | 'profile'>('feed');
+  const [subView, setSubView] = useState<SubView | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingInitialName, setOnboardingInitialName] = useState('');
   const [onboardingInitialUsername, setOnboardingInitialUsername] = useState('');
@@ -143,6 +392,39 @@ const App: React.FC = () => {
     console.log(`[VIA] ${msg}`);
   };
 
+  // Navigate to a main tab — always closes any open sub-view first
+  const handleTabChange = useCallback((tab: typeof activeTab) => {
+    setSubView(null);
+    setActiveTab(tab);
+  }, []);
+
+  const openUserProfile = useCallback((uid: string) => {
+    setSubView({ type: 'user-profile', uid });
+  }, []);
+
+  const openDive = useCallback((dive: DeepDive) => {
+    setSubView({ type: 'dive-detail', dive });
+  }, []);
+
+  const closeSubView = useCallback(() => setSubView(null), []);
+
+  // ── Register React handlers with router.js (fallback system) ─────────────
+  // router.js is loaded before React (via <script src="./router.js"> in index.html).
+  // Once React mounts, we give it handles into React state so it delegates here.
+  // On unmount we clear the handles so the router uses hard fallbacks instead.
+  useEffect(() => {
+    window.VIARouter?.registerReact({
+      setTab:      (tab: string) => handleTabChange(tab as typeof activeTab),
+      openProfile: (uid: string) => setSubView({ type: 'user-profile', uid }),
+      // openDive via id only: find the dive from state
+      openDive:    (id: string) => {
+        const dive = dives.find(d => d.id === id);
+        if (dive) setSubView({ type: 'dive-detail', dive });
+      },
+    });
+    return () => { window.VIARouter?.unregisterReact(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleTabChange, dives]);
 
   useEffect(() => {
     const localProfile = profileSystemRef.current.getProfile();
@@ -788,10 +1070,10 @@ const App: React.FC = () => {
 
                 <div className="grid gap-6">
                   {dives.map((dive) => (
-                    <DeepDiveCard 
-                      key={dive.id} 
-                      dive={dive} 
-                      onClick={() => addLog(`Opening dive: ${dive.title}`)} 
+                    <DeepDiveCard
+                      key={dive.id}
+                      dive={dive}
+                      onClick={() => openDive(dive)}
                     />
                   ))}
                 </div>
@@ -818,7 +1100,7 @@ const App: React.FC = () => {
                 exit={{ opacity: 0, y: -20 }}
                 className="h-full overflow-y-auto"
               >
-                <DiscoverView currentUser={profile} />
+                <DiscoverView currentUser={profile} onViewUser={openUserProfile} />
               </motion.div>
             )}
 
@@ -840,10 +1122,42 @@ const App: React.FC = () => {
           </AnimatePresence>
         </main>
 
-        {/* Global Navigation */}
-        <Navigation 
-          activeTab={activeTab} 
-          onTabChange={setActiveTab} 
+        {/* Sub-view overlays — PRIMARY: React state / FALLBACK: router.js */}
+        <AnimatePresence>
+          {subView?.type === 'user-profile' && profile && (
+            <SubViewErrorBoundary
+              key={'boundary-' + subView.uid}
+              handlerKey="openProfile"
+              fallbackHash={'#/user/' + subView.uid}
+              onCrash={closeSubView}
+            >
+              <UserProfileSheet
+                key={subView.uid}
+                uid={subView.uid}
+                currentUserUid={profile.uid}
+                onClose={closeSubView}
+              />
+            </SubViewErrorBoundary>
+          )}
+          {subView?.type === 'dive-detail' && (
+            <SubViewErrorBoundary
+              key={'boundary-' + subView.dive.id}
+              handlerKey="openDive"
+              onCrash={closeSubView}
+            >
+              <DiveDetailSheet
+                key={subView.dive.id}
+                dive={subView.dive}
+                onClose={closeSubView}
+              />
+            </SubViewErrorBoundary>
+          )}
+        </AnimatePresence>
+
+        {/* Global Navigation — always on top, even over sub-views */}
+        <Navigation
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
           onCreatePost={() => setIsCreatePostModalOpen(true)}
         />
 
@@ -879,10 +1193,16 @@ const App: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center gap-3 pointer-events-auto">
-              <button className="w-10 h-10 rounded-xl glass-panel flex items-center justify-center hover:bg-white/10 transition-colors">
+              <button
+                onClick={() => handleTabChange('discover')}
+                className="w-10 h-10 rounded-xl glass-panel flex items-center justify-center hover:bg-white/10 transition-colors"
+              >
                 <Search size={20} />
               </button>
-              <button className="w-10 h-10 rounded-xl glass-panel flex items-center justify-center hover:bg-white/10 transition-colors relative">
+              <button
+                onClick={() => handleTabChange('profile')}
+                className="w-10 h-10 rounded-xl glass-panel flex items-center justify-center hover:bg-white/10 transition-colors relative"
+              >
                 <Bell size={20} />
                 <div className="absolute top-2 right-2 w-2 h-2 bg-via-accent rounded-full border-2 border-via-dark" />
               </button>

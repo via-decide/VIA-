@@ -20,9 +20,10 @@ import { Sparkles } from 'lucide-react';
 
 interface DiscoverViewProps {
   currentUser: UserProfile;
+  onViewUser?: (uid: string) => void;
 }
 
-const DiscoverView: React.FC<DiscoverViewProps> = ({ currentUser }) => {
+const DiscoverView: React.FC<DiscoverViewProps> = ({ currentUser, onViewUser }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<UserProfile[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -114,7 +115,7 @@ const DiscoverView: React.FC<DiscoverViewProps> = ({ currentUser }) => {
               </div>
               <div className="space-y-3">
                 {searchResults.map(user => (
-                  <UserCard key={user.uid} user={user} currentUserUid={currentUser.uid} />
+                  <UserCard key={user.uid} user={user} currentUserUid={currentUser.uid} onViewUser={onViewUser} />
                 ))}
               </div>
             </div>
@@ -131,7 +132,7 @@ const DiscoverView: React.FC<DiscoverViewProps> = ({ currentUser }) => {
               </div>
               <div className="space-y-3">
                 {trendingUsers.map(user => (
-                  <UserCard key={user.uid} user={user} currentUserUid={currentUser.uid} />
+                  <UserCard key={user.uid} user={user} currentUserUid={currentUser.uid} onViewUser={onViewUser} />
                 ))}
               </div>
             </div>
@@ -142,7 +143,7 @@ const DiscoverView: React.FC<DiscoverViewProps> = ({ currentUser }) => {
   );
 };
 
-const UserCard = ({ user, currentUserUid }: { user: UserProfile, currentUserUid: string }) => {
+const UserCard = ({ user, currentUserUid, onViewUser }: { user: UserProfile, currentUserUid: string, onViewUser?: (uid: string) => void }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -193,7 +194,8 @@ const UserCard = ({ user, currentUserUid }: { user: UserProfile, currentUserUid:
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass-panel p-4 rounded-2xl flex items-center justify-between group hover:bg-white/5 transition-colors"
+      className="glass-panel p-4 rounded-2xl flex items-center justify-between group hover:bg-white/5 transition-colors cursor-pointer"
+      onClick={() => onViewUser?.(user.uid)}
     >
       <div className="flex items-center gap-4">
         <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-2xl shadow-inner">
@@ -216,7 +218,7 @@ const UserCard = ({ user, currentUserUid }: { user: UserProfile, currentUserUid:
         </div>
       </div>
       <button
-        onClick={handleFollow}
+        onClick={(e) => { e.stopPropagation(); handleFollow(); }}
         disabled={isUpdating}
         className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
           isFollowing 
