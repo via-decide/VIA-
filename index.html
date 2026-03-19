@@ -1070,10 +1070,10 @@ let CARDS = DEFAULT_CARDS.slice();
 const DISCOVER_ITEMS = [
   {emoji:'📦',cat:'Context',name:'Context Packager',desc:'Bundle text, code, and links into a single file payload for AI models.',toolPath:'https://via-decide.github.io/decide.engine-tools/'},
   {emoji:'📖',cat:'Dives',name:'The Digital Bharat Revolution',desc:'How affordable data and smartphones transformed 1.4 billion lives.',storyKey:'digital-bharat',isDive:true,participants:'12K',readTime:'8',isFeatured:true},
-  {emoji:'⚗️',cat:'AI',name:'Prompt Alchemy',desc:'Refine raw ideas into structured, high-yield system prompts.',toolPath:'./prompt-alchemy/index.html'},
+  {emoji:'⚗️',cat:'AI',name:'Prompt Alchemy',desc:'Refine raw ideas into structured, high-yield system prompts.',toolPath:'/prompt-alchemy/'},
   {emoji:'⚙️',cat:'Dev',name:'Spec Builder',desc:'Generate production-ready feature specs and architecture documents.',toolPath:'./tools/spec-builder/index.html'},
-  {emoji:'🎯',cat:'Career',name:'Interview Prep',desc:'Run simulated high-pressure technical and behavioral interviews.',toolPath:'./interview-prep/index.html'},
-  {emoji:'📚',cat:'Learning',name:'StudyOS',desc:'A modular, offline learning OS for intensive UPSC and tech study.',toolPath:'./StudyOS/index.html'},
+  {emoji:'🎯',cat:'Career',name:'Interview Prep',desc:'Run simulated high-pressure technical and behavioral interviews.',toolPath:'/interview-prep/'},
+  {emoji:'📚',cat:'Learning',name:'StudyOS',desc:'A modular, offline learning OS for intensive UPSC and tech study.',toolPath:'/StudyOS/'},
 ];
 
 const PROFILE_ITEMS = [
@@ -2234,7 +2234,7 @@ function openSheet(type, extra={}) {
         '</div>'+
         '<div class="sheet-btn-arrow">›</div>'+
       '</div>'+
-      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'./founder/index.html\'">'+
+      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'/founder/\'">'+
         '<div class="sheet-btn-icon" style="background:rgba(245,197,24,.1)">🧭</div>'+
         '<div class="sheet-btn-text">'+
           '<div class="sheet-btn-title">Founder Dashboard</div>'+
@@ -2242,7 +2242,7 @@ function openSheet(type, extra={}) {
         '</div>'+
         '<div class="sheet-btn-arrow">›</div>'+
       '</div>'+
-      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'./interview-prep/index.html\'">'+
+      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'/interview-prep/\'">'+
         '<div class="sheet-btn-icon" style="background:rgba(57,255,136,.08)">🎤</div>'+
         '<div class="sheet-btn-text">'+
           '<div class="sheet-btn-title">Interview Prep</div>'+
@@ -2250,7 +2250,7 @@ function openSheet(type, extra={}) {
         '</div>'+
         '<div class="sheet-btn-arrow">›</div>'+
       '</div>'+
-      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'./student-research/index.html\'">'+
+      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'/student-research/\'">'+
         '<div class="sheet-btn-icon" style="background:rgba(108,99,255,.12)">📚</div>'+
         '<div class="sheet-btn-text">'+
           '<div class="sheet-btn-title">Decision Research</div>'+

@@ -1,0 +1,77 @@
+# VIA — Cloudflare Pages _redirects
+# Generated: 2026-03-19
+# Rule order: specific subpages first, SPA fallback last
+
+# ── Auth ──────────────────────────────────────────────
+/auth                     /auth.html              200
+/auth/                    /auth.html              200
+
+# ── Creator flows ─────────────────────────────────────
+/creator-onboarding       /creator-onboarding.html   200
+/creator-onboarding/      /creator-onboarding.html   200
+/creator-story            /creator-story.html         200
+/creator-story/           /creator-story.html         200
+
+# ── Subpages (folder/index.html) ──────────────────────
+/founder                  /founder/index.html         200
+/founder/                 /founder/index.html         200
+/founder/*                /founder/index.html         200
+
+/interview-prep           /interview-prep/index.html  200
+/interview-prep/          /interview-prep/index.html  200
+/interview-prep/*         /interview-prep/index.html  200
+
+/student-research         /student-research/index.html  200
+/student-research/        /student-research/index.html  200
+/student-research/*       /student-research/index.html  200
+
+/StudyOS                  /StudyOS/index.html         200
+/StudyOS/                 /StudyOS/index.html         200
+/StudyOS/*                /StudyOS/index.html         200
+
+/prompt-alchemy           /prompt-alchemy/index.html  200
+/prompt-alchemy/          /prompt-alchemy/index.html  200
+/prompt-alchemy/*         /prompt-alchemy/index.html  200
+
+/agent                    /agent/index.html           200
+/agent/                   /agent/index.html           200
+/agent/*                  /agent/index.html           200
+
+/founder-tools            /founder/index.html         200
+/app-generator            /app-generator/index.html   200
+/app-generator/           /app-generator/index.html   200
+/app-generator/*          /app-generator/index.html   200
+
+/decision-brief-guide     /decision-brief-guide/index.html  200
+/decision-brief-guide/    /decision-brief-guide/index.html  200
+
+/multi-source-research-explained    /multi-source-research-explained/index.html  200
+/multi-source-research-explained/   /multi-source-research-explained/index.html  200
+
+/sales-dashboard          /sales-dashboard/index.html  200
+/sales-dashboard/         /sales-dashboard/index.html  200
+
+/wings-of-fire-quiz       /wings-of-fire-quiz/index.html  200
+/wings-of-fire-quiz/      /wings-of-fire-quiz/index.html  200
+
+/interview                /interview-prep/index.html  200
+/interview/               /interview-prep/index.html  200
+
+# ── Tools subpages ────────────────────────────────────
+/tools/context-packager           /tools/context-packager/index.html           200
+/tools/context-packager/          /tools/context-packager/index.html           200
+/tools/spec-builder               /tools/spec-builder/index.html               200
+/tools/spec-builder/              /tools/spec-builder/index.html               200
+/tools/task-splitter              /tools/task-splitter/index.html              200
+/tools/task-splitter/             /tools/task-splitter/index.html              200
+/tools/games/hex-wars             /tools/games/hex-wars/index.html             200
+/tools/games/hex-wars/            /tools/games/hex-wars/index.html             200
+/tools/games/snake-game           /tools/games/snake-game/index.html           200
+/tools/games/snake-game/          /tools/games/snake-game/index.html           200
+/tools/games/wings-of-fire-quiz   /tools/games/wings-of-fire-quiz/index.html   200
+/tools/games/wings-of-fire-quiz/  /tools/games/wings-of-fire-quiz/index.html   200
+/tools/games/skillhex-mission-control    /tools/games/skillhex-mission-control/index.html   200
+/tools/games/skillhex-mission-control/   /tools/games/skillhex-mission-control/index.html   200
+
+# ── SPA fallback — MUST be last ───────────────────────
+/*                        /index.html             200
