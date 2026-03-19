@@ -106,6 +106,14 @@
 /tools/games/skillhex-mission-control    /tools/games/skillhex-mission-control/index.html   200
 /tools/games/skillhex-mission-control/   /tools/games/skillhex-mission-control/index.html   200
 
+# Flagship Games (top-level routes)
+/skillhex                               /skillhex/index.html                200
+/skillhex/                              /skillhex/index.html                200
+/skillhex/*                             /skillhex/:splat                    200
+/game                                   /game/index.html                    200
+/game/                                  /game/index.html                    200
+/game/*                                 /game/:splat                        200
+
 # â”€â”€ Engine tools â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 /tools/engine/meeting-cost-calculator     /tools/engine/meeting-cost-calculator/index.html      200
 /tools/engine/meeting-cost-calculator/    /tools/engine/meeting-cost-calculator/index.html      200

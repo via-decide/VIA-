@@ -69,6 +69,7 @@ import DeepDiveCard from './components/DeepDiveCard';
 import Navigation from './components/Navigation';
 import ProfileView from './components/ProfileView';
 import DiscoverView from './components/DiscoverView';
+import GamesView from './components/GamesView';
 import CreatePostModal from './components/CreatePostModal';
 import CommentsModal from './components/CommentsModal';
 
@@ -111,7 +112,7 @@ const App: React.FC = () => {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'feed' | 'dives' | 'discover' | 'profile'>('feed');
+  const [activeTab, setActiveTab] = useState<'feed' | 'dives' | 'games' | 'discover' | 'profile'>('feed');
   const [posts, setPosts] = useState<Post[]>(INITIAL_POSTS);
   const [dives, setDives] = useState<DeepDive[]>(INITIAL_DEEP_DIVES);
   const [activePostIndex, setActivePostIndex] = useState(0);
@@ -675,8 +676,20 @@ const App: React.FC = () => {
               </motion.div>
             )}
 
+            {activeTab === 'games' && (
+              <motion.div
+                key="games"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="h-full overflow-y-auto"
+              >
+                <GamesView />
+              </motion.div>
+            )}
+
             {activeTab === 'discover' && profile && (
-              <motion.div 
+              <motion.div
                 key="discover"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

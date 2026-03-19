@@ -1,0 +1,14 @@
+StartFrame,EndFrame,TextContent,ActionType
+0,60,"WAIT. Why does this formula work?",hook
+20,120,"a² + b² = c²",hook-equation
+60,126,"Draw side a",draw-a
+84,126,"Draw side b",draw-b
+96,126,"Draw side c",draw-c
+126,180,"Grow square a²",square-a
+156,216,"Grow square b²",square-b
+192,225,"Grow square c²",square-c
+225,270,"Area intuition",area-labels
+225,270,"a² + b² = c²",equation-reveal
+375,465,"Watch the areas breathe",pulse-callout
+465,660,"Try the Geometry Calculator → viadecide.com",cta
+510,660,"@geogebra.in",watermark

@@ -1,0 +1,40 @@
+{
+  "name": "alchemist-remotion",
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "remotion studio src/index.ts",
+    "render": "ts-node --esm render.ts",
+    "render:all": "ts-node --esm render.ts --all",
+    "render:list": "ts-node --esm render.ts --list",
+    "voice:gen": "ts-node --esm voice-gen.ts --all",
+    "voice:dry": "ts-node --esm voice-gen.ts --dry-run --all",
+    "voice:list": "ts-node --esm voice-gen.ts --list",
+    "voice:force": "ts-node --esm voice-gen.ts --force --all",
+    "capture": "node capture_jobs.js",
+    "validate": "ts-node --esm studio.ts validate",
+    "info": "ts-node --esm studio.ts info",
+    "dry": "ts-node --esm studio.ts dry",
+    "trim": "ts-node --esm studio.ts trim",
+    "merge": "ts-node --esm studio.ts merge",
+    "merge:validate": "ts-node --esm studio.ts validate",
+    "merge:render": "ts-node --esm studio.ts merge",
+    "merge:dry": "ts-node --esm studio.ts dry",
+    "studio:validate": "ts-node --esm studio.ts validate"
+  },
+  "dependencies": {
+    "@remotion/bundler": "^4.0.0",
+    "@remotion/cli": "^4.0.0",
+    "@remotion/renderer": "^4.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.0"
+  }
+}

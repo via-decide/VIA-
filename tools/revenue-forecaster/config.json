@@ -1,0 +1,1 @@
+{ "name": "Revenue Forecaster", "cat": "business", "desc": "Model SaaS MRR growth and churn.", "icon": "📈", "entry": "tools/revenue-forecaster/index.html", "engine": false }

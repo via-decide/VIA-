@@ -1,0 +1,33 @@
+{
+  "brand": {
+    "name": "@geogebra.in",
+    "colors": {
+      "background": "#080d1a",
+      "navy": "#080d1a",
+      "cyan": "#00e5ff",
+      "pink": "#ff1f8e",
+      "yellow": "#ffd600",
+      "white": "#e8ecf5",
+      "dim": "#5a6080"
+    },
+    "typography": {
+      "fontFamily": "Inter, Arial, sans-serif",
+      "titleWeight": 800,
+      "bodyWeight": 600
+    }
+  },
+  "video": {
+    "fps": 30,
+    "durationInFrames": 660,
+    "width": 1080,
+    "height": 1920
+  },
+  "geometry": {
+    "scale": 0.72,
+    "points": {
+      "A": [0, 1.26],
+      "B": [-2.88, -0.9],
+      "C": [0, -0.9]
+    }
+  }
+}

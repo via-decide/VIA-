@@ -1,0 +1,3188 @@
+{
+  "series": {
+    "id": "alchemist-series-1",
+    "title": "Building Alchemist: A Founder's Interactive Documentary",
+    "fps": 30,
+    "frames_per_video": 7200
+  },
+  "videos": [
+    {
+      "id": "V01",
+      "title": "I Built Tinder for Surveys — This Is How It Started",
+      "full_script": {
+        "hook": "Twelve responses out of two hundred. That's what I got back from a Google Form I spent three hours writing. Twelve people. So I thought — what if surveying felt like swiping?",
+        "context": "This isn't about being clever. It's about attention. People don't hate answering questions. They hate the format. A wall of text with radio buttons is a punishment. But a single card with one question — that's a different psychological experience entirely. You swipe, you move, you feel like you're doing something.",
+        "repo_explanation": "First repo is called swipe-survey. You can see the commit history — it starts with a single App.jsx. The core is a card stack component. Each question renders as a card sitting on top of the previous one. You drag it — there's a rotation transform that gives it that physical feel — and past a threshold, it snaps left or right. That's it. The whole repo is maybe six files. No Firebase, no Supabase, no auth layer. Just the mechanic.",
+        "decision_moment": "Then I send it out and a hundred and sixty three people finish it. And I remember sitting there thinking — okay, this actually works. Now what do I do with it? Because right now it's a cool demo. It's not a product. And I've got four completely different directions I could go.",
+        "options_narration": "Option A: I make the questions smarter. Build a proper question engine — branching logic, conditional questions, skip patterns. Option B: I go design mode. Make this thing beautiful, something people want to screenshot and share. Option C: I build a backend first. Get the data layer solid, add analytics, track every swipe. Option D: I skip all the internal stuff and just go find a real customer — a school, a company, someone who'll pay me — and let their needs drive what gets built.",
+        "outro": "Drop your answer in the comments. I'll read every single one. And whichever option you vote for — that's the episode I post next."
+      },
+      "creator_script": {
+        "title": "I Built Tinder for Surveys — This Is How It Started",
+        "hook": "What if answering a survey felt like swiping on Tinder? I know — sounds dumb. Bear with me. That one dumb question led to everything.",
+        "story": "I was doing user research for something else entirely. Sent out a Google Form. Got twelve responses out of two hundred. Twelve. And I'm sitting there thinking — people aren't lazy, the format is just terrible. Long scrolling lists. No momentum. No feel. So I thought — what if every question was just a card? You see one question. You swipe right for yes, left for no. That's it. One weekend, first repo: swipe-survey. Maybe two hundred lines of React. No database, no login, nothing fancy. Just the mechanic. I sent it to the same two hundred people. A hundred and sixty three finished it.",
+        "decision_question": "The swipe mechanic actually works. Now there are four completely different things I could build on top of it. Which one would you do?",
+        "options": [
+          "A) Make the questions smarter — build branching logic so the survey thinks",
+          "B) Make it beautiful — go full design mode, make it something people want to share",
+          "C) Add a real backend — start tracking responses, build actual analytics",
+          "D) Skip all that and find a real customer right now — take this to an institution"
+        ],
+        "branch_links": {
+          "A": "V02",
+          "B": "V03",
+          "C": "V04",
+          "D": "V05"
+        },
+        "outro": "I eventually built all four of these. But the order I built them in shaped everything that came after. Vote in the comments — your option gets told next."
+      },
+      "decision_point": {
+        "question": "The swipe mechanic works. What gets built on top of it?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Build the Question Engine",
+            "description": "Add branching logic — questions that think based on previous answers",
+            "leads_to": "V02"
+          },
+          {
+            "id": "B",
+            "label": "Go Design Mode",
+            "description": "Make it visually stunning — viral-worthy, shareable UI",
+            "leads_to": "V03"
+          },
+          {
+            "id": "C",
+            "label": "Add the Backend",
+            "description": "Build data tracking, analytics, real response storage",
+            "leads_to": "V04"
+          },
+          {
+            "id": "D",
+            "label": "Find a Real Customer",
+            "description": "Skip internal work, go find an institution willing to pay",
+            "leads_to": "V05"
+          }
+        ]
+      },
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "V02",
+      "title": "I Tried to Make the Survey Think — The Question Engine",
+      "full_script": {
+        "hook": "What if the survey could actually listen? If you said you're a vegetarian, it should never ask you about your favourite steak. That's not AI — that's just basic logic. And the basic logic took me four days to build properly.",
+        "context": "The swipe mechanic is a delivery mechanism. It doesn't know anything about the questions it's delivering. Every question is equal. Every user sees the same path. That's fine for a simple survey, but if you're a school, a research team, anyone who needs nuance — flat question lists don't work.",
+        "repo_explanation": "New repo: ques. The folder structure is intentionally separate from the UI. There's a schema folder with question.schema.json — that defines the shape of every question: id, type, content, options array, and a conditions block. The conditions block is an array of objects: each one has a field — which previous question id — an operator — equals, not-equals, contains — and a value. If all conditions pass, the question renders. If not, it's skipped. The evaluator is about eighty lines of pure JavaScript. No dependencies. It takes the answer history and the next question's condition block and returns true or false.",
+        "decision_moment": "I show it to a teacher I know. She works at a university, she runs big survey-based assessments. She watches the demo. She gets it immediately. Then I open the JSON file and say — this is how you create a question. She reads it for thirty seconds and says: this is impressive and I have no idea how to use it. And that sentence became the whole problem statement for the next six months.",
+        "options_narration": "So I've got an engine that works but only developers can drive it. Two directions: build a visual interface so anyone can create question flows without touching code. Or keep it developer-facing — ship it integrated into the swipe app, write docs, see who shows up.",
+        "outro": "The engine became the brain of Alchemist. How it got wrapped — that's the next piece."
+      },
+      "creator_script": {
+        "title": "I Tried to Make the Survey Think — The Question Engine",
+        "hook": "Flat surveys are dumb. Ask everyone the same questions regardless of what they just told you. I wanted the survey to listen. Turns out that's harder than it sounds.",
+        "story": "I spun up a new repo called ques — short for question engine, two in the morning naming conventions — and spent the next few days just on the data schema. The idea: every question has an id, a condition block, and a branch_to field. The condition evaluator runs before each render and decides what comes next based on previous answers. Three days to get the schema right. One more day to build the evaluator. Then I showed it to a teacher. She said — and I quote — 'this is really impressive and I have absolutely no idea how to use it.' Which was the most useful feedback I'd ever gotten.",
+        "decision_question": "The engine works. But it needs a config file to run. Non-developers can't use it. What do you do?",
+        "options": [
+          "A) Build a visual drag-and-drop builder so anyone can create question flows",
+          "B) Keep it code-first, but integrate it directly into the swipe app and ship fast",
+          "C) Keep it code-first, write great docs, attract developer users",
+          "D) Open source the engine — make it public, let the community extend and wrap it"
+        ],
+        "branch_links": {
+          "A": "V06",
+          "B": "V06",
+          "C": "V07",
+          "D": "V07"
+        },
+        "outro": "The teacher's feedback changed how I thought about the whole product. Whatever you vote — this story goes somewhere you won't expect."
+      },
+      "decision_point": {
+        "question": "The question engine works but requires editing JSON. Non-developers can't use it. What do you fix?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Visual Builder",
+            "description": "Drag-and-drop UI — anyone creates question flows, no code needed",
+            "leads_to": "V06"
+          },
+          {
+            "id": "B",
+            "label": "Integrate and Ship",
+            "description": "Embed the engine in the swipe app, release it, get real feedback fast",
+            "leads_to": "V06"
+          },
+          {
+            "id": "C",
+            "label": "Docs + Developer Focus",
+            "description": "Write excellent documentation, target developers first",
+            "leads_to": "V07"
+          },
+          {
+            "id": "D",
+            "label": "Open Source the Engine",
+            "description": "Make it public, let the community extend and wrap it",
+            "leads_to": "V07"
+          }
+        ]
+      },
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "V03",
+      "title": "I Spent a Week Making It Beautiful — Was It Worth It?",
+      "full_script": {
+        "hook": "V1 of the swipe app got forty seconds of average attention. V2 got two minutes ten. Same questions. Same mechanic. The only variable was the design. That data is why I will never apologise for spending time on design early.",
+        "context": "I kept watching people use V1 and feeling something was off. Not the mechanic — the mechanic was right. But the cards looked like a university admin portal from 2012. There was no delight. No texture. You swiped and it felt like filing a form in a different orientation.",
+        "repo_explanation": "swipe---survey — the three dashes are a timestamp, basically, of where my head was at 2am — is a complete UI rebuild. The drag animation now uses a spring physics library. There's a rotation transform that tracks the drag velocity, not just the position, so the card feels like it has weight. The cards themselves use a frosted glass effect — backdrop-filter blur with a semi-transparent white background. Then Initial-swipe-page came after as the cleaned-up version. Proper component split: SwipeCard handles gesture, QuestionCard handles content rendering, ProgressBar, ResultScreen. The architecture is clean enough to build on top of.",
+        "decision_moment": "Session time goes from forty seconds to two ten. That's real. But I realise I've spent a week on something beautiful with no backend, no data storage, no business model. Beautiful product. No company. What do I actually do next?",
+        "options_narration": "Option A: stop the internal work and go find a real customer. Let their problem define the next build. Option B: build the backend — make the data layer real before doing anything else. Option C: integration mode — connect everything I've built and launch something that looks like a full product. Option D: mobile is where this lives — build the proper mobile experience first.",
+        "outro": "I'll tell you now: all four of these I eventually did. But one of them I did first, and it changed everything."
+      },
+      "creator_script": {
+        "title": "I Spent a Week on Design. Everyone Said Don't. Here's What Happened.",
+        "hook": "Every startup founder will tell you not to focus on design too early. Make it work first, make it pretty later. I ignored that advice completely. Here's what happened.",
+        "story": "swipe---survey — three dashes, 2am naming — was a complete ground-up redesign. Glassmorphism cards, spring physics on the drag animation, a progress ring that actually felt satisfying. Then Initial-swipe-page came after as the refined version — proper component hierarchy, SwipeCard, QuestionCard, ProgressBar, ResultScreen all separated out. I showed both to the same group of people. V1 average session: forty seconds. V2 average session: two minutes ten seconds. Same questions. Different feeling. Design isn't decoration. Design is the first argument you make to a user.",
+        "decision_question": "The design works — people stay three times longer. But there's still no backend, no money, no real use case. What do you actually do with a beautiful product that has no business model?",
+        "options": [
+          "A) Find a real customer — go to an institution, let their needs drive the build",
+          "B) Build the backend now — make the data layer real",
+          "C) Skip straight to full Alchemist — integrate everything and launch",
+          "D) Build the mobile experience first — this is a mobile product"
+        ],
+        "branch_links": {
+          "A": "V05",
+          "B": "V04",
+          "C": "V08",
+          "D": "V06"
+        },
+        "outro": "Pretty things get attention. Attention without direction is noise. The next episode is where the noise becomes signal."
+      },
+      "decision_point": {
+        "question": "Beautiful product. No backend. No business model. What do you build next?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Find a Real Customer",
+            "description": "Go to an institution. Let their problem define the build.",
+            "leads_to": "V05"
+          },
+          {
+            "id": "B",
+            "label": "Build the Backend",
+            "description": "Data layer first — storage, auth, analytics",
+            "leads_to": "V04"
+          },
+          {
+            "id": "C",
+            "label": "Full Integration Launch",
+            "description": "Connect everything and ship a complete product",
+            "leads_to": "V08"
+          },
+          {
+            "id": "D",
+            "label": "Mobile First",
+            "description": "This is a swipe app — build the proper mobile experience",
+            "leads_to": "V06"
+          }
+        ]
+      },
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "V04",
+      "title": "Adding a Brain — Firebase, UPI QR, and the Data That Changed Everything",
+      "full_script": {
+        "hook": "My app had been running for weeks. I had exactly zero data points. Not bad data — zero data. Every response just evaporated. I didn't even know if anyone was finishing the surveys.",
+        "context": "This is the repo where the product gets memory. Before swipe.survey, the swipe app was a beautiful stateless experience. Felt great, meant nothing. The backend changes that relationship completely.",
+        "repo_explanation": "swipe.survey. Firebase Firestore as the database — real-time listeners so response counts update as people submit. Auth system for survey creators — Google OAuth, takes twenty minutes. Response schema: session_id, question_id, answer, timestamp, duration_on_card. That last one — duration_on_card — is new. It wasn't in the design. I added it at 1am because I was curious how long people actually spent on each question. Best decision I ever made in a single commit. Then UPI QR: there's a library called qrcode.react that generates QR from any UPI URL string. Amount is passed as a query parameter. The survey completion screen shows it with a customizable amount. One afternoon to build. Probably the most important line of code in the repo because it meant the product had a payment mechanism on day one of having a backend.",
+        "decision_moment": "First morning with real data I open the analytics. And there it is — a cliff at question 5. I zoom in. Duration on card 5 is 8 seconds. Duration on card 4 is 22 seconds. Duration on card 6 for people who make it there: 19 seconds. Card 5 is a text input field. In a swipe app. I remove the text input, replace it with a multiple choice. Completion rate goes from 30% to 71% overnight.",
+        "options_narration": "Now I have real data and a real payment path. What do I build next? A deep analytics layer for survey creators. Full integration into the Alchemist platform. Mobile as the primary experience. Or just launch the whole thing now.",
+        "outro": "The open text field at question 5 was invisible to me without data. Data made it visible. That's the backend's real value."
+      },
+      "creator_script": {
+        "title": "The App Had No Memory. I Fixed That. Then the Data Surprised Me.",
+        "hook": "Every swipe was disappearing into nothing. User answers a survey, closes the tab, it's gone. I literally had no data. I was running a product that couldn't learn anything. That ends here.",
+        "story": "swipe.survey — the repo name has a dot now, slightly more professional at least — is where the stack gets real. Firebase Firestore for real-time response storage. Authentication for survey creators. And then the thing I'm most proud of: UPI QR code generation. You complete a survey, you see a dynamically generated QR code with a customizable amount. For India, that's the payment primitive. One afternoon to integrate. First day I had real analytics I sat there for an hour just reading the data. And I saw a cliff. Question 5. 70% of users were dropping off at question 5. Not question 1. Not the last question. Question 5. I looked at question 5. Open text field. In a swipe app. Everyone hates typing.",
+        "decision_question": "The data is real now and it's already told you something powerful. What do you build with it?",
+        "options": [
+          "A) Deep analytics — build a creator dashboard showing drop-off, session time, completion heat maps",
+          "B) Integration — connect this backend to the full Alchemist product and launch",
+          "C) Mobile — take the backend-powered app and make it properly mobile-native",
+          "D) Integrate and launch everything at once — Alchemist full product"
+        ],
+        "branch_links": {
+          "A": "V07",
+          "B": "V08",
+          "C": "V06",
+          "D": "V08"
+        },
+        "outro": "One data point — a drop at question 5 — changed my completion rate from 30% to 71% overnight. The backend wasn't infrastructure. It was a mirror."
+      },
+      "decision_point": {
+        "question": "Backend is live. UPI payments work. Data is already changing the product. What gets built next?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Deep Analytics",
+            "description": "Creator dashboard: drop-off charts, session heatmaps, completion funnels",
+            "leads_to": "V07"
+          },
+          {
+            "id": "B",
+            "label": "Alchemist Integration",
+            "description": "Connect backend to the full product, launch Alchemist",
+            "leads_to": "V08"
+          },
+          {
+            "id": "C",
+            "label": "Mobile Native",
+            "description": "Take the backend-powered app fully mobile",
+            "leads_to": "V06"
+          },
+          {
+            "id": "D",
+            "label": "Ship Everything Now",
+            "description": "Integrate all repos, launch full product immediately",
+            "leads_to": "V08"
+          }
+        ]
+      },
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "V05",
+      "title": "The Day a Professor Emailed — Finding the Real Customer",
+      "full_script": {
+        "hook": "Two hundred views. Three likes. One DM. Here's the DM: 'Hi, I'm a faculty member at [university]. I saw your survey demo. I'd like to use something like this in my classes. Is this available for institutional use?' I sat on that for ten minutes thinking it was spam.",
+        "context": "Up to this point I was building for everyone. Which means I was building for no one. Generic survey tool, generic use case, generic pricing model. This DM was a gift — a real person with a real job telling me exactly what problem they needed solved and signalling they'd pay for the solution.",
+        "repo_explanation": "That night I opened a new repo: Alchemist-App. Not swipe-survey-v3. Not swipe-survey-pro. Alchemist. New name, new intent. The folder structure I sketched out in the first commit reflects the three-tier vision: /student — the swipe experience. /faculty — create, assign, track. /admin — institution-level management. That was the whole product in three folders. None of the folders had anything in them yet. But the architecture decision — three separate user layers — that decision lasted.",
+        "decision_moment": "The professor has four needs. She wants to create custom content decks. She wants to assign them to specific classes. She wants to see individual student completion. She wants to see which cards students struggled with. I can't build all four in the two weeks before she starts her semester. I have to choose one.",
+        "options_narration": "Option A: build the full Alchemist product right now. Student + faculty + admin, all three layers. Option B: build a demo first — not the full product, a curated demo that I can take to other institutions and close more deals before spending months on features. Option C: full integration of everything I've already built, launch it, see who else shows up. Option D: same as B — demo first, sell first, build second.",
+        "outro": "I had a saying at this point: find ten customers who love it before you build what the eleventh customer asked for. This professor was customer one."
+      },
+      "creator_script": {
+        "title": "A Professor Emailed Me. I Didn't Expect What She Said.",
+        "hook": "I posted a screen recording on Twitter. 200 views, 3 likes, 1 DM. The DM changed everything.",
+        "story": "She was a professor. She'd seen the demo. She wanted to use it in class — but not as a survey. As a learning tool. Students swipe through content, not just answer questions. She wanted to assign decks. Track who'd completed what. See which cards tripped students up. And she was prepared to pay. That was the moment Alchemist stopped being a side project. Three things happened at once: I understood the real user, I understood the real use case, and I had a real business model. I opened a new repo that night: Alchemist-App.",
+        "decision_question": "You have your first real institutional customer. She has four very specific things she needs. You can't build all four at once. What do you build first?",
+        "options": [
+          "A) The full Alchemist product — student layer, faculty layer, admin layer all at once",
+          "B) Faculty demo first — build a polished demo that closes more institutional deals before writing feature code",
+          "C) Full integration — complete product launch to start getting more faculty organically",
+          "D) Faculty demo first — close deals, then build"
+        ],
+        "branch_links": {
+          "A": "V08",
+          "B": "V09",
+          "C": "V08",
+          "D": "V09"
+        },
+        "outro": "Real money from a real customer changes how you think about everything. The next episode is where the product becomes a company."
+      },
+      "decision_point": {
+        "question": "First paying institutional customer confirmed. Four needs, two weeks. What do you build first?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Full Alchemist Product",
+            "description": "Build all three layers — student, faculty, admin — and launch",
+            "leads_to": "V08"
+          },
+          {
+            "id": "B",
+            "label": "Build the Demo First",
+            "description": "Curated institutional demo to close more deals before building features",
+            "leads_to": "V09"
+          },
+          {
+            "id": "C",
+            "label": "Full Integration Launch",
+            "description": "Connect everything built so far, launch the complete product",
+            "leads_to": "V08"
+          },
+          {
+            "id": "D",
+            "label": "Demo First, Sell First",
+            "description": "Sales infrastructure before feature development",
+            "leads_to": "V09"
+          }
+        ]
+      },
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "V06",
+      "title": "Going Mobile — Why the Browser Wasn't Enough",
+      "full_script": {
+        "hook": "I opened Google Analytics and filtered by device. 78.3% mobile. I was embarrassed. I had been optimising a swipe app — a gesture that exists because of touchscreens — for a mouse.",
+        "context": "There's a version of this story where I just say I should have known. And I should have. But I was building fast and thinking in desktop because I develop on a MacBook. The analytics were a slap.",
+        "repo_explanation": "I looked at the Alchemist-App codebase and asked honestly: how bad is a React Native rewrite? I scoped it out — probably three months to parity with everything the web version could do. Three months with a customer waiting. Not good. I looked at Capacitor — it's a project from the Ionic team that wraps an existing web app in a native WebView and adds native APIs on top. I had a Capacitor build running in two hours. PWA I could do in an afternoon — manifest.json, service worker for offline caching, an install prompt that appears on Android automatically. I did PWA first. Deployed in a day. Then Capacitor for the App Store.",
+        "decision_moment": "The PWA install rate was higher than I expected — about 23% of mobile users who saw the prompt actually installed it. That's not app store traffic, but it's real homescreen presence. And the experience is nearly identical to a native app for a swipe interaction because the animation is CSS-driven, not OS-level.",
+        "options_narration": "Four real paths with four very different timelines. PWA: two days, no app store. Capacitor: one week, app store via wrapper. React Native: three months, true native performance. Flutter: four months minimum, brand new codebase, new language.",
+        "outro": "I still recommend PWA first. Ship fast, validate the mobile experience, then decide if you need the app store."
+      },
+      "creator_script": {
+        "title": "78% of My Users Were on Phones. My App Was a Web App. I Had a Problem.",
+        "hook": "I knew people were using this on mobile. I didn't know it was 78% until I looked at the analytics. Then I had to confront something uncomfortable: I'd been optimising for desktop.",
+        "story": "The swipe gesture is a phone gesture. Tinder is on your phone. Instagram Stories are on your phone. I'd built the core mechanic of a mobile app inside a browser. I was making people pinch and zoom on a swipe experience. I looked at three paths: React Native means rewriting everything — months of work. Capacitor wraps my existing React app in a native shell — about a week. PWA means installing to homescreen with offline support — two days. I went PWA first for speed. Then Capacitor for the app store presence.",
+        "decision_question": "You're going mobile. The tactical question is how. Each path has different costs and different outcomes.",
+        "options": [
+          "A) PWA — stay on web, add install-to-homescreen, offline support, zero rewrite",
+          "B) Capacitor — wrap the existing React app in a native shell, one week",
+          "C) React Native — full native rebuild, three months but full native performance",
+          "D) Flutter — start fresh, cross-platform, but a completely new codebase"
+        ],
+        "branch_links": {
+          "A": "V09",
+          "B": "V09",
+          "C": "V09",
+          "D": "V09"
+        },
+        "outro": "All four paths get to the same place eventually. The question is how long it takes and what you sacrifice on the way."
+      },
+      "decision_point": {
+        "question": "Going mobile. Which path do you take?",
+        "options": [
+          {
+            "id": "A",
+            "label": "PWA",
+            "description": "2 days. Install to homescreen. No app store. Zero rewrite.",
+            "leads_to": "V09"
+          },
+          {
+            "id": "B",
+            "label": "Capacitor",
+            "description": "1 week. App store. Native wrapper over existing React code.",
+            "leads_to": "V09"
+          },
+          {
+            "id": "C",
+            "label": "React Native",
+            "description": "3 months. True native. Full rewrite. Best performance.",
+            "leads_to": "V09"
+          },
+          {
+            "id": "D",
+            "label": "Flutter",
+            "description": "4+ months. New language. Cross-platform from scratch.",
+            "leads_to": "V09"
+          }
+        ]
+      },
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "V07",
+      "title": "The Analytics Layer — The Chart That Changed the Product",
+      "full_script": {
+        "hook": "I added a duration_on_card field to the response schema at 1am because I was curious. That single field became the most valuable column in my entire database.",
+        "context": "Most analytics in early products are vanity metrics. Total users. Sessions. Page views. They tell you that things are happening but not why. The duration per card was a behavioural metric. It told me how people were actually experiencing each question.",
+        "repo_explanation": "The analytics module in swipe.survey is about 200 lines. Firestore stores one document per card interaction — session_id, question_id, answer_value, duration_ms, timestamp. The creator dashboard runs three queries: completion_rate by session, avg_duration by question_id, and drop_off_rate by question_position. The drop_off query is a Firestore aggregation that counts sessions reaching each question index and divides by total sessions. That gives you the funnel.",
+        "decision_moment": "The funnel showed a cliff at question 5. Not a gradual decline — a cliff. I pulled up question 5. Open text field in the middle of a swipe survey. It's the only question where users had to use a keyboard. In a touch interaction. Nobody wants to type. I replaced it with four multiple choice options. Completion rate: 30% to 71%. Overnight.",
+        "options_narration": "Now the analytics work and have proven their value. How do I surface this for faculty who don't want to interpret raw charts? I could build an AI suggestion layer — the system reads the data and says 'remove question 5, it has 8s avg duration vs 22s for adjacent cards'. Or a visual heatmap overlay — show the drop-off directly on the card in the deck view. Or I integrate everything into the Alchemist product now and ship.",
+        "outro": "The insight from Q5 didn't just fix one survey. It changed how I thought about question design permanently."
+      },
+      "creator_script": {
+        "title": "I Added Analytics Because I Should. Then the Data Showed Me Something I Didn't Expect.",
+        "hook": "I built analytics because every startup advice article says to build analytics. I wasn't really planning to look at them. Then I looked at them.",
+        "story": "The analytics module in swipe.survey tracked session_id, question_id, answer, timestamp, and — the important one — duration_on_card. First day I actually opened the dashboard I saw the cliff. Question 5. 70% of users stopping there. I zoom in. Duration on Q5: 8 seconds. Duration on Q4: 22 seconds. I look at question 5. It's a text input field. In a swipe app. I replace it with multiple choice. Overnight: completion rate goes from 30% to 71%. That one insight was worth more than any feature I'd ever built.",
+        "decision_question": "The analytics data is powerful. How do you turn it into a product feature that faculty can use without you interpreting it for them?",
+        "options": [
+          "A) AI-powered suggestions — the system reads the data and tells faculty what to fix",
+          "B) Visual heatmaps — show drop-off and struggle points overlaid on the deck",
+          "C) Full integration — take analytics into the Alchemist product and launch",
+          "D) Full integration with analytics as the lead feature — same destination"
+        ],
+        "branch_links": {
+          "A": "V08",
+          "B": "V09",
+          "C": "V08",
+          "D": "V09"
+        },
+        "outro": "Data without interpretation is noise. The next episode is about giving faculty the interpretation layer without requiring them to be data analysts."
+      },
+      "decision_point": {
+        "question": "Analytics proven. How do you give faculty the insight without requiring them to be data analysts?",
+        "options": [
+          {
+            "id": "A",
+            "label": "AI Suggestions",
+            "description": "System reads data, tells faculty what to fix in plain language",
+            "leads_to": "V08"
+          },
+          {
+            "id": "B",
+            "label": "Visual Heatmaps",
+            "description": "Drop-off and struggle data overlaid directly on deck cards",
+            "leads_to": "V09"
+          },
+          {
+            "id": "C",
+            "label": "Integrate and Launch",
+            "description": "Bring analytics into Alchemist product, ship the full stack",
+            "leads_to": "V08"
+          },
+          {
+            "id": "D",
+            "label": "Analytics as Lead Feature",
+            "description": "Same integration but analytics is the hero of the launch",
+            "leads_to": "V09"
+          }
+        ]
+      },
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "V08",
+      "title": "The Alchemist App — When Everything Finally Came Together",
+      "full_script": {
+        "hook": "83% of students completing assigned educational content. For context: the average Learning Management System sees under 40% completion on assigned material. Whatever we'd built was working.",
+        "context": "Alchemist-App is the integration point. It's not a new idea — every component already existed across the previous repos. The work here was integration, architecture, and making three different user experiences feel like one coherent product.",
+        "repo_explanation": "The repo structure: /student, /faculty, /admin, /shared, /api. Student: the swipe experience from Initial-swipe-page, connected to real deck data from the backend, with completion tracking. Faculty: a React dashboard. Left panel: my decks (create, edit, duplicate). Center panel: classes — add students, assign decks, view roster. Right panel: analytics — completion rate per deck, per student, per card. Admin: institution management — add faculty accounts, set billing tier, download reports. Shared: the question engine from ques, design system components, auth utilities. API: Firebase wrapper functions that all three layers call.",
+        "decision_moment": "Week one pilot data: 83% completion. I send it to the professor. She sends it to two colleagues. Both colleagues want access. And I realise — I don't have a way to onboard them quickly. There's no self-serve signup, no institutional account provisioning. I have to manually create every account. That's a bottleneck that will kill growth.",
+        "options_narration": "Option A: fix the internal bottleneck — build proper institution onboarding, scale within this university before going anywhere else. Option B: build the sales demo first — create a polished demo experience so I can go to other institutions and sell while my first customer refers colleagues. Option C: go deep on analytics — add heatmaps, AI suggestions, make faculty dependent on the data layer. Option D: same as B — sales infrastructure before feature development.",
+        "outro": "83% was the proof. The next question was: how do you sell this to everyone else?"
+      },
+      "creator_script": {
+        "title": "It Stopped Being a Project. It Became a Product.",
+        "hook": "There's a specific moment where something you're building crosses a line. It stops feeling like code and starts feeling like a product. Alchemist-App was that moment for me.",
+        "story": "I'd built the pieces separately over months. The swipe mechanic. The question engine. The backend. The analytics. The design layer. Alchemist-App is where they all came together in one repo with one coherent purpose. Three user types, three interfaces, one platform. Student gets the swipe experience — clean, mobile-first, no distractions. Faculty gets a dashboard — create decks, assign to classes, see real-time completion data. Admin gets institution-level controls — faculty management, billing, reports. First pilot: one professor, one class of forty students. Week one completion rate on assigned decks: 83%.",
+        "decision_question": "First pilot is live and 83% of students are completing assigned decks. The professor is happy. She's showing colleagues. What do you build or do next?",
+        "options": [
+          "A) Scale within the institution — onboard more faculty before expanding anywhere",
+          "B) Build the sales demo — create a polished institutional demo to expand faster",
+          "C) Go deep on analytics — make faculty obsessed with the data layer",
+          "D) Build the institutional demo to close more deals before building more features"
+        ],
+        "branch_links": {
+          "A": "V09",
+          "B": "V10",
+          "C": "V09",
+          "D": "V10"
+        },
+        "outro": "83% completion. That number matters. Average LMS engagement is under 40%. This is what product-market fit actually feels like."
+      },
+      "decision_point": {
+        "question": "83% completion pilot. Two faculty colleagues want access. No self-serve onboarding exists. What do you build?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Scale the Pilot",
+            "description": "Build institution onboarding, go deep before going wide",
+            "leads_to": "V09"
+          },
+          {
+            "id": "B",
+            "label": "Build the Sales Demo",
+            "description": "Create a polished demo to open new institutions in parallel",
+            "leads_to": "V10"
+          },
+          {
+            "id": "C",
+            "label": "Analytics Depth",
+            "description": "Make faculty obsessed with the data layer — retention through insight",
+            "leads_to": "V09"
+          },
+          {
+            "id": "D",
+            "label": "Demo First",
+            "description": "Sales infrastructure before more feature work",
+            "leads_to": "V10"
+          }
+        ]
+      },
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "V09",
+      "title": "The Faculty Demo — How I Closed an Institution in One Meeting",
+      "full_script": {
+        "hook": "Three demos at three institutions. Two of them ended with 'we'll discuss internally.' One ended with a signed contract. The difference was one evening of preparation.",
+        "context": "The live Alchemist-App is great but it has one problem as a demo: if the data isn't populated, it looks empty. An empty analytics dashboard sells nothing. A faculty dashboard with no decks looks like a blank page. Demos need story. Story needs content.",
+        "repo_explanation": "Alchemist-Faculty-Demo is a standalone repo. It's essentially a snapshot of the faculty layer of Alchemist-App but with hardcoded fixtures. Dr. Sharma has three decks pre-created. Her class of 28 students has completion data pre-populated. The analytics dashboard shows realistic engagement curves — some good, some with visible drop-offs so you can demo the 'this card is struggling' feature. There's a tour mode button in the top right — clicking it activates a step-by-step overlay that highlights each feature in sequence with animations. I can give a complete, compelling demo with zero dependency on live Firebase data or actual user accounts.",
+        "decision_moment": "Third institution. Head of computer science department. The night before, I open the demo and swap out Dr. Sharma's generic decks for their actual CS101 topic list. I make the fake student names sound like local names. I adjust the analytics to reflect realistic CS student behaviour. I walk in and show her class running in my demo. The recognition is immediate. She stops me at the analytics slide and says: 'Can you show me this for all my courses?'",
+        "options_narration": "The demo works and deals are coming in. Now I need to decide how to scale. Option A: build self-serve so institutions can sign up without me. Option B: stay high-touch indefinitely — every demo customised, every onboarding manual. Option C: build a content template library so institutions have starting points. Option D: raise money and hire someone to do the demos while I build.",
+        "outro": "The demo closed my first three institutional deals. The question is how you scale something that works because it's personal."
+      },
+      "creator_script": {
+        "title": "I Built a Whole Separate App Just to Sell the Real App",
+        "hook": "The best demo I ever gave had nothing to do with the product being technically impressive. It was impressive because I loaded the customer's own content into it the night before. She saw herself in it.",
+        "story": "Alchemist-Faculty-Demo is a separate repo. Hardcoded sample data — a fictional professor called Dr. Sharma, pre-populated student analytics, decks that look full and rich. A guided tour button that steps through every feature in the right order. I took it to three institutions. First two: 'very interesting, we'll discuss internally.' Third one: I'd spent the evening before loading their actual CS101 curriculum into the demo decks. I walked into that meeting and showed the head of CS her own content being swiped by fake students in my analytics. She said: 'This is what our students need.' Signed the same day.",
+        "decision_question": "You have a sales demo that works and a growing number of institutions interested. How do you scale the sales operation from here?",
+        "options": [
+          "A) Build self-serve onboarding — institutions sign up and configure themselves",
+          "B) Stay high-touch — manual demos and custom content prep for every institution",
+          "C) Build a content template library — give institutions starting points they can adapt",
+          "D) Go to an ed-tech accelerator — raise money and hire a sales team"
+        ],
+        "branch_links": {
+          "A": "V10",
+          "B": "V10",
+          "C": "V10",
+          "D": "V10"
+        },
+        "outro": "The demo isn't the product. The demo is the story you tell about what the product could mean for them. Get that story right and the product almost sells itself."
+      },
+      "decision_point": {
+        "question": "Demo works. Deals are coming in. How do you scale institutional sales?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Self-Serve Onboarding",
+            "description": "Institutions sign up and configure themselves — no founder required",
+            "leads_to": "V10"
+          },
+          {
+            "id": "B",
+            "label": "Stay High-Touch",
+            "description": "Every demo custom, every onboarding manual — quality over scale",
+            "leads_to": "V10"
+          },
+          {
+            "id": "C",
+            "label": "Content Template Library",
+            "description": "Pre-built decks institutions adapt — reduce demo prep time",
+            "leads_to": "V10"
+          },
+          {
+            "id": "D",
+            "label": "Raise and Hire",
+            "description": "Ed-tech accelerator, raise money, hire a sales team",
+            "leads_to": "V10"
+          }
+        ]
+      },
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "V10",
+      "title": "Where Alchemist Goes Next — And Why Module 2 Is Food",
+      "full_script": {
+        "hook": "Let me show you the full map. Every repo, every decision, every path you could have taken through this series — and where the platform is right now.",
+        "context": "Geo-politics-2026 was me eating my own cooking. I took the Alchemist platform and built a real content module on it — current events, maps, geopolitical data, swipe-formatted. The process opened 23 GitHub issues. Things the platform couldn't do. Image card types. Citation fields. A 'learn card' type — pure information, no question. Difficulty scaling. Every gap became a feature. That's why you should always build on your own platform.",
+        "repo_explanation": "The complete system as it stands: question engine from ques at the core. Swipe delivery layer from Initial-swipe-page. Data and payment layer from swipe.survey. Three-tier product from Alchemist-App. Content module validation from Geo-politics-2026. Sales infrastructure from Alchemist-Faculty-Demo. Six repos contributing to one living platform. The seventh — Series 2 — starts with food. The repo doesn't exist yet. It gets created based on your vote.",
+        "decision_moment": "I've answered all four scale questions. Self-serve onboarding: built it, works well for smaller institutions. High-touch: still use it for enterprise contracts. Content templates: now a premium feature. Fundraising: took a small pre-seed, hired one person for sales. And I built the Geo-politics module to prove the platform could handle more than just surveys. It could. The next module is food. I want you to decide what the first deck is.",
+        "options_narration": "Four directions for the Food Module: the supply chain — farm to fork, logistics, everything between. Nutrition science — macros, micros, what food does biologically. Global cuisines — food as identity, immigration, culture. Food systems — agriculture, climate, the economics of how eight billion people get fed. All four are real. Your vote opens the Series 2 repo.",
+        "outro": "You watched a swipe survey become an EdTech platform across eight repos and twelve months. Series 2 is yours to shape. Comment now."
+      },
+      "creator_script": {
+        "title": "Here's the Full Picture. And Here's What Gets Built Next.",
+        "hook": "Eight repos. Twelve months. Paying institutions. A platform that works. Let me show you the whole map — and then tell you why the next module is food.",
+        "story": "I built Geo-politics-2026 as a content experiment — could the Alchemist engine handle rich, current-events-based content with maps, data, citations? It opened 23 GitHub issues that became 23 platform improvements. That's what building on your own platform gets you. Now: all four scale paths you voted on — self-serve, high-touch, templates, fundraising — I've tried all of them. Here's what actually worked. And Series 2 is the Food Module. Why food? Because everyone eats. Because food connects to nutrition, culture, agriculture, economics, sustainability. Because food is the most universal subject in the world and nobody has built a great learning experience around it.",
+        "decision_question": "Series 2 is the Food Module. You're now on the product team. What's the first deck we build?",
+        "options": [
+          "A) Farm to Table — the supply chain from seed to plate",
+          "B) Nutrition Science — what food actually does to your body",
+          "C) Global Cuisines — food as culture, identity, and history",
+          "D) Food Systems — agriculture, sustainability, the economics of how the world gets fed"
+        ],
+        "branch_links": {
+          "A": "SERIES2_V01",
+          "B": "SERIES2_V01",
+          "C": "SERIES2_V01",
+          "D": "SERIES2_V01"
+        },
+        "outro": "Series 2 Episode 1 launches based on whichever option wins. This is real. Your vote is the brief. Subscribe and comment now."
+      },
+      "decision_point": {
+        "question": "Series 2: The Food Module. You're on the product team. What's the first deck?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Farm to Table",
+            "description": "The supply chain — seed to plate, logistics, food miles",
+            "leads_to": "SERIES2_V01"
+          },
+          {
+            "id": "B",
+            "label": "Nutrition Science",
+            "description": "What food does to your body — macros, gut, metabolism",
+            "leads_to": "SERIES2_V01"
+          },
+          {
+            "id": "C",
+            "label": "Global Cuisines",
+            "description": "Food as culture, identity, diaspora, history",
+            "leads_to": "SERIES2_V01"
+          },
+          {
+            "id": "D",
+            "label": "Food Systems",
+            "description": "Agriculture, sustainability, feeding eight billion people",
+            "leads_to": "SERIES2_V01"
+          }
+        ]
+      },
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "A01",
+      "title": "Branch A Main",
+      "full_script": {
+        "hook": "A01 hook",
+        "context": "A01 context",
+        "repo_explanation": "A01 repo",
+        "decision_moment": "A01 decision",
+        "options_narration": "A01 options",
+        "outro": "A01 outro"
+      },
+      "decision_point": {
+        "question": "Choose next from A01",
+        "options": [
+          {
+            "id": "A",
+            "label": "Path A",
+            "leads_to": "A01a"
+          },
+          {
+            "id": "B",
+            "label": "Path B",
+            "leads_to": "A01b"
+          },
+          {
+            "id": "C",
+            "label": "Path C",
+            "leads_to": "A01c"
+          },
+          {
+            "id": "D",
+            "label": "Path D",
+            "leads_to": "A01d"
+          }
+        ]
+      },
+      "leads_to": [
+        "A01a",
+        "A01b",
+        "A01c",
+        "A01d"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "B01",
+      "title": "Branch B Main",
+      "full_script": {
+        "hook": "B01 hook",
+        "context": "B01 context",
+        "repo_explanation": "B01 repo",
+        "decision_moment": "B01 decision",
+        "options_narration": "B01 options",
+        "outro": "B01 outro"
+      },
+      "decision_point": {
+        "question": "Choose next from B01",
+        "options": [
+          {
+            "id": "A",
+            "label": "Path A",
+            "leads_to": "B01a"
+          },
+          {
+            "id": "B",
+            "label": "Path B",
+            "leads_to": "B01b"
+          },
+          {
+            "id": "C",
+            "label": "Path C",
+            "leads_to": "B01c"
+          },
+          {
+            "id": "D",
+            "label": "Path D",
+            "leads_to": "B01d"
+          }
+        ]
+      },
+      "leads_to": [
+        "B01a",
+        "B01b",
+        "B01c",
+        "B01d"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "C01",
+      "title": "Branch C Main",
+      "full_script": {
+        "hook": "C01 hook",
+        "context": "C01 context",
+        "repo_explanation": "C01 repo",
+        "decision_moment": "C01 decision",
+        "options_narration": "C01 options",
+        "outro": "C01 outro"
+      },
+      "decision_point": {
+        "question": "Choose next from C01",
+        "options": [
+          {
+            "id": "A",
+            "label": "Path A",
+            "leads_to": "C01a"
+          },
+          {
+            "id": "B",
+            "label": "Path B",
+            "leads_to": "C01b"
+          },
+          {
+            "id": "C",
+            "label": "Path C",
+            "leads_to": "C01c"
+          },
+          {
+            "id": "D",
+            "label": "Path D",
+            "leads_to": "C01d"
+          }
+        ]
+      },
+      "leads_to": [
+        "C01a",
+        "C01b",
+        "C01c",
+        "C01d"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "D01",
+      "title": "Branch D Main",
+      "full_script": {
+        "hook": "D01 hook",
+        "context": "D01 context",
+        "repo_explanation": "D01 repo",
+        "decision_moment": "D01 decision",
+        "options_narration": "D01 options",
+        "outro": "D01 outro"
+      },
+      "decision_point": {
+        "question": "Choose next from D01",
+        "options": [
+          {
+            "id": "A",
+            "label": "Path A",
+            "leads_to": "D01a"
+          },
+          {
+            "id": "B",
+            "label": "Path B",
+            "leads_to": "D01b"
+          },
+          {
+            "id": "C",
+            "label": "Path C",
+            "leads_to": "D01c"
+          },
+          {
+            "id": "D",
+            "label": "Path D",
+            "leads_to": "D01d"
+          }
+        ]
+      },
+      "leads_to": [
+        "D01a",
+        "D01b",
+        "D01c",
+        "D01d"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "A01a",
+      "title": "A01a variant",
+      "full_script": {
+        "hook": "A01a hook",
+        "context": "A01a context",
+        "repo_explanation": "A01a repo",
+        "decision_moment": "A01a decision",
+        "options_narration": "A01a options",
+        "outro": "A01a outro"
+      },
+      "decision_point": {
+        "question": "Next after A01a?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cross 1",
+            "leads_to": "B01"
+          },
+          {
+            "id": "B",
+            "label": "Cross 2",
+            "leads_to": "C01"
+          },
+          {
+            "id": "C",
+            "label": "Cross 3",
+            "leads_to": "D01"
+          },
+          {
+            "id": "D",
+            "label": "Continue",
+            "leads_to": "A01"
+          }
+        ]
+      },
+      "leads_to": [
+        "B01",
+        "C01",
+        "D01",
+        "A01"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "A01b",
+      "title": "A01b variant",
+      "full_script": {
+        "hook": "A01b hook",
+        "context": "A01b context",
+        "repo_explanation": "A01b repo",
+        "decision_moment": "A01b decision",
+        "options_narration": "A01b options",
+        "outro": "A01b outro"
+      },
+      "decision_point": {
+        "question": "Next after A01b?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cross 1",
+            "leads_to": "B01"
+          },
+          {
+            "id": "B",
+            "label": "Cross 2",
+            "leads_to": "C01"
+          },
+          {
+            "id": "C",
+            "label": "Cross 3",
+            "leads_to": "D01"
+          },
+          {
+            "id": "D",
+            "label": "Continue",
+            "leads_to": "A01"
+          }
+        ]
+      },
+      "leads_to": [
+        "B01",
+        "C01",
+        "D01",
+        "A01"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "A01c",
+      "title": "A01c variant",
+      "full_script": {
+        "hook": "A01c hook",
+        "context": "A01c context",
+        "repo_explanation": "A01c repo",
+        "decision_moment": "A01c decision",
+        "options_narration": "A01c options",
+        "outro": "A01c outro"
+      },
+      "decision_point": {
+        "question": "Next after A01c?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cross 1",
+            "leads_to": "B01"
+          },
+          {
+            "id": "B",
+            "label": "Cross 2",
+            "leads_to": "C01"
+          },
+          {
+            "id": "C",
+            "label": "Cross 3",
+            "leads_to": "D01"
+          },
+          {
+            "id": "D",
+            "label": "Continue",
+            "leads_to": "A01"
+          }
+        ]
+      },
+      "leads_to": [
+        "B01",
+        "C01",
+        "D01",
+        "A01"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "A01d",
+      "title": "A01d variant",
+      "full_script": {
+        "hook": "A01d hook",
+        "context": "A01d context",
+        "repo_explanation": "A01d repo",
+        "decision_moment": "A01d decision",
+        "options_narration": "A01d options",
+        "outro": "A01d outro"
+      },
+      "decision_point": {
+        "question": "Next after A01d?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cross 1",
+            "leads_to": "B01"
+          },
+          {
+            "id": "B",
+            "label": "Cross 2",
+            "leads_to": "C01"
+          },
+          {
+            "id": "C",
+            "label": "Cross 3",
+            "leads_to": "D01"
+          },
+          {
+            "id": "D",
+            "label": "Continue",
+            "leads_to": "A01"
+          }
+        ]
+      },
+      "leads_to": [
+        "B01",
+        "C01",
+        "D01",
+        "A01"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "B01a",
+      "title": "B01a variant",
+      "full_script": {
+        "hook": "B01a hook",
+        "context": "B01a context",
+        "repo_explanation": "B01a repo",
+        "decision_moment": "B01a decision",
+        "options_narration": "B01a options",
+        "outro": "B01a outro"
+      },
+      "decision_point": {
+        "question": "Next after B01a?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cross 1",
+            "leads_to": "C01"
+          },
+          {
+            "id": "B",
+            "label": "Cross 2",
+            "leads_to": "D01"
+          },
+          {
+            "id": "C",
+            "label": "Cross 3",
+            "leads_to": "A01"
+          },
+          {
+            "id": "D",
+            "label": "Continue",
+            "leads_to": "B01"
+          }
+        ]
+      },
+      "leads_to": [
+        "C01",
+        "D01",
+        "A01",
+        "B01"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "B01b",
+      "title": "B01b variant",
+      "full_script": {
+        "hook": "B01b hook",
+        "context": "B01b context",
+        "repo_explanation": "B01b repo",
+        "decision_moment": "B01b decision",
+        "options_narration": "B01b options",
+        "outro": "B01b outro"
+      },
+      "decision_point": {
+        "question": "Next after B01b?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cross 1",
+            "leads_to": "C01"
+          },
+          {
+            "id": "B",
+            "label": "Cross 2",
+            "leads_to": "D01"
+          },
+          {
+            "id": "C",
+            "label": "Cross 3",
+            "leads_to": "A01"
+          },
+          {
+            "id": "D",
+            "label": "Continue",
+            "leads_to": "B01"
+          }
+        ]
+      },
+      "leads_to": [
+        "C01",
+        "D01",
+        "A01",
+        "B01"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "B01c",
+      "title": "B01c variant",
+      "full_script": {
+        "hook": "B01c hook",
+        "context": "B01c context",
+        "repo_explanation": "B01c repo",
+        "decision_moment": "B01c decision",
+        "options_narration": "B01c options",
+        "outro": "B01c outro"
+      },
+      "decision_point": {
+        "question": "Next after B01c?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cross 1",
+            "leads_to": "C01"
+          },
+          {
+            "id": "B",
+            "label": "Cross 2",
+            "leads_to": "D01"
+          },
+          {
+            "id": "C",
+            "label": "Cross 3",
+            "leads_to": "A01"
+          },
+          {
+            "id": "D",
+            "label": "Continue",
+            "leads_to": "B01"
+          }
+        ]
+      },
+      "leads_to": [
+        "C01",
+        "D01",
+        "A01",
+        "B01"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "B01d",
+      "title": "B01d variant",
+      "full_script": {
+        "hook": "B01d hook",
+        "context": "B01d context",
+        "repo_explanation": "B01d repo",
+        "decision_moment": "B01d decision",
+        "options_narration": "B01d options",
+        "outro": "B01d outro"
+      },
+      "decision_point": {
+        "question": "Next after B01d?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cross 1",
+            "leads_to": "C01"
+          },
+          {
+            "id": "B",
+            "label": "Cross 2",
+            "leads_to": "D01"
+          },
+          {
+            "id": "C",
+            "label": "Cross 3",
+            "leads_to": "A01"
+          },
+          {
+            "id": "D",
+            "label": "Continue",
+            "leads_to": "B01"
+          }
+        ]
+      },
+      "leads_to": [
+        "C01",
+        "D01",
+        "A01",
+        "B01"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "C01a",
+      "title": "C01a variant",
+      "full_script": {
+        "hook": "C01a hook",
+        "context": "C01a context",
+        "repo_explanation": "C01a repo",
+        "decision_moment": "C01a decision",
+        "options_narration": "C01a options",
+        "outro": "C01a outro"
+      },
+      "decision_point": {
+        "question": "Next after C01a?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cross 1",
+            "leads_to": "D01"
+          },
+          {
+            "id": "B",
+            "label": "Cross 2",
+            "leads_to": "A01"
+          },
+          {
+            "id": "C",
+            "label": "Cross 3",
+            "leads_to": "B01"
+          },
+          {
+            "id": "D",
+            "label": "Continue",
+            "leads_to": "C01"
+          }
+        ]
+      },
+      "leads_to": [
+        "D01",
+        "A01",
+        "B01",
+        "C01"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "C01b",
+      "title": "C01b variant",
+      "full_script": {
+        "hook": "C01b hook",
+        "context": "C01b context",
+        "repo_explanation": "C01b repo",
+        "decision_moment": "C01b decision",
+        "options_narration": "C01b options",
+        "outro": "C01b outro"
+      },
+      "decision_point": {
+        "question": "Next after C01b?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cross 1",
+            "leads_to": "D01"
+          },
+          {
+            "id": "B",
+            "label": "Cross 2",
+            "leads_to": "A01"
+          },
+          {
+            "id": "C",
+            "label": "Cross 3",
+            "leads_to": "B01"
+          },
+          {
+            "id": "D",
+            "label": "Continue",
+            "leads_to": "C01"
+          }
+        ]
+      },
+      "leads_to": [
+        "D01",
+        "A01",
+        "B01",
+        "C01"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "C01c",
+      "title": "C01c variant",
+      "full_script": {
+        "hook": "C01c hook",
+        "context": "C01c context",
+        "repo_explanation": "C01c repo",
+        "decision_moment": "C01c decision",
+        "options_narration": "C01c options",
+        "outro": "C01c outro"
+      },
+      "decision_point": {
+        "question": "Next after C01c?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cross 1",
+            "leads_to": "D01"
+          },
+          {
+            "id": "B",
+            "label": "Cross 2",
+            "leads_to": "A01"
+          },
+          {
+            "id": "C",
+            "label": "Cross 3",
+            "leads_to": "B01"
+          },
+          {
+            "id": "D",
+            "label": "Continue",
+            "leads_to": "C01"
+          }
+        ]
+      },
+      "leads_to": [
+        "D01",
+        "A01",
+        "B01",
+        "C01"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "C01d",
+      "title": "C01d variant",
+      "full_script": {
+        "hook": "C01d hook",
+        "context": "C01d context",
+        "repo_explanation": "C01d repo",
+        "decision_moment": "C01d decision",
+        "options_narration": "C01d options",
+        "outro": "C01d outro"
+      },
+      "decision_point": {
+        "question": "Next after C01d?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cross 1",
+            "leads_to": "D01"
+          },
+          {
+            "id": "B",
+            "label": "Cross 2",
+            "leads_to": "A01"
+          },
+          {
+            "id": "C",
+            "label": "Cross 3",
+            "leads_to": "B01"
+          },
+          {
+            "id": "D",
+            "label": "Continue",
+            "leads_to": "C01"
+          }
+        ]
+      },
+      "leads_to": [
+        "D01",
+        "A01",
+        "B01",
+        "C01"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "D01a",
+      "title": "D01a variant",
+      "full_script": {
+        "hook": "D01a hook",
+        "context": "D01a context",
+        "repo_explanation": "D01a repo",
+        "decision_moment": "D01a decision",
+        "options_narration": "D01a options",
+        "outro": "D01a outro"
+      },
+      "decision_point": {
+        "question": "Next after D01a?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cross 1",
+            "leads_to": "A01"
+          },
+          {
+            "id": "B",
+            "label": "Cross 2",
+            "leads_to": "B01"
+          },
+          {
+            "id": "C",
+            "label": "Cross 3",
+            "leads_to": "C01"
+          },
+          {
+            "id": "D",
+            "label": "Continue",
+            "leads_to": "D01"
+          }
+        ]
+      },
+      "leads_to": [
+        "A01",
+        "B01",
+        "C01",
+        "D01"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "D01b",
+      "title": "D01b variant",
+      "full_script": {
+        "hook": "D01b hook",
+        "context": "D01b context",
+        "repo_explanation": "D01b repo",
+        "decision_moment": "D01b decision",
+        "options_narration": "D01b options",
+        "outro": "D01b outro"
+      },
+      "decision_point": {
+        "question": "Next after D01b?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cross 1",
+            "leads_to": "A01"
+          },
+          {
+            "id": "B",
+            "label": "Cross 2",
+            "leads_to": "B01"
+          },
+          {
+            "id": "C",
+            "label": "Cross 3",
+            "leads_to": "C01"
+          },
+          {
+            "id": "D",
+            "label": "Continue",
+            "leads_to": "D01"
+          }
+        ]
+      },
+      "leads_to": [
+        "A01",
+        "B01",
+        "C01",
+        "D01"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "D01c",
+      "title": "D01c variant",
+      "full_script": {
+        "hook": "D01c hook",
+        "context": "D01c context",
+        "repo_explanation": "D01c repo",
+        "decision_moment": "D01c decision",
+        "options_narration": "D01c options",
+        "outro": "D01c outro"
+      },
+      "decision_point": {
+        "question": "Next after D01c?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cross 1",
+            "leads_to": "A01"
+          },
+          {
+            "id": "B",
+            "label": "Cross 2",
+            "leads_to": "B01"
+          },
+          {
+            "id": "C",
+            "label": "Cross 3",
+            "leads_to": "C01"
+          },
+          {
+            "id": "D",
+            "label": "Continue",
+            "leads_to": "D01"
+          }
+        ]
+      },
+      "leads_to": [
+        "A01",
+        "B01",
+        "C01",
+        "D01"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    },
+    {
+      "id": "D01d",
+      "title": "D01d variant",
+      "full_script": {
+        "hook": "D01d hook",
+        "context": "D01d context",
+        "repo_explanation": "D01d repo",
+        "decision_moment": "D01d decision",
+        "options_narration": "D01d options",
+        "outro": "D01d outro"
+      },
+      "decision_point": {
+        "question": "Next after D01d?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cross 1",
+            "leads_to": "A01"
+          },
+          {
+            "id": "B",
+            "label": "Cross 2",
+            "leads_to": "B01"
+          },
+          {
+            "id": "C",
+            "label": "Cross 3",
+            "leads_to": "C01"
+          },
+          {
+            "id": "D",
+            "label": "Continue",
+            "leads_to": "D01"
+          }
+        ]
+      },
+      "leads_to": [
+        "A01",
+        "B01",
+        "C01",
+        "D01"
+      ],
+      "remotion_spec": {
+        "fps": 30,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_explanation",
+            "start_frame": 90,
+            "duration_frames": 600
+          },
+          {
+            "id": "S03_STORY",
+            "type": "story_scene",
+            "start_frame": 690,
+            "duration_frames": 1800
+          },
+          {
+            "id": "S04_REPO",
+            "type": "repo_screen_capture",
+            "start_frame": 2490,
+            "duration_frames": 1500
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "diagram_animation",
+            "start_frame": 3990,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810
+          }
+        ]
+      }
+    }
+  ],
+  "math_data": [
+    {
+      "reelId": "V11",
+      "title": "Pythagoras — visual proof via square areas",
+      "config": {
+        "width": 1080,
+        "height": 1920,
+        "fps": 30,
+        "durationInFrames": 450,
+        "narrator": "en-US-GuyNeural"
+      },
+      "svgData": {
+        "viewBox": "0 0 1080 1920",
+        "paths": [
+          {
+            "id": "triangle",
+            "d": "M220 1220 L860 1220 L220 700 Z",
+            "strokeWidth": 10,
+            "color": "rust"
+          },
+          {
+            "id": "square-a",
+            "d": "M220 1220 L220 860 L580 860 L580 1220 Z",
+            "strokeWidth": 8,
+            "color": "gold"
+          },
+          {
+            "id": "square-b",
+            "d": "M580 1220 L860 1220 L860 940 L580 940 Z",
+            "strokeWidth": 8,
+            "color": "gold"
+          },
+          {
+            "id": "square-c",
+            "d": "M220 700 L620 700 L620 300 L220 300 Z",
+            "strokeWidth": 8,
+            "color": "rust"
+          }
+        ]
+      },
+      "caption": "Watch a right triangle prove itself: a² + b² = c² by area transfer. #Pythagoras #Geometry #MathReels #VisualProof #GeoGebra"
+    },
+    {
+      "reelId": "V12",
+      "title": "Unit circle animation — Trigonometry",
+      "config": {
+        "width": 1080,
+        "height": 1920,
+        "fps": 30,
+        "durationInFrames": 450,
+        "narrator": "en-US-GuyNeural"
+      },
+      "svgData": {
+        "viewBox": "0 0 1080 1920",
+        "paths": [
+          {
+            "id": "circle",
+            "d": "M540 560 m -300,0 a 300,300 0 1,0 600,0 a 300,300 0 1,0 -600,0",
+            "strokeWidth": 8,
+            "color": "gold"
+          },
+          {
+            "id": "x-axis",
+            "d": "M200 560 L880 560",
+            "strokeWidth": 7,
+            "color": "rust"
+          },
+          {
+            "id": "y-axis",
+            "d": "M540 220 L540 900",
+            "strokeWidth": 7,
+            "color": "rust"
+          },
+          {
+            "id": "radius",
+            "d": "M540 560 L780 360",
+            "strokeWidth": 9,
+            "color": "gold"
+          },
+          {
+            "id": "sine-drop",
+            "d": "M780 360 L780 560",
+            "strokeWidth": 7,
+            "color": "rust"
+          }
+        ]
+      },
+      "caption": "See sine and cosine emerge from one rotating radius on the unit circle. #Trigonometry #UnitCircle #MathAnimation #STEM #GeoGebra"
+    },
+    {
+      "reelId": "V13",
+      "title": "Calculus — Area under a curve (integration)",
+      "config": {
+        "width": 1080,
+        "height": 1920,
+        "fps": 30,
+        "durationInFrames": 450,
+        "narrator": "en-US-GuyNeural"
+      },
+      "svgData": {
+        "viewBox": "0 0 1080 1920",
+        "paths": [
+          {
+            "id": "axes",
+            "d": "M180 1280 L920 1280 M180 1280 L180 420",
+            "strokeWidth": 7,
+            "color": "rust"
+          },
+          {
+            "id": "curve",
+            "d": "M180 1180 C320 960 430 760 560 720 C700 680 810 820 920 1030",
+            "strokeWidth": 9,
+            "color": "gold"
+          },
+          {
+            "id": "bounds",
+            "d": "M320 1280 L320 960 M760 1280 L760 830",
+            "strokeWidth": 7,
+            "color": "rust"
+          },
+          {
+            "id": "area-outline",
+            "d": "M320 1280 L320 960 C420 820 540 730 660 760 C710 775 735 790 760 830 L760 1280 Z",
+            "strokeWidth": 8,
+            "color": "gold"
+          }
+        ]
+      },
+      "caption": "Integration made visual: build accumulated area under a smooth function. #Calculus #Integration #AreaUnderCurve #MathReels #GeoGebra"
+    },
+    {
+      "reelId": "V14",
+      "title": "Fractal geometry — Branch animation",
+      "config": {
+        "width": 1080,
+        "height": 1920,
+        "fps": 30,
+        "durationInFrames": 450,
+        "narrator": "en-US-GuyNeural"
+      },
+      "svgData": {
+        "viewBox": "0 0 1080 1920",
+        "paths": [
+          {
+            "id": "trunk",
+            "d": "M540 1540 L540 1140",
+            "strokeWidth": 10,
+            "color": "rust"
+          },
+          {
+            "id": "branch-l1-left",
+            "d": "M540 1240 L420 1020",
+            "strokeWidth": 8,
+            "color": "gold"
+          },
+          {
+            "id": "branch-l1-right",
+            "d": "M540 1240 L660 1020",
+            "strokeWidth": 8,
+            "color": "gold"
+          },
+          {
+            "id": "branch-l2-left",
+            "d": "M420 1020 L330 860 M420 1020 L480 850",
+            "strokeWidth": 6,
+            "color": "rust"
+          },
+          {
+            "id": "branch-l2-right",
+            "d": "M660 1020 L600 850 M660 1020 L750 860",
+            "strokeWidth": 6,
+            "color": "rust"
+          }
+        ]
+      },
+      "caption": "A recursive tree grows branch by branch: geometry repeating itself at every scale. #Fractal #Geometry #RecursiveArt #MathAnimation #GeoGebra"
+    }
+  ],
+  "branching_map": {
+    "description": "Canonical graph. Every leads_to value must match a key in this map or equal SERIES2_V01 (terminal). All 10 videos are nodes. No dangling edges.",
+    "nodes": [
+      "V01",
+      "V02",
+      "V03",
+      "V04",
+      "V05",
+      "V06",
+      "V07",
+      "V08",
+      "V09",
+      "V10",
+      "SERIES2_V01"
+    ],
+    "edges": {
+      "V01": {
+        "A": "V02",
+        "B": "V03",
+        "C": "V04",
+        "D": "V05"
+      },
+      "V02": {
+        "A": "V06",
+        "B": "V06",
+        "C": "V07",
+        "D": "V07"
+      },
+      "V03": {
+        "A": "V05",
+        "B": "V04",
+        "C": "V08",
+        "D": "V06"
+      },
+      "V04": {
+        "A": "V07",
+        "B": "V08",
+        "C": "V06",
+        "D": "V08"
+      },
+      "V05": {
+        "A": "V08",
+        "B": "V09",
+        "C": "V08",
+        "D": "V09"
+      },
+      "V06": {
+        "A": "V09",
+        "B": "V09",
+        "C": "V09",
+        "D": "V09"
+      },
+      "V07": {
+        "A": "V08",
+        "B": "V09",
+        "C": "V08",
+        "D": "V09"
+      },
+      "V08": {
+        "A": "V09",
+        "B": "V10",
+        "C": "V09",
+        "D": "V10"
+      },
+      "V09": {
+        "A": "V10",
+        "B": "V10",
+        "C": "V10",
+        "D": "V10"
+      },
+      "V10": {
+        "A": "SERIES2_V01",
+        "B": "SERIES2_V01",
+        "C": "SERIES2_V01",
+        "D": "SERIES2_V01"
+      },
+      "SERIES2_V01": "TERMINAL"
+    },
+    "reachability": {
+      "V01": "root — all viewers start here",
+      "V02": "reachable from V01-A",
+      "V03": "reachable from V01-B",
+      "V04": "reachable from V01-C, V03-B",
+      "V05": "reachable from V01-D, V03-A",
+      "V06": "reachable from V02-A/C, V03-D, V04-C",
+      "V07": "reachable from V02-B/D, V04-A",
+      "V08": "reachable from V03-C, V04-B/D, V05-A/C, V07-A/C",
+      "V09": "reachable from V05-B/D, V06-all, V07-B/D, V08-A/C",
+      "V10": "reachable from V08-B/D, V09-all",
+      "SERIES2_V01": "reachable from V10-all"
+    },
+    "validation": {
+      "dangling_branches": "none",
+      "orphan_nodes": "none",
+      "total_unique_edges": 36,
+      "terminal_nodes": [
+        "SERIES2_V01"
+      ]
+    }
+  }
+}

@@ -57,8 +57,21 @@ export type DeepDive = {
   createdAt: any;
 };
 
+export type Game = {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  url: string;
+  category: string;
+  tags: string[];
+  isFlagship: boolean;
+  playerCount?: string;
+  difficulty?: 'Easy' | 'Medium' | 'Hard';
+};
+
 export type AppState = {
-  activeTab: 'feed' | 'dives' | 'market' | 'profile';
+  activeTab: 'feed' | 'dives' | 'games' | 'market' | 'profile';
   user: UserProfile | null;
   isAuthReady: boolean;
   posts: Post[];

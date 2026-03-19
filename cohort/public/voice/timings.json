@@ -1,0 +1,1898 @@
+{
+  "generated": "2026-03-09T11:48:42.256Z",
+  "mode": "production-v2.json",
+  "entries": [
+    {
+      "videoId": "V01",
+      "sceneId": "S01_INTRO",
+      "durationSec": 11,
+      "durationFrames": 330,
+      "file": "V01_S01_INTRO.wav"
+    },
+    {
+      "videoId": "V01",
+      "sceneId": "S02_HOOK",
+      "durationSec": 28,
+      "durationFrames": 840,
+      "file": "V01_S02_HOOK.wav"
+    },
+    {
+      "videoId": "V01",
+      "sceneId": "S03_STORY",
+      "durationSec": 17,
+      "durationFrames": 510,
+      "file": "V01_S03_STORY.wav"
+    },
+    {
+      "videoId": "V01",
+      "sceneId": "S04_REPO",
+      "durationSec": 27,
+      "durationFrames": 810,
+      "file": "V01_S04_REPO.wav"
+    },
+    {
+      "videoId": "V01",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 18,
+      "durationFrames": 540,
+      "file": "V01_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "V01",
+      "sceneId": "S06_DECISION",
+      "durationSec": 29,
+      "durationFrames": 870,
+      "file": "V01_S06_DECISION.wav"
+    },
+    {
+      "videoId": "V01",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 8,
+      "durationFrames": 240,
+      "file": "V01_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "V02",
+      "sceneId": "S01_INTRO",
+      "durationSec": 14,
+      "durationFrames": 420,
+      "file": "V02_S01_INTRO.wav"
+    },
+    {
+      "videoId": "V02",
+      "sceneId": "S02_HOOK",
+      "durationSec": 30,
+      "durationFrames": 900,
+      "file": "V02_S02_HOOK.wav"
+    },
+    {
+      "videoId": "V02",
+      "sceneId": "S03_STORY",
+      "durationSec": 17,
+      "durationFrames": 510,
+      "file": "V02_S03_STORY.wav"
+    },
+    {
+      "videoId": "V02",
+      "sceneId": "S04_REPO",
+      "durationSec": 34,
+      "durationFrames": 1020,
+      "file": "V02_S04_REPO.wav"
+    },
+    {
+      "videoId": "V02",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 25,
+      "durationFrames": 750,
+      "file": "V02_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "V02",
+      "sceneId": "S06_DECISION",
+      "durationSec": 15,
+      "durationFrames": 450,
+      "file": "V02_S06_DECISION.wav"
+    },
+    {
+      "videoId": "V02",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 5,
+      "durationFrames": 150,
+      "file": "V02_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "V03",
+      "sceneId": "S01_INTRO",
+      "durationSec": 13,
+      "durationFrames": 390,
+      "file": "V03_S01_INTRO.wav"
+    },
+    {
+      "videoId": "V03",
+      "sceneId": "S02_HOOK",
+      "durationSec": 30,
+      "durationFrames": 900,
+      "file": "V03_S02_HOOK.wav"
+    },
+    {
+      "videoId": "V03",
+      "sceneId": "S03_STORY",
+      "durationSec": 16,
+      "durationFrames": 480,
+      "file": "V03_S03_STORY.wav"
+    },
+    {
+      "videoId": "V03",
+      "sceneId": "S04_REPO",
+      "durationSec": 33,
+      "durationFrames": 990,
+      "file": "V03_S04_REPO.wav"
+    },
+    {
+      "videoId": "V03",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 13,
+      "durationFrames": 390,
+      "file": "V03_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "V03",
+      "sceneId": "S06_DECISION",
+      "durationSec": 22,
+      "durationFrames": 660,
+      "file": "V03_S06_DECISION.wav"
+    },
+    {
+      "videoId": "V03",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 7,
+      "durationFrames": 210,
+      "file": "V03_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "V04",
+      "sceneId": "S01_INTRO",
+      "durationSec": 11,
+      "durationFrames": 330,
+      "file": "V04_S01_INTRO.wav"
+    },
+    {
+      "videoId": "V04",
+      "sceneId": "S02_HOOK",
+      "durationSec": 21,
+      "durationFrames": 630,
+      "file": "V04_S02_HOOK.wav"
+    },
+    {
+      "videoId": "V04",
+      "sceneId": "S03_STORY",
+      "durationSec": 10,
+      "durationFrames": 300,
+      "file": "V04_S03_STORY.wav"
+    },
+    {
+      "videoId": "V04",
+      "sceneId": "S04_REPO",
+      "durationSec": 45,
+      "durationFrames": 1350,
+      "file": "V04_S04_REPO.wav"
+    },
+    {
+      "videoId": "V04",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 26,
+      "durationFrames": 780,
+      "file": "V04_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "V04",
+      "sceneId": "S06_DECISION",
+      "durationSec": 13,
+      "durationFrames": 390,
+      "file": "V04_S06_DECISION.wav"
+    },
+    {
+      "videoId": "V04",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 7,
+      "durationFrames": 210,
+      "file": "V04_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "V05",
+      "sceneId": "S01_INTRO",
+      "durationSec": 16,
+      "durationFrames": 480,
+      "file": "V05_S01_INTRO.wav"
+    },
+    {
+      "videoId": "V05",
+      "sceneId": "S02_HOOK",
+      "durationSec": 34,
+      "durationFrames": 1020,
+      "file": "V05_S02_HOOK.wav"
+    },
+    {
+      "videoId": "V05",
+      "sceneId": "S03_STORY",
+      "durationSec": 18,
+      "durationFrames": 540,
+      "file": "V05_S03_STORY.wav"
+    },
+    {
+      "videoId": "V05",
+      "sceneId": "S04_REPO",
+      "durationSec": 25,
+      "durationFrames": 750,
+      "file": "V05_S04_REPO.wav"
+    },
+    {
+      "videoId": "V05",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 18,
+      "durationFrames": 540,
+      "file": "V05_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "V05",
+      "sceneId": "S06_DECISION",
+      "durationSec": 25,
+      "durationFrames": 750,
+      "file": "V05_S06_DECISION.wav"
+    },
+    {
+      "videoId": "V05",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 9,
+      "durationFrames": 270,
+      "file": "V05_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "V06",
+      "sceneId": "S01_INTRO",
+      "durationSec": 11,
+      "durationFrames": 330,
+      "file": "V06_S01_INTRO.wav"
+    },
+    {
+      "videoId": "V06",
+      "sceneId": "S02_HOOK",
+      "durationSec": 23,
+      "durationFrames": 690,
+      "file": "V06_S02_HOOK.wav"
+    },
+    {
+      "videoId": "V06",
+      "sceneId": "S03_STORY",
+      "durationSec": 13,
+      "durationFrames": 390,
+      "file": "V06_S03_STORY.wav"
+    },
+    {
+      "videoId": "V06",
+      "sceneId": "S04_REPO",
+      "durationSec": 38,
+      "durationFrames": 1140,
+      "file": "V06_S04_REPO.wav"
+    },
+    {
+      "videoId": "V06",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 18,
+      "durationFrames": 540,
+      "file": "V06_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "V06",
+      "sceneId": "S06_DECISION",
+      "durationSec": 12,
+      "durationFrames": 360,
+      "file": "V06_S06_DECISION.wav"
+    },
+    {
+      "videoId": "V06",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 6,
+      "durationFrames": 180,
+      "file": "V06_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "V07",
+      "sceneId": "S01_INTRO",
+      "durationSec": 9,
+      "durationFrames": 270,
+      "file": "V07_S01_INTRO.wav"
+    },
+    {
+      "videoId": "V07",
+      "sceneId": "S02_HOOK",
+      "durationSec": 23,
+      "durationFrames": 690,
+      "file": "V07_S02_HOOK.wav"
+    },
+    {
+      "videoId": "V07",
+      "sceneId": "S03_STORY",
+      "durationSec": 14,
+      "durationFrames": 420,
+      "file": "V07_S03_STORY.wav"
+    },
+    {
+      "videoId": "V07",
+      "sceneId": "S04_REPO",
+      "durationSec": 21,
+      "durationFrames": 630,
+      "file": "V07_S04_REPO.wav"
+    },
+    {
+      "videoId": "V07",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 21,
+      "durationFrames": 630,
+      "file": "V07_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "V07",
+      "sceneId": "S06_DECISION",
+      "durationSec": 26,
+      "durationFrames": 780,
+      "file": "V07_S06_DECISION.wav"
+    },
+    {
+      "videoId": "V07",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 6,
+      "durationFrames": 180,
+      "file": "V07_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "V08",
+      "sceneId": "S01_INTRO",
+      "durationSec": 9,
+      "durationFrames": 270,
+      "file": "V08_S01_INTRO.wav"
+    },
+    {
+      "videoId": "V08",
+      "sceneId": "S02_HOOK",
+      "durationSec": 21,
+      "durationFrames": 630,
+      "file": "V08_S02_HOOK.wav"
+    },
+    {
+      "videoId": "V08",
+      "sceneId": "S03_STORY",
+      "durationSec": 12,
+      "durationFrames": 360,
+      "file": "V08_S03_STORY.wav"
+    },
+    {
+      "videoId": "V08",
+      "sceneId": "S04_REPO",
+      "durationSec": 30,
+      "durationFrames": 900,
+      "file": "V08_S04_REPO.wav"
+    },
+    {
+      "videoId": "V08",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 19,
+      "durationFrames": 570,
+      "file": "V08_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "V08",
+      "sceneId": "S06_DECISION",
+      "durationSec": 25,
+      "durationFrames": 750,
+      "file": "V08_S06_DECISION.wav"
+    },
+    {
+      "videoId": "V08",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 5,
+      "durationFrames": 150,
+      "file": "V08_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "V09",
+      "sceneId": "S01_INTRO",
+      "durationSec": 9,
+      "durationFrames": 270,
+      "file": "V09_S01_INTRO.wav"
+    },
+    {
+      "videoId": "V09",
+      "sceneId": "S02_HOOK",
+      "durationSec": 23,
+      "durationFrames": 690,
+      "file": "V09_S02_HOOK.wav"
+    },
+    {
+      "videoId": "V09",
+      "sceneId": "S03_STORY",
+      "durationSec": 15,
+      "durationFrames": 450,
+      "file": "V09_S03_STORY.wav"
+    },
+    {
+      "videoId": "V09",
+      "sceneId": "S04_REPO",
+      "durationSec": 33,
+      "durationFrames": 990,
+      "file": "V09_S04_REPO.wav"
+    },
+    {
+      "videoId": "V09",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 27,
+      "durationFrames": 810,
+      "file": "V09_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "V09",
+      "sceneId": "S06_DECISION",
+      "durationSec": 22,
+      "durationFrames": 660,
+      "file": "V09_S06_DECISION.wav"
+    },
+    {
+      "videoId": "V09",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 7,
+      "durationFrames": 210,
+      "file": "V09_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "V10",
+      "sceneId": "S01_INTRO",
+      "durationSec": 9,
+      "durationFrames": 270,
+      "file": "V10_S01_INTRO.wav"
+    },
+    {
+      "videoId": "V10",
+      "sceneId": "S02_HOOK",
+      "durationSec": 32,
+      "durationFrames": 960,
+      "file": "V10_S02_HOOK.wav"
+    },
+    {
+      "videoId": "V10",
+      "sceneId": "S03_STORY",
+      "durationSec": 23,
+      "durationFrames": 690,
+      "file": "V10_S03_STORY.wav"
+    },
+    {
+      "videoId": "V10",
+      "sceneId": "S04_REPO",
+      "durationSec": 22,
+      "durationFrames": 660,
+      "file": "V10_S04_REPO.wav"
+    },
+    {
+      "videoId": "V10",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 24,
+      "durationFrames": 720,
+      "file": "V10_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "V10",
+      "sceneId": "S06_DECISION",
+      "durationSec": 19,
+      "durationFrames": 570,
+      "file": "V10_S06_DECISION.wav"
+    },
+    {
+      "videoId": "V10",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 8,
+      "durationFrames": 240,
+      "file": "V10_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "A01",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01_S01_INTRO.wav"
+    },
+    {
+      "videoId": "A01",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01_S02_HOOK.wav"
+    },
+    {
+      "videoId": "A01",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01_S03_STORY.wav"
+    },
+    {
+      "videoId": "A01",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01_S04_REPO.wav"
+    },
+    {
+      "videoId": "A01",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "A01",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01_S06_DECISION.wav"
+    },
+    {
+      "videoId": "A01",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "B01",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01_S01_INTRO.wav"
+    },
+    {
+      "videoId": "B01",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01_S02_HOOK.wav"
+    },
+    {
+      "videoId": "B01",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01_S03_STORY.wav"
+    },
+    {
+      "videoId": "B01",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01_S04_REPO.wav"
+    },
+    {
+      "videoId": "B01",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "B01",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01_S06_DECISION.wav"
+    },
+    {
+      "videoId": "B01",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "C01",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01_S01_INTRO.wav"
+    },
+    {
+      "videoId": "C01",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01_S02_HOOK.wav"
+    },
+    {
+      "videoId": "C01",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01_S03_STORY.wav"
+    },
+    {
+      "videoId": "C01",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01_S04_REPO.wav"
+    },
+    {
+      "videoId": "C01",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "C01",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01_S06_DECISION.wav"
+    },
+    {
+      "videoId": "C01",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "D01",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01_S01_INTRO.wav"
+    },
+    {
+      "videoId": "D01",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01_S02_HOOK.wav"
+    },
+    {
+      "videoId": "D01",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01_S03_STORY.wav"
+    },
+    {
+      "videoId": "D01",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01_S04_REPO.wav"
+    },
+    {
+      "videoId": "D01",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "D01",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01_S06_DECISION.wav"
+    },
+    {
+      "videoId": "D01",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "A01a",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01a_S01_INTRO.wav"
+    },
+    {
+      "videoId": "A01a",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01a_S02_HOOK.wav"
+    },
+    {
+      "videoId": "A01a",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01a_S03_STORY.wav"
+    },
+    {
+      "videoId": "A01a",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01a_S04_REPO.wav"
+    },
+    {
+      "videoId": "A01a",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01a_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "A01a",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01a_S06_DECISION.wav"
+    },
+    {
+      "videoId": "A01a",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01a_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "A01b",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01b_S01_INTRO.wav"
+    },
+    {
+      "videoId": "A01b",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01b_S02_HOOK.wav"
+    },
+    {
+      "videoId": "A01b",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01b_S03_STORY.wav"
+    },
+    {
+      "videoId": "A01b",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01b_S04_REPO.wav"
+    },
+    {
+      "videoId": "A01b",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01b_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "A01b",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01b_S06_DECISION.wav"
+    },
+    {
+      "videoId": "A01b",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01b_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "A01c",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01c_S01_INTRO.wav"
+    },
+    {
+      "videoId": "A01c",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01c_S02_HOOK.wav"
+    },
+    {
+      "videoId": "A01c",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01c_S03_STORY.wav"
+    },
+    {
+      "videoId": "A01c",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01c_S04_REPO.wav"
+    },
+    {
+      "videoId": "A01c",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01c_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "A01c",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01c_S06_DECISION.wav"
+    },
+    {
+      "videoId": "A01c",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01c_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "A01d",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01d_S01_INTRO.wav"
+    },
+    {
+      "videoId": "A01d",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01d_S02_HOOK.wav"
+    },
+    {
+      "videoId": "A01d",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01d_S03_STORY.wav"
+    },
+    {
+      "videoId": "A01d",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01d_S04_REPO.wav"
+    },
+    {
+      "videoId": "A01d",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01d_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "A01d",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01d_S06_DECISION.wav"
+    },
+    {
+      "videoId": "A01d",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "A01d_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "B01a",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01a_S01_INTRO.wav"
+    },
+    {
+      "videoId": "B01a",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01a_S02_HOOK.wav"
+    },
+    {
+      "videoId": "B01a",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01a_S03_STORY.wav"
+    },
+    {
+      "videoId": "B01a",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01a_S04_REPO.wav"
+    },
+    {
+      "videoId": "B01a",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01a_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "B01a",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01a_S06_DECISION.wav"
+    },
+    {
+      "videoId": "B01a",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01a_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "B01b",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01b_S01_INTRO.wav"
+    },
+    {
+      "videoId": "B01b",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01b_S02_HOOK.wav"
+    },
+    {
+      "videoId": "B01b",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01b_S03_STORY.wav"
+    },
+    {
+      "videoId": "B01b",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01b_S04_REPO.wav"
+    },
+    {
+      "videoId": "B01b",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01b_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "B01b",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01b_S06_DECISION.wav"
+    },
+    {
+      "videoId": "B01b",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01b_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "B01c",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01c_S01_INTRO.wav"
+    },
+    {
+      "videoId": "B01c",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01c_S02_HOOK.wav"
+    },
+    {
+      "videoId": "B01c",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01c_S03_STORY.wav"
+    },
+    {
+      "videoId": "B01c",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01c_S04_REPO.wav"
+    },
+    {
+      "videoId": "B01c",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01c_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "B01c",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01c_S06_DECISION.wav"
+    },
+    {
+      "videoId": "B01c",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01c_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "B01d",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01d_S01_INTRO.wav"
+    },
+    {
+      "videoId": "B01d",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01d_S02_HOOK.wav"
+    },
+    {
+      "videoId": "B01d",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01d_S03_STORY.wav"
+    },
+    {
+      "videoId": "B01d",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01d_S04_REPO.wav"
+    },
+    {
+      "videoId": "B01d",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01d_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "B01d",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01d_S06_DECISION.wav"
+    },
+    {
+      "videoId": "B01d",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "B01d_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "C01a",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01a_S01_INTRO.wav"
+    },
+    {
+      "videoId": "C01a",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01a_S02_HOOK.wav"
+    },
+    {
+      "videoId": "C01a",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01a_S03_STORY.wav"
+    },
+    {
+      "videoId": "C01a",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01a_S04_REPO.wav"
+    },
+    {
+      "videoId": "C01a",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01a_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "C01a",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01a_S06_DECISION.wav"
+    },
+    {
+      "videoId": "C01a",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01a_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "C01b",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01b_S01_INTRO.wav"
+    },
+    {
+      "videoId": "C01b",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01b_S02_HOOK.wav"
+    },
+    {
+      "videoId": "C01b",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01b_S03_STORY.wav"
+    },
+    {
+      "videoId": "C01b",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01b_S04_REPO.wav"
+    },
+    {
+      "videoId": "C01b",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01b_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "C01b",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01b_S06_DECISION.wav"
+    },
+    {
+      "videoId": "C01b",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01b_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "C01c",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01c_S01_INTRO.wav"
+    },
+    {
+      "videoId": "C01c",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01c_S02_HOOK.wav"
+    },
+    {
+      "videoId": "C01c",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01c_S03_STORY.wav"
+    },
+    {
+      "videoId": "C01c",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01c_S04_REPO.wav"
+    },
+    {
+      "videoId": "C01c",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01c_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "C01c",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01c_S06_DECISION.wav"
+    },
+    {
+      "videoId": "C01c",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01c_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "C01d",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01d_S01_INTRO.wav"
+    },
+    {
+      "videoId": "C01d",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01d_S02_HOOK.wav"
+    },
+    {
+      "videoId": "C01d",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01d_S03_STORY.wav"
+    },
+    {
+      "videoId": "C01d",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01d_S04_REPO.wav"
+    },
+    {
+      "videoId": "C01d",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01d_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "C01d",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01d_S06_DECISION.wav"
+    },
+    {
+      "videoId": "C01d",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "C01d_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "D01a",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01a_S01_INTRO.wav"
+    },
+    {
+      "videoId": "D01a",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01a_S02_HOOK.wav"
+    },
+    {
+      "videoId": "D01a",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01a_S03_STORY.wav"
+    },
+    {
+      "videoId": "D01a",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01a_S04_REPO.wav"
+    },
+    {
+      "videoId": "D01a",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01a_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "D01a",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01a_S06_DECISION.wav"
+    },
+    {
+      "videoId": "D01a",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01a_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "D01b",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01b_S01_INTRO.wav"
+    },
+    {
+      "videoId": "D01b",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01b_S02_HOOK.wav"
+    },
+    {
+      "videoId": "D01b",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01b_S03_STORY.wav"
+    },
+    {
+      "videoId": "D01b",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01b_S04_REPO.wav"
+    },
+    {
+      "videoId": "D01b",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01b_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "D01b",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01b_S06_DECISION.wav"
+    },
+    {
+      "videoId": "D01b",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01b_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "D01c",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01c_S01_INTRO.wav"
+    },
+    {
+      "videoId": "D01c",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01c_S02_HOOK.wav"
+    },
+    {
+      "videoId": "D01c",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01c_S03_STORY.wav"
+    },
+    {
+      "videoId": "D01c",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01c_S04_REPO.wav"
+    },
+    {
+      "videoId": "D01c",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01c_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "D01c",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01c_S06_DECISION.wav"
+    },
+    {
+      "videoId": "D01c",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01c_S07_OUTRO.wav"
+    },
+    {
+      "videoId": "D01d",
+      "sceneId": "S01_INTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01d_S01_INTRO.wav"
+    },
+    {
+      "videoId": "D01d",
+      "sceneId": "S02_HOOK",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01d_S02_HOOK.wav"
+    },
+    {
+      "videoId": "D01d",
+      "sceneId": "S03_STORY",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01d_S03_STORY.wav"
+    },
+    {
+      "videoId": "D01d",
+      "sceneId": "S04_REPO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01d_S04_REPO.wav"
+    },
+    {
+      "videoId": "D01d",
+      "sceneId": "S05_DIAGRAM",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01d_S05_DIAGRAM.wav"
+    },
+    {
+      "videoId": "D01d",
+      "sceneId": "S06_DECISION",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01d_S06_DECISION.wav"
+    },
+    {
+      "videoId": "D01d",
+      "sceneId": "S07_OUTRO",
+      "durationSec": 1,
+      "durationFrames": 30,
+      "file": "D01d_S07_OUTRO.wav"
+    }
+  ],
+  "flat": {
+    "V01_S01_INTRO": 11,
+    "V01_S02_HOOK": 28,
+    "V01_S03_STORY": 17,
+    "V01_S04_REPO": 27,
+    "V01_S05_DIAGRAM": 18,
+    "V01_S06_DECISION": 29,
+    "V01_S07_OUTRO": 8,
+    "V02_S01_INTRO": 14,
+    "V02_S02_HOOK": 30,
+    "V02_S03_STORY": 17,
+    "V02_S04_REPO": 34,
+    "V02_S05_DIAGRAM": 25,
+    "V02_S06_DECISION": 15,
+    "V02_S07_OUTRO": 5,
+    "V03_S01_INTRO": 13,
+    "V03_S02_HOOK": 30,
+    "V03_S03_STORY": 16,
+    "V03_S04_REPO": 33,
+    "V03_S05_DIAGRAM": 13,
+    "V03_S06_DECISION": 22,
+    "V03_S07_OUTRO": 7,
+    "V04_S01_INTRO": 11,
+    "V04_S02_HOOK": 21,
+    "V04_S03_STORY": 10,
+    "V04_S04_REPO": 45,
+    "V04_S05_DIAGRAM": 26,
+    "V04_S06_DECISION": 13,
+    "V04_S07_OUTRO": 7,
+    "V05_S01_INTRO": 16,
+    "V05_S02_HOOK": 34,
+    "V05_S03_STORY": 18,
+    "V05_S04_REPO": 25,
+    "V05_S05_DIAGRAM": 18,
+    "V05_S06_DECISION": 25,
+    "V05_S07_OUTRO": 9,
+    "V06_S01_INTRO": 11,
+    "V06_S02_HOOK": 23,
+    "V06_S03_STORY": 13,
+    "V06_S04_REPO": 38,
+    "V06_S05_DIAGRAM": 18,
+    "V06_S06_DECISION": 12,
+    "V06_S07_OUTRO": 6,
+    "V07_S01_INTRO": 9,
+    "V07_S02_HOOK": 23,
+    "V07_S03_STORY": 14,
+    "V07_S04_REPO": 21,
+    "V07_S05_DIAGRAM": 21,
+    "V07_S06_DECISION": 26,
+    "V07_S07_OUTRO": 6,
+    "V08_S01_INTRO": 9,
+    "V08_S02_HOOK": 21,
+    "V08_S03_STORY": 12,
+    "V08_S04_REPO": 30,
+    "V08_S05_DIAGRAM": 19,
+    "V08_S06_DECISION": 25,
+    "V08_S07_OUTRO": 5,
+    "V09_S01_INTRO": 9,
+    "V09_S02_HOOK": 23,
+    "V09_S03_STORY": 15,
+    "V09_S04_REPO": 33,
+    "V09_S05_DIAGRAM": 27,
+    "V09_S06_DECISION": 22,
+    "V09_S07_OUTRO": 7,
+    "V10_S01_INTRO": 9,
+    "V10_S02_HOOK": 32,
+    "V10_S03_STORY": 23,
+    "V10_S04_REPO": 22,
+    "V10_S05_DIAGRAM": 24,
+    "V10_S06_DECISION": 19,
+    "V10_S07_OUTRO": 8,
+    "A01_S01_INTRO": 1,
+    "A01_S02_HOOK": 1,
+    "A01_S03_STORY": 1,
+    "A01_S04_REPO": 1,
+    "A01_S05_DIAGRAM": 1,
+    "A01_S06_DECISION": 1,
+    "A01_S07_OUTRO": 1,
+    "B01_S01_INTRO": 1,
+    "B01_S02_HOOK": 1,
+    "B01_S03_STORY": 1,
+    "B01_S04_REPO": 1,
+    "B01_S05_DIAGRAM": 1,
+    "B01_S06_DECISION": 1,
+    "B01_S07_OUTRO": 1,
+    "C01_S01_INTRO": 1,
+    "C01_S02_HOOK": 1,
+    "C01_S03_STORY": 1,
+    "C01_S04_REPO": 1,
+    "C01_S05_DIAGRAM": 1,
+    "C01_S06_DECISION": 1,
+    "C01_S07_OUTRO": 1,
+    "D01_S01_INTRO": 1,
+    "D01_S02_HOOK": 1,
+    "D01_S03_STORY": 1,
+    "D01_S04_REPO": 1,
+    "D01_S05_DIAGRAM": 1,
+    "D01_S06_DECISION": 1,
+    "D01_S07_OUTRO": 1,
+    "A01a_S01_INTRO": 1,
+    "A01a_S02_HOOK": 1,
+    "A01a_S03_STORY": 1,
+    "A01a_S04_REPO": 1,
+    "A01a_S05_DIAGRAM": 1,
+    "A01a_S06_DECISION": 1,
+    "A01a_S07_OUTRO": 1,
+    "A01b_S01_INTRO": 1,
+    "A01b_S02_HOOK": 1,
+    "A01b_S03_STORY": 1,
+    "A01b_S04_REPO": 1,
+    "A01b_S05_DIAGRAM": 1,
+    "A01b_S06_DECISION": 1,
+    "A01b_S07_OUTRO": 1,
+    "A01c_S01_INTRO": 1,
+    "A01c_S02_HOOK": 1,
+    "A01c_S03_STORY": 1,
+    "A01c_S04_REPO": 1,
+    "A01c_S05_DIAGRAM": 1,
+    "A01c_S06_DECISION": 1,
+    "A01c_S07_OUTRO": 1,
+    "A01d_S01_INTRO": 1,
+    "A01d_S02_HOOK": 1,
+    "A01d_S03_STORY": 1,
+    "A01d_S04_REPO": 1,
+    "A01d_S05_DIAGRAM": 1,
+    "A01d_S06_DECISION": 1,
+    "A01d_S07_OUTRO": 1,
+    "B01a_S01_INTRO": 1,
+    "B01a_S02_HOOK": 1,
+    "B01a_S03_STORY": 1,
+    "B01a_S04_REPO": 1,
+    "B01a_S05_DIAGRAM": 1,
+    "B01a_S06_DECISION": 1,
+    "B01a_S07_OUTRO": 1,
+    "B01b_S01_INTRO": 1,
+    "B01b_S02_HOOK": 1,
+    "B01b_S03_STORY": 1,
+    "B01b_S04_REPO": 1,
+    "B01b_S05_DIAGRAM": 1,
+    "B01b_S06_DECISION": 1,
+    "B01b_S07_OUTRO": 1,
+    "B01c_S01_INTRO": 1,
+    "B01c_S02_HOOK": 1,
+    "B01c_S03_STORY": 1,
+    "B01c_S04_REPO": 1,
+    "B01c_S05_DIAGRAM": 1,
+    "B01c_S06_DECISION": 1,
+    "B01c_S07_OUTRO": 1,
+    "B01d_S01_INTRO": 1,
+    "B01d_S02_HOOK": 1,
+    "B01d_S03_STORY": 1,
+    "B01d_S04_REPO": 1,
+    "B01d_S05_DIAGRAM": 1,
+    "B01d_S06_DECISION": 1,
+    "B01d_S07_OUTRO": 1,
+    "C01a_S01_INTRO": 1,
+    "C01a_S02_HOOK": 1,
+    "C01a_S03_STORY": 1,
+    "C01a_S04_REPO": 1,
+    "C01a_S05_DIAGRAM": 1,
+    "C01a_S06_DECISION": 1,
+    "C01a_S07_OUTRO": 1,
+    "C01b_S01_INTRO": 1,
+    "C01b_S02_HOOK": 1,
+    "C01b_S03_STORY": 1,
+    "C01b_S04_REPO": 1,
+    "C01b_S05_DIAGRAM": 1,
+    "C01b_S06_DECISION": 1,
+    "C01b_S07_OUTRO": 1,
+    "C01c_S01_INTRO": 1,
+    "C01c_S02_HOOK": 1,
+    "C01c_S03_STORY": 1,
+    "C01c_S04_REPO": 1,
+    "C01c_S05_DIAGRAM": 1,
+    "C01c_S06_DECISION": 1,
+    "C01c_S07_OUTRO": 1,
+    "C01d_S01_INTRO": 1,
+    "C01d_S02_HOOK": 1,
+    "C01d_S03_STORY": 1,
+    "C01d_S04_REPO": 1,
+    "C01d_S05_DIAGRAM": 1,
+    "C01d_S06_DECISION": 1,
+    "C01d_S07_OUTRO": 1,
+    "D01a_S01_INTRO": 1,
+    "D01a_S02_HOOK": 1,
+    "D01a_S03_STORY": 1,
+    "D01a_S04_REPO": 1,
+    "D01a_S05_DIAGRAM": 1,
+    "D01a_S06_DECISION": 1,
+    "D01a_S07_OUTRO": 1,
+    "D01b_S01_INTRO": 1,
+    "D01b_S02_HOOK": 1,
+    "D01b_S03_STORY": 1,
+    "D01b_S04_REPO": 1,
+    "D01b_S05_DIAGRAM": 1,
+    "D01b_S06_DECISION": 1,
+    "D01b_S07_OUTRO": 1,
+    "D01c_S01_INTRO": 1,
+    "D01c_S02_HOOK": 1,
+    "D01c_S03_STORY": 1,
+    "D01c_S04_REPO": 1,
+    "D01c_S05_DIAGRAM": 1,
+    "D01c_S06_DECISION": 1,
+    "D01c_S07_OUTRO": 1,
+    "D01d_S01_INTRO": 1,
+    "D01d_S02_HOOK": 1,
+    "D01d_S03_STORY": 1,
+    "D01d_S04_REPO": 1,
+    "D01d_S05_DIAGRAM": 1,
+    "D01d_S06_DECISION": 1,
+    "D01d_S07_OUTRO": 1
+  }
+  "V01_S01_INTRO": 11,
+  "V01_S02_HOOK": 28,
+  "V01_S03_STORY": 17,
+  "V01_S04_REPO": 27,
+  "V01_S05_DIAGRAM": 18,
+  "V01_S06_DECISION": 29,
+  "V01_S07_OUTRO": 8,
+  "V02_S01_INTRO": 14,
+  "V02_S02_HOOK": 30,
+  "V02_S03_STORY": 17,
+  "V02_S04_REPO": 34,
+  "V02_S05_DIAGRAM": 25,
+  "V02_S06_DECISION": 15,
+  "V02_S07_OUTRO": 5,
+  "V03_S01_INTRO": 13,
+  "V03_S02_HOOK": 30,
+  "V03_S03_STORY": 16,
+  "V03_S04_REPO": 33,
+  "V03_S05_DIAGRAM": 13,
+  "V03_S06_DECISION": 22,
+  "V03_S07_OUTRO": 7,
+  "V04_S01_INTRO": 11,
+  "V04_S02_HOOK": 21,
+  "V04_S03_STORY": 10,
+  "V04_S04_REPO": 45,
+  "V04_S05_DIAGRAM": 26,
+  "V04_S06_DECISION": 13,
+  "V04_S07_OUTRO": 7,
+  "V05_S01_INTRO": 16,
+  "V05_S02_HOOK": 34,
+  "V05_S03_STORY": 18,
+  "V05_S04_REPO": 25,
+  "V05_S05_DIAGRAM": 18,
+  "V05_S06_DECISION": 25,
+  "V05_S07_OUTRO": 9,
+  "V06_S01_INTRO": 11,
+  "V06_S02_HOOK": 23,
+  "V06_S03_STORY": 13,
+  "V06_S04_REPO": 38,
+  "V06_S05_DIAGRAM": 18,
+  "V06_S06_DECISION": 12,
+  "V06_S07_OUTRO": 6,
+  "V07_S01_INTRO": 9,
+  "V07_S02_HOOK": 23,
+  "V07_S03_STORY": 14,
+  "V07_S04_REPO": 21,
+  "V07_S05_DIAGRAM": 21,
+  "V07_S06_DECISION": 26,
+  "V07_S07_OUTRO": 6,
+  "V08_S01_INTRO": 9,
+  "V08_S02_HOOK": 21,
+  "V08_S03_STORY": 12,
+  "V08_S04_REPO": 30,
+  "V08_S05_DIAGRAM": 19,
+  "V08_S06_DECISION": 25,
+  "V08_S07_OUTRO": 5,
+  "V09_S01_INTRO": 9,
+  "V09_S02_HOOK": 23,
+  "V09_S03_STORY": 15,
+  "V09_S04_REPO": 33,
+  "V09_S05_DIAGRAM": 27,
+  "V09_S06_DECISION": 22,
+  "V09_S07_OUTRO": 7,
+  "V10_S01_INTRO": 9,
+  "V10_S02_HOOK": 32,
+  "V10_S03_STORY": 23,
+  "V10_S04_REPO": 22,
+  "V10_S05_DIAGRAM": 24,
+  "V10_S06_DECISION": 19,
+  "V10_S07_OUTRO": 8,
+  "A01_S01_INTRO": 1,
+  "A01_S02_HOOK": 1,
+  "A01_S03_STORY": 1,
+  "A01_S04_REPO": 1,
+  "A01_S05_DIAGRAM": 1,
+  "A01_S06_DECISION": 1,
+  "A01_S07_OUTRO": 1,
+  "B01_S01_INTRO": 1,
+  "B01_S02_HOOK": 1,
+  "B01_S03_STORY": 1,
+  "B01_S04_REPO": 1,
+  "B01_S05_DIAGRAM": 1,
+  "B01_S06_DECISION": 1,
+  "B01_S07_OUTRO": 1,
+  "C01_S01_INTRO": 1,
+  "C01_S02_HOOK": 1,
+  "C01_S03_STORY": 1,
+  "C01_S04_REPO": 1,
+  "C01_S05_DIAGRAM": 1,
+  "C01_S06_DECISION": 1,
+  "C01_S07_OUTRO": 1,
+  "D01_S01_INTRO": 1,
+  "D01_S02_HOOK": 1,
+  "D01_S03_STORY": 1,
+  "D01_S04_REPO": 1,
+  "D01_S05_DIAGRAM": 1,
+  "D01_S06_DECISION": 1,
+  "D01_S07_OUTRO": 1,
+  "A01a_S01_INTRO": 1,
+  "A01a_S02_HOOK": 1,
+  "A01a_S03_STORY": 1,
+  "A01a_S04_REPO": 1,
+  "A01a_S05_DIAGRAM": 1,
+  "A01a_S06_DECISION": 1,
+  "A01a_S07_OUTRO": 1,
+  "A01b_S01_INTRO": 1,
+  "A01b_S02_HOOK": 1,
+  "A01b_S03_STORY": 1,
+  "A01b_S04_REPO": 1,
+  "A01b_S05_DIAGRAM": 1,
+  "A01b_S06_DECISION": 1,
+  "A01b_S07_OUTRO": 1,
+  "A01c_S01_INTRO": 1,
+  "A01c_S02_HOOK": 1,
+  "A01c_S03_STORY": 1,
+  "A01c_S04_REPO": 1,
+  "A01c_S05_DIAGRAM": 1,
+  "A01c_S06_DECISION": 1,
+  "A01c_S07_OUTRO": 1,
+  "A01d_S01_INTRO": 1,
+  "A01d_S02_HOOK": 1,
+  "A01d_S03_STORY": 1,
+  "A01d_S04_REPO": 1,
+  "A01d_S05_DIAGRAM": 1,
+  "A01d_S06_DECISION": 1,
+  "A01d_S07_OUTRO": 1,
+  "B01a_S01_INTRO": 1,
+  "B01a_S02_HOOK": 1,
+  "B01a_S03_STORY": 1,
+  "B01a_S04_REPO": 1,
+  "B01a_S05_DIAGRAM": 1,
+  "B01a_S06_DECISION": 1,
+  "B01a_S07_OUTRO": 1,
+  "B01b_S01_INTRO": 1,
+  "B01b_S02_HOOK": 1,
+  "B01b_S03_STORY": 1,
+  "B01b_S04_REPO": 1,
+  "B01b_S05_DIAGRAM": 1,
+  "B01b_S06_DECISION": 1,
+  "B01b_S07_OUTRO": 1,
+  "B01c_S01_INTRO": 1,
+  "B01c_S02_HOOK": 1,
+  "B01c_S03_STORY": 1,
+  "B01c_S04_REPO": 1,
+  "B01c_S05_DIAGRAM": 1,
+  "B01c_S06_DECISION": 1,
+  "B01c_S07_OUTRO": 1,
+  "B01d_S01_INTRO": 1,
+  "B01d_S02_HOOK": 1,
+  "B01d_S03_STORY": 1,
+  "B01d_S04_REPO": 1,
+  "B01d_S05_DIAGRAM": 1,
+  "B01d_S06_DECISION": 1,
+  "B01d_S07_OUTRO": 1,
+  "C01a_S01_INTRO": 1,
+  "C01a_S02_HOOK": 1,
+  "C01a_S03_STORY": 1,
+  "C01a_S04_REPO": 1,
+  "C01a_S05_DIAGRAM": 1,
+  "C01a_S06_DECISION": 1,
+  "C01a_S07_OUTRO": 1,
+  "C01b_S01_INTRO": 1,
+  "C01b_S02_HOOK": 1,
+  "C01b_S03_STORY": 1,
+  "C01b_S04_REPO": 1,
+  "C01b_S05_DIAGRAM": 1,
+  "C01b_S06_DECISION": 1,
+  "C01b_S07_OUTRO": 1,
+  "C01c_S01_INTRO": 1,
+  "C01c_S02_HOOK": 1,
+  "C01c_S03_STORY": 1,
+  "C01c_S04_REPO": 1,
+  "C01c_S05_DIAGRAM": 1,
+  "C01c_S06_DECISION": 1,
+  "C01c_S07_OUTRO": 1,
+  "C01d_S01_INTRO": 1,
+  "C01d_S02_HOOK": 1,
+  "C01d_S03_STORY": 1,
+  "C01d_S04_REPO": 1,
+  "C01d_S05_DIAGRAM": 1,
+  "C01d_S06_DECISION": 1,
+  "C01d_S07_OUTRO": 1,
+  "D01a_S01_INTRO": 1,
+  "D01a_S02_HOOK": 1,
+  "D01a_S03_STORY": 1,
+  "D01a_S04_REPO": 1,
+  "D01a_S05_DIAGRAM": 1,
+  "D01a_S06_DECISION": 1,
+  "D01a_S07_OUTRO": 1,
+  "D01b_S01_INTRO": 1,
+  "D01b_S02_HOOK": 1,
+  "D01b_S03_STORY": 1,
+  "D01b_S04_REPO": 1,
+  "D01b_S05_DIAGRAM": 1,
+  "D01b_S06_DECISION": 1,
+  "D01b_S07_OUTRO": 1,
+  "D01c_S01_INTRO": 1,
+  "D01c_S02_HOOK": 1,
+  "D01c_S03_STORY": 1,
+  "D01c_S04_REPO": 1,
+  "D01c_S05_DIAGRAM": 1,
+  "D01c_S06_DECISION": 1,
+  "D01c_S07_OUTRO": 1,
+  "D01d_S01_INTRO": 1,
+  "D01d_S02_HOOK": 1,
+  "D01d_S03_STORY": 1,
+  "D01d_S04_REPO": 1,
+  "D01d_S05_DIAGRAM": 1,
+  "D01d_S06_DECISION": 1,
+  "D01d_S07_OUTRO": 1
+}

@@ -1,0 +1,3707 @@
+{
+  "series": {
+    "id": "alchemist-series-1",
+    "title": "Building Alchemist: A Founder's Interactive Documentary",
+    "tagline": "Eight repos. Twelve months. Every decision is yours.",
+    "total_videos": 10,
+    "format": "YouTube Interactive Branching Series",
+    "fps": 30,
+    "duration_seconds_per_video": 240,
+    "frames_per_video": 7200,
+    "consistency_note": "frames_per_video = duration_seconds_per_video × fps = 240 × 30 = 7200. Verified.",
+    "scene_frame_budget": {
+      "S01_INTRO": {
+        "frames": 90,
+        "seconds": 3
+      },
+      "S02_HOOK": {
+        "frames": 600,
+        "seconds": 20
+      },
+      "S03_STORY": {
+        "frames": 1800,
+        "seconds": 60
+      },
+      "S04_REPO": {
+        "frames": 1500,
+        "seconds": 50
+      },
+      "S05_DIAGRAM": {
+        "frames": 1200,
+        "seconds": 40
+      },
+      "S06_DECISION": {
+        "frames": 1200,
+        "seconds": 40
+      },
+      "S07_OUTRO": {
+        "frames": 810,
+        "seconds": 27
+      },
+      "frame_total": 7200,
+      "second_total": 240
+    },
+    "canonical_branch_graph": {
+      "V01": {
+        "A": "V02",
+        "B": "V03",
+        "C": "V04",
+        "D": "V05"
+      },
+      "V02": {
+        "A": "V06",
+        "B": "V07",
+        "C": "V06",
+        "D": "V07"
+      },
+      "V03": {
+        "A": "V05",
+        "B": "V04",
+        "C": "V08",
+        "D": "V06"
+      },
+      "V04": {
+        "A": "V07",
+        "B": "V08",
+        "C": "V06",
+        "D": "V08"
+      },
+      "V05": {
+        "A": "V08",
+        "B": "V09",
+        "C": "V08",
+        "D": "V09"
+      },
+      "V06": {
+        "A": "V09",
+        "B": "V09",
+        "C": "V09",
+        "D": "V09"
+      },
+      "V07": {
+        "A": "V08",
+        "B": "V09",
+        "C": "V08",
+        "D": "V09"
+      },
+      "V08": {
+        "A": "V09",
+        "B": "V10",
+        "C": "V09",
+        "D": "V10"
+      },
+      "V09": {
+        "A": "V10",
+        "B": "V10",
+        "C": "V10",
+        "D": "V10"
+      },
+      "V10": "TERMINAL"
+    },
+    "repo_timeline": [
+      "swipe-survey",
+      "swipe---survey",
+      "ques",
+      "Initial-swipe-page",
+      "swipe.survey",
+      "Alchemist-App",
+      "Geo-politics-2026",
+      "Alchemist-Faculty-Demo"
+    ]
+  },
+  "videos": [
+    {
+      "id": "V01",
+      "parent_id": null,
+      "branch_from_option": null,
+      "title": "I Built Tinder for Surveys — This Is How It Started",
+      "concept": "Origin story. How a frustration with boring surveys turned into a swipe-card mechanic and the seed of an EdTech platform.",
+      "repo_stage": "swipe-survey (v1) — first commit, pure mechanic, no backend",
+      "duration_seconds": 240,
+      "creator_script": {
+        "title": "I Built Tinder for Surveys — This Is How It Started",
+        "hook": "What if answering a survey felt like swiping on Tinder? I know — sounds dumb. Bear with me. That one dumb question led to everything.",
+        "story": "I was doing user research for something else entirely. Sent out a Google Form. Got twelve responses out of two hundred. Twelve. And I'm sitting there thinking — people aren't lazy, the format is just terrible. Long scrolling lists. No momentum. No feel. So I thought — what if every question was just a card? You see one question. You swipe right for yes, left for no. That's it. One weekend, first repo: swipe-survey. Maybe two hundred lines of React. No database, no login, nothing fancy. Just the mechanic. I sent it to the same two hundred people. A hundred and sixty three finished it.",
+        "decision_question": "The swipe mechanic actually works. Now there are four completely different things I could build on top of it. Which one would you do?",
+        "options": [
+          "A) Make the questions smarter — build branching logic so the survey thinks",
+          "B) Make it beautiful — go full design mode, make it something people want to share",
+          "C) Add a real backend — start tracking responses, build actual analytics",
+          "D) Skip all that and find a real customer right now — take this to an institution"
+        ],
+        "branch_links": {
+          "A": "V02",
+          "B": "V03",
+          "C": "V04",
+          "D": "V05"
+        },
+        "outro": "I eventually built all four of these. But the order I built them in shaped everything that came after. Vote in the comments — your option gets told next."
+      },
+      "full_script": {
+        "hook": "Twelve responses out of two hundred. That's what I got back from a Google Form I spent three hours writing. Twelve people. So I thought — what if surveying felt like swiping?",
+        "context": "This isn't about being clever. It's about attention. People don't hate answering questions. They hate the format. A wall of text with radio buttons is a punishment. But a single card with one question — that's a different psychological experience entirely. You swipe, you move, you feel like you're doing something.",
+        "repo_explanation": "First repo is called swipe-survey. You can see the commit history — it starts with a single App.jsx. The core is a card stack component. Each question renders as a card sitting on top of the previous one. You drag it — there's a rotation transform that gives it that physical feel — and past a threshold, it snaps left or right. That's it. The whole repo is maybe six files. No Firebase, no Supabase, no auth layer. Just the mechanic.",
+        "decision_moment": "Then I send it out and a hundred and sixty three people finish it. And I remember sitting there thinking — okay, this actually works. Now what do I do with it? Because right now it's a cool demo. It's not a product. And I've got four completely different directions I could go.",
+        "options_narration": "Option A: I make the questions smarter. Build a proper question engine — branching logic, conditional questions, skip patterns. Option B: I go design mode. Make this thing beautiful, something people want to screenshot and share. Option C: I build a backend first. Get the data layer solid, add analytics, track every swipe. Option D: I skip all the internal stuff and just go find a real customer — a school, a company, someone who'll pay me — and let their needs drive what gets built.",
+        "outro": "Drop your answer in the comments. I'll read every single one. And whichever option you vote for — that's the episode I post next."
+      },
+      "decision_point": {
+        "question": "The swipe mechanic works. What gets built on top of it?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Build the Question Engine",
+            "description": "Add branching logic — questions that think based on previous answers",
+            "leads_to": "V02"
+          },
+          {
+            "id": "B",
+            "label": "Go Design Mode",
+            "description": "Make it visually stunning — viral-worthy, shareable UI",
+            "leads_to": "V03"
+          },
+          {
+            "id": "C",
+            "label": "Add the Backend",
+            "description": "Build data tracking, analytics, real response storage",
+            "leads_to": "V04"
+          },
+          {
+            "id": "D",
+            "label": "Find a Real Customer",
+            "description": "Skip internal work, go find an institution willing to pay",
+            "leads_to": "V05"
+          }
+        ]
+      },
+      "visuals": {
+        "screens_to_show": [
+          "swipe-survey GitHub repo — top-level file list and first commit message",
+          "App.jsx open — highlight the card stack component and drag threshold logic",
+          "Live demo: swipe card gesture in action (screen recording)",
+          "Google Form screenshot (blurred) vs swipe card side-by-side",
+          "Response rate comparison: 12/200 (6%) vs 163/200 (81.5%) — simple bar chart overlay"
+        ],
+        "architecture_diagrams": [
+          "Linear flow: Card Stack → Swipe Event (threshold detected) → Yes or No recorded → Next Card rendered → End Screen"
+        ],
+        "b_roll_suggestions": [
+          "Someone swiping Tinder on a phone — match the gesture to the app gesture",
+          "Late-night laptop glow — coding session aesthetic",
+          "A long Google Form scrolling and scrolling — no end in sight",
+          "Phone notification: '163 responses received'"
+        ]
+      },
+      "notebookllm_prompt": "Upload the swipe-survey repository files. Generate a hand-drawn notebook diagram showing: (1) A vertical stack of three playing-card-shaped rectangles on the left, labeled 'Card Stack'. (2) Two arrows leaving the top card — one curving right labeled 'Swipe Right = YES', one curving left labeled 'Swipe Left = NO'. (3) A counter box below: 'Questions Answered: 0 → N'. (4) A completion box at bottom right: 'Survey Complete'. Add a response rate callout in the corner: '6% → 81.5% completion'. Use blue-black ink, rough sketch style, minimal text. Title the diagram: 'swipe-survey v1 — The Core Mechanic'.",
+      "remotion_spec": {
+        "resolution": "1920x1080",
+        "fps": 30,
+        "duration_seconds": 240,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90,
+            "description": "Series title card. Dark background with a single playing card that flips to reveal the episode title. Card uses CSS 3D perspective transform, 180deg rotateY over 60 frames, then title text fades in over 30 frames.",
+            "text_overlays": [
+              {
+                "text": "ALCHEMIST",
+                "style": "display",
+                "position": "center",
+                "appear_frame": 0
+              },
+              {
+                "text": "Episode 1 — The Swipe That Started Everything",
+                "style": "subtitle",
+                "position": "center_below",
+                "appear_frame": 60
+              }
+            ],
+            "transition": {
+              "type": "fade_in",
+              "duration_frames": 30
+            }
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_head",
+            "start_frame": 90,
+            "duration_frames": 600,
+            "description": "Founder on camera, medium close-up. Lower third animates in at frame 30 of this scene. Background: blurred code editor. Founder delivers hook and response-rate stat.",
+            "text_overlays": [
+              {
+                "text": "Dharamdaxini · Founder, Alchemist",
+                "style": "lower_third",
+                "position": "bottom_left",
+                "appear_frame": 120
+              },
+              {
+                "text": "12 / 200 responses",
+                "style": "stat_callout_red",
+                "position": "center_right",
+                "appear_frame": 300
+              },
+              {
+                "text": "163 / 200 responses",
+                "style": "stat_callout_green",
+                "position": "center_right",
+                "appear_frame": 480
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S03_STORY",
+            "type": "mixed_narration_broll",
+            "start_frame": 690,
+            "duration_frames": 1800,
+            "description": "Intercut: founder narration with screen recordings of the swipe mechanic. First 600 frames: Google Form vs swipe card split screen. Next 600 frames: live demo of swipe-survey, card snapping left/right. Final 600 frames: GitHub repo overview — file list, first commit message zoomed in.",
+            "text_overlays": [
+              {
+                "text": "swipe-survey — first commit",
+                "style": "caption",
+                "position": "bottom_center",
+                "appear_frame": 1290
+              },
+              {
+                "text": "~200 lines of React. No backend. Just the mechanic.",
+                "style": "caption",
+                "position": "bottom_center",
+                "appear_frame": 1590
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S04_REPO",
+            "type": "screen_capture_annotated",
+            "start_frame": 2490,
+            "duration_frames": 1500,
+            "description": "Animated screen walkthrough of swipe-survey repo. Zoom into App.jsx — yellow highlight box appears over the SwipeCard component. Pan to the drag threshold condition — red highlight. Then show the card stack render map. Each highlight animates in with a 15-frame grow from center. End on the file count: 6 files, ~200 lines.",
+            "text_overlays": [
+              {
+                "text": "SwipeCard.jsx — the whole mechanic is here",
+                "style": "annotation_yellow",
+                "position": "top_right",
+                "appear_frame": 2520
+              },
+              {
+                "text": "threshold > 100px → commit swipe direction",
+                "style": "annotation_red",
+                "position": "top_right",
+                "appear_frame": 2820
+              },
+              {
+                "text": "6 files. ~200 lines. One weekend.",
+                "style": "caption_bold",
+                "position": "bottom_center",
+                "appear_frame": 3600
+              }
+            ],
+            "transition": {
+              "type": "slide_left",
+              "duration_frames": 20
+            }
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "animated_diagram",
+            "start_frame": 3990,
+            "duration_frames": 1200,
+            "description": "Notebook-style hand-drawn diagram animates in using SVG path stroke-dashoffset animation. Each element draws itself sequentially: card stack (0-300), swipe arrows (300-600), counter (600-900), completion box (900-1100), response rate callout fades in (1100-1200).",
+            "text_overlays": [
+              {
+                "text": "How the mechanic works",
+                "style": "diagram_title",
+                "position": "top_left",
+                "appear_frame": 3990
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200,
+            "description": "Full-screen decision UI. Dark overlay fades in over 20 frames. Question text slides up. Four option cards bounce in with spring physics: card A at frame 60, B at frame 120, C at frame 180, D at frame 240. Each card: white rounded rect, option letter in bold, label, one-line description. Subtle pulse animation on all cards from frame 600 onward. Comment CTA text appears at frame 900.",
+            "text_overlays": [
+              {
+                "text": "The swipe mechanic works. What gets built next?",
+                "style": "decision_question",
+                "position": "top_center",
+                "appear_frame": 5220
+              },
+              {
+                "text": "A  Build the Question Engine",
+                "style": "option_card",
+                "position": "quadrant_TL",
+                "appear_frame": 5250
+              },
+              {
+                "text": "B  Go Design Mode",
+                "style": "option_card",
+                "position": "quadrant_TR",
+                "appear_frame": 5310
+              },
+              {
+                "text": "C  Add the Backend",
+                "style": "option_card",
+                "position": "quadrant_BL",
+                "appear_frame": 5370
+              },
+              {
+                "text": "D  Find a Real Customer",
+                "style": "option_card",
+                "position": "quadrant_BR",
+                "appear_frame": 5430
+              },
+              {
+                "text": "Comment your choice — I read every one.",
+                "style": "cta",
+                "position": "bottom_center",
+                "appear_frame": 6090
+              }
+            ],
+            "transition": {
+              "type": "zoom_out",
+              "duration_frames": 30
+            }
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810,
+            "description": "Subscribe button animation (YouTube branding safe zone). Three branch preview thumbnails slide in from right, labeled with option letters. Series logo fades in bottom right. Final frame holds for 2 seconds before fade to black.",
+            "text_overlays": [
+              {
+                "text": "All 4 paths get built.",
+                "style": "outro_headline",
+                "position": "center_left",
+                "appear_frame": 6420
+              },
+              {
+                "text": "Your vote decides the order.",
+                "style": "outro_subhead",
+                "position": "center_left",
+                "appear_frame": 6540
+              },
+              {
+                "text": "↑ Subscribe to follow the build",
+                "style": "cta_subscribe",
+                "position": "bottom_center",
+                "appear_frame": 6690
+              }
+            ],
+            "transition": {
+              "type": "fade_to_black",
+              "duration_frames": 60
+            }
+          }
+        ]
+      },
+      "youtube": {
+        "cards_targets": [
+          {
+            "appears_at_second": 180,
+            "type": "video",
+            "target_id": "V02",
+            "label": "Option A: Question Engine"
+          },
+          {
+            "appears_at_second": 195,
+            "type": "video",
+            "target_id": "V03",
+            "label": "Option B: Design Mode"
+          },
+          {
+            "appears_at_second": 210,
+            "type": "video",
+            "target_id": "V04",
+            "label": "Option C: Add Backend"
+          },
+          {
+            "appears_at_second": 225,
+            "type": "video",
+            "target_id": "V05",
+            "label": "Option D: Real Customer"
+          }
+        ],
+        "end_screen_targets": [
+          {
+            "position": "TL",
+            "target_id": "V02",
+            "label": "A: Question Engine"
+          },
+          {
+            "position": "TR",
+            "target_id": "V03",
+            "label": "B: Design Mode"
+          },
+          {
+            "position": "BL",
+            "target_id": "V04",
+            "label": "C: Add Backend"
+          },
+          {
+            "position": "BR",
+            "target_id": "V05",
+            "label": "D: Real Customer"
+          }
+        ],
+        "playlist": "PLalchemist-series1",
+        "pinned_comment_template": "👇 YOU DECIDE WHAT GETS BUILT NEXT:\n\nA) Question Engine → [link V02]\nB) Design Mode → [link V03]\nC) Add Backend → [link V04]\nD) Real Customer → [link V05]\n\nComment your letter. Most votes = next upload. All 4 paths will be posted.",
+        "description_links": {
+          "A_question_engine": "[V02 link]",
+          "B_design_mode": "[V03 link]",
+          "C_backend": "[V04 link]",
+          "D_real_customer": "[V05 link]",
+          "full_series_playlist": "[playlist link]",
+          "github_swipe_survey": "https://github.com/dharamdaxini/swipe-survey"
+        }
+      }
+    },
+    {
+      "id": "V02",
+      "parent_id": "V01",
+      "branch_from_option": "A",
+      "title": "I Tried to Make the Survey Think — The Question Engine",
+      "concept": "Building a dedicated question engine in a separate repo, designing the branching data schema, and discovering why non-developers can't use it.",
+      "repo_stage": "ques — question engine, condition evaluator, JSON schema for branching logic",
+      "duration_seconds": 240,
+      "creator_script": {
+        "title": "I Tried to Make the Survey Think — The Question Engine",
+        "hook": "Flat surveys are dumb. Ask everyone the same questions regardless of what they just told you. I wanted the survey to listen. Turns out that's harder than it sounds.",
+        "story": "I spun up a new repo called ques — short for question engine, two in the morning naming conventions — and spent the next few days just on the data schema. The idea: every question has an id, a condition block, and a branch_to field. The condition evaluator runs before each render and decides what comes next based on previous answers. Three days to get the schema right. One more day to build the evaluator. Then I showed it to a teacher. She said — and I quote — 'this is really impressive and I have absolutely no idea how to use it.' Which was the most useful feedback I'd ever gotten.",
+        "decision_question": "The engine works. But it needs a config file to run. Non-developers can't use it. What do you do?",
+        "options": [
+          "A) Build a visual drag-and-drop builder so anyone can create question flows",
+          "B) Keep it code-first, but integrate it directly into the swipe app and ship fast",
+          "C) Keep it code-first, write great docs, attract developer users",
+          "D) Open source the engine — make it public, let the community extend and wrap it"
+        ],
+        "branch_links": {
+          "A": "V06",
+          "B": "V06",
+          "C": "V07",
+          "D": "V07"
+        },
+        "outro": "The teacher's feedback changed how I thought about the whole product. Whatever you vote — this story goes somewhere you won't expect."
+      },
+      "full_script": {
+        "hook": "What if the survey could actually listen? If you said you're a vegetarian, it should never ask you about your favourite steak. That's not AI — that's just basic logic. And the basic logic took me four days to build properly.",
+        "context": "The swipe mechanic is a delivery mechanism. It doesn't know anything about the questions it's delivering. Every question is equal. Every user sees the same path. That's fine for a simple survey, but if you're a school, a research team, anyone who needs nuance — flat question lists don't work.",
+        "repo_explanation": "New repo: ques. The folder structure is intentionally separate from the UI. There's a schema folder with question.schema.json — that defines the shape of every question: id, type, content, options array, and a conditions block. The conditions block is an array of objects: each one has a field — which previous question id — an operator — equals, not-equals, contains — and a value. If all conditions pass, the question renders. If not, it's skipped. The evaluator is about eighty lines of pure JavaScript. No dependencies. It takes the answer history and the next question's condition block and returns true or false.",
+        "decision_moment": "I show it to a teacher I know. She works at a university, she runs big survey-based assessments. She watches the demo. She gets it immediately. Then I open the JSON file and say — this is how you create a question. She reads it for thirty seconds and says: this is impressive and I have no idea how to use it. And that sentence became the whole problem statement for the next six months.",
+        "options_narration": "So I've got an engine that works but only developers can drive it. Two directions: build a visual interface so anyone can create question flows without touching code. Or keep it developer-facing — ship it integrated into the swipe app, write docs, see who shows up.",
+        "outro": "The engine became the brain of Alchemist. How it got wrapped — that's the next piece."
+      },
+      "decision_point": {
+        "question": "The question engine works but requires editing JSON. Non-developers can't use it. What do you fix?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Visual Builder",
+            "description": "Drag-and-drop UI — anyone creates question flows, no code needed",
+            "leads_to": "V06"
+          },
+          {
+            "id": "B",
+            "label": "Integrate and Ship",
+            "description": "Embed the engine in the swipe app, release it, get real feedback fast",
+            "leads_to": "V06"
+          },
+          {
+            "id": "C",
+            "label": "Docs + Developer Focus",
+            "description": "Write excellent documentation, target developers first",
+            "leads_to": "V07"
+          },
+          {
+            "id": "D",
+            "label": "Open Source the Engine",
+            "description": "Make it public, let the community extend and wrap it",
+            "leads_to": "V07"
+          }
+        ]
+      },
+      "visuals": {
+        "screens_to_show": [
+          "ques repo file structure — highlight /schema and /evaluator folders",
+          "question.schema.json open — show id, type, content, conditions array with syntax highlighting",
+          "evaluator.js — highlight the condition-checking loop, ~80 lines",
+          "Example branching JSON: 'If Q3 answer = yes → show Q4, else skip to Q7'",
+          "Side-by-side: flat survey path (linear) vs branching path (tree) — simple diagram overlay"
+        ],
+        "architecture_diagrams": [
+          "Decision tree: Root Q → Condition check → Branch A (condition met) → Sub-question / Branch B (not met) → Skip to Qn"
+        ],
+        "b_roll_suggestions": [
+          "JSON file being edited — syntax highlighting visible",
+          "Someone reading a JSON file, looking confused — the 'teacher moment'",
+          "A branching diagram drawn on whiteboard or paper",
+          "Two different user journeys through the same survey — one short, one long"
+        ]
+      },
+      "notebookllm_prompt": "Upload the ques repository. Generate a hand-drawn notebook decision tree diagram. Root node (circle): 'Are you a student?'. Left branch YES → circle: 'Which year?' → circle: 'Preferred subject?'. Right branch NO → circle: 'Are you faculty?' → YES: 'Department?' / NO: 'Admin role?'. All terminal nodes are squares. Add a legend bottom-left: circle = question, square = end node. Add a sidebar annotation: 'conditions: [{field: Q1, op: equals, value: yes}]'. Title: 'ques — Branching Logic Schema'. Ink style: ruled notebook paper, blue pen.",
+      "remotion_spec": {
+        "resolution": "1920x1080",
+        "fps": 30,
+        "duration_seconds": 240,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90,
+            "description": "Episode label card. A single JSON brace '{' types itself on screen, then the episode title fades beneath it.",
+            "text_overlays": [
+              {
+                "text": "ALCHEMIST",
+                "style": "series_label",
+                "position": "top_center",
+                "appear_frame": 0
+              },
+              {
+                "text": "V02 — The Question Engine",
+                "style": "episode_title",
+                "position": "center",
+                "appear_frame": 45
+              },
+              {
+                "text": "Branched from: Option A",
+                "style": "branch_label",
+                "position": "bottom_right",
+                "appear_frame": 60
+              }
+            ],
+            "transition": {
+              "type": "fade_in",
+              "duration_frames": 30
+            }
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_head",
+            "start_frame": 90,
+            "duration_frames": 600,
+            "description": "Founder on camera delivers hook about flat surveys being dumb. Code editor background blurred. Lower third shows branch context.",
+            "text_overlays": [
+              {
+                "text": "Dharamdaxini · Founder, Alchemist",
+                "style": "lower_third",
+                "position": "bottom_left",
+                "appear_frame": 120
+              },
+              {
+                "text": "You chose: Build the Question Engine",
+                "style": "branch_context_pill",
+                "position": "top_right",
+                "appear_frame": 90
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S03_STORY",
+            "type": "mixed_narration_broll",
+            "start_frame": 690,
+            "duration_frames": 1800,
+            "description": "Intercut talking head with repo walkthrough. 0-600: founder explains separation of concerns — UI vs engine. 600-1200: screen recording of ques repo, file structure, condition block JSON scrolling. 1200-1800: whiteboard or paper sketch of branching logic being drawn in real time.",
+            "text_overlays": [
+              {
+                "text": "ques/ — question engine, separated from UI",
+                "style": "caption",
+                "position": "bottom_center",
+                "appear_frame": 1290
+              },
+              {
+                "text": "The condition block: field · operator · value",
+                "style": "annotation_yellow",
+                "position": "top_right",
+                "appear_frame": 1590
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S04_REPO",
+            "type": "screen_capture_annotated",
+            "start_frame": 2490,
+            "duration_frames": 1500,
+            "description": "Detailed repo walkthrough. Zoom into question.schema.json — highlight conditions array. Then open evaluator.js — animated highlight on the forEach loop. Show a passing condition (green flash) and a failing one (red flash). End on: the teacher reaction moment — talking head clip: 'impressive, no idea how to use it'.",
+            "text_overlays": [
+              {
+                "text": "question.schema.json",
+                "style": "filename_tag",
+                "position": "top_left",
+                "appear_frame": 2520
+              },
+              {
+                "text": "evaluator.js — ~80 lines, zero dependencies",
+                "style": "filename_tag",
+                "position": "top_left",
+                "appear_frame": 2820
+              },
+              {
+                "text": "Teacher: 'impressive and completely unusable'",
+                "style": "quote_callout",
+                "position": "center",
+                "appear_frame": 3600
+              }
+            ],
+            "transition": {
+              "type": "slide_left",
+              "duration_frames": 20
+            }
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "animated_diagram",
+            "start_frame": 3990,
+            "duration_frames": 1200,
+            "description": "Hand-drawn decision tree animates via SVG path draw. Root draws first (frames 0-200), left branch grows (200-500), right branch grows (500-800), terminal nodes appear (800-1000), condition annotation slides in (1000-1200).",
+            "text_overlays": [
+              {
+                "text": "The same question set, three different paths",
+                "style": "diagram_title",
+                "position": "top_left",
+                "appear_frame": 3990
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200,
+            "description": "Decision UI. Background dims to 80% opacity over 20 frames. Question text slides up from bottom. Four cards bounce in with spring physics staggered at 60-frame intervals.",
+            "text_overlays": [
+              {
+                "text": "The engine works. Non-developers can't use it. What do you fix?",
+                "style": "decision_question",
+                "position": "top_center",
+                "appear_frame": 5210
+              },
+              {
+                "text": "A  Visual Builder",
+                "style": "option_card",
+                "position": "quadrant_TL",
+                "appear_frame": 5250
+              },
+              {
+                "text": "B  Integrate and Ship",
+                "style": "option_card",
+                "position": "quadrant_TR",
+                "appear_frame": 5310
+              },
+              {
+                "text": "C  Docs + Dev Focus",
+                "style": "option_card",
+                "position": "quadrant_BL",
+                "appear_frame": 5370
+              },
+              {
+                "text": "D  Open Source It",
+                "style": "option_card",
+                "position": "quadrant_BR",
+                "appear_frame": 5430
+              },
+              {
+                "text": "A or B → V06  ·  C or D → V07",
+                "style": "branch_routing_label",
+                "position": "bottom_center",
+                "appear_frame": 6090
+              }
+            ],
+            "transition": {
+              "type": "zoom_out",
+              "duration_frames": 30
+            }
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810,
+            "description": "Two branch preview thumbnails (V06, V07). Series logo. Subscribe CTA.",
+            "text_overlays": [
+              {
+                "text": "A or B → V06: Mobile + Integration",
+                "style": "branch_card",
+                "position": "left_center",
+                "appear_frame": 6420
+              },
+              {
+                "text": "C or D → V07: Analytics Deep Dive",
+                "style": "branch_card",
+                "position": "right_center",
+                "appear_frame": 6450
+              },
+              {
+                "text": "↑ Subscribe to follow the build",
+                "style": "cta_subscribe",
+                "position": "bottom_center",
+                "appear_frame": 6690
+              }
+            ],
+            "transition": {
+              "type": "fade_to_black",
+              "duration_frames": 60
+            }
+          }
+        ]
+      },
+      "youtube": {
+        "cards_targets": [
+          {
+            "appears_at_second": 185,
+            "type": "video",
+            "target_id": "V06",
+            "label": "A or B: Visual Builder / Ship It"
+          },
+          {
+            "appears_at_second": 210,
+            "type": "video",
+            "target_id": "V07",
+            "label": "C or D: Docs / Open Source"
+          }
+        ],
+        "end_screen_targets": [
+          {
+            "position": "left",
+            "target_id": "V06",
+            "label": "A/B: Build the UI or Ship"
+          },
+          {
+            "position": "right",
+            "target_id": "V07",
+            "label": "C/D: Dev Focus / OSS"
+          }
+        ],
+        "playlist": "PLalchemist-series1",
+        "pinned_comment_template": "👇 YOU DECIDE:\n\nA) Visual Builder → [V06 link]\nB) Integrate & Ship → [V06 link]\nC) Docs + Dev Focus → [V07 link]\nD) Open Source → [V07 link]\n\nComment A, B, C, or D.",
+        "description_links": {
+          "A_B_visual_ship": "[V06 link]",
+          "C_D_docs_oss": "[V07 link]",
+          "back_to_V01": "[V01 link]",
+          "github_ques": "https://github.com/dharamdaxini/ques"
+        }
+      }
+    },
+    {
+      "id": "V03",
+      "parent_id": "V01",
+      "branch_from_option": "B",
+      "title": "I Spent a Week Making It Beautiful — Was It Worth It?",
+      "concept": "The full design rebuild across swipe---survey and Initial-swipe-page. Spring physics, glassmorphism, component architecture. And whether beautiful products sell.",
+      "repo_stage": "swipe---survey (v2) + Initial-swipe-page — UI overhaul, spring animations, component split",
+      "duration_seconds": 240,
+      "creator_script": {
+        "title": "I Spent a Week on Design. Everyone Said Don't. Here's What Happened.",
+        "hook": "Every startup founder will tell you not to focus on design too early. Make it work first, make it pretty later. I ignored that advice completely. Here's what happened.",
+        "story": "swipe---survey — three dashes, 2am naming — was a complete ground-up redesign. Glassmorphism cards, spring physics on the drag animation, a progress ring that actually felt satisfying. Then Initial-swipe-page came after as the refined version — proper component hierarchy, SwipeCard, QuestionCard, ProgressBar, ResultScreen all separated out. I showed both to the same group of people. V1 average session: forty seconds. V2 average session: two minutes ten seconds. Same questions. Different feeling. Design isn't decoration. Design is the first argument you make to a user.",
+        "decision_question": "The design works — people stay three times longer. But there's still no backend, no money, no real use case. What do you actually do with a beautiful product that has no business model?",
+        "options": [
+          "A) Find a real customer — go to an institution, let their needs drive the build",
+          "B) Build the backend now — make the data layer real",
+          "C) Skip straight to full Alchemist — integrate everything and launch",
+          "D) Build the mobile experience first — this is a mobile product"
+        ],
+        "branch_links": {
+          "A": "V05",
+          "B": "V04",
+          "C": "V08",
+          "D": "V06"
+        },
+        "outro": "Pretty things get attention. Attention without direction is noise. The next episode is where the noise becomes signal."
+      },
+      "full_script": {
+        "hook": "V1 of the swipe app got forty seconds of average attention. V2 got two minutes ten. Same questions. Same mechanic. The only variable was the design. That data is why I will never apologise for spending time on design early.",
+        "context": "I kept watching people use V1 and feeling something was off. Not the mechanic — the mechanic was right. But the cards looked like a university admin portal from 2012. There was no delight. No texture. You swiped and it felt like filing a form in a different orientation.",
+        "repo_explanation": "swipe---survey — the three dashes are a timestamp, basically, of where my head was at 2am — is a complete UI rebuild. The drag animation now uses a spring physics library. There's a rotation transform that tracks the drag velocity, not just the position, so the card feels like it has weight. The cards themselves use a frosted glass effect — backdrop-filter blur with a semi-transparent white background. Then Initial-swipe-page came after as the cleaned-up version. Proper component split: SwipeCard handles gesture, QuestionCard handles content rendering, ProgressBar, ResultScreen. The architecture is clean enough to build on top of.",
+        "decision_moment": "Session time goes from forty seconds to two ten. That's real. But I realise I've spent a week on something beautiful with no backend, no data storage, no business model. Beautiful product. No company. What do I actually do next?",
+        "options_narration": "Option A: stop the internal work and go find a real customer. Let their problem define the next build. Option B: build the backend — make the data layer real before doing anything else. Option C: integration mode — connect everything I've built and launch something that looks like a full product. Option D: mobile is where this lives — build the proper mobile experience first.",
+        "outro": "I'll tell you now: all four of these I eventually did. But one of them I did first, and it changed everything."
+      },
+      "decision_point": {
+        "question": "Beautiful product. No backend. No business model. What do you build next?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Find a Real Customer",
+            "description": "Go to an institution. Let their problem define the build.",
+            "leads_to": "V05"
+          },
+          {
+            "id": "B",
+            "label": "Build the Backend",
+            "description": "Data layer first — storage, auth, analytics",
+            "leads_to": "V04"
+          },
+          {
+            "id": "C",
+            "label": "Full Integration Launch",
+            "description": "Connect everything and ship a complete product",
+            "leads_to": "V08"
+          },
+          {
+            "id": "D",
+            "label": "Mobile First",
+            "description": "This is a swipe app — build the proper mobile experience",
+            "leads_to": "V06"
+          }
+        ]
+      },
+      "visuals": {
+        "screens_to_show": [
+          "V1 vs V2 side-by-side: same question, completely different visual treatment",
+          "swipe---survey component: the spring physics drag handler — highlight velocity tracking",
+          "backdrop-filter CSS snippet — the glassmorphism card",
+          "Initial-swipe-page folder structure: SwipeCard.jsx, QuestionCard.jsx, ProgressBar.jsx, ResultScreen.jsx",
+          "Session time bar chart: 40s vs 2m10s — animated bar grow"
+        ],
+        "architecture_diagrams": [
+          "Component hierarchy tree: App → SwipeCard (gesture layer) → QuestionCard (content layer) → ProgressBar + ResultScreen (state layer)"
+        ],
+        "b_roll_suggestions": [
+          "Before/after side-by-side — same person using V1 then V2, body language difference",
+          "CSS spring animation in slow motion",
+          "Someone taking a screenshot of the card — the 'I want to share this' moment",
+          "Analytics dashboard showing session time spike after V2 launch"
+        ]
+      },
+      "notebookllm_prompt": "Upload Initial-swipe-page repository. Generate a component tree diagram in hand-drawn notebook style. Top box: 'App.jsx'. Arrow down to 'SwipeCard.jsx' (label: 'gesture + physics layer'). Arrow down to 'QuestionCard.jsx' (label: 'content rendering'). Two arrows right from QuestionCard: 'ProgressBar.jsx' and 'ResultScreen.jsx'. Add sidebar annotation with a bar chart sketch: two bars labeled 'V1: 40s' (short, red) and 'V2: 2m10s' (tall, green). Title: 'Initial-swipe-page — Component Architecture + Session Impact'. Ink: ruled notebook, blue pen.",
+      "remotion_spec": {
+        "resolution": "1920x1080",
+        "fps": 30,
+        "duration_seconds": 240,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90,
+            "description": "A plain square card morphs — over 60 frames — into a frosted glass rounded card with spring bounce settle. Title appears beneath.",
+            "text_overlays": [
+              {
+                "text": "ALCHEMIST",
+                "style": "series_label",
+                "position": "top_center",
+                "appear_frame": 0
+              },
+              {
+                "text": "V03 — Design First",
+                "style": "episode_title",
+                "position": "center",
+                "appear_frame": 60
+              },
+              {
+                "text": "Branched from: Option B",
+                "style": "branch_label",
+                "position": "bottom_right",
+                "appear_frame": 60
+              }
+            ],
+            "transition": {
+              "type": "morph",
+              "duration_frames": 60
+            }
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_head",
+            "start_frame": 90,
+            "duration_frames": 600,
+            "description": "Founder delivers the design-vs-pragmatism argument. Lower third. Branch context pill top right.",
+            "text_overlays": [
+              {
+                "text": "Dharamdaxini · Founder, Alchemist",
+                "style": "lower_third",
+                "position": "bottom_left",
+                "appear_frame": 120
+              },
+              {
+                "text": "You chose: Go Design Mode",
+                "style": "branch_context_pill",
+                "position": "top_right",
+                "appear_frame": 90
+              },
+              {
+                "text": "40 seconds",
+                "style": "stat_callout_red",
+                "position": "center_right",
+                "appear_frame": 360
+              },
+              {
+                "text": "2 minutes 10 seconds",
+                "style": "stat_callout_green",
+                "position": "center_right",
+                "appear_frame": 480
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S03_STORY",
+            "type": "mixed_narration_broll",
+            "start_frame": 690,
+            "duration_frames": 1800,
+            "description": "0-600: V1 vs V2 split screen — same question card, side by side. 600-1200: live demo of spring drag animation, card rotation with velocity. 1200-1800: Initial-swipe-page component file structure tour.",
+            "text_overlays": [
+              {
+                "text": "Same mechanic. Different feeling.",
+                "style": "caption_bold",
+                "position": "bottom_center",
+                "appear_frame": 890
+              },
+              {
+                "text": "Spring physics: card weight tracks drag velocity",
+                "style": "annotation_yellow",
+                "position": "top_right",
+                "appear_frame": 1290
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S04_REPO",
+            "type": "screen_capture_annotated",
+            "start_frame": 2490,
+            "duration_frames": 1500,
+            "description": "Repo walkthrough: swipe---survey then Initial-swipe-page. Highlight backdrop-filter CSS. Show SwipeCard.jsx velocity tracking. Component tree visible in IDE sidebar.",
+            "text_overlays": [
+              {
+                "text": "backdrop-filter: blur(20px) — the glass card",
+                "style": "annotation_yellow",
+                "position": "top_right",
+                "appear_frame": 2550
+              },
+              {
+                "text": "velocity → rotation transform = physical feel",
+                "style": "annotation_red",
+                "position": "top_right",
+                "appear_frame": 2850
+              },
+              {
+                "text": "Initial-swipe-page: clean enough to build on top of",
+                "style": "caption",
+                "position": "bottom_center",
+                "appear_frame": 3600
+              }
+            ],
+            "transition": {
+              "type": "slide_left",
+              "duration_frames": 20
+            }
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "animated_diagram",
+            "start_frame": 3990,
+            "duration_frames": 1200,
+            "description": "Component hierarchy draws itself top-down. Simultaneously a session-time bar chart grows in bottom-right corner. Each component node pops in with a subtle scale bounce.",
+            "text_overlays": [
+              {
+                "text": "Component Architecture — Initial-swipe-page",
+                "style": "diagram_title",
+                "position": "top_left",
+                "appear_frame": 3990
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200,
+            "description": "Decision UI with glassmorphism card aesthetic matching the product's design language. Four option cards use the same frosted glass treatment.",
+            "text_overlays": [
+              {
+                "text": "Beautiful product. No business model. What now?",
+                "style": "decision_question",
+                "position": "top_center",
+                "appear_frame": 5210
+              },
+              {
+                "text": "A  Find a Real Customer → V05",
+                "style": "option_card_glass",
+                "position": "quadrant_TL",
+                "appear_frame": 5250
+              },
+              {
+                "text": "B  Build the Backend → V04",
+                "style": "option_card_glass",
+                "position": "quadrant_TR",
+                "appear_frame": 5310
+              },
+              {
+                "text": "C  Full Integration Launch → V08",
+                "style": "option_card_glass",
+                "position": "quadrant_BL",
+                "appear_frame": 5370
+              },
+              {
+                "text": "D  Mobile First → V06",
+                "style": "option_card_glass",
+                "position": "quadrant_BR",
+                "appear_frame": 5430
+              }
+            ],
+            "transition": {
+              "type": "zoom_out",
+              "duration_frames": 30
+            }
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810,
+            "description": "Four branch thumbnails, frosted glass styling. Subscribe CTA.",
+            "text_overlays": [
+              {
+                "text": "Four paths from here. All real. All built.",
+                "style": "outro_headline",
+                "position": "center_left",
+                "appear_frame": 6420
+              },
+              {
+                "text": "↑ Subscribe",
+                "style": "cta_subscribe",
+                "position": "bottom_center",
+                "appear_frame": 6690
+              }
+            ],
+            "transition": {
+              "type": "fade_to_black",
+              "duration_frames": 60
+            }
+          }
+        ]
+      },
+      "youtube": {
+        "cards_targets": [
+          {
+            "appears_at_second": 185,
+            "type": "video",
+            "target_id": "V05",
+            "label": "A: Real Customer"
+          },
+          {
+            "appears_at_second": 195,
+            "type": "video",
+            "target_id": "V04",
+            "label": "B: Build Backend"
+          },
+          {
+            "appears_at_second": 205,
+            "type": "video",
+            "target_id": "V08",
+            "label": "C: Full Launch"
+          },
+          {
+            "appears_at_second": 215,
+            "type": "video",
+            "target_id": "V06",
+            "label": "D: Mobile First"
+          }
+        ],
+        "end_screen_targets": [
+          {
+            "position": "TL",
+            "target_id": "V05",
+            "label": "A: Real Customer"
+          },
+          {
+            "position": "TR",
+            "target_id": "V04",
+            "label": "B: Backend"
+          },
+          {
+            "position": "BL",
+            "target_id": "V08",
+            "label": "C: Launch"
+          },
+          {
+            "position": "BR",
+            "target_id": "V06",
+            "label": "D: Mobile"
+          }
+        ],
+        "playlist": "PLalchemist-series1",
+        "pinned_comment_template": "👇 FOUR PATHS FROM HERE:\n\nA) Find a Real Customer → [V05 link]\nB) Build the Backend → [V04 link]\nC) Full Integration Launch → [V08 link]\nD) Mobile First → [V06 link]\n\nComment your letter.",
+        "description_links": {
+          "A_real_customer": "[V05 link]",
+          "B_backend": "[V04 link]",
+          "C_launch": "[V08 link]",
+          "D_mobile": "[V06 link]",
+          "github_initial_swipe": "https://github.com/dharamdaxini/Initial-swipe-page"
+        }
+      }
+    },
+    {
+      "id": "V04",
+      "parent_id": "V01",
+      "branch_from_option": "C",
+      "title": "Adding a Brain — Firebase, UPI QR, and the Data That Changed Everything",
+      "concept": "Building the data layer: Firebase Firestore for real-time responses, UPI QR payment integration, and the analytics revelation that saved the product.",
+      "repo_stage": "swipe.survey — Firebase backend, UPI QR generation, analytics, response tracking",
+      "duration_seconds": 240,
+      "creator_script": {
+        "title": "The App Had No Memory. I Fixed That. Then the Data Surprised Me.",
+        "hook": "Every swipe was disappearing into nothing. User answers a survey, closes the tab, it's gone. I literally had no data. I was running a product that couldn't learn anything. That ends here.",
+        "story": "swipe.survey — the repo name has a dot now, slightly more professional at least — is where the stack gets real. Firebase Firestore for real-time response storage. Authentication for survey creators. And then the thing I'm most proud of: UPI QR code generation. You complete a survey, you see a dynamically generated QR code with a customizable amount. For India, that's the payment primitive. One afternoon to integrate. First day I had real analytics I sat there for an hour just reading the data. And I saw a cliff. Question 5. 70% of users were dropping off at question 5. Not question 1. Not the last question. Question 5. I looked at question 5. Open text field. In a swipe app. Everyone hates typing.",
+        "decision_question": "The data is real now and it's already told you something powerful. What do you build with it?",
+        "options": [
+          "A) Deep analytics — build a creator dashboard showing drop-off, session time, completion heat maps",
+          "B) Integration — connect this backend to the full Alchemist product and launch",
+          "C) Mobile — take the backend-powered app and make it properly mobile-native",
+          "D) Integrate and launch everything at once — Alchemist full product"
+        ],
+        "branch_links": {
+          "A": "V07",
+          "B": "V08",
+          "C": "V06",
+          "D": "V08"
+        },
+        "outro": "One data point — a drop at question 5 — changed my completion rate from 30% to 71% overnight. The backend wasn't infrastructure. It was a mirror."
+      },
+      "full_script": {
+        "hook": "My app had been running for weeks. I had exactly zero data points. Not bad data — zero data. Every response just evaporated. I didn't even know if anyone was finishing the surveys.",
+        "context": "This is the repo where the product gets memory. Before swipe.survey, the swipe app was a beautiful stateless experience. Felt great, meant nothing. The backend changes that relationship completely.",
+        "repo_explanation": "swipe.survey. Firebase Firestore as the database — real-time listeners so response counts update as people submit. Auth system for survey creators — Google OAuth, takes twenty minutes. Response schema: session_id, question_id, answer, timestamp, duration_on_card. That last one — duration_on_card — is new. It wasn't in the design. I added it at 1am because I was curious how long people actually spent on each question. Best decision I ever made in a single commit. Then UPI QR: there's a library called qrcode.react that generates QR from any UPI URL string. Amount is passed as a query parameter. The survey completion screen shows it with a customizable amount. One afternoon to build. Probably the most important line of code in the repo because it meant the product had a payment mechanism on day one of having a backend.",
+        "decision_moment": "First morning with real data I open the analytics. And there it is — a cliff at question 5. I zoom in. Duration on card 5 is 8 seconds. Duration on card 4 is 22 seconds. Duration on card 6 for people who make it there: 19 seconds. Card 5 is a text input field. In a swipe app. I remove the text input, replace it with a multiple choice. Completion rate goes from 30% to 71% overnight.",
+        "options_narration": "Now I have real data and a real payment path. What do I build next? A deep analytics layer for survey creators. Full integration into the Alchemist platform. Mobile as the primary experience. Or just launch the whole thing now.",
+        "outro": "The open text field at question 5 was invisible to me without data. Data made it visible. That's the backend's real value."
+      },
+      "decision_point": {
+        "question": "Backend is live. UPI payments work. Data is already changing the product. What gets built next?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Deep Analytics",
+            "description": "Creator dashboard: drop-off charts, session heatmaps, completion funnels",
+            "leads_to": "V07"
+          },
+          {
+            "id": "B",
+            "label": "Alchemist Integration",
+            "description": "Connect backend to the full product, launch Alchemist",
+            "leads_to": "V08"
+          },
+          {
+            "id": "C",
+            "label": "Mobile Native",
+            "description": "Take the backend-powered app fully mobile",
+            "leads_to": "V06"
+          },
+          {
+            "id": "D",
+            "label": "Ship Everything Now",
+            "description": "Integrate all repos, launch full product immediately",
+            "leads_to": "V08"
+          }
+        ]
+      },
+      "visuals": {
+        "screens_to_show": [
+          "Firebase Firestore console — real-time response collection populating",
+          "swipe.survey response schema: session_id, question_id, answer, timestamp, duration_on_card",
+          "UPI QR code generation code — qrcode.react with UPI URL construction",
+          "Analytics chart: drop-off cliff at question 5 — highlighted with red callout circle",
+          "Before/after completion rates: 30% vs 71% — bar chart with animated grow"
+        ],
+        "architecture_diagrams": [
+          "Data pipeline: User Swipes → Firestore write (session + answer + timing) → Creator Dashboard query → Drop-off chart. Side branch: Survey Complete → UPI QR Render → Payment confirmed → Firestore payment record."
+        ],
+        "b_roll_suggestions": [
+          "Firebase console with live data streaming in",
+          "Phone showing UPI QR code on survey completion screen",
+          "The analytics moment — founder staring at a cliff chart",
+          "Before/after: text input card vs multiple choice card"
+        ]
+      },
+      "notebookllm_prompt": "Upload swipe.survey repository. Generate a data pipeline diagram in notebook style. Left side: a phone with swipe card (label: 'User Swipes'). Arrow labeled 'answer + timing' to center: a cylinder labeled 'Firestore'. From Firestore: one arrow right to 'Creator Dashboard' (box). One arrow down to 'UPI QR Generator' (box with QR icon). From QR box: arrow to 'Payment Confirmed' (box with checkmark). Below the Firestore cylinder, add a drop-off funnel: Q1 (100%) → Q2 (95%) → Q3 (85%) → Q4 (75%) → Q5 (30%) with a red circle at Q5. Add callout: 'Open text → multiple choice = 30% → 71%'. Title: 'swipe.survey — Backend + Data Pipeline'. Ink: blue pen on ruled paper.",
+      "remotion_spec": {
+        "resolution": "1920x1080",
+        "fps": 30,
+        "duration_seconds": 240,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90,
+            "description": "Data particles stream into a database cylinder icon. Title fades in beneath.",
+            "text_overlays": [
+              {
+                "text": "ALCHEMIST",
+                "style": "series_label",
+                "position": "top_center",
+                "appear_frame": 0
+              },
+              {
+                "text": "V04 — Adding a Brain",
+                "style": "episode_title",
+                "position": "center",
+                "appear_frame": 45
+              },
+              {
+                "text": "Branched from: Option C",
+                "style": "branch_label",
+                "position": "bottom_right",
+                "appear_frame": 60
+              }
+            ],
+            "transition": {
+              "type": "data_stream_in",
+              "duration_frames": 60
+            }
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_head",
+            "start_frame": 90,
+            "duration_frames": 600,
+            "description": "Founder delivers the 'zero data points' hook. Empty table animates in to emphasize.",
+            "text_overlays": [
+              {
+                "text": "Dharamdaxini · Founder, Alchemist",
+                "style": "lower_third",
+                "position": "bottom_left",
+                "appear_frame": 120
+              },
+              {
+                "text": "You chose: Add the Backend",
+                "style": "branch_context_pill",
+                "position": "top_right",
+                "appear_frame": 90
+              },
+              {
+                "text": "Responses stored: 0",
+                "style": "stat_callout_red",
+                "position": "center_right",
+                "appear_frame": 360
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S03_STORY",
+            "type": "mixed_narration_broll",
+            "start_frame": 690,
+            "duration_frames": 1800,
+            "description": "0-600: Firebase console streaming data in real time — screen recording. 600-1200: UPI QR code appearing on survey completion screen demo. 1200-1800: founder narrates the Q5 cliff discovery — dramatic pause at the chart.",
+            "text_overlays": [
+              {
+                "text": "Firebase Firestore — real-time, schema-flexible",
+                "style": "caption",
+                "position": "bottom_center",
+                "appear_frame": 890
+              },
+              {
+                "text": "UPI QR: one afternoon. First payment primitive.",
+                "style": "caption",
+                "position": "bottom_center",
+                "appear_frame": 1290
+              },
+              {
+                "text": "Question 5. 70% drop-off. Why?",
+                "style": "dramatic_callout",
+                "position": "center",
+                "appear_frame": 1590
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S04_REPO",
+            "type": "screen_capture_annotated",
+            "start_frame": 2490,
+            "duration_frames": 1500,
+            "description": "Repo walkthrough: response schema annotated, duration_on_card field highlighted in yellow. UPI URL construction code highlighted. Analytics query showing Q5 aggregation. Then the fix: text input replaced with multiple choice.",
+            "text_overlays": [
+              {
+                "text": "duration_on_card — added at 1am, best single commit",
+                "style": "annotation_yellow",
+                "position": "top_right",
+                "appear_frame": 2550
+              },
+              {
+                "text": "UPI URL: upi://pay?pa=...&am=${amount}&cu=INR",
+                "style": "annotation_code",
+                "position": "top_right",
+                "appear_frame": 2850
+              },
+              {
+                "text": "Q5: avg duration 8s vs 22s on Q4",
+                "style": "annotation_red",
+                "position": "top_right",
+                "appear_frame": 3300
+              }
+            ],
+            "transition": {
+              "type": "slide_left",
+              "duration_frames": 20
+            }
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "animated_diagram",
+            "start_frame": 3990,
+            "duration_frames": 1200,
+            "description": "Data pipeline draws itself: phone → Firestore → dashboard. Side branch draws to UPI QR. Drop-off funnel appears below Firestore — each Q bar drops sequentially, Q5 bar drops sharply with red circle animation.",
+            "text_overlays": [
+              {
+                "text": "The backend doesn't just store data. It teaches you.",
+                "style": "diagram_caption",
+                "position": "bottom_center",
+                "appear_frame": 4890
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200,
+            "description": "Decision UI. Data dashboard aesthetic — dark background, chart lines visible behind the cards.",
+            "text_overlays": [
+              {
+                "text": "Backend live. Data is talking. What do you build with it?",
+                "style": "decision_question",
+                "position": "top_center",
+                "appear_frame": 5210
+              },
+              {
+                "text": "A  Deep Analytics → V07",
+                "style": "option_card",
+                "position": "quadrant_TL",
+                "appear_frame": 5250
+              },
+              {
+                "text": "B  Alchemist Integration → V08",
+                "style": "option_card",
+                "position": "quadrant_TR",
+                "appear_frame": 5310
+              },
+              {
+                "text": "C  Mobile Native → V06",
+                "style": "option_card",
+                "position": "quadrant_BL",
+                "appear_frame": 5370
+              },
+              {
+                "text": "D  Ship Everything → V08",
+                "style": "option_card",
+                "position": "quadrant_BR",
+                "appear_frame": 5430
+              }
+            ],
+            "transition": {
+              "type": "zoom_out",
+              "duration_frames": 30
+            }
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810,
+            "description": "Branch previews V06, V07, V08. Data stream particle animation continues in background.",
+            "text_overlays": [
+              {
+                "text": "30% → 71% completion. One data point. One fix.",
+                "style": "outro_headline",
+                "position": "center_left",
+                "appear_frame": 6420
+              },
+              {
+                "text": "↑ Subscribe",
+                "style": "cta_subscribe",
+                "position": "bottom_center",
+                "appear_frame": 6690
+              }
+            ],
+            "transition": {
+              "type": "fade_to_black",
+              "duration_frames": 60
+            }
+          }
+        ]
+      },
+      "youtube": {
+        "cards_targets": [
+          {
+            "appears_at_second": 185,
+            "type": "video",
+            "target_id": "V07",
+            "label": "A: Deep Analytics"
+          },
+          {
+            "appears_at_second": 200,
+            "type": "video",
+            "target_id": "V08",
+            "label": "B or D: Full Integration"
+          },
+          {
+            "appears_at_second": 215,
+            "type": "video",
+            "target_id": "V06",
+            "label": "C: Mobile"
+          }
+        ],
+        "end_screen_targets": [
+          {
+            "position": "left",
+            "target_id": "V07",
+            "label": "A: Analytics"
+          },
+          {
+            "position": "center",
+            "target_id": "V08",
+            "label": "B/D: Integration"
+          },
+          {
+            "position": "right",
+            "target_id": "V06",
+            "label": "C: Mobile"
+          }
+        ],
+        "playlist": "PLalchemist-series1",
+        "pinned_comment_template": "👇 DECIDE:\n\nA) Deep Analytics → [V07 link]\nB) Alchemist Integration → [V08 link]\nC) Mobile Native → [V06 link]\nD) Ship Everything → [V08 link]\n\nComment your letter.",
+        "description_links": {
+          "A_analytics": "[V07 link]",
+          "B_D_integration": "[V08 link]",
+          "C_mobile": "[V06 link]",
+          "github_swipe_survey": "https://github.com/dharamdaxini/swipe.survey"
+        }
+      }
+    },
+    {
+      "id": "V05",
+      "parent_id": "V01",
+      "branch_from_option": "D",
+      "title": "The Day a Professor Emailed — Finding the Real Customer",
+      "concept": "The B2B pivot. A university faculty member sees the demo and wants it for classroom engagement. The moment the product found its purpose.",
+      "repo_stage": "Transition: swipe.survey → Alchemist-App — first institutional customer triggers new repo",
+      "duration_seconds": 240,
+      "creator_script": {
+        "title": "A Professor Emailed Me. I Didn't Expect What She Said.",
+        "hook": "I posted a screen recording on Twitter. 200 views, 3 likes, 1 DM. The DM changed everything.",
+        "story": "She was a professor. She'd seen the demo. She wanted to use it in class — but not as a survey. As a learning tool. Students swipe through content, not just answer questions. She wanted to assign decks. Track who'd completed what. See which cards tripped students up. And she was prepared to pay. That was the moment Alchemist stopped being a side project. Three things happened at once: I understood the real user, I understood the real use case, and I had a real business model. I opened a new repo that night: Alchemist-App.",
+        "decision_question": "You have your first real institutional customer. She has four very specific things she needs. You can't build all four at once. What do you build first?",
+        "options": [
+          "A) The full Alchemist product — student layer, faculty layer, admin layer all at once",
+          "B) Faculty demo first — build a polished demo that closes more institutional deals before writing feature code",
+          "C) Full integration — complete product launch to start getting more faculty organically",
+          "D) Faculty demo first — close deals, then build"
+        ],
+        "branch_links": {
+          "A": "V08",
+          "B": "V09",
+          "C": "V08",
+          "D": "V09"
+        },
+        "outro": "Real money from a real customer changes how you think about everything. The next episode is where the product becomes a company."
+      },
+      "full_script": {
+        "hook": "Two hundred views. Three likes. One DM. Here's the DM: 'Hi, I'm a faculty member at [university]. I saw your survey demo. I'd like to use something like this in my classes. Is this available for institutional use?' I sat on that for ten minutes thinking it was spam.",
+        "context": "Up to this point I was building for everyone. Which means I was building for no one. Generic survey tool, generic use case, generic pricing model. This DM was a gift — a real person with a real job telling me exactly what problem they needed solved and signalling they'd pay for the solution.",
+        "repo_explanation": "That night I opened a new repo: Alchemist-App. Not swipe-survey-v3. Not swipe-survey-pro. Alchemist. New name, new intent. The folder structure I sketched out in the first commit reflects the three-tier vision: /student — the swipe experience. /faculty — create, assign, track. /admin — institution-level management. That was the whole product in three folders. None of the folders had anything in them yet. But the architecture decision — three separate user layers — that decision lasted.",
+        "decision_moment": "The professor has four needs. She wants to create custom content decks. She wants to assign them to specific classes. She wants to see individual student completion. She wants to see which cards students struggled with. I can't build all four in the two weeks before she starts her semester. I have to choose one.",
+        "options_narration": "Option A: build the full Alchemist product right now. Student + faculty + admin, all three layers. Option B: build a demo first — not the full product, a curated demo that I can take to other institutions and close more deals before spending months on features. Option C: full integration of everything I've already built, launch it, see who else shows up. Option D: same as B — demo first, sell first, build second.",
+        "outro": "I had a saying at this point: find ten customers who love it before you build what the eleventh customer asked for. This professor was customer one."
+      },
+      "decision_point": {
+        "question": "First paying institutional customer confirmed. Four needs, two weeks. What do you build first?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Full Alchemist Product",
+            "description": "Build all three layers — student, faculty, admin — and launch",
+            "leads_to": "V08"
+          },
+          {
+            "id": "B",
+            "label": "Build the Demo First",
+            "description": "Curated institutional demo to close more deals before building features",
+            "leads_to": "V09"
+          },
+          {
+            "id": "C",
+            "label": "Full Integration Launch",
+            "description": "Connect everything built so far, launch the complete product",
+            "leads_to": "V08"
+          },
+          {
+            "id": "D",
+            "label": "Demo First, Sell First",
+            "description": "Sales infrastructure before feature development",
+            "leads_to": "V09"
+          }
+        ]
+      },
+      "visuals": {
+        "screens_to_show": [
+          "Twitter notification: 1 DM (recreated/illustrated, no real PII)",
+          "DM content (recreated): 'faculty member...institutional use...'",
+          "Alchemist-App first commit: empty folder structure /student /faculty /admin",
+          "Whiteboard or notebook: the four needs the professor articulated",
+          "New repo vs old repo: naming change moment — swipe-survey → Alchemist-App"
+        ],
+        "architecture_diagrams": [
+          "Three-tier stakeholder map: Admin (top) → Faculty (middle, 'creates and assigns') → Student (bottom, 'swipes and learns'). Arrows: Admin manages Faculty. Faculty assigns to Students. Students return completion data to Faculty."
+        ],
+        "b_roll_suggestions": [
+          "Phone receiving a DM notification",
+          "A university classroom — students on phones",
+          "First commit message typed out in terminal",
+          "Three-tier diagram being sketched on paper"
+        ]
+      },
+      "notebookllm_prompt": "Generate a stakeholder map in hand-drawn notebook style. Center box: 'Alchemist Platform'. Top arrow pointing down: 'Admin — manages institution'. Left arrow pointing in: 'Faculty — creates decks, assigns classes, reads analytics'. Bottom arrow pointing up: 'Student — swipes, learns, completes'. Right side: a small timeline with 4 bullet points: '1. Create deck', '2. Assign to class', '3. Track completion', '4. See struggle cards'. Circle item 1 — 'Start here'. Add: a coin icon near Faculty with label 'paying customer'. Title: 'V05 — The B2B Pivot — First Institutional Customer'. Ink: blue pen, ruled notebook.",
+      "remotion_spec": {
+        "resolution": "1920x1080",
+        "fps": 30,
+        "duration_seconds": 240,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90,
+            "description": "DM notification icon pops in with a notification bounce. Title appears beneath. Old logo fades, new Alchemist branding fades in.",
+            "text_overlays": [
+              {
+                "text": "ALCHEMIST",
+                "style": "series_label",
+                "position": "top_center",
+                "appear_frame": 0
+              },
+              {
+                "text": "V05 — The B2B Pivot",
+                "style": "episode_title",
+                "position": "center",
+                "appear_frame": 45
+              },
+              {
+                "text": "Branched from: Option D",
+                "style": "branch_label",
+                "position": "bottom_right",
+                "appear_frame": 60
+              }
+            ],
+            "transition": {
+              "type": "notification_bounce",
+              "duration_frames": 45
+            }
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_head",
+            "start_frame": 90,
+            "duration_frames": 600,
+            "description": "Founder delivers the DM story. '200 views. 3 likes. 1 DM.' Stats animate in as text callouts.",
+            "text_overlays": [
+              {
+                "text": "Dharamdaxini · Founder, Alchemist",
+                "style": "lower_third",
+                "position": "bottom_left",
+                "appear_frame": 120
+              },
+              {
+                "text": "You chose: Find a Real Customer",
+                "style": "branch_context_pill",
+                "position": "top_right",
+                "appear_frame": 90
+              },
+              {
+                "text": "200 views · 3 likes · 1 DM",
+                "style": "stat_trio",
+                "position": "center_right",
+                "appear_frame": 300
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S03_STORY",
+            "type": "mixed_narration_broll",
+            "start_frame": 690,
+            "duration_frames": 1800,
+            "description": "0-600: illustrated DM thread — recreated conversation (no PII). 600-1200: Alchemist-App first commit, empty folder structure tour. 1200-1800: whiteboard sketch of the three-tier stakeholder map being drawn.",
+            "text_overlays": [
+              {
+                "text": "Alchemist-App — repo created this night",
+                "style": "caption",
+                "position": "bottom_center",
+                "appear_frame": 1090
+              },
+              {
+                "text": "/student  /faculty  /admin — three empty folders. Full architecture.",
+                "style": "caption_code",
+                "position": "bottom_center",
+                "appear_frame": 1390
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S04_REPO",
+            "type": "screen_capture_annotated",
+            "start_frame": 2490,
+            "duration_frames": 1500,
+            "description": "Alchemist-App first commit tour. Zoom into folder structure. Highlight that folders are empty — the architecture is the decision, not the code. Show the four needs on a split-screen notepad.",
+            "text_overlays": [
+              {
+                "text": "Alchemist-App — first commit",
+                "style": "filename_tag",
+                "position": "top_left",
+                "appear_frame": 2520
+              },
+              {
+                "text": "Empty folders = architecture decision",
+                "style": "annotation_yellow",
+                "position": "top_right",
+                "appear_frame": 2820
+              },
+              {
+                "text": "4 needs. 2 weeks. 1 choice.",
+                "style": "caption_bold",
+                "position": "bottom_center",
+                "appear_frame": 3600
+              }
+            ],
+            "transition": {
+              "type": "slide_left",
+              "duration_frames": 20
+            }
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "animated_diagram",
+            "start_frame": 3990,
+            "duration_frames": 1200,
+            "description": "Three-tier stakeholder map draws itself. Admin appears first (top), then Faculty (middle), then Student (bottom). Arrows draw between them with labels. Coin icon animates near Faculty.",
+            "text_overlays": [
+              {
+                "text": "Three users. One platform. One paying customer to start.",
+                "style": "diagram_caption",
+                "position": "bottom_center",
+                "appear_frame": 4890
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200,
+            "description": "Decision UI. Warm academic tone — off-white background, serif-adjacent heading.",
+            "text_overlays": [
+              {
+                "text": "First paying customer. Four needs. Two weeks. What do you build first?",
+                "style": "decision_question",
+                "position": "top_center",
+                "appear_frame": 5210
+              },
+              {
+                "text": "A  Full Alchemist Product → V08",
+                "style": "option_card",
+                "position": "quadrant_TL",
+                "appear_frame": 5250
+              },
+              {
+                "text": "B  Build the Demo First → V09",
+                "style": "option_card",
+                "position": "quadrant_TR",
+                "appear_frame": 5310
+              },
+              {
+                "text": "C  Full Integration Launch → V08",
+                "style": "option_card",
+                "position": "quadrant_BL",
+                "appear_frame": 5370
+              },
+              {
+                "text": "D  Demo First, Sell First → V09",
+                "style": "option_card",
+                "position": "quadrant_BR",
+                "appear_frame": 5430
+              }
+            ],
+            "transition": {
+              "type": "zoom_out",
+              "duration_frames": 30
+            }
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810,
+            "description": "Two branch previews: V08 (Full Product) and V09 (Demo + Sales). Subscribe CTA.",
+            "text_overlays": [
+              {
+                "text": "Find ten customers who love it. Then build for the eleventh.",
+                "style": "outro_quote",
+                "position": "center_left",
+                "appear_frame": 6420
+              },
+              {
+                "text": "↑ Subscribe",
+                "style": "cta_subscribe",
+                "position": "bottom_center",
+                "appear_frame": 6690
+              }
+            ],
+            "transition": {
+              "type": "fade_to_black",
+              "duration_frames": 60
+            }
+          }
+        ]
+      },
+      "youtube": {
+        "cards_targets": [
+          {
+            "appears_at_second": 185,
+            "type": "video",
+            "target_id": "V08",
+            "label": "A or C: Full Product Launch"
+          },
+          {
+            "appears_at_second": 210,
+            "type": "video",
+            "target_id": "V09",
+            "label": "B or D: Demo First"
+          }
+        ],
+        "end_screen_targets": [
+          {
+            "position": "left",
+            "target_id": "V08",
+            "label": "A/C: Full Launch"
+          },
+          {
+            "position": "right",
+            "target_id": "V09",
+            "label": "B/D: Demo First"
+          }
+        ],
+        "playlist": "PLalchemist-series1",
+        "pinned_comment_template": "👇 DECIDE:\n\nA) Full Alchemist Product → [V08 link]\nB) Build the Demo First → [V09 link]\nC) Full Integration Launch → [V08 link]\nD) Demo First, Sell First → [V09 link]\n\nComment your letter.",
+        "description_links": {
+          "A_C_full_product": "[V08 link]",
+          "B_D_demo_first": "[V09 link]",
+          "github_alchemist_app": "https://github.com/dharamdaxini/Alchemist-App"
+        }
+      }
+    },
+    {
+      "id": "V06",
+      "parent_id": "V02",
+      "branch_from_option": "A_or_B",
+      "title": "Going Mobile — Why the Browser Wasn't Enough",
+      "concept": "78% mobile traffic on a web app optimised for desktop. The decision to go mobile-first, and the tactical choice between PWA, Capacitor, React Native, and Flutter.",
+      "repo_stage": "Alchemist-App mobile considerations — PWA manifest, Capacitor investigation",
+      "duration_seconds": 240,
+      "creator_script": {
+        "title": "78% of My Users Were on Phones. My App Was a Web App. I Had a Problem.",
+        "hook": "I knew people were using this on mobile. I didn't know it was 78% until I looked at the analytics. Then I had to confront something uncomfortable: I'd been optimising for desktop.",
+        "story": "The swipe gesture is a phone gesture. Tinder is on your phone. Instagram Stories are on your phone. I'd built the core mechanic of a mobile app inside a browser. I was making people pinch and zoom on a swipe experience. I looked at three paths: React Native means rewriting everything — months of work. Capacitor wraps my existing React app in a native shell — about a week. PWA means installing to homescreen with offline support — two days. I went PWA first for speed. Then Capacitor for the app store presence.",
+        "decision_question": "You're going mobile. The tactical question is how. Each path has different costs and different outcomes.",
+        "options": [
+          "A) PWA — stay on web, add install-to-homescreen, offline support, zero rewrite",
+          "B) Capacitor — wrap the existing React app in a native shell, one week",
+          "C) React Native — full native rebuild, three months but full native performance",
+          "D) Flutter — start fresh, cross-platform, but a completely new codebase"
+        ],
+        "branch_links": {
+          "A": "V09",
+          "B": "V09",
+          "C": "V09",
+          "D": "V09"
+        },
+        "outro": "All four paths get to the same place eventually. The question is how long it takes and what you sacrifice on the way."
+      },
+      "full_script": {
+        "hook": "I opened Google Analytics and filtered by device. 78.3% mobile. I was embarrassed. I had been optimising a swipe app — a gesture that exists because of touchscreens — for a mouse.",
+        "context": "There's a version of this story where I just say I should have known. And I should have. But I was building fast and thinking in desktop because I develop on a MacBook. The analytics were a slap.",
+        "repo_explanation": "I looked at the Alchemist-App codebase and asked honestly: how bad is a React Native rewrite? I scoped it out — probably three months to parity with everything the web version could do. Three months with a customer waiting. Not good. I looked at Capacitor — it's a project from the Ionic team that wraps an existing web app in a native WebView and adds native APIs on top. I had a Capacitor build running in two hours. PWA I could do in an afternoon — manifest.json, service worker for offline caching, an install prompt that appears on Android automatically. I did PWA first. Deployed in a day. Then Capacitor for the App Store.",
+        "decision_moment": "The PWA install rate was higher than I expected — about 23% of mobile users who saw the prompt actually installed it. That's not app store traffic, but it's real homescreen presence. And the experience is nearly identical to a native app for a swipe interaction because the animation is CSS-driven, not OS-level.",
+        "options_narration": "Four real paths with four very different timelines. PWA: two days, no app store. Capacitor: one week, app store via wrapper. React Native: three months, true native performance. Flutter: four months minimum, brand new codebase, new language.",
+        "outro": "I still recommend PWA first. Ship fast, validate the mobile experience, then decide if you need the app store."
+      },
+      "decision_point": {
+        "question": "Going mobile. Which path do you take?",
+        "options": [
+          {
+            "id": "A",
+            "label": "PWA",
+            "description": "2 days. Install to homescreen. No app store. Zero rewrite.",
+            "leads_to": "V09"
+          },
+          {
+            "id": "B",
+            "label": "Capacitor",
+            "description": "1 week. App store. Native wrapper over existing React code.",
+            "leads_to": "V09"
+          },
+          {
+            "id": "C",
+            "label": "React Native",
+            "description": "3 months. True native. Full rewrite. Best performance.",
+            "leads_to": "V09"
+          },
+          {
+            "id": "D",
+            "label": "Flutter",
+            "description": "4+ months. New language. Cross-platform from scratch.",
+            "leads_to": "V09"
+          }
+        ]
+      },
+      "visuals": {
+        "screens_to_show": [
+          "Google Analytics device breakdown: 78.3% mobile highlighted",
+          "manifest.json for PWA — key fields: name, icons, display: standalone",
+          "Capacitor config file — capacitor.config.json, 20 lines",
+          "Side-by-side: install prompt on Android vs app store listing",
+          "PWA install rate stat: 23% of mobile users who saw the prompt"
+        ],
+        "architecture_diagrams": [
+          "Mobile strategy decision tree: 4 branches with time/cost labels: PWA (2d, $0), Capacitor (1w, low), React Native (3mo, high), Flutter (4mo+, high). Circle PWA and Capacitor as 'recommended start path'."
+        ],
+        "b_roll_suggestions": [
+          "Someone pinching to zoom on a swipe app — the frustration moment",
+          "PWA install prompt appearing on an Android phone",
+          "App icon appearing on phone homescreen",
+          "Side-by-side swipe experience: desktop browser vs mobile PWA"
+        ]
+      },
+      "notebookllm_prompt": "Generate a mobile strategy decision tree in hand-drawn notebook style. Root: 'Go Mobile?' (diamond). YES branch → four options in a column: 'PWA: 2 days, no app store', 'Capacitor: 1 week, app store wrapper', 'React Native: 3 months, full native rewrite', 'Flutter: 4+ months, new codebase'. Draw a star next to PWA and Capacitor. Add a callout box: '78.3% mobile traffic — before any of this'. Add bottom note: 'All four paths = same destination. Different cost.' Title: 'V06 — Mobile Strategy Decision'. Ink: blue pen, notebook paper.",
+      "remotion_spec": {
+        "resolution": "1920x1080",
+        "fps": 30,
+        "duration_seconds": 240,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90,
+            "description": "Phone outline on screen. Counter animates up: '78%'. Title appears beneath.",
+            "text_overlays": [
+              {
+                "text": "ALCHEMIST",
+                "style": "series_label",
+                "position": "top_center",
+                "appear_frame": 0
+              },
+              {
+                "text": "V06 — Going Mobile",
+                "style": "episode_title",
+                "position": "center",
+                "appear_frame": 45
+              },
+              {
+                "text": "Reached via: V02 A/B · V03 D · V04 C",
+                "style": "branch_label_multi",
+                "position": "bottom_right",
+                "appear_frame": 60
+              }
+            ],
+            "transition": {
+              "type": "count_up",
+              "duration_frames": 60
+            }
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_head",
+            "start_frame": 90,
+            "duration_frames": 600,
+            "description": "Founder delivers the '78%' embarrassment hook. Analytics chart animates in beside them.",
+            "text_overlays": [
+              {
+                "text": "Dharamdaxini · Founder, Alchemist",
+                "style": "lower_third",
+                "position": "bottom_left",
+                "appear_frame": 120
+              },
+              {
+                "text": "78.3% mobile users",
+                "style": "stat_callout_red",
+                "position": "center_right",
+                "appear_frame": 300
+              },
+              {
+                "text": "Optimised for desktop.",
+                "style": "stat_callout_red_small",
+                "position": "center_right",
+                "appear_frame": 420
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S03_STORY",
+            "type": "mixed_narration_broll",
+            "start_frame": 690,
+            "duration_frames": 1800,
+            "description": "0-600: person pinching to zoom on swipe app — the bad experience. 600-1200: manifest.json and Capacitor config side by side. 1200-1800: PWA install prompt demo on Android phone.",
+            "text_overlays": [
+              {
+                "text": "manifest.json: display: standalone. That's the PWA switch.",
+                "style": "annotation_code",
+                "position": "top_right",
+                "appear_frame": 1090
+              },
+              {
+                "text": "PWA install rate: 23% of prompted mobile users",
+                "style": "stat_callout_green",
+                "position": "center_right",
+                "appear_frame": 1590
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S04_REPO",
+            "type": "screen_capture_annotated",
+            "start_frame": 2490,
+            "duration_frames": 1500,
+            "description": "manifest.json full view annotated. Capacitor config annotated. Timeline graphic: PWA (day 1), Capacitor (week 1), React Native scope (~90 days). Each timeline bar grows left to right.",
+            "text_overlays": [
+              {
+                "text": "manifest.json — 15 lines, PWA complete",
+                "style": "annotation_yellow",
+                "position": "top_right",
+                "appear_frame": 2520
+              },
+              {
+                "text": "React Native rewrite scope: ~90 days",
+                "style": "annotation_red",
+                "position": "top_right",
+                "appear_frame": 3300
+              }
+            ],
+            "transition": {
+              "type": "slide_left",
+              "duration_frames": 20
+            }
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "animated_diagram",
+            "start_frame": 3990,
+            "duration_frames": 1200,
+            "description": "Decision tree draws itself. Root → four branches grow with time/cost labels. PWA and Capacitor get star animations. React Native and Flutter get clock icons with long animations.",
+            "text_overlays": [
+              {
+                "text": "Same destination. Very different timelines.",
+                "style": "diagram_caption",
+                "position": "bottom_center",
+                "appear_frame": 4890
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200,
+            "description": "Decision UI. Mobile phone frame wraps each option card.",
+            "text_overlays": [
+              {
+                "text": "Going mobile. Which path?",
+                "style": "decision_question",
+                "position": "top_center",
+                "appear_frame": 5210
+              },
+              {
+                "text": "A  PWA — 2 days",
+                "style": "option_card_mobile",
+                "position": "quadrant_TL",
+                "appear_frame": 5250
+              },
+              {
+                "text": "B  Capacitor — 1 week",
+                "style": "option_card_mobile",
+                "position": "quadrant_TR",
+                "appear_frame": 5310
+              },
+              {
+                "text": "C  React Native — 3 months",
+                "style": "option_card_mobile",
+                "position": "quadrant_BL",
+                "appear_frame": 5370
+              },
+              {
+                "text": "D  Flutter — 4+ months",
+                "style": "option_card_mobile",
+                "position": "quadrant_BR",
+                "appear_frame": 5430
+              },
+              {
+                "text": "All options → V09",
+                "style": "branch_routing_label",
+                "position": "bottom_center",
+                "appear_frame": 6090
+              }
+            ],
+            "transition": {
+              "type": "zoom_out",
+              "duration_frames": 30
+            }
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810,
+            "description": "All paths converge to V09. Visual: four arrows merging into one. Subscribe CTA.",
+            "text_overlays": [
+              {
+                "text": "All four paths. All discussed in V09.",
+                "style": "outro_headline",
+                "position": "center_left",
+                "appear_frame": 6420
+              },
+              {
+                "text": "↑ Subscribe",
+                "style": "cta_subscribe",
+                "position": "bottom_center",
+                "appear_frame": 6690
+              }
+            ],
+            "transition": {
+              "type": "fade_to_black",
+              "duration_frames": 60
+            }
+          }
+        ]
+      },
+      "youtube": {
+        "cards_targets": [
+          {
+            "appears_at_second": 210,
+            "type": "video",
+            "target_id": "V09",
+            "label": "All paths → V09: The Faculty Demo"
+          }
+        ],
+        "end_screen_targets": [
+          {
+            "position": "center",
+            "target_id": "V09",
+            "label": "Next: The Faculty Demo"
+          }
+        ],
+        "playlist": "PLalchemist-series1",
+        "pinned_comment_template": "👇 MOBILE STRATEGY VOTE:\n\nA) PWA → [V09 link]\nB) Capacitor → [V09 link]\nC) React Native → [V09 link]\nD) Flutter → [V09 link]\n\nAll paths lead to V09 — but comment your mobile pick anyway. Running a real poll.",
+        "description_links": {
+          "all_paths_V09": "[V09 link]",
+          "github_alchemist_app": "https://github.com/dharamdaxini/Alchemist-App"
+        }
+      }
+    },
+    {
+      "id": "V07",
+      "parent_id": "V02",
+      "branch_from_option": "C_or_D",
+      "title": "The Analytics Layer — The Chart That Changed the Product",
+      "concept": "Building creator-side analytics in swipe.survey. The Q5 drop-off discovery. How data turned from infrastructure into product insight.",
+      "repo_stage": "swipe.survey analytics module — Firestore aggregations, creator dashboard, drop-off visualisation",
+      "duration_seconds": 240,
+      "creator_script": {
+        "title": "I Added Analytics Because I Should. Then the Data Showed Me Something I Didn't Expect.",
+        "hook": "I built analytics because every startup advice article says to build analytics. I wasn't really planning to look at them. Then I looked at them.",
+        "story": "The analytics module in swipe.survey tracked session_id, question_id, answer, timestamp, and — the important one — duration_on_card. First day I actually opened the dashboard I saw the cliff. Question 5. 70% of users stopping there. I zoom in. Duration on Q5: 8 seconds. Duration on Q4: 22 seconds. I look at question 5. It's a text input field. In a swipe app. I replace it with multiple choice. Overnight: completion rate goes from 30% to 71%. That one insight was worth more than any feature I'd ever built.",
+        "decision_question": "The analytics data is powerful. How do you turn it into a product feature that faculty can use without you interpreting it for them?",
+        "options": [
+          "A) AI-powered suggestions — the system reads the data and tells faculty what to fix",
+          "B) Visual heatmaps — show drop-off and struggle points overlaid on the deck",
+          "C) Full integration — take analytics into the Alchemist product and launch",
+          "D) Full integration with analytics as the lead feature — same destination"
+        ],
+        "branch_links": {
+          "A": "V08",
+          "B": "V09",
+          "C": "V08",
+          "D": "V09"
+        },
+        "outro": "Data without interpretation is noise. The next episode is about giving faculty the interpretation layer without requiring them to be data analysts."
+      },
+      "full_script": {
+        "hook": "I added a duration_on_card field to the response schema at 1am because I was curious. That single field became the most valuable column in my entire database.",
+        "context": "Most analytics in early products are vanity metrics. Total users. Sessions. Page views. They tell you that things are happening but not why. The duration per card was a behavioural metric. It told me how people were actually experiencing each question.",
+        "repo_explanation": "The analytics module in swipe.survey is about 200 lines. Firestore stores one document per card interaction — session_id, question_id, answer_value, duration_ms, timestamp. The creator dashboard runs three queries: completion_rate by session, avg_duration by question_id, and drop_off_rate by question_position. The drop_off query is a Firestore aggregation that counts sessions reaching each question index and divides by total sessions. That gives you the funnel.",
+        "decision_moment": "The funnel showed a cliff at question 5. Not a gradual decline — a cliff. I pulled up question 5. Open text field in the middle of a swipe survey. It's the only question where users had to use a keyboard. In a touch interaction. Nobody wants to type. I replaced it with four multiple choice options. Completion rate: 30% to 71%. Overnight.",
+        "options_narration": "Now the analytics work and have proven their value. How do I surface this for faculty who don't want to interpret raw charts? I could build an AI suggestion layer — the system reads the data and says 'remove question 5, it has 8s avg duration vs 22s for adjacent cards'. Or a visual heatmap overlay — show the drop-off directly on the card in the deck view. Or I integrate everything into the Alchemist product now and ship.",
+        "outro": "The insight from Q5 didn't just fix one survey. It changed how I thought about question design permanently."
+      },
+      "decision_point": {
+        "question": "Analytics proven. How do you give faculty the insight without requiring them to be data analysts?",
+        "options": [
+          {
+            "id": "A",
+            "label": "AI Suggestions",
+            "description": "System reads data, tells faculty what to fix in plain language",
+            "leads_to": "V08"
+          },
+          {
+            "id": "B",
+            "label": "Visual Heatmaps",
+            "description": "Drop-off and struggle data overlaid directly on deck cards",
+            "leads_to": "V09"
+          },
+          {
+            "id": "C",
+            "label": "Integrate and Launch",
+            "description": "Bring analytics into Alchemist product, ship the full stack",
+            "leads_to": "V08"
+          },
+          {
+            "id": "D",
+            "label": "Analytics as Lead Feature",
+            "description": "Same integration but analytics is the hero of the launch",
+            "leads_to": "V09"
+          }
+        ]
+      },
+      "visuals": {
+        "screens_to_show": [
+          "Firestore document: session_id, question_id, answer, duration_ms — highlight duration_ms",
+          "Creator dashboard: funnel chart — Q1 100%, Q2 95%, Q3 88%, Q4 76%, Q5 cliff to 30%",
+          "Q5 red circle annotation: 'avg 8s vs 22s for adjacent cards'",
+          "Before: text input Q5. After: multiple choice Q5.",
+          "Completion rate bar: 30% → 71% animated grow"
+        ],
+        "architecture_diagrams": [
+          "Analytics query pipeline: Firestore raw events → three aggregation queries (completion_rate, avg_duration, drop_off_rate) → creator dashboard charts"
+        ],
+        "b_roll_suggestions": [
+          "Dashboard with the cliff at Q5 — real screen recording",
+          "Someone encountering a keyboard on a swipe app — the friction moment",
+          "Completion rate counter animating up: 30 → 71",
+          "Before/after: Q5 text input vs Q5 multiple choice"
+        ]
+      },
+      "notebookllm_prompt": "Upload swipe.survey analytics files. Generate a funnel diagram in hand-drawn notebook style. Draw a vertical funnel shape with 10 horizontal slices labeled Q1 through Q10. Q1 is full width (100%). Each slice narrows slightly until Q5 which drops sharply to about 30% width. Draw a red circle around Q5 with an arrow: 'Open text field — avg 8s, others avg 20s'. Below the funnel, draw two bars: 'Before: 30%' (short, red) and 'After removing text input: 71%' (tall, green). Title: 'V07 — The Q5 Drop-off Discovery'. Ink: ruled notebook, blue pen.",
+      "remotion_spec": {
+        "resolution": "1920x1080",
+        "fps": 30,
+        "duration_seconds": 240,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90,
+            "description": "Funnel chart draws itself — then drops sharply at Q5 position with a red flash. Title appears.",
+            "text_overlays": [
+              {
+                "text": "ALCHEMIST",
+                "style": "series_label",
+                "position": "top_center",
+                "appear_frame": 0
+              },
+              {
+                "text": "V07 — The Analytics Layer",
+                "style": "episode_title",
+                "position": "center",
+                "appear_frame": 45
+              },
+              {
+                "text": "Reached via: V02 C/D · V04 A",
+                "style": "branch_label_multi",
+                "position": "bottom_right",
+                "appear_frame": 60
+              }
+            ],
+            "transition": {
+              "type": "chart_drop_flash",
+              "duration_frames": 60
+            }
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_head",
+            "start_frame": 90,
+            "duration_frames": 600,
+            "description": "Founder delivers hook. Analytics were an afterthought. Until they weren't.",
+            "text_overlays": [
+              {
+                "text": "Dharamdaxini · Founder, Alchemist",
+                "style": "lower_third",
+                "position": "bottom_left",
+                "appear_frame": 120
+              },
+              {
+                "text": "Reached via: Analytics path",
+                "style": "branch_context_pill",
+                "position": "top_right",
+                "appear_frame": 90
+              },
+              {
+                "text": "duration_on_card — added at 1am",
+                "style": "annotation_yellow",
+                "position": "center_right",
+                "appear_frame": 420
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S03_STORY",
+            "type": "mixed_narration_broll",
+            "start_frame": 690,
+            "duration_frames": 1800,
+            "description": "0-600: Firestore schema annotated. 600-1200: creator dashboard funnel chart — Q5 cliff highlighted in red. 1200-1800: the before/after — text input Q5 vs multiple choice Q5, completion bars.",
+            "text_overlays": [
+              {
+                "text": "duration_ms per card — the field that mattered most",
+                "style": "annotation_yellow",
+                "position": "top_right",
+                "appear_frame": 890
+              },
+              {
+                "text": "Q5: 8s avg. Q4: 22s avg. Why?",
+                "style": "dramatic_callout",
+                "position": "center",
+                "appear_frame": 1290
+              },
+              {
+                "text": "Text input in a swipe app. Remove it.",
+                "style": "annotation_red",
+                "position": "center_right",
+                "appear_frame": 1590
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S04_REPO",
+            "type": "screen_capture_annotated",
+            "start_frame": 2490,
+            "duration_frames": 1500,
+            "description": "Firestore query code for drop_off_rate shown. Aggregation pipeline highlighted. Dashboard UI side-by-side. The Q5 fix commit shown — diff: input type='text' → radio buttons.",
+            "text_overlays": [
+              {
+                "text": "drop_off_rate query: count(sessions reaching Qn) / count(total sessions)",
+                "style": "annotation_code",
+                "position": "top_right",
+                "appear_frame": 2580
+              },
+              {
+                "text": "The fix commit: one line change. 41% completion gain.",
+                "style": "annotation_green",
+                "position": "bottom_center",
+                "appear_frame": 3300
+              }
+            ],
+            "transition": {
+              "type": "slide_left",
+              "duration_frames": 20
+            }
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "animated_diagram",
+            "start_frame": 3990,
+            "duration_frames": 1200,
+            "description": "Funnel draws itself. Each Q bar shorter than previous. Q5 drops dramatically with red circle appearing and pulsing. Then before/after bars grow in bottom corner.",
+            "text_overlays": [
+              {
+                "text": "One data point. One decision. 41 percentage points.",
+                "style": "diagram_caption",
+                "position": "bottom_center",
+                "appear_frame": 4890
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200,
+            "description": "Decision UI. Data dashboard background continues behind cards.",
+            "text_overlays": [
+              {
+                "text": "Analytics work. How do you give faculty the insight — without a data analyst?",
+                "style": "decision_question",
+                "position": "top_center",
+                "appear_frame": 5210
+              },
+              {
+                "text": "A  AI Suggestions → V08",
+                "style": "option_card",
+                "position": "quadrant_TL",
+                "appear_frame": 5250
+              },
+              {
+                "text": "B  Visual Heatmaps → V09",
+                "style": "option_card",
+                "position": "quadrant_TR",
+                "appear_frame": 5310
+              },
+              {
+                "text": "C  Integrate & Launch → V08",
+                "style": "option_card",
+                "position": "quadrant_BL",
+                "appear_frame": 5370
+              },
+              {
+                "text": "D  Analytics as Hero Feature → V09",
+                "style": "option_card",
+                "position": "quadrant_BR",
+                "appear_frame": 5430
+              }
+            ],
+            "transition": {
+              "type": "zoom_out",
+              "duration_frames": 30
+            }
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810,
+            "description": "Branch previews V08 and V09. Subscribe CTA.",
+            "text_overlays": [
+              {
+                "text": "Data doesn't lie. It just needs someone to listen.",
+                "style": "outro_quote",
+                "position": "center_left",
+                "appear_frame": 6420
+              },
+              {
+                "text": "↑ Subscribe",
+                "style": "cta_subscribe",
+                "position": "bottom_center",
+                "appear_frame": 6690
+              }
+            ],
+            "transition": {
+              "type": "fade_to_black",
+              "duration_frames": 60
+            }
+          }
+        ]
+      },
+      "youtube": {
+        "cards_targets": [
+          {
+            "appears_at_second": 190,
+            "type": "video",
+            "target_id": "V08",
+            "label": "A or C: Integration"
+          },
+          {
+            "appears_at_second": 215,
+            "type": "video",
+            "target_id": "V09",
+            "label": "B or D: Faculty Demo"
+          }
+        ],
+        "end_screen_targets": [
+          {
+            "position": "left",
+            "target_id": "V08",
+            "label": "A/C: Integrate"
+          },
+          {
+            "position": "right",
+            "target_id": "V09",
+            "label": "B/D: Faculty Demo"
+          }
+        ],
+        "playlist": "PLalchemist-series1",
+        "pinned_comment_template": "👇 DECIDE:\n\nA) AI Suggestions → [V08 link]\nB) Visual Heatmaps → [V09 link]\nC) Integrate & Launch → [V08 link]\nD) Analytics Hero Feature → [V09 link]\n\nComment your letter.",
+        "description_links": {
+          "A_C_integration": "[V08 link]",
+          "B_D_faculty_demo": "[V09 link]",
+          "github_swipe_survey": "https://github.com/dharamdaxini/swipe.survey"
+        }
+      }
+    },
+    {
+      "id": "V08",
+      "parent_id": "V03",
+      "branch_from_option": "C",
+      "title": "The Alchemist App — When Everything Finally Came Together",
+      "concept": "The full Alchemist-App build: three-tier architecture (student/faculty/admin), the pilot with 83% completion, and the first proof of product-market fit.",
+      "repo_stage": "Alchemist-App — full three-tier product, faculty dashboard, student swipe layer, admin portal",
+      "duration_seconds": 240,
+      "creator_script": {
+        "title": "It Stopped Being a Project. It Became a Product.",
+        "hook": "There's a specific moment where something you're building crosses a line. It stops feeling like code and starts feeling like a product. Alchemist-App was that moment for me.",
+        "story": "I'd built the pieces separately over months. The swipe mechanic. The question engine. The backend. The analytics. The design layer. Alchemist-App is where they all came together in one repo with one coherent purpose. Three user types, three interfaces, one platform. Student gets the swipe experience — clean, mobile-first, no distractions. Faculty gets a dashboard — create decks, assign to classes, see real-time completion data. Admin gets institution-level controls — faculty management, billing, reports. First pilot: one professor, one class of forty students. Week one completion rate on assigned decks: 83%.",
+        "decision_question": "First pilot is live and 83% of students are completing assigned decks. The professor is happy. She's showing colleagues. What do you build or do next?",
+        "options": [
+          "A) Scale within the institution — onboard more faculty before expanding anywhere",
+          "B) Build the sales demo — create a polished institutional demo to expand faster",
+          "C) Go deep on analytics — make faculty obsessed with the data layer",
+          "D) Build the institutional demo to close more deals before building more features"
+        ],
+        "branch_links": {
+          "A": "V09",
+          "B": "V10",
+          "C": "V09",
+          "D": "V10"
+        },
+        "outro": "83% completion. That number matters. Average LMS engagement is under 40%. This is what product-market fit actually feels like."
+      },
+      "full_script": {
+        "hook": "83% of students completing assigned educational content. For context: the average Learning Management System sees under 40% completion on assigned material. Whatever we'd built was working.",
+        "context": "Alchemist-App is the integration point. It's not a new idea — every component already existed across the previous repos. The work here was integration, architecture, and making three different user experiences feel like one coherent product.",
+        "repo_explanation": "The repo structure: /student, /faculty, /admin, /shared, /api. Student: the swipe experience from Initial-swipe-page, connected to real deck data from the backend, with completion tracking. Faculty: a React dashboard. Left panel: my decks (create, edit, duplicate). Center panel: classes — add students, assign decks, view roster. Right panel: analytics — completion rate per deck, per student, per card. Admin: institution management — add faculty accounts, set billing tier, download reports. Shared: the question engine from ques, design system components, auth utilities. API: Firebase wrapper functions that all three layers call.",
+        "decision_moment": "Week one pilot data: 83% completion. I send it to the professor. She sends it to two colleagues. Both colleagues want access. And I realise — I don't have a way to onboard them quickly. There's no self-serve signup, no institutional account provisioning. I have to manually create every account. That's a bottleneck that will kill growth.",
+        "options_narration": "Option A: fix the internal bottleneck — build proper institution onboarding, scale within this university before going anywhere else. Option B: build the sales demo first — create a polished demo experience so I can go to other institutions and sell while my first customer refers colleagues. Option C: go deep on analytics — add heatmaps, AI suggestions, make faculty dependent on the data layer. Option D: same as B — sales infrastructure before feature development.",
+        "outro": "83% was the proof. The next question was: how do you sell this to everyone else?"
+      },
+      "decision_point": {
+        "question": "83% completion pilot. Two faculty colleagues want access. No self-serve onboarding exists. What do you build?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Scale the Pilot",
+            "description": "Build institution onboarding, go deep before going wide",
+            "leads_to": "V09"
+          },
+          {
+            "id": "B",
+            "label": "Build the Sales Demo",
+            "description": "Create a polished demo to open new institutions in parallel",
+            "leads_to": "V10"
+          },
+          {
+            "id": "C",
+            "label": "Analytics Depth",
+            "description": "Make faculty obsessed with the data layer — retention through insight",
+            "leads_to": "V09"
+          },
+          {
+            "id": "D",
+            "label": "Demo First",
+            "description": "Sales infrastructure before more feature work",
+            "leads_to": "V10"
+          }
+        ]
+      },
+      "visuals": {
+        "screens_to_show": [
+          "Alchemist-App repo structure: /student /faculty /admin /shared /api",
+          "Faculty dashboard: three-panel layout — decks, classes, analytics",
+          "Student swipe experience on mobile — deck assigned by faculty",
+          "Admin portal: institution management view",
+          "Pilot completion data: 83% vs industry average 40% — bar chart"
+        ],
+        "architecture_diagrams": [
+          "Three-tier system: Admin (top) manages Faculty accounts. Faculty creates decks and assigns to Student groups. Student completes decks and sends completion events back up. Shared layer: question engine, design system, auth."
+        ],
+        "b_roll_suggestions": [
+          "Alchemist-App folder structure opening in IDE",
+          "Faculty dashboard creation flow — drag question cards",
+          "Student on phone swiping through an assigned deck",
+          "Completion rate chart: 83% vs 40% industry"
+        ]
+      },
+      "notebookllm_prompt": "Upload Alchemist-App repository. Generate a three-tier architecture diagram in hand-drawn notebook style. Three horizontal layers: Top: 'Admin Layer — institution management, billing, faculty accounts'. Middle: 'Faculty Layer — deck creation, class assignment, analytics dashboard'. Bottom: 'Student Layer — swipe experience, completion tracking'. Connecting arrows between layers: Admin → Faculty: 'manages accounts'. Faculty → Student: 'assigns decks'. Student → Faculty: 'completion data flows up'. Right-side callout: '83% completion vs 40% industry average'. Title: 'Alchemist-App — Full Three-Tier Architecture'. Ink: blue pen, notebook paper.",
+      "remotion_spec": {
+        "resolution": "1920x1080",
+        "fps": 30,
+        "duration_seconds": 240,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90,
+            "description": "Three layers stack from bottom up: Student → Faculty → Admin. Gold particle burst on final stack. '83%' counter animates in.",
+            "text_overlays": [
+              {
+                "text": "ALCHEMIST",
+                "style": "series_label",
+                "position": "top_center",
+                "appear_frame": 0
+              },
+              {
+                "text": "V08 — Everything Comes Together",
+                "style": "episode_title",
+                "position": "center",
+                "appear_frame": 45
+              },
+              {
+                "text": "Reached via: V03 C · V04 B/D · V05 A/C · V07 A/C",
+                "style": "branch_label_multi",
+                "position": "bottom_right",
+                "appear_frame": 60
+              }
+            ],
+            "transition": {
+              "type": "layer_stack_gold",
+              "duration_frames": 60
+            }
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_head",
+            "start_frame": 90,
+            "duration_frames": 600,
+            "description": "Founder delivers the 83% hook. Industry average 40% comparison overlay.",
+            "text_overlays": [
+              {
+                "text": "Dharamdaxini · Founder, Alchemist",
+                "style": "lower_third",
+                "position": "bottom_left",
+                "appear_frame": 120
+              },
+              {
+                "text": "Industry average: 40%",
+                "style": "stat_callout_red",
+                "position": "center_right",
+                "appear_frame": 300
+              },
+              {
+                "text": "Alchemist pilot: 83%",
+                "style": "stat_callout_green",
+                "position": "center_right",
+                "appear_frame": 420
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S03_STORY",
+            "type": "mixed_narration_broll",
+            "start_frame": 690,
+            "duration_frames": 1800,
+            "description": "0-600: Alchemist-App folder structure tour in IDE. 600-1200: faculty dashboard three-panel view walkthrough. 1200-1800: student swipe experience on mobile — assigned deck completion.",
+            "text_overlays": [
+              {
+                "text": "/student /faculty /admin /shared /api — one repo, one product",
+                "style": "caption_code",
+                "position": "bottom_center",
+                "appear_frame": 890
+              },
+              {
+                "text": "Faculty: create, assign, track. All in one panel.",
+                "style": "caption",
+                "position": "bottom_center",
+                "appear_frame": 1390
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S04_REPO",
+            "type": "screen_capture_annotated",
+            "start_frame": 2490,
+            "duration_frames": 1500,
+            "description": "Deep dive: faculty dashboard creation flow annotated. Student completion event in Firestore. Admin institution management UI. Pilot data: 83% across 40 students.",
+            "text_overlays": [
+              {
+                "text": "Faculty dashboard — create, assign, track in one flow",
+                "style": "annotation_yellow",
+                "position": "top_right",
+                "appear_frame": 2520
+              },
+              {
+                "text": "Admin: add faculty → set billing → export reports",
+                "style": "annotation_yellow",
+                "position": "top_right",
+                "appear_frame": 2820
+              },
+              {
+                "text": "Pilot week 1: 83% of 40 students completed assigned decks",
+                "style": "stat_callout_green",
+                "position": "bottom_center",
+                "appear_frame": 3600
+              }
+            ],
+            "transition": {
+              "type": "slide_left",
+              "duration_frames": 20
+            }
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "animated_diagram",
+            "start_frame": 3990,
+            "duration_frames": 1200,
+            "description": "Three-tier architecture draws itself layer by layer. Connecting arrows animate with labels. 83% vs 40% comparison bars appear in corner with grow animation.",
+            "text_overlays": [
+              {
+                "text": "Three user types. One coherent platform.",
+                "style": "diagram_caption",
+                "position": "bottom_center",
+                "appear_frame": 4890
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200,
+            "description": "Decision UI. Platform aesthetic — polished, product-grade. The decision is a scale decision now, not a build decision.",
+            "text_overlays": [
+              {
+                "text": "83% pilot. Two faculty want access. No self-serve onboarding. What now?",
+                "style": "decision_question",
+                "position": "top_center",
+                "appear_frame": 5210
+              },
+              {
+                "text": "A  Scale the Pilot → V09",
+                "style": "option_card",
+                "position": "quadrant_TL",
+                "appear_frame": 5250
+              },
+              {
+                "text": "B  Build the Sales Demo → V10",
+                "style": "option_card",
+                "position": "quadrant_TR",
+                "appear_frame": 5310
+              },
+              {
+                "text": "C  Analytics Depth → V09",
+                "style": "option_card",
+                "position": "quadrant_BL",
+                "appear_frame": 5370
+              },
+              {
+                "text": "D  Demo First → V10",
+                "style": "option_card",
+                "position": "quadrant_BR",
+                "appear_frame": 5430
+              }
+            ],
+            "transition": {
+              "type": "zoom_out",
+              "duration_frames": 30
+            }
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810,
+            "description": "Branch previews V09 and V10. This is the final fork before the series bridge.",
+            "text_overlays": [
+              {
+                "text": "Product-market fit confirmed. Now scale it.",
+                "style": "outro_headline",
+                "position": "center_left",
+                "appear_frame": 6420
+              },
+              {
+                "text": "↑ Subscribe",
+                "style": "cta_subscribe",
+                "position": "bottom_center",
+                "appear_frame": 6690
+              }
+            ],
+            "transition": {
+              "type": "fade_to_black",
+              "duration_frames": 60
+            }
+          }
+        ]
+      },
+      "youtube": {
+        "cards_targets": [
+          {
+            "appears_at_second": 190,
+            "type": "video",
+            "target_id": "V09",
+            "label": "A or C: Scale + Analytics"
+          },
+          {
+            "appears_at_second": 215,
+            "type": "video",
+            "target_id": "V10",
+            "label": "B or D: Sales Demo"
+          }
+        ],
+        "end_screen_targets": [
+          {
+            "position": "left",
+            "target_id": "V09",
+            "label": "A/C: Scale Pilot"
+          },
+          {
+            "position": "right",
+            "target_id": "V10",
+            "label": "B/D: Sales Demo"
+          }
+        ],
+        "playlist": "PLalchemist-series1",
+        "pinned_comment_template": "👇 DECIDE:\n\nA) Scale the Pilot → [V09 link]\nB) Build the Sales Demo → [V10 link]\nC) Analytics Depth → [V09 link]\nD) Demo First → [V10 link]\n\nComment your letter.",
+        "description_links": {
+          "A_C_scale": "[V09 link]",
+          "B_D_demo": "[V10 link]",
+          "github_alchemist_app": "https://github.com/dharamdaxini/Alchemist-App"
+        }
+      }
+    },
+    {
+      "id": "V09",
+      "parent_id": "V05",
+      "branch_from_option": "B_or_D",
+      "title": "The Faculty Demo — How I Closed an Institution in One Meeting",
+      "concept": "Alchemist-Faculty-Demo: a hardcoded, curated demo built specifically for institutional sales. The night-before preparation technique. The contract signed on the spot.",
+      "repo_stage": "Alchemist-Faculty-Demo — hardcoded sample data, tour mode, pre-loaded institutional content",
+      "duration_seconds": 240,
+      "creator_script": {
+        "title": "I Built a Whole Separate App Just to Sell the Real App",
+        "hook": "The best demo I ever gave had nothing to do with the product being technically impressive. It was impressive because I loaded the customer's own content into it the night before. She saw herself in it.",
+        "story": "Alchemist-Faculty-Demo is a separate repo. Hardcoded sample data — a fictional professor called Dr. Sharma, pre-populated student analytics, decks that look full and rich. A guided tour button that steps through every feature in the right order. I took it to three institutions. First two: 'very interesting, we'll discuss internally.' Third one: I'd spent the evening before loading their actual CS101 curriculum into the demo decks. I walked into that meeting and showed the head of CS her own content being swiped by fake students in my analytics. She said: 'This is what our students need.' Signed the same day.",
+        "decision_question": "You have a sales demo that works and a growing number of institutions interested. How do you scale the sales operation from here?",
+        "options": [
+          "A) Build self-serve onboarding — institutions sign up and configure themselves",
+          "B) Stay high-touch — manual demos and custom content prep for every institution",
+          "C) Build a content template library — give institutions starting points they can adapt",
+          "D) Go to an ed-tech accelerator — raise money and hire a sales team"
+        ],
+        "branch_links": {
+          "A": "V10",
+          "B": "V10",
+          "C": "V10",
+          "D": "V10"
+        },
+        "outro": "The demo isn't the product. The demo is the story you tell about what the product could mean for them. Get that story right and the product almost sells itself."
+      },
+      "full_script": {
+        "hook": "Three demos at three institutions. Two of them ended with 'we'll discuss internally.' One ended with a signed contract. The difference was one evening of preparation.",
+        "context": "The live Alchemist-App is great but it has one problem as a demo: if the data isn't populated, it looks empty. An empty analytics dashboard sells nothing. A faculty dashboard with no decks looks like a blank page. Demos need story. Story needs content.",
+        "repo_explanation": "Alchemist-Faculty-Demo is a standalone repo. It's essentially a snapshot of the faculty layer of Alchemist-App but with hardcoded fixtures. Dr. Sharma has three decks pre-created. Her class of 28 students has completion data pre-populated. The analytics dashboard shows realistic engagement curves — some good, some with visible drop-offs so you can demo the 'this card is struggling' feature. There's a tour mode button in the top right — clicking it activates a step-by-step overlay that highlights each feature in sequence with animations. I can give a complete, compelling demo with zero dependency on live Firebase data or actual user accounts.",
+        "decision_moment": "Third institution. Head of computer science department. The night before, I open the demo and swap out Dr. Sharma's generic decks for their actual CS101 topic list. I make the fake student names sound like local names. I adjust the analytics to reflect realistic CS student behaviour. I walk in and show her class running in my demo. The recognition is immediate. She stops me at the analytics slide and says: 'Can you show me this for all my courses?'",
+        "options_narration": "The demo works and deals are coming in. Now I need to decide how to scale. Option A: build self-serve so institutions can sign up without me. Option B: stay high-touch indefinitely — every demo customised, every onboarding manual. Option C: build a content template library so institutions have starting points. Option D: raise money and hire someone to do the demos while I build.",
+        "outro": "The demo closed my first three institutional deals. The question is how you scale something that works because it's personal."
+      },
+      "decision_point": {
+        "question": "Demo works. Deals are coming in. How do you scale institutional sales?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Self-Serve Onboarding",
+            "description": "Institutions sign up and configure themselves — no founder required",
+            "leads_to": "V10"
+          },
+          {
+            "id": "B",
+            "label": "Stay High-Touch",
+            "description": "Every demo custom, every onboarding manual — quality over scale",
+            "leads_to": "V10"
+          },
+          {
+            "id": "C",
+            "label": "Content Template Library",
+            "description": "Pre-built decks institutions adapt — reduce demo prep time",
+            "leads_to": "V10"
+          },
+          {
+            "id": "D",
+            "label": "Raise and Hire",
+            "description": "Ed-tech accelerator, raise money, hire a sales team",
+            "leads_to": "V10"
+          }
+        ]
+      },
+      "visuals": {
+        "screens_to_show": [
+          "Alchemist-Faculty-Demo repo: fixture files for Dr. Sharma, pre-populated analytics",
+          "Tour mode activated — step-by-step overlay highlighting features",
+          "Night-before prep: swapping generic deck names for CS101 topic names",
+          "Demo analytics dashboard with realistic engagement data",
+          "Three demos funnel: 3 pitches → 2 'discuss internally' → 1 signed contract"
+        ],
+        "architecture_diagrams": [
+          "Demo architecture: Hardcoded fixtures (JSON) → Faculty demo UI → Tour mode overlay. No Firebase dependency. No auth required. Runs entirely from local state."
+        ],
+        "b_roll_suggestions": [
+          "Founder at laptop the night before — loading customer content into demo",
+          "Demo walkthrough in a meeting room",
+          "Contract signing moment — represented illustratively",
+          "Funnel: 3 pitches → 1 close"
+        ]
+      },
+      "notebookllm_prompt": "Upload Alchemist-Faculty-Demo repository. Generate a sales funnel diagram in hand-drawn notebook style. Draw a wide funnel shape. Top: '3 Institution Demos'. Second level: '2 → Internal Discussion (generic demo)'. Bottom: '1 → Signed Contract (customised demo)'. Arrow pointing to bottom level: 'Night before: loaded customer's own CS101 content'. Below the funnel: two boxes side by side: 'Generic Demo: show capabilities' vs 'Custom Demo: show their future'. Star the custom box. Add a callout: 'Dr. Sharma = fictional. The CS101 content = real.' Title: 'V09 — The Faculty Demo That Closed the Deal'. Ink: blue pen, ruled notebook.",
+      "remotion_spec": {
+        "resolution": "1920x1080",
+        "fps": 30,
+        "duration_seconds": 240,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90,
+            "description": "Funnel fills from top. Bottom level lights up green — contract signed. Title appears.",
+            "text_overlays": [
+              {
+                "text": "ALCHEMIST",
+                "style": "series_label",
+                "position": "top_center",
+                "appear_frame": 0
+              },
+              {
+                "text": "V09 — The Faculty Demo",
+                "style": "episode_title",
+                "position": "center",
+                "appear_frame": 45
+              },
+              {
+                "text": "Reached via: V05 B/D · V06 all · V07 B/D · V08 A/C",
+                "style": "branch_label_multi",
+                "position": "bottom_right",
+                "appear_frame": 60
+              }
+            ],
+            "transition": {
+              "type": "funnel_fill_green",
+              "duration_frames": 60
+            }
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_head",
+            "start_frame": 90,
+            "duration_frames": 600,
+            "description": "Founder delivers the 'one evening of preparation' hook. '3 demos, 1 contract' stat overlay.",
+            "text_overlays": [
+              {
+                "text": "Dharamdaxini · Founder, Alchemist",
+                "style": "lower_third",
+                "position": "bottom_left",
+                "appear_frame": 120
+              },
+              {
+                "text": "3 demos · 1 signed contract",
+                "style": "stat_callout_green",
+                "position": "center_right",
+                "appear_frame": 360
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S03_STORY",
+            "type": "mixed_narration_broll",
+            "start_frame": 690,
+            "duration_frames": 1800,
+            "description": "0-600: Faculty-Demo repo — fixture files, Dr. Sharma data, tour mode code. 600-1200: tour mode demo screen recording — step-by-step overlay activating. 1200-1800: night-before prep — swapping generic content for CS101 content (screen recording).",
+            "text_overlays": [
+              {
+                "text": "Hardcoded fixtures: no Firebase, no auth, no fragility",
+                "style": "caption",
+                "position": "bottom_center",
+                "appear_frame": 890
+              },
+              {
+                "text": "Tour mode: built-in walkthrough, zero rehearsal needed",
+                "style": "caption",
+                "position": "bottom_center",
+                "appear_frame": 1290
+              },
+              {
+                "text": "Night before: swap Dr. Sharma's decks for real CS101 topics",
+                "style": "annotation_yellow",
+                "position": "top_right",
+                "appear_frame": 1590
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S04_REPO",
+            "type": "screen_capture_annotated",
+            "start_frame": 2490,
+            "duration_frames": 1500,
+            "description": "Faculty-Demo repo deep dive: fixtures/drSharma.json annotated. tourMode.js highlighted. Demo analytics screenshot — realistic engagement curve. The contract-moment reconstruction.",
+            "text_overlays": [
+              {
+                "text": "fixtures/drSharma.json — no database required",
+                "style": "annotation_yellow",
+                "position": "top_right",
+                "appear_frame": 2520
+              },
+              {
+                "text": "'Can you show me this for all my courses?' — CS department head",
+                "style": "quote_callout",
+                "position": "center",
+                "appear_frame": 3300
+              }
+            ],
+            "transition": {
+              "type": "slide_left",
+              "duration_frames": 20
+            }
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "animated_diagram",
+            "start_frame": 3990,
+            "duration_frames": 1200,
+            "description": "Sales funnel draws itself. Three levels animate in. Bottom level glows green. Custom vs generic demo boxes appear side by side with star on custom.",
+            "text_overlays": [
+              {
+                "text": "The product didn't close the deal. The story did.",
+                "style": "diagram_caption",
+                "position": "bottom_center",
+                "appear_frame": 4890
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200,
+            "description": "Decision UI. This is the final decision before the series bridge — weighty, clear. All four options lead to V10.",
+            "text_overlays": [
+              {
+                "text": "Demo works. Deals are coming in. How do you scale institutional sales?",
+                "style": "decision_question",
+                "position": "top_center",
+                "appear_frame": 5210
+              },
+              {
+                "text": "A  Self-Serve Onboarding → V10",
+                "style": "option_card",
+                "position": "quadrant_TL",
+                "appear_frame": 5250
+              },
+              {
+                "text": "B  Stay High-Touch → V10",
+                "style": "option_card",
+                "position": "quadrant_TR",
+                "appear_frame": 5310
+              },
+              {
+                "text": "C  Content Templates → V10",
+                "style": "option_card",
+                "position": "quadrant_BL",
+                "appear_frame": 5370
+              },
+              {
+                "text": "D  Raise and Hire → V10",
+                "style": "option_card",
+                "position": "quadrant_BR",
+                "appear_frame": 5430
+              },
+              {
+                "text": "All paths → V10: The Series Bridge",
+                "style": "branch_routing_label",
+                "position": "bottom_center",
+                "appear_frame": 6090
+              }
+            ],
+            "transition": {
+              "type": "zoom_out",
+              "duration_frames": 30
+            }
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810,
+            "description": "All four arrows converge to V10. Big moment — series is about to close. Subscribe CTA plus Series 2 teaser.",
+            "text_overlays": [
+              {
+                "text": "All four paths covered in V10 — the series bridge.",
+                "style": "outro_headline",
+                "position": "center_left",
+                "appear_frame": 6420
+              },
+              {
+                "text": "And then: Module 2 — Food. Series 2 begins.",
+                "style": "outro_subhead",
+                "position": "center_left",
+                "appear_frame": 6540
+              },
+              {
+                "text": "↑ Subscribe",
+                "style": "cta_subscribe",
+                "position": "bottom_center",
+                "appear_frame": 6690
+              }
+            ],
+            "transition": {
+              "type": "fade_to_black",
+              "duration_frames": 60
+            }
+          }
+        ]
+      },
+      "youtube": {
+        "cards_targets": [
+          {
+            "appears_at_second": 220,
+            "type": "video",
+            "target_id": "V10",
+            "label": "All paths → V10: The Bridge"
+          }
+        ],
+        "end_screen_targets": [
+          {
+            "position": "center",
+            "target_id": "V10",
+            "label": "V10: Series Bridge + Food Module"
+          }
+        ],
+        "playlist": "PLalchemist-series1",
+        "pinned_comment_template": "👇 SCALE STRATEGY VOTE:\n\nA) Self-Serve Onboarding → [V10 link]\nB) Stay High-Touch → [V10 link]\nC) Content Templates → [V10 link]\nD) Raise and Hire → [V10 link]\n\nAll roads lead to V10 — but comment which scale path you'd choose. I'll address all four there.",
+        "description_links": {
+          "all_paths_V10": "[V10 link]",
+          "github_faculty_demo": "https://github.com/dharamdaxini/Alchemist-Faculty-Demo"
+        }
+      }
+    },
+    {
+      "id": "V10",
+      "parent_id": "V08",
+      "branch_from_option": "B_or_D",
+      "title": "Where Alchemist Goes Next — And Why Module 2 Is Food",
+      "concept": "Series bridge episode. The full architecture retrospective. All four scale paths addressed. The Geo-politics-2026 module as platform validation. The Food Module launch as Series 2.",
+      "repo_stage": "Geo-politics-2026 + full series retrospective + Series 2 setup",
+      "duration_seconds": 240,
+      "creator_script": {
+        "title": "Here's the Full Picture. And Here's What Gets Built Next.",
+        "hook": "Eight repos. Twelve months. Paying institutions. A platform that works. Let me show you the whole map — and then tell you why the next module is food.",
+        "story": "I built Geo-politics-2026 as a content experiment — could the Alchemist engine handle rich, current-events-based content with maps, data, citations? It opened 23 GitHub issues that became 23 platform improvements. That's what building on your own platform gets you. Now: all four scale paths you voted on — self-serve, high-touch, templates, fundraising — I've tried all of them. Here's what actually worked. And Series 2 is the Food Module. Why food? Because everyone eats. Because food connects to nutrition, culture, agriculture, economics, sustainability. Because food is the most universal subject in the world and nobody has built a great learning experience around it.",
+        "decision_question": "Series 2 is the Food Module. You're now on the product team. What's the first deck we build?",
+        "options": [
+          "A) Farm to Table — the supply chain from seed to plate",
+          "B) Nutrition Science — what food actually does to your body",
+          "C) Global Cuisines — food as culture, identity, and history",
+          "D) Food Systems — agriculture, sustainability, the economics of how the world gets fed"
+        ],
+        "branch_links": {
+          "A": "SERIES2_V01",
+          "B": "SERIES2_V01",
+          "C": "SERIES2_V01",
+          "D": "SERIES2_V01"
+        },
+        "outro": "Series 2 Episode 1 launches based on whichever option wins. This is real. Your vote is the brief. Subscribe and comment now."
+      },
+      "full_script": {
+        "hook": "Let me show you the full map. Every repo, every decision, every path you could have taken through this series — and where the platform is right now.",
+        "context": "Geo-politics-2026 was me eating my own cooking. I took the Alchemist platform and built a real content module on it — current events, maps, geopolitical data, swipe-formatted. The process opened 23 GitHub issues. Things the platform couldn't do. Image card types. Citation fields. A 'learn card' type — pure information, no question. Difficulty scaling. Every gap became a feature. That's why you should always build on your own platform.",
+        "repo_explanation": "The complete system as it stands: question engine from ques at the core. Swipe delivery layer from Initial-swipe-page. Data and payment layer from swipe.survey. Three-tier product from Alchemist-App. Content module validation from Geo-politics-2026. Sales infrastructure from Alchemist-Faculty-Demo. Six repos contributing to one living platform. The seventh — Series 2 — starts with food. The repo doesn't exist yet. It gets created based on your vote.",
+        "decision_moment": "I've answered all four scale questions. Self-serve onboarding: built it, works well for smaller institutions. High-touch: still use it for enterprise contracts. Content templates: now a premium feature. Fundraising: took a small pre-seed, hired one person for sales. And I built the Geo-politics module to prove the platform could handle more than just surveys. It could. The next module is food. I want you to decide what the first deck is.",
+        "options_narration": "Four directions for the Food Module: the supply chain — farm to fork, logistics, everything between. Nutrition science — macros, micros, what food does biologically. Global cuisines — food as identity, immigration, culture. Food systems — agriculture, climate, the economics of how eight billion people get fed. All four are real. Your vote opens the Series 2 repo.",
+        "outro": "You watched a swipe survey become an EdTech platform across eight repos and twelve months. Series 2 is yours to shape. Comment now."
+      },
+      "decision_point": {
+        "question": "Series 2: The Food Module. You're on the product team. What's the first deck?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Farm to Table",
+            "description": "The supply chain — seed to plate, logistics, food miles",
+            "leads_to": "SERIES2_V01"
+          },
+          {
+            "id": "B",
+            "label": "Nutrition Science",
+            "description": "What food does to your body — macros, gut, metabolism",
+            "leads_to": "SERIES2_V01"
+          },
+          {
+            "id": "C",
+            "label": "Global Cuisines",
+            "description": "Food as culture, identity, diaspora, history",
+            "leads_to": "SERIES2_V01"
+          },
+          {
+            "id": "D",
+            "label": "Food Systems",
+            "description": "Agriculture, sustainability, feeding eight billion people",
+            "leads_to": "SERIES2_V01"
+          }
+        ]
+      },
+      "visuals": {
+        "screens_to_show": [
+          "All 8 repos side by side in GitHub browser — scrollable list with commit dates",
+          "Geo-politics-2026 repo — 23 GitHub issues list",
+          "Platform evolution timeline: commit date of each repo from swipe-survey to Faculty-Demo",
+          "Blank new repo placeholder: 'alchemist-food-module — to be created'",
+          "Four food content direction moodboards (illustrated, not photographs)"
+        ],
+        "architecture_diagrams": [
+          "Full Alchemist system map: six repos as labelled nodes arranged around a central platform circle, with their contribution labeled on each connecting arrow. External: three paying institutions. Planned: Food Module node with a '?' placeholder."
+        ],
+        "b_roll_suggestions": [
+          "Terminal window: git init alchemist-food-module",
+          "A spread of global food — representing the four module directions",
+          "Series 1 episode thumbnails stacked, with Series 2 blank card at end",
+          "Comment section with votes filling in — community building moment"
+        ]
+      },
+      "notebookllm_prompt": "Upload all available repository files. Generate a complete series architecture diagram in hand-drawn notebook style. Center: a circle labeled 'Alchemist Platform'. Six nodes orbiting it connected by arrows, each labeled with the repo name and its contribution: 'ques → question engine', 'Initial-swipe-page → delivery layer', 'swipe.survey → data + payments', 'Alchemist-App → three-tier product', 'Geo-politics-2026 → content validation (23 features)', 'Alchemist-Faculty-Demo → sales layer'. Outside: three boxes labeled 'Institution 1', 'Institution 2', 'Institution 3' connected to platform. Below: a dashed box labeled 'alchemist-food-module — Series 2' with a question mark inside and four branches: Farm-to-Table, Nutrition, Cuisines, Food Systems. Title: 'Complete Alchemist Architecture — Series 1 Retrospective'. Ink: blue pen, ruled notebook, multiple pages feel.",
+      "remotion_spec": {
+        "resolution": "1920x1080",
+        "fps": 30,
+        "duration_seconds": 240,
+        "total_duration_frames": 7200,
+        "scenes": [
+          {
+            "id": "S01_INTRO",
+            "type": "intro_animation",
+            "start_frame": 0,
+            "duration_frames": 90,
+            "description": "All previous 9 episode cards appear as a grid — each one a small thumbnail. Then Series 2 blank card appears centre screen with a question mark. Title appears.",
+            "text_overlays": [
+              {
+                "text": "ALCHEMIST",
+                "style": "series_label",
+                "position": "top_center",
+                "appear_frame": 0
+              },
+              {
+                "text": "V10 — The Series Bridge",
+                "style": "episode_title",
+                "position": "center",
+                "appear_frame": 45
+              },
+              {
+                "text": "Terminal episode — all paths converge here",
+                "style": "branch_label",
+                "position": "bottom_right",
+                "appear_frame": 60
+              }
+            ],
+            "transition": {
+              "type": "grid_then_spotlight",
+              "duration_frames": 70
+            }
+          },
+          {
+            "id": "S02_HOOK",
+            "type": "talking_head",
+            "start_frame": 90,
+            "duration_frames": 600,
+            "description": "Founder delivers the full-map hook. Reflects on 12 months and 8 repos.",
+            "text_overlays": [
+              {
+                "text": "Dharamdaxini · Founder, Alchemist",
+                "style": "lower_third",
+                "position": "bottom_left",
+                "appear_frame": 120
+              },
+              {
+                "text": "8 repos · 12 months · 3 paying institutions",
+                "style": "stat_trio_gold",
+                "position": "center_right",
+                "appear_frame": 300
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S03_STORY",
+            "type": "mixed_narration_broll",
+            "start_frame": 690,
+            "duration_frames": 1800,
+            "description": "0-600: Geo-politics-2026 repo walkthrough — 23 issues list, new card types added. 600-1200: all four scale paths addressed in rapid-fire talking head (200 frames each). 1200-1800: full platform architecture diagram animated on screen.",
+            "text_overlays": [
+              {
+                "text": "Geo-politics-2026: 23 issues = 23 platform features",
+                "style": "caption",
+                "position": "bottom_center",
+                "appear_frame": 890
+              },
+              {
+                "text": "Build on your own platform. Always.",
+                "style": "caption_bold",
+                "position": "bottom_center",
+                "appear_frame": 1090
+              },
+              {
+                "text": "4 scale paths. All tried. All real.",
+                "style": "caption",
+                "position": "bottom_center",
+                "appear_frame": 1390
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S04_REPO",
+            "type": "screen_capture_annotated",
+            "start_frame": 2490,
+            "duration_frames": 1500,
+            "description": "All 8 repos shown on GitHub profile page. Click through each — one second per repo with name and commit count annotated. Then terminal: git init alchemist-food-module — the Series 2 repo creation moment.",
+            "text_overlays": [
+              {
+                "text": "Eight repos. One platform.",
+                "style": "caption_bold",
+                "position": "bottom_center",
+                "appear_frame": 2520
+              },
+              {
+                "text": "$ git init alchemist-food-module",
+                "style": "terminal_text",
+                "position": "center",
+                "appear_frame": 3600
+              },
+              {
+                "text": "Series 2 begins with your vote.",
+                "style": "caption_bold",
+                "position": "bottom_center",
+                "appear_frame": 3750
+              }
+            ],
+            "transition": {
+              "type": "slide_left",
+              "duration_frames": 20
+            }
+          },
+          {
+            "id": "S05_DIAGRAM",
+            "type": "animated_diagram",
+            "start_frame": 3990,
+            "duration_frames": 1200,
+            "description": "Full system map draws itself — central circle first, then six repo nodes orbit out with connecting arrows, then three institution boxes appear, then Food Module dashed box grows in at bottom with four sub-branches.",
+            "text_overlays": [
+              {
+                "text": "This is where the platform is. Series 2 is what happens next.",
+                "style": "diagram_caption",
+                "position": "bottom_center",
+                "appear_frame": 4890
+              }
+            ],
+            "transition": {
+              "type": "cut",
+              "duration_frames": 1
+            }
+          },
+          {
+            "id": "S06_DECISION",
+            "type": "decision_overlay",
+            "start_frame": 5190,
+            "duration_frames": 1200,
+            "description": "The most visually dramatic decision screen of the series. Full-screen. The four Food Module options use food-themed visual backgrounds — muted illustration style. This is the Series 2 brief.",
+            "text_overlays": [
+              {
+                "text": "Series 2: The Food Module. You're on the product team. What's the first deck?",
+                "style": "decision_question_large",
+                "position": "top_center",
+                "appear_frame": 5210
+              },
+              {
+                "text": "A  Farm to Table",
+                "style": "option_card_food",
+                "position": "quadrant_TL",
+                "appear_frame": 5250
+              },
+              {
+                "text": "B  Nutrition Science",
+                "style": "option_card_food",
+                "position": "quadrant_TR",
+                "appear_frame": 5310
+              },
+              {
+                "text": "C  Global Cuisines",
+                "style": "option_card_food",
+                "position": "quadrant_BL",
+                "appear_frame": 5370
+              },
+              {
+                "text": "D  Food Systems",
+                "style": "option_card_food",
+                "position": "quadrant_BR",
+                "appear_frame": 5430
+              },
+              {
+                "text": "Most votes = Series 2 Episode 1 brief. This is real.",
+                "style": "cta_urgent",
+                "position": "bottom_center",
+                "appear_frame": 6090
+              }
+            ],
+            "transition": {
+              "type": "zoom_in_dramatic",
+              "duration_frames": 40
+            }
+          },
+          {
+            "id": "S07_OUTRO",
+            "type": "outro",
+            "start_frame": 6390,
+            "duration_frames": 810,
+            "description": "Series 1 complete card. Subscribe CTA. Series 2 teaser graphic. Community comment prompt — show existing comments with letter votes to create FOMO.",
+            "text_overlays": [
+              {
+                "text": "Series 1: Complete.",
+                "style": "outro_headline_gold",
+                "position": "center_left",
+                "appear_frame": 6420
+              },
+              {
+                "text": "Series 2 starts with the winning comment.",
+                "style": "outro_subhead",
+                "position": "center_left",
+                "appear_frame": 6480
+              },
+              {
+                "text": "↑ Subscribe · ↓ Comment your letter",
+                "style": "cta_double",
+                "position": "bottom_center",
+                "appear_frame": 6690
+              }
+            ],
+            "transition": {
+              "type": "fade_to_black",
+              "duration_frames": 60
+            }
+          }
+        ]
+      },
+      "youtube": {
+        "cards_targets": [
+          {
+            "appears_at_second": 220,
+            "type": "playlist",
+            "target_id": "PLalchemist-series1",
+            "label": "Watch the full series"
+          }
+        ],
+        "end_screen_targets": [
+          {
+            "position": "left",
+            "target_id": "V01",
+            "label": "Start from Episode 1"
+          },
+          {
+            "position": "right",
+            "target_id": "PLalchemist-series1",
+            "label": "Full Series Playlist"
+          }
+        ],
+        "playlist": "PLalchemist-series1",
+        "pinned_comment_template": "🍽️ SERIES 2 VOTE — THIS IS THE BRIEF:\n\nA) Farm to Table — supply chain\nB) Nutrition Science — biology of food\nC) Global Cuisines — food as culture\nD) Food Systems — agriculture + sustainability\n\nComment your letter. The option with most votes = Series 2 Episode 1. I will post the repo creation the day voting closes.",
+        "description_links": {
+          "full_series_playlist": "[playlist link]",
+          "start_from_V01": "[V01 link]",
+          "github_geo_politics": "https://github.com/dharamdaxini/Geo-politics-2026",
+          "github_faculty_demo": "https://github.com/dharamdaxini/Alchemist-Faculty-Demo"
+        }
+      }
+    }
+  ],
+  "branching_map": {
+    "description": "Canonical graph. Every leads_to value must match a key in this map or equal SERIES2_V01 (terminal). All 10 videos are nodes. No dangling edges.",
+    "nodes": [
+      "V01",
+      "V02",
+      "V03",
+      "V04",
+      "V05",
+      "V06",
+      "V07",
+      "V08",
+      "V09",
+      "V10",
+      "SERIES2_V01"
+    ],
+    "edges": {
+      "V01": {
+        "A": "V02",
+        "B": "V03",
+        "C": "V04",
+        "D": "V05"
+      },
+      "V02": {
+        "A": "V06",
+        "B": "V06",
+        "C": "V07",
+        "D": "V07"
+      },
+      "V03": {
+        "A": "V05",
+        "B": "V04",
+        "C": "V08",
+        "D": "V06"
+      },
+      "V04": {
+        "A": "V07",
+        "B": "V08",
+        "C": "V06",
+        "D": "V08"
+      },
+      "V05": {
+        "A": "V08",
+        "B": "V09",
+        "C": "V08",
+        "D": "V09"
+      },
+      "V06": {
+        "A": "V09",
+        "B": "V09",
+        "C": "V09",
+        "D": "V09"
+      },
+      "V07": {
+        "A": "V08",
+        "B": "V09",
+        "C": "V08",
+        "D": "V09"
+      },
+      "V08": {
+        "A": "V09",
+        "B": "V10",
+        "C": "V09",
+        "D": "V10"
+      },
+      "V09": {
+        "A": "V10",
+        "B": "V10",
+        "C": "V10",
+        "D": "V10"
+      },
+      "V10": {
+        "A": "SERIES2_V01",
+        "B": "SERIES2_V01",
+        "C": "SERIES2_V01",
+        "D": "SERIES2_V01"
+      },
+      "SERIES2_V01": "TERMINAL"
+    },
+    "reachability": {
+      "V01": "root — all viewers start here",
+      "V02": "reachable from V01-A",
+      "V03": "reachable from V01-B",
+      "V04": "reachable from V01-C, V03-B",
+      "V05": "reachable from V01-D, V03-A",
+      "V06": "reachable from V02-A/C, V03-D, V04-C",
+      "V07": "reachable from V02-B/D, V04-A",
+      "V08": "reachable from V03-C, V04-B/D, V05-A/C, V07-A/C",
+      "V09": "reachable from V05-B/D, V06-all, V07-B/D, V08-A/C",
+      "V10": "reachable from V08-B/D, V09-all",
+      "SERIES2_V01": "reachable from V10-all"
+    },
+    "validation": {
+      "dangling_branches": "none",
+      "orphan_nodes": "none",
+      "total_unique_edges": 36,
+      "terminal_nodes": [
+        "SERIES2_V01"
+      ]
+    }
+  },
+  "notebook_master_diagram": {
+    "title": "Complete Series Architecture — Swipe Survey to Alchemist Platform",
+    "prompt": "Upload all available repository files and screenshots as source material. Generate a full landscape notebook diagram spanning the complete product evolution. Layout: left-to-right timeline across the page. STAGE 1 (far left): 'swipe-survey v1'. Draw a card stack with swipe arrows. Label: 'The Mechanic'. STAGE 2: 'ques'. Draw a branching tree. Label: 'The Brain'. STAGE 3: 'swipe---survey + Initial-swipe-page'. Draw a frosted glass card shape. Label: 'The Design'. STAGE 4: 'swipe.survey'. Draw a database cylinder + UPI QR code icon. Label: 'The Data + Payments'. STAGE 5: 'Alchemist-App'. Draw three stacked boxes: Admin / Faculty / Student. Label: 'The Product'. STAGE 6 (far right): 'Geo-politics + Faculty-Demo'. Draw a content deck icon + a funnel icon. Label: 'Content + Sales'. Connect all stages with horizontal arrows. Below each stage: 2-3 bullet annotations about key decisions. Above the timeline: title 'Alchemist — 8 Repos, 12 Months'. Below: three feature lanes running the full width — 'Interaction Layer', 'Data Pipeline', 'Admin System'. Each lane highlights which repos contributed. Bottom right: dashed box labeled 'Series 2 — Food Module'. Style: hand-drawn, blue and black ink, educational notebook aesthetic, ruled paper background.",
+    "component_annotations": {
+      "interaction_layer": "swipe-survey → Initial-swipe-page → Alchemist-App /student",
+      "data_pipeline": "swipe.survey (Firebase + UPI) → analytics module → Alchemist-App /api",
+      "admin_system": "Alchemist-App /admin → Faculty-Demo (sales) → institution management",
+      "content_engine": "Geo-politics-2026 (23 improvements) → module library → Series 2"
+    }
+  },
+  "production_notes": {
+    "frame_consistency": {
+      "formula": "total_duration_frames = duration_seconds × fps",
+      "values": "240 × 30 = 7200",
+      "all_videos_verified": true
+    },
+    "branch_consistency": {
+      "all_leads_to_values_in_node_set": true,
+      "no_dangling_edges": true,
+      "no_orphan_nodes": true
+    },
+    "scene_frame_budget_per_video": {
+      "S01_INTRO": 90,
+      "S02_HOOK": 600,
+      "S03_STORY": 1800,
+      "S04_REPO": 1500,
+      "S05_DIAGRAM": 1200,
+      "S06_DECISION": 1200,
+      "S07_OUTRO": 810,
+      "total": 7200
+    },
+    "remotion_implementation": {
+      "framework": "Remotion — React-based programmatic video rendering",
+      "recommended_composition_pattern": "Each video is one Remotion Composition with id matching the video id (e.g. 'V01'). Scene components are conditionally rendered based on currentFrame within the total_duration_frames budget.",
+      "reusable_components": [
+        "DecisionOverlay — takes question + 4 options as props",
+        "BranchContextPill — shows which option was chosen to reach this video",
+        "RepoScreenCapture — takes repo name + annotated regions as props",
+        "AnimatedDiagram — renders SVG path stroke-dashoffset animations",
+        "LowerThird — standard YouTube lower third",
+        "StatCallout — animated stat bubble (red or green)"
+      ],
+      "entry_command": "npx remotion render alchemist-series/index.tsx V01 --out ./renders/V01.mp4"
+    },
+    "youtube_branching_setup": {
+      "card_placement": "All cards appear between seconds 185–225 of each video (within the decision overlay scene)",
+      "end_screen_window": "Final 20 seconds of each video (seconds 220–240)",
+      "playlist_id": "PLalchemist-series1",
+      "pinned_comment_strategy": "Pin within 5 minutes of publish. Use the pinned_comment_template from each video's youtube field.",
+      "community_post_schedule": "Post a community poll 48h after each video for the same decision — this extends engagement window"
+    },
+    "website_player_integration": {
+      "data_contract": "The branching_map.edges object is the complete routing table for a web player. On decision selection, look up branching_map.edges[current_video_id][selected_option] to get next_video_id.",
+      "player_state": "{ current_video_id, visited_path: [], selected_options: {} }",
+      "suggested_player_events": [
+        "video_started(video_id)",
+        "decision_shown(video_id)",
+        "option_selected(video_id, option_id, leads_to)",
+        "series_completed(visited_path)"
+      ],
+      "embed_format": "Each video id maps to a YouTube embed URL. Branch routing is handled client-side using the branching_map."
+    },
+    "launch_sequence": {
+      "week_1": [
+        "V01"
+      ],
+      "week_2": [
+        "V02",
+        "V03",
+        "V04",
+        "V05"
+      ],
+      "week_3": [
+        "V06",
+        "V07"
+      ],
+      "week_4": [
+        "V08"
+      ],
+      "week_5": [
+        "V09"
+      ],
+      "week_6": [
+        "V10"
+      ],
+      "series_2_launch": "Based on V10 comment vote results"
+    },
+    "repo_to_video_mapping": {
+      "swipe-survey": "V01 (primary), V02 (referenced)",
+      "swipe---survey": "V03 (primary)",
+      "ques": "V02 (primary)",
+      "Initial-swipe-page": "V03 (primary), V06 (referenced)",
+      "swipe.survey": "V04 (primary), V07 (referenced)",
+      "Alchemist-App": "V05 (origin), V08 (primary)",
+      "Geo-politics-2026": "V10 (primary)",
+      "Alchemist-Faculty-Demo": "V09 (primary), V10 (referenced)"
+    }
+  }
+}

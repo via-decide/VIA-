@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Layer 1 — Swipe Crucible</title>
+  <link rel="stylesheet" href="../../../shared/shared.css" />
+  <script src="../../../shared/swipe-engine.js"></script>
+  <script src="../../../shared/growth-stage-engine.js"></script>
+  <script src="../../../shared/reward-wallet.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background: var(--color-soil-dark);
+      color: var(--color-text-main);
+      font-family: Inter, system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 14px 10px;
+    }
+    .app {
+      width: 100%;
+      max-width: 420px;
+      display: grid;
+      gap: 12px;
+    }
+    .panel {
+      background: var(--color-soil-light);
+      border: 1px solid var(--color-bark-brown);
+      border-radius: 16px;
+      padding: 12px;
+    }
+    h1 { margin: 0 0 6px; font-size: 1.1rem; }
+    .meta { color: var(--color-text-muted); font-size: 0.92rem; }
+    .root-wrap { margin-top: 8px; }
+    .root-row { display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 6px; }
+    .bar { height: 10px; border-radius: 999px; border: 1px solid var(--color-bark-brown); background: var(--color-soil-dark); overflow: hidden; }
+    .bar > span { display: block; height: 100%; width: 0; background: var(--color-leaf-green); }
+
+    .stack {
+      position: relative;
+      height: 360px;
+      border: 1px dashed var(--color-bark-brown);
+      border-radius: 16px;
+      padding: 10px;
+      overflow: hidden;
+    }
+    .ghost {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      height: 280px;
+      border-radius: 14px;
+      border: 1px solid var(--color-bark-brown);
+      background: rgba(0,0,0,0.15);
+    }
+    .ghost.g2 { top: 28px; opacity: 0.55; }
+    .ghost.g3 { top: 40px; opacity: 0.35; }
+
+    .card {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 16px;
+      bottom: 52px;
+      border-radius: 16px;
+      border: 1px solid var(--color-bark-brown);
+      background: var(--color-soil-light);
+      padding: 14px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      touch-action: none;
+      user-select: none;
+      will-change: transform;
+    }
+    .card.water { box-shadow: inset 0 0 0 2px var(--color-water-blue); }
+    .card.pest { box-shadow: inset 0 0 0 2px var(--color-burn-red); }
+    .card.logic { box-shadow: inset 0 0 0 2px var(--color-leaf-green); }
+    .card.rest { box-shadow: inset 0 0 0 2px var(--color-mineral-gold); }
+
+    .card-title { font-size: 1.08rem; font-weight: 700; }
+    .card-text { font-size: 1rem; line-height: 1.45; align-self: center; }
+    .card-actions { display: flex; justify-content: space-between; color: var(--color-text-muted); font-size: 0.88rem; }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 48%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 700;
+      pointer-events: none;
+    }
+    .overlay.right { right: 0; border-radius: 0 16px 16px 0; background: color-mix(in srgb, var(--color-leaf-green) 35%, transparent); color: var(--color-leaf-green); }
+    .overlay.left { left: 0; border-radius: 16px 0 0 16px; background: color-mix(in srgb, var(--color-burn-red) 35%, transparent); color: var(--color-burn-red); }
+
+    .progress { margin-top: auto; font-size: 0.85rem; color: var(--color-text-muted); }
+    .hint { text-align: center; color: var(--color-text-muted); font-size: 0.88rem; }
+
+    .complete h2 { margin: 0 0 8px; }
+    .stats { display: grid; gap: 4px; margin: 8px 0 14px; }
+    .btn {
+      border: none;
+      border-radius: 10px;
+      background: var(--color-leaf-green);
+      color: #111;
+      font-weight: 700;
+      padding: 12px;
+      text-decoration: none;
+      text-align: center;
+      display: inline-block;
+    }
+    .hide { display: none !important; }
+  </style>
+<script src="../../../shared/vd-wallet.js"></script>
+<script src="../../../shared/tool-bridge.js"></script>
+  <script src="../../../shared/vd-nav-fix.js"></script>
+<script src="../../../shared/vd-wallet.js"></script>
+<script src="../../../shared/tool-bridge.js"></script>
+</head>
+<body>
+  <main class="app">
+    <section class="panel">
+      <h1>Layer 1 — Swipe Crucible</h1>
+      <div id="meta" class="meta">Day 1 · Streak 🔥 0 · ⭐ 0 XP</div>
+      <div class="root-wrap">
+        <div class="root-row"><span>Root Strength</span><span id="rootPct">0%</span></div>
+        <div class="bar"><span id="rootBar"></span></div>
+      </div>
+    </section>
+
+    <section id="gamePanel" class="panel">
+      <div class="stack" id="stack">
+        <div class="ghost g3"></div>
+        <div class="ghost g2"></div>
+        <div id="cardHost"></div>
+        <div class="progress" id="cardProgress">Card 1 of 5</div>
+      </div>
+      <div class="hint">← skip &nbsp;&nbsp;&nbsp; complete →</div>
+    </section>
+
+    <section id="alreadyPanel" class="panel hide">
+      <h2 style="margin:0 0 8px;">Already played today</h2>
+      <div id="countdown" class="meta"></div>
+      <a class="btn" href="../growth-milestone-engine/index.html">See My Farm</a>
+    </section>
+
+    <section id="completePanel" class="panel complete hide">
+      <h2>Session Complete</h2>
+      <div class="stats">
+        <div id="result-xp">XP Earned: +0</div>
+        <div id="rootLine">Root Growth: +0</div>
+        <div id="accLine">Accuracy: 0%</div>
+        <div id="result-streak">Streak: 0 days 🔥</div>
+      </div>
+      <a class="btn" href="../growth-milestone-engine/index.html">See My Farm</a>
+    </section>
+  </main>
+
+  <script src="../../../shared/tool-storage.js"></script>
+  <script src="tool.js"></script>
+</body>
+</html>
