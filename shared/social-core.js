@@ -178,6 +178,41 @@
       }));
   }
 
+  function listProfiles(limit = 20) {
+    const state = readState();
+    return Object.values(state.users)
+      .sort((a, b) => {
+        const followerDelta = Number(b.followers || 0) - Number(a.followers || 0);
+        if (followerDelta !== 0) return followerDelta;
+        const xpDelta = Number(b.xp || 0) - Number(a.xp || 0);
+        if (xpDelta !== 0) return xpDelta;
+        return String(a.display_name || a.username || '').localeCompare(String(b.display_name || b.username || ''));
+      })
+      .slice(0, limit);
+  }
+
+  function searchProfiles(queryText, limit = 10) {
+    const query = String(queryText || '').trim().toLowerCase();
+    if (!query) return listProfiles(limit);
+    return listProfiles(100)
+      .filter((profile) => {
+        const haystack = [
+          profile.username,
+          profile.display_name,
+          profile.city
+        ].join(' ').toLowerCase();
+        return haystack.includes(query);
+      })
+      .slice(0, limit);
+  }
+
+  function isFollowing(targetUserId, actor = getCurrentUser()) {
+    const source = normalizeProfile(actor);
+    if (!source || !source.id || !targetUserId) return false;
+    const state = readState();
+    return state.follows.some((item) => item.actor_user_id === source.id && item.target_user_id === targetUserId);
+  }
+
   async function createPost(input, actor = getCurrentUser()) {
     const author = normalizeProfile(actor);
     if (!author || !author.id) return null;
@@ -385,6 +420,9 @@
     getProfileCounts,
     listFeed,
     listPostsByAuthor,
+    listProfiles,
+    searchProfiles,
+    isFollowing,
     createPost,
     followUser,
     reactToPost,
