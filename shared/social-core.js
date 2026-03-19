@@ -72,7 +72,12 @@
       username: profile.username,
       display_name: profile.display_name,
       city: profile.city,
-      avatar_emoji: profile.avatar_emoji
+      avatar_emoji: profile.avatar_emoji,
+      xp: Number(profile.xp || 0),
+      level: Number(profile.level || 1),
+      followers: Number(profile.followers || 0),
+      following: Number(profile.following || 0),
+      posts: Number(profile.posts || 0)
     };
   }
 
@@ -133,14 +138,6 @@
     storeUserProfile(state, merged);
     writeState(state);
     saveLocalUserIfCurrent(merged);
-    state.users[merged.id] = {
-      id: merged.id,
-      username: merged.username,
-      display_name: merged.display_name,
-      city: merged.city,
-      avatar_emoji: merged.avatar_emoji
-    };
-    writeState(state);
     saveLocalUser(merged);
     return merged;
   }
@@ -150,13 +147,6 @@
     if (!normalized || !normalized.id) return normalized;
     const state = readState();
     storeUserProfile(state, normalized);
-    state.users[normalized.id] = {
-      id: normalized.id,
-      username: normalized.username,
-      display_name: normalized.display_name,
-      city: normalized.city,
-      avatar_emoji: normalized.avatar_emoji
-    };
     writeState(state);
     return syncProfileCounts(normalized);
   }
@@ -172,6 +162,55 @@
         reaction_count: state.reactions.filter((item) => item.post_id === post.id).length,
         author: state.users[post.author_id] || null
       }));
+  }
+
+  function listPostsByAuthor(authorId, limit = 12) {
+    if (!authorId) return [];
+    const state = readState();
+    return state.posts
+      .filter((post) => post.author_id === authorId)
+      .sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')))
+      .slice(0, limit)
+      .map((post) => ({
+        ...post,
+        reaction_count: state.reactions.filter((item) => item.post_id === post.id).length,
+        author: state.users[post.author_id] || null
+      }));
+  }
+
+  function listProfiles(limit = 20) {
+    const state = readState();
+    return Object.values(state.users)
+      .sort((a, b) => {
+        const followerDelta = Number(b.followers || 0) - Number(a.followers || 0);
+        if (followerDelta !== 0) return followerDelta;
+        const xpDelta = Number(b.xp || 0) - Number(a.xp || 0);
+        if (xpDelta !== 0) return xpDelta;
+        return String(a.display_name || a.username || '').localeCompare(String(b.display_name || b.username || ''));
+      })
+      .slice(0, limit);
+  }
+
+  function searchProfiles(queryText, limit = 10) {
+    const query = String(queryText || '').trim().toLowerCase();
+    if (!query) return listProfiles(limit);
+    return listProfiles(100)
+      .filter((profile) => {
+        const haystack = [
+          profile.username,
+          profile.display_name,
+          profile.city
+        ].join(' ').toLowerCase();
+        return haystack.includes(query);
+      })
+      .slice(0, limit);
+  }
+
+  function isFollowing(targetUserId, actor = getCurrentUser()) {
+    const source = normalizeProfile(actor);
+    if (!source || !source.id || !targetUserId) return false;
+    const state = readState();
+    return state.follows.some((item) => item.actor_user_id === source.id && item.target_user_id === targetUserId);
   }
 
   async function createPost(input, actor = getCurrentUser()) {
@@ -321,6 +360,7 @@
     const createdCircle = await insertRemote('via_circles', circle);
     if (createdCircle) {
       await insertRemote('via_circle_members', member);
+    }
     const client = getClient();
     if (client) {
       try {
@@ -379,6 +419,10 @@
     syncProfileCounts,
     getProfileCounts,
     listFeed,
+    listPostsByAuthor,
+    listProfiles,
+    searchProfiles,
+    isFollowing,
     createPost,
     followUser,
     reactToPost,

@@ -152,6 +152,23 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 .discover-card-desc{font-size:.75rem;color:rgba(255,255,255,0.6);line-height:1.4;margin-top:.2rem;}
 .stagger-enter{animation:staggerFade .5s cubic-bezier(.16,1,.3,1) both;opacity:0;transform:translateY(15px);}
 @keyframes staggerFade{to{opacity:1;transform:translateY(0)}}
+.discover-shell{position:absolute;inset:0;overflow-y:auto;padding:5.5rem 1rem 5rem;display:flex;flex-direction:column;gap:1rem;}
+.discover-social-panel{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:22px;padding:1rem;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
+.discover-social-label{font-size:.62rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--saffron);margin-bottom:.35rem;}
+.discover-social-title{font-family:'Playfair Display',serif;font-size:1.35rem;color:#fff;margin-bottom:.35rem;}
+.discover-social-sub{font-size:.78rem;color:rgba(255,255,255,.6);line-height:1.45;margin-bottom:.85rem;}
+.discover-search{width:100%;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(11,11,26,.8);color:#fff;padding:.95rem 1rem;font-family:'DM Sans',sans-serif;font-size:.9rem;}
+.discover-user-results{display:flex;flex-direction:column;gap:.7rem;margin-top:.9rem;}
+.discover-user-card{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.9rem 1rem;border-radius:18px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);}
+.discover-user-main{display:flex;align-items:center;gap:.75rem;min-width:0;}
+.discover-user-avatar{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
+.discover-user-copy{min-width:0;}
+.discover-user-name{font-size:.92rem;font-weight:700;color:#fff;line-height:1.2;}
+.discover-user-handle{font-size:.72rem;color:rgba(255,255,255,.45);margin-top:.18rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.discover-user-meta{font-size:.66rem;color:rgba(255,255,255,.5);margin-top:.24rem;}
+.discover-user-btn{border:1px solid rgba(255,107,0,.32);background:rgba(255,107,0,.15);color:#fff;border-radius:999px;padding:.58rem .9rem;font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;flex-shrink:0;font-family:'DM Sans',sans-serif;}
+.discover-user-btn.following{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.7);}
+.discover-user-empty{padding:1rem;border-radius:16px;background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.08);font-size:.78rem;color:rgba(255,255,255,.5);text-align:center;}
 
 /* ── PROFILE ── */
 .profile-wrap{position:absolute;inset:0;padding:4rem 1.2rem 5rem;overflow-y:auto;display:flex;flex-direction:column;align-items:center;}
@@ -172,6 +189,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 .pgrid-type{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--saffron);margin-bottom:.3rem;}
 .pgrid-title{font-size:.95rem;font-weight:700;color:#fff;line-height:1.25;}
 .pgrid-views{font-size:.7rem;color:rgba(255,255,255,.6);margin-top:.3rem;}
+.profile-social-meta{width:100%;margin:-.15rem 0 1.2rem;text-align:center;font-size:.7rem;color:rgba(255,255,255,.55);letter-spacing:.06em;text-transform:uppercase;}
 .signout-btn{margin-top:1rem;width:100%;padding:1rem;border-radius:16px;background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);color:#ff6b6b;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .25s cubic-bezier(.16,1,.3,1);}
 .signout-btn.guest{background:rgba(255,107,0,.08);border-color:rgba(255,107,0,.25);color:var(--saffron);}
 .signout-btn:active{transform:scale(.97)}
@@ -470,7 +488,16 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 
   <!-- DISCOVER LAYER -->
   <div id="layer-discover" style="display:none;position:absolute;inset:0">
-    <div class="discover-grid" id="discover-grid"></div>
+    <div class="discover-shell">
+      <div class="discover-social-panel">
+        <div class="discover-social-label">Community</div>
+        <div class="discover-social-title">Find VIA creators</div>
+        <div class="discover-social-sub">Search members, follow them, and explore who is publishing on VIA right now.</div>
+        <input id="discover-user-search" class="discover-search" type="search" placeholder="Search by username, display name, or city"/>
+        <div class="discover-user-results" id="discover-user-results"></div>
+      </div>
+      <div class="discover-grid" id="discover-grid"></div>
+    </div>
   </div>
 
   <!-- ═══════════════════════════════════════════════════
@@ -651,6 +678,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
         <span id="level-label">Level 1 · Explorer</span><span id="xp-bar-label">0 / 500 XP</span>
       </div>
       <div class="xp-bar"><div class="xp-fill" id="xp-fill-bar"></div></div>
+      <div class="profile-social-meta" id="profile-social-meta">0 following · 0 community reactions</div>
       <div class="profile-grid" id="profile-grid"></div>
       <button class="signout-btn guest" id="profile-auth-btn" onclick="VIA.openAuth()">Sign In to Save Progress</button>
     </div>
@@ -700,6 +728,53 @@ const _sb = window.DatabaseService && typeof window.DatabaseService.getClient ==
     ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null);
 let currentUser = null;
 let authReady = false;
+const SOCIAL_STORAGE_KEY = 'viadecide.social.core';
+const discoverState = { query:'', profiles:[], requestId:0, inputBound:false };
+
+function getSocialCore(){return window.SocialCore&&typeof window.SocialCore.readState==='function'?window.SocialCore:null;}
+function isSignedInUser(user){return !!(user&&user.id&&!user.is_guest);}
+function getRelativeTime(value){
+  if(!value)return'Now';
+  const stamp=new Date(value).getTime();
+  if(Number.isNaN(stamp))return'Now';
+  const diff=Math.max(0,Date.now()-stamp);
+  const minute=60*1000,hour=60*minute,day=24*hour;
+  if(diff<hour)return Math.max(1,Math.round(diff/minute))+'m ago';
+  if(diff<day)return Math.max(1,Math.round(diff/hour))+'h ago';
+  return Math.max(1,Math.round(diff/day))+'d ago';
+}
+function truncateText(value,max){const text=String(value||'').trim();return text.length>max?text.slice(0,Math.max(0,max-1)).trim()+'…':text;}
+function syncCurrentUserSocialState(){
+  const social=getSocialCore();
+  if(!social||!isSignedInUser(currentUser))return currentUser;
+  const synced=social.syncProfileCounts(currentUser);
+  if(synced&&synced.id){
+    currentUser={...currentUser,...synced,is_guest:false};
+    VIA.user=currentUser;
+  }
+  return currentUser;
+}
+function updateProfileSocialMeta(user){
+  const meta=document.getElementById('profile-social-meta');
+  if(!meta)return;
+  const social=getSocialCore();
+  if(!social||!isSignedInUser(user)){
+    meta.textContent='0 following · 0 community reactions';
+    return;
+  }
+  const state=social.readState();
+  const following=state.follows.filter((item)=>item.actor_user_id===user.id).length;
+  const reactions=state.reactions.filter((item)=>item.actor_user_id===user.id).length;
+  meta.textContent=following+' following · '+reactions+' community reactions';
+}
+function refreshSocialSurfaces(options={}){
+  const keepIndex=options.keepIndex!==false;
+  syncCurrentUserSocialState();
+  syncCreatorContentSurface({ keepIndex });
+  buildDiscover();
+  buildProfile();
+  renderApp();
+}
 
 function formatCount(n){if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return String(n);}
 function escapeHTML(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
@@ -724,6 +799,7 @@ function renderUserUI(user){
   const av=document.querySelector('.profile-avatar-lg');if(av)av.textContent=resolvedUser.avatar_emoji||'🌟';
   const fc=document.getElementById('follower-count');if(fc)fc.textContent=formatCount(resolvedUser.followers||0);
   const pp=document.getElementById('profile-posts');if(pp)pp.textContent=resolvedUser.posts||0;
+  updateProfileSocialMeta(resolvedUser);
 }
 function renderGuestUI(){
   const guestProfile=getGuestProfile();
@@ -735,11 +811,13 @@ function renderGuestUI(){
   const av=document.querySelector('.profile-avatar-lg');if(av)av.textContent=guestProfile.avatar_emoji;
   const fc=document.getElementById('follower-count');if(fc)fc.textContent=formatCount(0);
   const pp=document.getElementById('profile-posts');if(pp)pp.textContent='0';
+  updateProfileSocialMeta(guestProfile);
 }
 function renderApp(){
   if(!authReady)return;
   logAuthSnapshot();
   if(currentUser){
+    syncCurrentUserSocialState();
     renderUserUI(currentUser);
   }else{
     renderGuestUI();
@@ -761,11 +839,19 @@ const VIA = {
     return profile;
   },
   async hydrateUser(profile){
+    const social=getSocialCore();
     const normalized=profile&&typeof profile==='object'?{...getGuestProfile(),...profile,is_guest:false}:null;
     currentUser=normalized;
+    if(social&&normalized&&normalized.id){
+      const synced=social.bootstrapProfile(normalized);
+      if(synced&&synced.id){
+        currentUser={...normalized,...synced,is_guest:false};
+      }
+    }
     this.user=normalized;
-    if(normalized&&normalized.id){await this.saveLocalProfile(normalized);}
-    return normalized;
+    if(currentUser&&currentUser.id){await this.saveLocalProfile(currentUser);}
+    this.user=currentUser;
+    return currentUser;
   },
   async restoreSession(){
     if(!_sb||!_sb.auth||typeof _sb.auth.getSession!=='function')return null;
@@ -837,6 +923,7 @@ const VIA = {
         }
         authReady=true;
         renderApp();
+        refreshSocialSurfaces({ keepIndex:true });
       });
       this.authSubscription=data?.subscription||null;
     }
@@ -856,6 +943,7 @@ const VIA = {
     clearCachedProfile();
     authReady=true;
     renderApp();
+    refreshSocialSurfaces({ keepIndex:true });
     switchLayer('feed');
   }
 };
@@ -1001,7 +1089,49 @@ function getPublishedCreatorCards() {
   }));
 }
 
+function getSocialFeedCards() {
+  const social=getSocialCore();
+  if(!social)return [];
+  return social.listFeed(8).map((post) => {
+    const author=post.author||{};
+    const body=String(post.body||'').trim();
+    const headline=truncateText(body, 110);
+    const summary=body.length>110?truncateText(body, 180):'Posted on VIA community feed';
+    return {
+      id: post.id,
+      socialPostId: post.id,
+      cat: 'create',
+      catLabel: '✦ Community',
+      bg: 'linear-gradient(160deg,#24103a 0%,#0B0B1A 60%)',
+      emoji: author.avatar_emoji || '✍️',
+      title: escapeHTML(headline).replace(/\n/g,'<br/>'),
+      author: author.display_name || author.username || 'VIA Creator',
+      authorEmoji: author.avatar_emoji || '✍️',
+      location: author.city || 'VIA',
+      time: getRelativeTime(post.created_at),
+      likes: formatCount(post.reaction_count || 0),
+      microSummary: escapeHTML(summary).replace(/\n/g,'<br/>'),
+      microCTA: 'Published on the VIA social layer',
+      storyKey: null
+    };
+  });
+}
+
 function getProfileItems() {
+  const social=getSocialCore();
+  const authoredItems=social&&isSignedInUser(currentUser)
+    ? social.listPostsByAuthor(currentUser.id, 6).map((post, index) => ({
+        emoji:(post.author&&post.author.avatar_emoji)||currentUser.avatar_emoji||'✍️',
+        title:truncateText(post.body || `Community Post ${index + 1}`, 42),
+        type:'Post',
+        views:formatCount(post.reaction_count || 0)+' reactions',
+        color:'#24103a',
+        storyKey:null,
+        socialPostId:post.id,
+        postBody:post.body || '',
+        createdAt:post.created_at || ''
+      }))
+    : [];
   const draftItems = getPublishedCreatorDrafts().slice(0, 4).map((draft, index) => ({
     emoji: draft.type === 'Video Script' ? '🎬' : '✍️',
     title: draft.title || `Creator Draft ${index + 1}`,
@@ -1010,12 +1140,16 @@ function getProfileItems() {
     color: '#240b36',
     storyKey: 'creator'
   }));
-  return draftItems.concat(PROFILE_ITEMS);
+  return authoredItems.concat(draftItems, PROFILE_ITEMS);
 }
 
-function syncCreatorContentSurface() {
-  CARDS = getPublishedCreatorCards().concat(DEFAULT_CARDS.slice());
-  if (currentCard >= CARDS.length) currentCard = 0;
+function syncCreatorContentSurface(options={}) {
+  const keepIndex=options.keepIndex!==false;
+  const previousIndex=currentCard;
+  CARDS = getSocialFeedCards().concat(getPublishedCreatorCards(), DEFAULT_CARDS.slice());
+  if (!keepIndex) currentCard = 0;
+  else if (previousIndex >= CARDS.length) currentCard = 0;
+  else currentCard = previousIndex;
   if (document.getElementById('deck')) {
     buildProgressDots();
     buildDeck();
@@ -1028,6 +1162,9 @@ function syncCreatorContentSurface() {
 window.addEventListener('storage', (event) => {
   if (event.key === CREATOR_PUBLISHED_KEY) {
     syncCreatorContentSurface();
+  }
+  if (event.key === SOCIAL_STORAGE_KEY) {
+    refreshSocialSurfaces({ keepIndex:true });
   }
 });
 
@@ -1611,11 +1748,25 @@ function openStorySheet(index) {
 }
 
 function likeCard(index) {
+  const cardData=CARDS[index];
   addXP(5);
   const wrap=document.createElement('div');wrap.className='affirmation-ripple';wrap.style.left='50%';wrap.style.top='50%';
   for(let i=0;i<3;i++){const r=document.createElement('div');r.className='ripple-ring';wrap.appendChild(r);}
   const b=document.createElement('div');b.className='ripple-burst';b.textContent='🔥';wrap.appendChild(b);
   document.body.appendChild(wrap);setTimeout(()=>wrap.remove(),850);
+  if(cardData&&cardData.socialPostId){
+    if(!isSignedInUser(currentUser)){
+      openSheet('auth-required',{ action:'react to community posts' });
+      return;
+    }
+    const social=getSocialCore();
+    if(!social) return;
+    social.reactToPost(cardData.socialPostId,'🔥',currentUser).then(()=>{
+      setTimeout(()=>refreshSocialSurfaces({ keepIndex:true }),120);
+    }).catch((error)=>{
+      console.error('Reaction failed:', error);
+    });
+  }
 }
 
 function openRibbon(index){activeRibbonCard=index;document.getElementById('action-ribbon').classList.add('open');}
@@ -1646,9 +1797,79 @@ function updateXP(v){
 // ════════════════════════════════════════════════════════════════
 // BENTO GRIDS
 // ════════════════════════════════════════════════════════════════
-function buildDiscover() {
-  const grid=document.getElementById('discover-grid');grid.innerHTML='';
+function renderDiscoverUsers(profiles, query){
+  const results=document.getElementById('discover-user-results');
+  if(!results)return;
+  if(!profiles.length){
+    results.innerHTML='<div class="discover-user-empty">'+(query?'No VIA creators found for this search yet.':'No community profiles found yet. Sign in and publish the first post.')+'</div>';
+    return;
+  }
+  results.innerHTML=profiles.map((profile)=>{
+    const safeId=String(profile.id||'').replace(/'/g,'');
+    const following=isSignedInUser(currentUser)&&getSocialCore()&&getSocialCore().isFollowing(profile.id,currentUser);
+    const followerText=formatCount(profile.followers||0)+' followers · Level '+(profile.level||1);
+    return '<div class="discover-user-card">'+
+      '<div class="discover-user-main">'+
+        '<div class="discover-user-avatar">'+escapeHTML(profile.avatar_emoji||'🌟')+'</div>'+
+        '<div class="discover-user-copy">'+
+          '<div class="discover-user-name">'+escapeHTML(profile.display_name||profile.username||'VIA Creator')+'</div>'+
+          '<div class="discover-user-handle">@'+escapeHTML(profile.username||'user')+(profile.city?' · '+escapeHTML(profile.city):'')+'</div>'+
+          '<div class="discover-user-meta">'+escapeHTML(followerText)+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<button class="discover-user-btn'+(following?' following':'')+'" '+(following?'disabled ':'')+'onclick="followDiscoverUser(\''+safeId+'\')">'+(following?'Following':'Follow')+'</button>'+
+    '</div>';
+  }).join('');
+}
+
+async function fetchDiscoverProfiles(queryText){
+  const social=getSocialCore();
+  const query=String(queryText||'').trim();
+  const localProfiles=social
+    ? (query ? social.searchProfiles(query,12) : social.listProfiles(8))
+    : [];
+  let remoteProfiles=[];
+  if(_sb&&typeof _sb.from==='function'){
+    try{
+      let request=_sb.from('via_users').select('*').limit(query?12:6);
+      if(query){
+        const safeQuery=query.replace(/,/g,' ').replace(/\s+/g,' ').trim();
+        request=request.or(`username.ilike.%${safeQuery}%,display_name.ilike.%${safeQuery}%,city.ilike.%${safeQuery}%`);
+      }else{
+        request=request.order('xp',{ascending:false});
+      }
+      if(isSignedInUser(currentUser)) request=request.neq('id', currentUser.id);
+      const { data, error } = await request;
+      if(!error&&Array.isArray(data)) remoteProfiles=data;
+    }catch(error){
+      console.error('Discover search failed:', error);
+    }
+  }
+  const merged=[];
+  const seen=new Set();
+  remoteProfiles.concat(localProfiles).forEach((profile)=>{
+    if(!profile||!profile.id||seen.has(profile.id)||(isSignedInUser(currentUser)&&profile.id===currentUser.id)) return;
+    seen.add(profile.id);
+    const normalized={
+      ...profile,
+      display_name:profile.display_name||profile.name||profile.username||'VIA Creator',
+      avatar_emoji:profile.avatar_emoji||'🌟',
+      xp:Number(profile.xp||0),
+      level:Number(profile.level||1),
+      followers:Number(profile.followers||0),
+      following:Number(profile.following||0),
+      posts:Number(profile.posts||0)
+    };
+    if(social) social.bootstrapProfile(normalized);
+    merged.push(normalized);
+  });
+  return merged.slice(0,query?10:6);
+}
+
+async function buildDiscover() {
+  const grid=document.getElementById('discover-grid');if(grid){grid.innerHTML='';}
   DISCOVER_ITEMS.forEach((item,i)=>{
+    if(!grid)return;
     const card=document.createElement('div');
     card.className='discover-card stagger-enter';
     card.style.animationDelay=(i*.04)+'s';
@@ -1660,6 +1881,19 @@ function buildDiscover() {
     });
     grid.appendChild(card);
   });
+
+  const input=document.getElementById('discover-user-search');
+  if(input&&!discoverState.inputBound){
+    input.addEventListener('input',()=>{discoverState.query=input.value||'';buildDiscover();});
+    discoverState.inputBound=true;
+  }
+  if(input&&input.value!==discoverState.query) input.value=discoverState.query;
+  renderDiscoverUsers([], discoverState.query);
+  const requestId=++discoverState.requestId;
+  const profiles=await fetchDiscoverProfiles(discoverState.query);
+  if(requestId!==discoverState.requestId) return;
+  discoverState.profiles=profiles;
+  renderDiscoverUsers(profiles, discoverState.query);
 }
 
 function buildProfile(){
@@ -1678,6 +1912,56 @@ function buildProfile(){
     grid.appendChild(div);
   });
 }
+
+window.followDiscoverUser = async function(userId){
+  const social=getSocialCore();
+  if(!social||!userId)return;
+  if(!isSignedInUser(currentUser)){
+    openSheet('auth-required',{ action:'follow creators' });
+    return;
+  }
+  const target=discoverState.profiles.find((profile)=>profile.id===userId) || social.searchProfiles('',50).find((profile)=>profile.id===userId);
+  if(!target||social.isFollowing(userId,currentUser)) return;
+  await social.followUser(target,currentUser);
+  addXP(20);
+  refreshSocialSurfaces({ keepIndex:true });
+};
+
+window.publishComposerPost = async function(){
+  const social=getSocialCore();
+  const textarea=document.getElementById('composer-body');
+  const status=document.getElementById('composer-status');
+  if(!social||!textarea) return;
+  if(!isSignedInUser(currentUser)){
+    openSheet('auth-required',{ action:'publish on VIA' });
+    return;
+  }
+  const body=String(textarea.value||'').trim();
+  if(!body){
+    if(status) status.textContent='Write something before publishing.';
+    return;
+  }
+  if(status) status.textContent='Publishing…';
+  const created=await social.createPost({ body, visibility:'public' }, currentUser);
+  if(!created){
+    if(status) status.textContent='Unable to publish right now.';
+    return;
+  }
+  addXP(40);
+  closeSheet();
+  currentCard=0;
+  refreshSocialSurfaces({ keepIndex:false });
+  switchLayer('feed');
+};
+
+window.copyFeedHeadline = function(index){
+  const card=CARDS[index];
+  const text=card?stripTags(card.title||'VIA story'):'VIA story';
+  if(navigator.clipboard&&typeof navigator.clipboard.writeText==='function'){
+    navigator.clipboard.writeText(text).catch(()=>{});
+  }
+  closeSheet();
+};
 
 function buildProgressDots(){
   const wrap=document.getElementById('progress-dots');wrap.innerHTML='';
@@ -1814,12 +2098,28 @@ const SHEETS = {
 function openSheet(type, extra={}) {
   const overlay=document.getElementById('sheet-overlay'),sheet=document.getElementById('sheet'),body=document.getElementById('sheet-body');
   let html='';
-  if(type==='discover-detail'&&extra.item){
+  if(type==='auth-required'){
+    const action=extra&&extra.action?extra.action:'continue';
+    html='<div class="sheet-title">Sign in required</div><div class="sheet-sub">Create a VIA account to '+escapeHTML(action)+'.</div><div class="sheet-actions"><div class="sheet-btn" onclick="closeSheet();VIA.openAuth()"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">→</div><div class="sheet-btn-text"><div class="sheet-btn-title">Open Auth</div><div class="sheet-btn-sub">Save progress, post, and follow creators</div></div><div class="sheet-btn-arrow">›</div></div></div>';
+  } else if(type==='create'){
+    html='<div class="sheet-title">Create on VIA</div><div class="sheet-sub">Publish a short post to the community feed. Your post will appear above the curated trend cards.</div><div class="sheet-actions">'+
+      '<div class="sheet-btn" onclick="window.open(\'https://t.me/GN8RBot\',\'_blank\');closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">📹</div><div class="sheet-btn-text"><div class="sheet-btn-title">Video</div><div class="sheet-btn-sub">Open GN8R Bot for video-first creation</div></div><div class="sheet-btn-arrow">›</div></div>'+
+      '<div class="sheet-btn" style="align-items:flex-start;cursor:default"><div class="sheet-btn-icon" style="background:rgba(108,99,255,.15)">✍️</div><div class="sheet-btn-text" style="width:100%"><div class="sheet-btn-title">Write on VIA</div><div class="sheet-btn-sub">Short note, idea, or update for your followers.</div><div class="via-agent-row" style="margin-top:.85rem;display:block"><textarea id="composer-body" placeholder="What are you building, learning, or thinking about today?" style="width:100%;min-height:120px"></textarea></div><div id="composer-status" class="sheet-btn-sub" style="margin-top:.6rem">Community posts persist locally via SocialCore and sync to Supabase when available.</div><div class="via-agent-row" style="margin-top:.8rem"><button type="button" class="via-agent-btn" onclick="publishComposerPost()">Publish</button><button type="button" class="via-agent-btn alt" onclick="closeSheet()">Cancel</button></div></div></div>'+
+    '</div>';
+  } else if(type==='discover-detail'&&extra.item){
     const {item}=extra;const safe=(item.toolPath||'').replace(/'/g,"\\'");
     html=`<div class="sheet-title">${item.emoji} ${item.name}</div><div class="sheet-sub">${item.cat}</div><div class="sheet-actions">${item.toolPath?`<div class="sheet-btn" onclick="window.location.href='${safe}';closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">▶</div><div class="sheet-btn-text"><div class="sheet-btn-title">Launch Tool</div><div class="sheet-btn-sub">Open ${item.name}</div></div><div class="sheet-btn-arrow">›</div></div>`:''}</div>`;
   } else if(type==='profile-detail'&&extra.item){
     const {item}=extra;
-    html=`<div class="sheet-title">${item.emoji} ${item.title}</div><div class="sheet-sub">${item.type}</div><div class="sheet-actions"><div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Close</div></div><div class="sheet-btn-arrow">›</div></div></div>`;
+    html=`<div class="sheet-title">${item.emoji} ${item.title}</div><div class="sheet-sub">${item.type}</div><div class="sheet-actions">${item.postBody?`<div class="sheet-btn" style="align-items:flex-start;cursor:default"><div class="sheet-btn-icon" style="background:rgba(108,99,255,.15)">✍️</div><div class="sheet-btn-text"><div class="sheet-btn-title">Post body</div><div class="sheet-btn-sub">${escapeHTML(item.postBody)}</div></div></div>`:''}<div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Close</div></div><div class="sheet-btn-arrow">›</div></div></div>`;
+  } else if(type==='story'&&typeof extra.cardIndex==='number'&&CARDS[extra.cardIndex]){
+    const card=CARDS[extra.cardIndex];
+    html='<div class="sheet-title">'+escapeHTML(card.author||'VIA Creator')+'</div><div class="sheet-sub">'+escapeHTML(card.time||'Just now')+'</div><div class="sheet-actions"><div class="sheet-btn" style="align-items:flex-start;cursor:default"><div class="sheet-btn-icon" style="background:rgba(108,99,255,.15)">'+escapeHTML(card.authorEmoji||'✍️')+'</div><div class="sheet-btn-text"><div class="sheet-btn-title">'+escapeHTML(stripTags(card.title||'Community post'))+'</div><div class="sheet-btn-sub">'+escapeHTML(stripTags(card.microSummary||'Published on the VIA feed.'))+'</div></div></div></div>';
+  } else if(type==='share'&&typeof extra.cardIndex==='number'&&CARDS[extra.cardIndex]){
+    const card=CARDS[extra.cardIndex];
+    html='<div class="sheet-title">Share this story</div><div class="sheet-sub">Copy the headline or open the deep dive to continue reading.</div><div class="sheet-actions"><div class="sheet-btn" onclick="copyFeedHeadline('+extra.cardIndex+')"><div class="sheet-btn-icon" style="background:rgba(245,197,24,.15)">⧉</div><div class="sheet-btn-text"><div class="sheet-btn-title">Copy headline</div><div class="sheet-btn-sub">'+escapeHTML(stripTags(card.title||'VIA story'))+'</div></div><div class="sheet-btn-arrow">›</div></div></div>';
+  } else if(type==='comment'){
+    html='<div class="sheet-title">Comments are next</div><div class="sheet-sub">The feed now persists posts and reactions. Comment threads can be added safely in the next pass.</div><div class="sheet-actions"><div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Close</div></div><div class="sheet-btn-arrow">›</div></div></div>';
   } else {
     const s=SHEETS[type];if(!s)return;
     html='<div class="sheet-title">'+s.title+'</div><div class="sheet-sub">'+s.sub+'</div><div class="sheet-actions">'+s.actions.map(a=>'<div class="sheet-btn" onclick="'+(a.url?'window.open(\''+a.url+'\',\'_blank\');closeSheet()':'addXP(5);closeSheet()')+'"><div class="sheet-btn-icon" style="background:'+a.iconBg+'">'+a.icon+'</div><div class="sheet-btn-text"><div class="sheet-btn-title">'+a.title+'</div><div class="sheet-btn-sub">'+a.sub+'</div></div><div class="sheet-btn-arrow">›</div></div>').join('')+'</div>';
