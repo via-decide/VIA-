@@ -1,113 +1,4 @@
-<!--
-SETUP CHECKLIST
-1) Create a Supabase project
-2) Run the SQL migration below in Supabase SQL Editor
-3) Set window.ECO_SUPABASE_ANON_KEY (or localStorage eco_supabase_anon_key) before using live auth
--->
-<!--
-Run this in Supabase SQL editor:
-
-CREATE TABLE via_users (
-  id UUID REFERENCES auth.users PRIMARY KEY,
-  username TEXT UNIQUE NOT NULL,
-  display_name TEXT NOT NULL,
-  city TEXT,
-  avatar_emoji TEXT DEFAULT '🌟',
-  xp INTEGER DEFAULT 0,
-  level INTEGER DEFAULT 1,
-  followers INTEGER DEFAULT 0,
-  following INTEGER DEFAULT 0,
-  posts INTEGER DEFAULT 0,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Row Level Security
-ALTER TABLE via_users ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can read all profiles" ON via_users FOR SELECT USING (true);
-CREATE POLICY "Users can update own profile" ON via_users FOR UPDATE USING (auth.uid() = id);
-CREATE POLICY "Users can insert own profile" ON via_users FOR INSERT WITH CHECK (auth.uid() = id);
-
-CREATE TABLE via_activity_log (
-  id TEXT PRIMARY KEY,
-  event_type TEXT NOT NULL,
-  source TEXT NOT NULL,
-  page_path TEXT NOT NULL,
-  payload JSONB NOT NULL DEFAULT '{}'::jsonb,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
-ALTER TABLE via_activity_log ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Authenticated users can insert activity logs" ON via_activity_log FOR INSERT TO authenticated WITH CHECK (true);
-CREATE POLICY "Authenticated users can read activity logs" ON via_activity_log FOR SELECT TO authenticated USING (true);
-
-CREATE TABLE via_posts (
-  id TEXT PRIMARY KEY,
-  author_id UUID REFERENCES via_users(id) NOT NULL,
-  body TEXT NOT NULL,
-  visibility TEXT NOT NULL DEFAULT 'public',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
-CREATE TABLE via_follows (
-  id TEXT PRIMARY KEY,
-  actor_user_id UUID REFERENCES via_users(id) NOT NULL,
-  target_user_id UUID REFERENCES via_users(id) NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
-CREATE TABLE via_reactions (
-  id TEXT PRIMARY KEY,
-  post_id TEXT REFERENCES via_posts(id) NOT NULL,
-  actor_user_id UUID REFERENCES via_users(id) NOT NULL,
-  emoji TEXT NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
-CREATE TABLE via_circles (
-  id TEXT PRIMARY KEY,
-  owner_id UUID REFERENCES via_users(id) NOT NULL,
-  name TEXT NOT NULL,
-  description TEXT DEFAULT '',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
-CREATE TABLE via_circle_members (
-  id BIGSERIAL PRIMARY KEY,
-  circle_id TEXT REFERENCES via_circles(id) NOT NULL,
-  user_id UUID REFERENCES via_users(id) NOT NULL,
-  role TEXT NOT NULL DEFAULT 'member',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
-CREATE TABLE via_moderation_queue (
-  id TEXT PRIMARY KEY,
-  reporter_user_id UUID REFERENCES via_users(id) NOT NULL,
-  entity_type TEXT NOT NULL,
-  entity_id TEXT NOT NULL,
-  reason TEXT NOT NULL,
-  status TEXT NOT NULL DEFAULT 'open',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
-ALTER TABLE via_posts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE via_follows ENABLE ROW LEVEL SECURITY;
-ALTER TABLE via_reactions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE via_circles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE via_circle_members ENABLE ROW LEVEL SECURITY;
-ALTER TABLE via_moderation_queue ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Users can read posts" ON via_posts FOR SELECT USING (true);
-CREATE POLICY "Users can insert own posts" ON via_posts FOR INSERT WITH CHECK (auth.uid() = author_id);
-CREATE POLICY "Users can read follows" ON via_follows FOR SELECT USING (true);
-CREATE POLICY "Users can insert own follows" ON via_follows FOR INSERT WITH CHECK (auth.uid() = actor_user_id);
-CREATE POLICY "Users can read reactions" ON via_reactions FOR SELECT USING (true);
-CREATE POLICY "Users can insert own reactions" ON via_reactions FOR INSERT WITH CHECK (auth.uid() = actor_user_id);
-CREATE POLICY "Users can read circles" ON via_circles FOR SELECT USING (true);
-CREATE POLICY "Users can create circles" ON via_circles FOR INSERT WITH CHECK (auth.uid() = owner_id);
-CREATE POLICY "Users can read circle members" ON via_circle_members FOR SELECT USING (true);
-CREATE POLICY "Users can join circles they belong to" ON via_circle_members FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can create moderation flags" ON via_moderation_queue FOR INSERT WITH CHECK (auth.uid() = reporter_user_id);
--->
+<!-- Firebase-backed auth page. window.viaFirebase must be initialized before the inline auth script runs. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -116,11 +7,20 @@ CREATE POLICY "Users can create moderation flags" ON via_moderation_queue FOR IN
 <title>VIA · Auth</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
-window.ECO_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtsenJkZHZvY3N1dGRlaXd2cmhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NzAzNDAsImV4cCI6MjA4OTM0NjM0MH0.4oLh-_y0MkgdO6F98Y4D8FTwy4pOTAjc1eeERkjkQJk";
+window.VIA_FIREBASE_CONFIG = {
+  apiKey:            "REPLACE_ME",
+  authDomain:        "REPLACE_ME.firebaseapp.com",
+  projectId:         "REPLACE_ME",
+  storageBucket:     "REPLACE_ME.appspot.com",
+  messagingSenderId: "REPLACE_ME",
+  appId:             "REPLACE_ME"
+};
 </script>
-<script src="./shared/eco-supabase-config.js"></script>
+<script src="./shared/firebase-config.js"></script>
 <script src="./shared/tool-storage.js"></script>
 <script src="./shared/social-core.js"></script>
 <style>
@@ -178,7 +78,7 @@ input.error,select.error{border-color:#ff6b6b}
 
 <div id="auth-app">
   <div class="panel">
-    <div id="offline-banner" class="banner">Running in offline mode — configure Supabase for full features.</div>
+    <div id="offline-banner" class="banner">Running in offline mode — configure Firebase for full features.</div>
     <div class="tabs">
       <button id="signin-tab" class="tab active" type="button">Sign In</button>
       <button id="signup-tab" class="tab" type="button">Join VIA</button>
@@ -227,25 +127,10 @@ input.error,select.error{border-color:#ff6b6b}
     console.error("VIA Auth: Runtime error:", e.message, "at", e.filename, ":", e.lineno);
   });
 
-  // ── SUPABASE CONFIGURATION ──
-  // Prefer window.ECO_SUPABASE_ANON_KEY (or localStorage eco_supabase_anon_key) so the same backend wiring can be reused across VIA tools.
-  const sbConfig = window.DatabaseService && typeof window.DatabaseService.getConfig === 'function'
-    ? window.DatabaseService.getConfig()
-    : {
-        url: window.ECO_SUPABASE_CONFIG?.url || window.ECO_SUPABASE_URL || 'https://klzrddvocsutdeiwvrhs.supabase.co',
-        anonKey: window.ECO_SUPABASE_CONFIG?.anonKey || window.ECO_SUPABASE_ANON_KEY || '',
-        isConfigured: !!(window.ECO_SUPABASE_CONFIG?.anonKey || window.ECO_SUPABASE_ANON_KEY)
-      };
-  
-  const SUPABASE_URL = sbConfig.url;
-  const SUPABASE_ANON_KEY = sbConfig.anonKey;
-  const SUPABASE_CONFIGURED = Boolean(sbConfig.isConfigured);
-  
-  const sb = window.DatabaseService && typeof window.DatabaseService.getClient === 'function'
-    ? window.DatabaseService.getClient()
-    : ((typeof window.supabase !== 'undefined' && SUPABASE_CONFIGURED)
-      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-      : null);
+  // ── FIREBASE CONFIGURATION ──
+  const _fbAuth = window.viaFirebase && window.viaFirebase.auth ? window.viaFirebase.auth : null;
+  const _fbDb   = window.viaFirebase && window.viaFirebase.db   ? window.viaFirebase.db   : null;
+  const FIREBASE_CONFIGURED = !!(_fbAuth);
 
   const state = { authMode:'signin', loginType:'email', phoneStep: 1 };
   const usernameRe = /^[a-z0-9_.]{3,20}$/;
@@ -289,44 +174,41 @@ input.error,select.error{border-color:#ff6b6b}
   }
 
   async function restoreSession() {
-    if (!sb || !sb.auth || typeof sb.auth.getSession !== 'function') return null;
-    try {
-      const { data, error } = await sb.auth.getSession();
-      if (error) { console.error('Session error:', error); return null; }
-      return data?.session || null;
-    } catch (err) { console.error('Restore failed:', err); return null; }
+    if (!_fbAuth) return null;
+    return new Promise((resolve) => {
+      const unsub = _fbAuth.onAuthStateChanged((user) => {
+        unsub();
+        resolve(user || null);
+      });
+    });
   }
 
-  async function buildCurrentUser(session, fallbackProfile) {
-    const authUser = session?.user;
-    if (!authUser) return null;
-    let profile = fallbackProfile && fallbackProfile.id === authUser.id ? fallbackProfile : null;
-    if (!profile && window.DatabaseService && typeof window.DatabaseService.getLocalUserProfile === 'function') {
-      const cachedProfile = window.DatabaseService.getLocalUserProfile();
-      if (cachedProfile?.id === authUser.id) profile = cachedProfile;
-    }
-    if (sb && typeof sb.from === 'function') {
+  async function buildCurrentUser(firebaseUser) {
+    if (!firebaseUser || !firebaseUser.uid) return null;
+    let profile = null;
+    if (_fbDb) {
       try {
-        const { data, error } = await sb.from('via_users').select('*').eq('id', authUser.id).single();
-        if (error) { console.error('Profile fetch error:', error); } else if (data) { profile = data; }
-      } catch (err) { console.error('Profile restore failed:', err); }
+        const doc = await _fbDb.collection('users').doc(firebaseUser.uid).get();
+        if (doc.exists) profile = doc.data();
+      } catch(err) {
+        console.warn('Firestore profile fetch failed:', err.message);
+      }
     }
-    profile = prepareProfile(profile && profile.id === authUser.id ? profile : {
-      id: authUser.id,
-      email: authUser.email || '',
-      display_name: authUser.user_metadata?.name || authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'VIA User',
-      username: authUser.user_metadata?.username || 'user',
-      city: authUser.user_metadata?.city || '',
-      avatar_emoji: '🌟',
-      xp: 0,
-      level: 1,
-      followers: 0,
-      following: 0,
-      posts: 0
-    });
-    currentUser = profile;
-    saveProfileCache(profile);
-    return currentUser;
+    if (!profile) {
+      profile = {
+        id: firebaseUser.uid,
+        email: firebaseUser.email || '',
+        username: (firebaseUser.displayName || firebaseUser.email || 'user').toLowerCase().replace(/[^a-z0-9_.]/g,'_').slice(0,20),
+        display_name: firebaseUser.displayName || firebaseUser.email || 'VIA User',
+        city: '',
+        avatar_emoji: '🌟',
+        xp: 0, level: 1, followers: 0, following: 0, posts: 0
+      };
+    }
+    const prepared = prepareProfile(profile);
+    currentUser = prepared;
+    saveProfileCache(prepared);
+    return prepared;
   }
 
   async function initApp() {
@@ -381,13 +263,17 @@ input.error,select.error{border-color:#ff6b6b}
   }
 
   async function signIn(email, password) {
-    if (!sb || !sb.auth || typeof sb.auth.signInWithPassword !== 'function') throw new Error('Supabase auth is not configured.');
-    const { data, error } = await sb.auth.signInWithPassword({ email, password });
-    if (error) { console.error('Login error:', error); alert('Login failed'); throw error; }
-    currentUser = await buildCurrentUser(data.session || { user: data.user });
-    authReady = true;
-    renderApp();
-    return data;
+    if (!_fbAuth) throw new Error('Firebase Auth is not configured.');
+    try {
+      const cred = await _fbAuth.signInWithEmailAndPassword(email, password);
+      currentUser = await buildCurrentUser(cred.user);
+      authReady = true;
+      renderApp();
+      return cred;
+    } catch (err) {
+      console.error('Login error:', err);
+      throw new Error(err.message || 'Login failed');
+    }
   }
 
   async function signInHandler(e){
@@ -414,7 +300,7 @@ input.error,select.error{border-color:#ff6b6b}
       }
       
       if(!otp || otp.length < 6){ setErr('signin-otp-err','Enter 6-digit code.'); setInputError('signin-otp',true); return; }
-      // In this demo, any 6 digits work. Real OTP would use sb.auth.verifyOtp
+      // In this demo, any 6 digits work. Real OTP would use Firebase phone auth.
       var email=phoneToPseudoEmail(phone);
     } else {
       if(!rawId || !/^\S+@\S+\.\S+$/.test(rawId)){ setErr('signin-id-err','Enter valid email.'); setInputError('signin-id',true); return; }
@@ -422,7 +308,7 @@ input.error,select.error{border-color:#ff6b6b}
     }
 
     if(state.loginType==='email' && password.length<8){ setErr('signin-pass-err','Min 8 characters.'); setInputError('signin-password',true); return; }
-    if(!sb){ setErr('signin-main-err','Supabase not configured.'); return; }
+    if(!_fbAuth){ setErr('signin-main-err','Firebase not configured.'); return; }
     
     try { 
       // For phone demo, we still use pseudo-email + fixed password or something
@@ -473,18 +359,27 @@ input.error,select.error{border-color:#ff6b6b}
     let email = state.loginType==='phone' ? phoneToPseudoEmail(parsePhone(rawId)) : rawId;
     let finalPass = state.loginType==='phone' ? 'via_demo_pass' : password;
 
-    if(!sb){ setErr('signup-main-err','Supabase not configured.'); return; }
+    if(!_fbAuth){ setErr('signup-main-err','Firebase not configured.'); return; }
     
     try {
-      const { data, error } = await sb.auth.signUp({ email, password: finalPass, options:{ data:{ name, username, city } } });
-      if(error || !data?.user){ setErr('signup-main-err', error?.message || 'Sign up failed'); return; }
-      const profile = prepareProfile({ id: data.user.id, username, display_name: name, city, avatar_emoji:'🌟', xp:0, level:1, followers:0, following:0, posts:0 });
-      const { error: insErr } = await sb.from('via_users').upsert(profile, { onConflict:'id' });
-      if(insErr){ setErr('signup-main-err', insErr.message); return; }
+      const cred = await _fbAuth.createUserWithEmailAndPassword(email, finalPass);
+      const uid = cred.user.uid;
+      const profile = prepareProfile({
+        id: uid,
+        email,
+        username,
+        display_name: name,
+        city,
+        avatar_emoji: '🌟',
+        xp: 0, level: 1, followers: 0, following: 0, posts: 0
+      });
+      if (_fbDb) {
+        await _fbDb.collection('users').doc(uid).set(profile, { merge: true });
+      }
       saveProfileCache(profile);
-      window.location.href='./index.html';
+      window.location.href = './index.html';
     } catch(err) {
-      setErr('signup-main-err', err.message || 'An unexpected error occurred.');
+      setErr('signup-main-err', err.message || 'Sign up failed');
     }
   }
 
@@ -492,9 +387,13 @@ input.error,select.error{border-color:#ff6b6b}
     const email=document.getElementById('reset-email').value.trim();
     setErr('reset-err','');
     if(!/^\S+@\S+\.\S+$/.test(email)){ setErr('reset-err','Enter a valid email for reset link.'); return; }
-    if(!sb){ setErr('reset-err','Configure Supabase to enable password reset.'); return; }
-    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
-    setErr('reset-err', error ? error.message : 'Reset email sent. Check your inbox.');
+    if(!_fbAuth){ setErr('reset-err','Firebase not configured.'); return; }
+    try {
+      await _fbAuth.sendPasswordResetEmail(email);
+      setErr('reset-err','Reset email sent. Check your inbox.');
+    } catch(err) {
+      setErr('reset-err', err.message || 'Reset failed.');
+    }
   }
 
   document.getElementById('signin-tab').addEventListener('click',()=>showTab('signin'));
@@ -506,15 +405,42 @@ input.error,select.error{border-color:#ff6b6b}
   document.getElementById('forgot-link').addEventListener('click',(e)=>{ e.preventDefault(); document.getElementById('reset-wrap').classList.toggle('hidden'); });
   document.getElementById('reset-email').addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ e.preventDefault(); resetPassword(); }});
   document.getElementById('google-btn').addEventListener('click', async ()=>{
-    if(!sb){ setErr('signin-main-err','Configure Supabase for Google OAuth.'); return; }
-    await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: window.location.href } });
+    if(!_fbAuth){ setErr('signin-main-err','Firebase not configured.'); return; }
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.addScope('email');
+      provider.addScope('profile');
+      const cred = await _fbAuth.signInWithPopup(provider);
+      const user = cred.user;
+      const profile = prepareProfile({
+        id: user.uid,
+        email: user.email || '',
+        username: (user.displayName || user.email || 'user').toLowerCase().replace(/[^a-z0-9_.]/g,'_').slice(0,20),
+        display_name: user.displayName || user.email || 'VIA User',
+        city: '',
+        avatar_emoji: '🌟',
+        xp: 0, level: 1, followers: 0, following: 0, posts: 0
+      });
+      if (_fbDb) {
+        await _fbDb.collection('users').doc(user.uid).set(profile, { merge: true });
+      }
+      saveProfileCache(profile);
+      window.location.href = './index.html';
+    } catch(err) {
+      setErr('signin-main-err', err.message || 'Google sign-in failed.');
+    }
   });
   document.getElementById('telegram-btn').addEventListener('click', ()=> window.open('https://t.me/GN8RBot?start=via_auth','_blank'));
 
-  if (sb && sb.auth && typeof sb.auth.onAuthStateChange === 'function') {
-    sb.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth event:', event);
-      if (session) { currentUser = await buildCurrentUser(session); } else { currentUser = null; clearCachedProfile(); }
+  if (_fbAuth) {
+    _fbAuth.onAuthStateChanged(async (user) => {
+      console.log('Firebase auth state:', user ? user.uid : 'signed out');
+      if (user) {
+        currentUser = await buildCurrentUser(user);
+      } else {
+        currentUser = null;
+        clearCachedProfile();
+      }
       authReady = true;
       renderApp();
     });
@@ -532,10 +458,10 @@ input.error,select.error{border-color:#ff6b6b}
 
   window.addEventListener('DOMContentLoaded', () => {
     console.log("VIA Auth: DOMContentLoaded fired");
-    if(!SUPABASE_CONFIGURED) {
+    if(!FIREBASE_CONFIGURED) {
       const banner = document.getElementById('offline-banner');
       if (banner) banner.style.display='block';
-      console.log("VIA Auth: Supabase not configured, showing banner");
+      console.log("VIA Auth: Firebase not configured, showing banner");
     }
     setLoginType('email');
     setTimeout(finishBoot, 500);
