@@ -2,125 +2,25 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Image as ImageIcon, Loader2, Send, Mic, MicOff, Sparkles, Youtube, Linkedin, Bot, ChevronRight } from 'lucide-react';
 import { UserProfile } from '../types';
+import { generateContent, type PostCommand } from '../services/agentService';
 
 // ── Web Speech API types (browser-native, no package needed) ──────────────────
 declare global {
   interface Window {
     SpeechRecognition: new () => SpeechRecognition;
     webkitSpeechRecognition: new () => SpeechRecognition;
-    // Agent system from shared/agent-layer.js (loaded via index.html)
-    AgentLayer?: {
-      createAgentWorkflow: (name: string, task: string, tools: unknown[]) => unknown;
-      runAgentTask: (workflow: unknown, tools: unknown[], opts?: unknown) => Promise<{ text?: string }>;
-    };
-    VIAToolRegistry?: { getTools: () => unknown[] };
   }
 }
 
 // ── Slash commands ─────────────────────────────────────────────────────────────
 const COMMANDS = [
-  { cmd: '/post',     label: 'VIA Post',    icon: Sparkles,  color: 'text-via-accent', desc: 'Viral social post for Bharat' },
-  { cmd: '/linkedin', label: 'LinkedIn',    icon: Linkedin,  color: 'text-blue-400',   desc: 'Professional long-form post' },
-  { cmd: '/youtube',  label: 'YouTube',     icon: Youtube,   color: 'text-red-400',    desc: 'Video title + description' },
-  { cmd: '/task',     label: 'Agent Task',  icon: Bot,       color: 'text-via-gold',   desc: 'Run an agent workflow' },
+  { cmd: '/post'     as PostCommand, label: 'VIA Post',   icon: Sparkles, color: 'text-via-accent', desc: 'Viral social post for Bharat' },
+  { cmd: '/linkedin' as PostCommand, label: 'LinkedIn',   icon: Linkedin, color: 'text-blue-400',   desc: 'Professional long-form post' },
+  { cmd: '/youtube'  as PostCommand, label: 'YouTube',    icon: Youtube,  color: 'text-red-400',    desc: 'Video title + description' },
+  { cmd: '/task'     as PostCommand, label: 'Agent Task', icon: Bot,      color: 'text-via-gold',   desc: 'Run an agent workflow' },
 ] as const;
 
-type CommandKey = typeof COMMANDS[number]['cmd'];
-
-// ── Content generation (template engine + optional LLM bridge) ────────────────
-// Mirrors the logic in tools/engine/script-generator-files/tool.js but adapted
-// for social/professional formats. Calls window.AgentLayer if available.
-function buildPostContent(cmd: CommandKey, topic: string, displayName: string): string {
-  const name = displayName || 'Creator';
-  const t = topic.trim() || 'this topic';
-
-  if (cmd === '/post') {
-    return `🔥 ${t.charAt(0).toUpperCase() + t.slice(1)} is changing the game in India.
-
-Here's what most people don't realise:
-
-→ The opportunity is bigger than it looks
-→ Early movers are already seeing results
-→ You don't need to wait for the "right time"
-
-Start now. Build in public. Learn as you go.
-
-What's your take on ${t}? Drop it below 👇
-
-#BharatBuilds #${t.replace(/\s+/g, '')} #VIA #India`;
-  }
-
-  if (cmd === '/linkedin') {
-    return `I've been thinking deeply about ${t}.
-
-Here's what I've learned after working on it:
-
-1️⃣ Most people overcomplicate the starting point
-2️⃣ The first 10% of progress comes from clarity, not effort
-3️⃣ Consistency over 90 days beats any shortcut
-
-The real insight? ${t.charAt(0).toUpperCase() + t.slice(1)} rewards those who stay in the game long enough to learn the patterns others give up on.
-
-What has your experience taught you about ${t}?
-
-I read every comment — genuinely curious to hear your perspective.
-
-— ${name}
-
-#${t.replace(/\s+/g, '')} #Leadership #BuildingInIndia #GrowthMindset`;
-  }
-
-  if (cmd === '/youtube') {
-    const title = `${t.charAt(0).toUpperCase() + t.slice(1)} Explained in 60 Seconds | Must Watch`;
-    return `📽 TITLE: ${title}
-
-📝 DESCRIPTION:
-In this video, I break down ${t} so you can understand it fast and apply it today.
-
-Whether you're a student, founder, or professional — this one's for you.
-
-What you'll learn:
-✅ What ${t} actually means
-✅ Why it matters right now in India
-✅ The one thing you should do first
-
-⏱ TIMESTAMPS:
-0:00 — Hook: Why ${t} matters
-0:20 — The core concept simplified
-0:45 — Real example from Bharat
-1:10 — What to do next
-
-👍 Like if this helped | Subscribe for more Bharat builds
-💬 Comment your biggest question about ${t}
-
-#${t.replace(/\s+/g, '')} #India #${name.replace(/\s+/g, '')}Builds`;
-  }
-
-  if (cmd === '/task') {
-    // For /task: attempt to call the agent system if loaded in window
-    return `[Agent Task: ${t}]\n\nProcessing via VIA Agent… check the agent surface at /agent.html for full output.\n\nQuick summary will appear here once the agent completes.`;
-  }
-
-  return topic;
-}
-
-// Try to call the global agent system (shared/agent-layer.js loaded by index.html).
-// Falls back to template generation if agent is unavailable.
-async function generateWithAgent(cmd: CommandKey, topic: string, displayName: string): Promise<string> {
-  // Only /task routes through the agent workflow; other commands use templates directly
-  // (the agent system requires WorkflowEngine which may not be ready in React context)
-  if (cmd === '/task' && window.AgentLayer && window.VIAToolRegistry) {
-    try {
-      const tools = window.VIAToolRegistry.getTools();
-      const workflow = window.AgentLayer.createAgentWorkflow('VIA Post Agent', topic, tools);
-      const result = await window.AgentLayer.runAgentTask(workflow, tools);
-      if (result?.text) return result.text;
-    } catch (err) {
-      console.warn('[VoicePost] Agent workflow failed, using template:', err);
-    }
-  }
-  return buildPostContent(cmd, topic, displayName);
-}
+type CommandKey = PostCommand;
 
 // ── Component ─────────────────────────────────────────────────────────────────
 interface CreatePostModalProps {
@@ -237,7 +137,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, user
     setError('');
 
     try {
-      const generated = await generateWithAgent(cmd, topic, user.displayName);
+      const generated = await generateContent(cmd, topic, user.displayName);
       setContent(generated);
       setTimeout(() => textareaRef.current?.focus(), 50);
     } catch (err) {
