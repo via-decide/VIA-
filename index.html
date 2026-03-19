@@ -13,26 +13,18 @@
 <link rel="manifest" href="./manifest.json"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Serif+Display:ital@0;1&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<link rel="stylesheet" href="./onboarding/onboarding.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-// VIA Firebase config — set real values via Cloudflare Pages env vars
-// or replace the values below for local dev only (never commit real keys)
-window.VIA_FIREBASE_CONFIG = {
-  apiKey:            "REPLACE_ME",
-  authDomain:        "REPLACE_ME.firebaseapp.com",
-  projectId:         "REPLACE_ME",
-  storageBucket:     "REPLACE_ME.appspot.com",
-  messagingSenderId: "REPLACE_ME",
-  appId:             "REPLACE_ME"
-};
+window.ECO_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtsenJkZHZvY3N1dGRlaXd2cmhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NzAzNDAsImV4cCI6MjA4OTM0NjM0MH0.4oLh-_y0MkgdO6F98Y4D8FTwy4pOTAjc1eeERkjkQJk";
 </script>
-<script src="./shared/firebase-config.js"></script>
+<script src="./shared/eco-supabase-config.js"></script>
 <script src="./shared/tool-storage.js"></script>
 <script src="./shared/social-core.js"></script>
-<script src="./js/via-navigation.js"></script>
-<script src="./js/via-bootstrap.js"></script>
+<script src="./src/core/content/micro-content-architecture/MicroContentParser.js"></script>
+<script src="./src/core/content/micro-content-architecture/MicroContentComposer.js"></script>
+<script src="./src/core/content/micro-content-architecture/MicroContentRegistry.js"></script>
+<script src="./src/core/content/micro-content-architecture/index.js"></script>
 <style>
 /* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -98,8 +90,6 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 .card-meta{display:flex;align-items:center;gap:.75rem;font-size:.75rem;color:rgba(255,255,255,.6);font-weight:500;}
 .card-avatar{width:28px;height:28px;border-radius:50%;border:2px solid var(--saffron);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;background:var(--deep3);}
 .card-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.3)}
-.follow-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:99px;padding:.25rem .7rem;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;transition:all .2s ease;margin-left:auto;}
-.follow-btn:active{transform:scale(.92);background:rgba(255,107,0,.15);border-color:rgba(255,107,0,.4);}
 .card-actions{position:absolute;right:1rem;bottom:5rem;display:flex;flex-direction:column;gap:1.2rem;z-index:3;}
 .action-btn{display:flex;flex-direction:column;align-items:center;gap:.25rem;cursor:pointer;transition:transform .2s cubic-bezier(.16,1,.3,1);}
 .action-btn:active{transform:scale(.88)}
@@ -160,17 +150,25 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 .discover-card-cat{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--saffron);}
 .discover-card-name{font-size:1.05rem;font-weight:700;color:#fff;line-height:1.2;}
 .discover-card-desc{font-size:.75rem;color:rgba(255,255,255,0.6);line-height:1.4;margin-top:.2rem;}
-.discover-header{grid-column:1 / -1;font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.06em;color:var(--white);margin-top:1rem;display:flex;align-items:center;gap:.5rem;}
-.discover-header::after{content:'';flex:1;height:1px;background:var(--border);}
-.dive-card-premium{grid-column:1 / -1;background:linear-gradient(135deg,rgba(255,107,0,.1),rgba(108,99,255,.05));border:1px solid rgba(255,107,0,.3);border-radius:24px;padding:1.5rem;display:flex;flex-direction:column;gap:.8rem;cursor:pointer;transition:all .3s ease;position:relative;overflow:hidden;}
-.dive-card-premium::before{content:'';position:absolute;top:0;left:0;right:0;height:100%;background:linear-gradient(45deg,transparent,rgba(255,255,255,0.05),transparent);transform:translateX(-100%);transition:transform .6s;}
-.dive-card-premium:hover::before{transform:translateX(100%);}
-.dive-card-premium:active{transform:scale(.98);}
-.dive-badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.6rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--saffron);background:rgba(255,107,0,.15);padding:.3rem .7rem;border-radius:99px;width:fit-content;}
-.dive-premium-title{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;line-height:1.2;color:#fff;}
-.dive-premium-stats{display:flex;align-items:center;gap:1.2rem;margin-top:.5rem;font-size:.65rem;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;}
 .stagger-enter{animation:staggerFade .5s cubic-bezier(.16,1,.3,1) both;opacity:0;transform:translateY(15px);}
 @keyframes staggerFade{to{opacity:1;transform:translateY(0)}}
+.discover-shell{position:absolute;inset:0;overflow-y:auto;padding:5.5rem 1rem 5rem;display:flex;flex-direction:column;gap:1rem;}
+.discover-social-panel{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:22px;padding:1rem;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
+.discover-social-label{font-size:.62rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--saffron);margin-bottom:.35rem;}
+.discover-social-title{font-family:'Playfair Display',serif;font-size:1.35rem;color:#fff;margin-bottom:.35rem;}
+.discover-social-sub{font-size:.78rem;color:rgba(255,255,255,.6);line-height:1.45;margin-bottom:.85rem;}
+.discover-search{width:100%;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(11,11,26,.8);color:#fff;padding:.95rem 1rem;font-family:'DM Sans',sans-serif;font-size:.9rem;}
+.discover-user-results{display:flex;flex-direction:column;gap:.7rem;margin-top:.9rem;}
+.discover-user-card{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.9rem 1rem;border-radius:18px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);}
+.discover-user-main{display:flex;align-items:center;gap:.75rem;min-width:0;}
+.discover-user-avatar{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
+.discover-user-copy{min-width:0;}
+.discover-user-name{font-size:.92rem;font-weight:700;color:#fff;line-height:1.2;}
+.discover-user-handle{font-size:.72rem;color:rgba(255,255,255,.45);margin-top:.18rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.discover-user-meta{font-size:.66rem;color:rgba(255,255,255,.5);margin-top:.24rem;}
+.discover-user-btn{border:1px solid rgba(255,107,0,.32);background:rgba(255,107,0,.15);color:#fff;border-radius:999px;padding:.58rem .9rem;font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;flex-shrink:0;font-family:'DM Sans',sans-serif;}
+.discover-user-btn.following{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.7);}
+.discover-user-empty{padding:1rem;border-radius:16px;background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.08);font-size:.78rem;color:rgba(255,255,255,.5);text-align:center;}
 
 /* ── PROFILE ── */
 .profile-wrap{position:absolute;inset:0;padding:4rem 1.2rem 5rem;overflow-y:auto;display:flex;flex-direction:column;align-items:center;}
@@ -191,6 +189,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 .pgrid-type{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--saffron);margin-bottom:.3rem;}
 .pgrid-title{font-size:.95rem;font-weight:700;color:#fff;line-height:1.25;}
 .pgrid-views{font-size:.7rem;color:rgba(255,255,255,.6);margin-top:.3rem;}
+.profile-social-meta{width:100%;margin:-.15rem 0 1.2rem;text-align:center;font-size:.7rem;color:rgba(255,255,255,.55);letter-spacing:.06em;text-transform:uppercase;}
 .signout-btn{margin-top:1rem;width:100%;padding:1rem;border-radius:16px;background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);color:#ff6b6b;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .25s cubic-bezier(.16,1,.3,1);}
 .signout-btn.guest{background:rgba(255,107,0,.08);border-color:rgba(255,107,0,.25);color:var(--saffron);}
 .signout-btn:active{transform:scale(.97)}
@@ -461,19 +460,18 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 <!-- ── APP ── -->
 <div id="app">
   <div class="status-bar">
-    <div class="status-logo" onclick="VIANavigation.openSurface('feed')">VIA</div>
+    <div class="status-logo" onclick="switchLayer('feed')">VIA</div>
     <div class="status-actions">
-      <button class="status-auth-btn" id="feed-debug-btn" type="button" hidden onclick="window.testPost && window.testPost()">Test Post</button>
       <div class="status-xp"><div class="xp-dot"></div><span id="xp-counter">0 XP</span></div>
       <button class="status-auth-btn" id="status-auth-btn" onclick="VIA.openAuth()">Sign In</button>
     </div>
   </div>
 
   <div class="layer-tabs" id="layer-tabs">
-    <button class="layer-tab active" data-layer="feed" onclick="VIANavigation.openSurface('feed')">Feed</button>
-    <button class="layer-tab" data-layer="discover" onclick="VIANavigation.openSurface('discover')">Discover</button>
-    <button class="layer-tab" data-layer="about" onclick="VIANavigation.openSurface('about')">About</button>
-    <button class="layer-tab" data-layer="profile" onclick="VIANavigation.openSurface('profile')">Profile</button>
+    <button class="layer-tab active" data-layer="feed">Feed</button>
+    <button class="layer-tab" data-layer="discover">Discover</button>
+    <button class="layer-tab" data-layer="about">About</button>
+    <button class="layer-tab" data-layer="profile">Profile</button>
   </div>
 
   <!-- FEED DECK -->
@@ -490,7 +488,16 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 
   <!-- DISCOVER LAYER -->
   <div id="layer-discover" style="display:none;position:absolute;inset:0">
-    <div class="discover-grid" id="discover-grid"></div>
+    <div class="discover-shell">
+      <div class="discover-social-panel">
+        <div class="discover-social-label">Community</div>
+        <div class="discover-social-title">Find VIA creators</div>
+        <div class="discover-social-sub">Search members, follow them, and explore who is publishing on VIA right now.</div>
+        <input id="discover-user-search" class="discover-search" type="search" placeholder="Search by username, display name, or city"/>
+        <div class="discover-user-results" id="discover-user-results"></div>
+      </div>
+      <div class="discover-grid" id="discover-grid"></div>
+    </div>
   </div>
 
   <!-- ═══════════════════════════════════════════════════
@@ -500,7 +507,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 
     <!-- Fixed top bar: back + story switcher -->
     <div class="dd-topbar">
-      <button class="dd-back" onclick="VIANavigation.openSurface('feed')" title="Back to Feed">←</button>
+      <button class="dd-back" onclick="switchLayer('feed')" title="Back to Feed">←</button>
       <div class="dd-story-scroll" id="dd-story-scroll">
         <button class="dd-story-btn active" data-story="food"    onclick="ddLoad('food',this)">🔥 Mumbai Food</button>
         <button class="dd-story-btn"        data-story="drone"   onclick="ddLoad('drone',this)">🌾 Agri Drone</button>
@@ -629,7 +636,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
           <div class="about-product-info"><div class="about-product-name">GN8R Bot</div><div class="about-product-desc">AI command center in Telegram. Generate real files, run pipelines.</div></div>
           <div class="about-product-arrow">›</div>
         </div>
-        <div class="about-product" onclick="VIANavigation.openSurface('feed')">
+        <div class="about-product" onclick="switchLayer('feed')">
           <div class="about-product-icon">📱</div>
           <div class="about-product-info"><div class="about-product-name">VIA Social Feed</div><div class="about-product-desc">Swipe-native social platform for Bharat.</div></div>
           <div class="about-product-arrow">›</div>
@@ -639,14 +646,9 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
           <div class="about-product-info"><div class="about-product-name">Deep Dives</div><div class="about-product-desc">Cinematic story breakdowns on Bharat's biggest trends.</div></div>
           <div class="about-product-arrow">›</div>
         </div>
-        <div class="about-product" onclick="VIANavigation.openSurface('creator_onboarding')">
+        <div class="about-product" onclick="window.location.href='/creator-onboarding.html'">
           <div class="about-product-icon">🎬</div>
           <div class="about-product-info"><div class="about-product-name">Creator Setup</div><div class="about-product-desc">Start the creator onboarding flow and set up your VIA publishing path.</div></div>
-          <div class="about-product-arrow">›</div>
-        </div>
-        <div class="about-product" onclick="window.open('https://orchard.viadecide.com','_blank')">
-          <div class="about-product-icon">🌱</div>
-          <div class="about-product-info"><div class="about-product-name">Orchard Game</div><div class="about-product-desc">Grow digital plants, breed hybrids, and transfer credits in this live multiplayer simulation.</div></div>
           <div class="about-product-arrow">›</div>
         </div>
       </div>
@@ -676,6 +678,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
         <span id="level-label">Level 1 · Explorer</span><span id="xp-bar-label">0 / 500 XP</span>
       </div>
       <div class="xp-bar"><div class="xp-fill" id="xp-fill-bar"></div></div>
+      <div class="profile-social-meta" id="profile-social-meta">0 following · 0 community reactions</div>
       <div class="profile-grid" id="profile-grid"></div>
       <button class="signout-btn guest" id="profile-auth-btn" onclick="VIA.openAuth()">Sign In to Save Progress</button>
     </div>
@@ -687,17 +690,17 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
-    <button class="nav-item active" data-nav="feed" data-page="feed" onclick="VIANavigation.openSurface('feed')">
+    <button class="nav-item active" data-nav="feed" onclick="switchNav('feed',this)">
       <div class="nav-icon">🏠</div><div class="nav-label">Feed</div>
     </button>
-    <button class="nav-item" data-nav="discover" data-page="discover" onclick="VIANavigation.openSurface('discover')">
+    <button class="nav-item" data-nav="discover" onclick="switchNav('discover',this)">
       <div class="nav-icon">🔍</div><div class="nav-label">Explore</div>
     </button>
     <button class="nav-create" onclick="openSheet('create')">＋</button>
-    <button class="nav-item" data-nav="about" data-page="about" onclick="VIANavigation.openSurface('about')">
+    <button class="nav-item" data-nav="about" onclick="switchNav('about',this)">
       <div class="nav-icon">ℹ️</div><div class="nav-label">About</div>
     </button>
-    <button class="nav-item" data-nav="profile" data-page="profile" onclick="VIANavigation.openSurface('profile')">
+    <button class="nav-item" data-nav="profile" onclick="switchNav('profile',this)">
       <div class="nav-icon">👤</div><div class="nav-label">Profile</div>
     </button>
   </nav>
@@ -707,13 +710,72 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 <div id="sheet-overlay" class="sheet-overlay" onclick="closeSheet()"></div>
 <div id="sheet" class="sheet"><div class="sheet-handle"></div><div id="sheet-body"></div></div>
 
+<script src="./onboarding/onboarding.js"></script>
+<script src="./js/viadecide-agent.js"></script>
+<script src="./router.js"></script>
 <script>
 // ════════════════════════════════════════════════════════════════
-// REMOTE AUTH + HELPERS
+// SUPABASE + HELPERS
 // ════════════════════════════════════════════════════════════════
-const _remoteAuth = window.viaFirebase && window.viaFirebase.auth ? window.viaFirebase.auth : null;
+const _sbConfig = window.DatabaseService && typeof window.DatabaseService.getConfig === 'function'
+  ? window.DatabaseService.getConfig()
+  : { url: window.ECO_SUPABASE_CONFIG?.url || 'https://klzrddvocsutdeiwvrhs.supabase.co', anonKey: window.ECO_SUPABASE_CONFIG?.anonKey || window.ECO_SUPABASE_ANON_KEY || '', isConfigured: !!(window.ECO_SUPABASE_CONFIG?.anonKey || window.ECO_SUPABASE_ANON_KEY) };
+const SUPABASE_URL = _sbConfig.url;
+const SUPABASE_ANON_KEY = _sbConfig.anonKey;
+const SUPABASE_CONFIGURED = Boolean(_sbConfig.isConfigured);
+const _sb = window.DatabaseService && typeof window.DatabaseService.getClient === 'function'
+  ? window.DatabaseService.getClient()
+  : ((typeof window.supabase !== 'undefined' && SUPABASE_CONFIGURED)
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null);
 let currentUser = null;
 let authReady = false;
+const SOCIAL_STORAGE_KEY = 'viadecide.social.core';
+const discoverState = { query:'', profiles:[], requestId:0, inputBound:false };
+
+function getSocialCore(){return window.SocialCore&&typeof window.SocialCore.readState==='function'?window.SocialCore:null;}
+function isSignedInUser(user){return !!(user&&user.id&&!user.is_guest);}
+function getRelativeTime(value){
+  if(!value)return'Now';
+  const stamp=new Date(value).getTime();
+  if(Number.isNaN(stamp))return'Now';
+  const diff=Math.max(0,Date.now()-stamp);
+  const minute=60*1000,hour=60*minute,day=24*hour;
+  if(diff<hour)return Math.max(1,Math.round(diff/minute))+'m ago';
+  if(diff<day)return Math.max(1,Math.round(diff/hour))+'h ago';
+  return Math.max(1,Math.round(diff/day))+'d ago';
+}
+function truncateText(value,max){const text=String(value||'').trim();return text.length>max?text.slice(0,Math.max(0,max-1)).trim()+'…':text;}
+function syncCurrentUserSocialState(){
+  const social=getSocialCore();
+  if(!social||!isSignedInUser(currentUser))return currentUser;
+  const synced=social.syncProfileCounts(currentUser);
+  if(synced&&synced.id){
+    currentUser={...currentUser,...synced,is_guest:false};
+    VIA.user=currentUser;
+  }
+  return currentUser;
+}
+function updateProfileSocialMeta(user){
+  const meta=document.getElementById('profile-social-meta');
+  if(!meta)return;
+  const social=getSocialCore();
+  if(!social||!isSignedInUser(user)){
+    meta.textContent='0 following · 0 community reactions';
+    return;
+  }
+  const state=social.readState();
+  const following=state.follows.filter((item)=>item.actor_user_id===user.id).length;
+  const reactions=state.reactions.filter((item)=>item.actor_user_id===user.id).length;
+  meta.textContent=following+' following · '+reactions+' community reactions';
+}
+function refreshSocialSurfaces(options={}){
+  const keepIndex=options.keepIndex!==false;
+  syncCurrentUserSocialState();
+  syncCreatorContentSurface({ keepIndex });
+  buildDiscover();
+  buildProfile();
+  renderApp();
+}
 
 function formatCount(n){if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return String(n);}
 function escapeHTML(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
@@ -724,7 +786,7 @@ function logAuthSnapshot(){console.log('Auth Ready:', authReady);console.log('Cu
 function updateAuthUI(user){
   const guest=!user||user.is_guest||!user.id;
   const sb=document.getElementById('status-auth-btn');
-  if(sb){sb.textContent=guest?'Sign In':'Account';sb.onclick=guest?()=>VIA.openAuth():()=>VIANavigation.openSurface('profile');}
+  if(sb){sb.textContent=guest?'Sign In':'Account';sb.onclick=guest?()=>VIA.openAuth():()=>switchLayer('profile');}
   const pb=document.getElementById('profile-auth-btn');
   if(pb){pb.textContent=guest?'Sign In to Save Progress':'Sign Out';pb.classList.toggle('guest',guest);pb.onclick=guest?()=>VIA.openAuth():()=>VIA.signOut();}
 }
@@ -738,6 +800,7 @@ function renderUserUI(user){
   const av=document.querySelector('.profile-avatar-lg');if(av)av.textContent=resolvedUser.avatar_emoji||'🌟';
   const fc=document.getElementById('follower-count');if(fc)fc.textContent=formatCount(resolvedUser.followers||0);
   const pp=document.getElementById('profile-posts');if(pp)pp.textContent=resolvedUser.posts||0;
+  updateProfileSocialMeta(resolvedUser);
 }
 function renderGuestUI(){
   const guestProfile=getGuestProfile();
@@ -749,11 +812,13 @@ function renderGuestUI(){
   const av=document.querySelector('.profile-avatar-lg');if(av)av.textContent=guestProfile.avatar_emoji;
   const fc=document.getElementById('follower-count');if(fc)fc.textContent=formatCount(0);
   const pp=document.getElementById('profile-posts');if(pp)pp.textContent='0';
+  updateProfileSocialMeta(guestProfile);
 }
 function renderApp(){
   if(!authReady)return;
   logAuthSnapshot();
   if(currentUser){
+    syncCurrentUserSocialState();
     renderUserUI(currentUser);
   }else{
     renderGuestUI();
@@ -775,17 +840,29 @@ const VIA = {
     return profile;
   },
   async hydrateUser(profile){
+    const social=getSocialCore();
     const normalized=profile&&typeof profile==='object'?{...getGuestProfile(),...profile,is_guest:false}:null;
     currentUser=normalized;
+    if(social&&normalized&&normalized.id){
+      const synced=social.bootstrapProfile(normalized);
+      if(synced&&synced.id){
+        currentUser={...normalized,...synced,is_guest:false};
+      }
+    }
     this.user=normalized;
-    if(normalized&&normalized.id){await this.saveLocalProfile(normalized);}
-    return normalized;
+    if(currentUser&&currentUser.id){await this.saveLocalProfile(currentUser);}
+    this.user=currentUser;
+    return currentUser;
   },
   async restoreSession(){
-    if(!_remoteAuth)return null;
+    if(!_sb||!_sb.auth||typeof _sb.auth.getSession!=='function')return null;
     try{
-      const authUser=_remoteAuth.currentUser||null;
-      return authUser?{ user: authUser }:null;
+      const { data, error } = await _sb.auth.getSession();
+      if(error){
+        console.error('Session error:', error);
+        return null;
+      }
+      return data?.session||null;
     }catch(err){
       console.error('Restore failed:', err);
       return null;
@@ -798,10 +875,12 @@ const VIA = {
       ? window.DatabaseService.getLocalUserProfile()
       : null;
     if(profile?.id!==authUser.id){profile=null;}
-    if(window.DatabaseService&&typeof window.DatabaseService.getUserProfile==='function'){
+    if(_sb&&typeof _sb.from==='function'){
       try{
-        const data=await window.DatabaseService.getUserProfile(authUser.id);
-        if(data&&data.id===authUser.id){
+        const { data, error } = await _sb.from('via_users').select('*').eq('id', authUser.id).single();
+        if(error){
+          console.error('Profile sync error:', error);
+        }else if(data){
           profile=data;
         }
       }catch(err){
@@ -833,11 +912,11 @@ const VIA = {
     }
     authReady=true;
     renderApp();
-    if(_remoteAuth&&!this.authSubscription&&typeof _remoteAuth.onAuthStateChanged==='function'){
-      this.authSubscription=_remoteAuth.onAuthStateChanged(async(user)=>{
-        console.log('Auth event:', user ? 'signed-in' : 'signed-out');
-        if(user){
-          await this.resolveProfile({ user });
+    if(_sb&&_sb.auth&&!this.authSubscription&&typeof _sb.auth.onAuthStateChange==='function'){
+      const { data } = _sb.auth.onAuthStateChange(async(event,session)=>{
+        console.log('Auth event:', event);
+        if(session){
+          await this.resolveProfile(session);
         }else{
           currentUser=null;
           this.user=null;
@@ -845,7 +924,9 @@ const VIA = {
         }
         authReady=true;
         renderApp();
+        refreshSocialSurfaces({ keepIndex:true });
       });
+      this.authSubscription=data?.subscription||null;
     }
     return currentUser;
   },
@@ -855,14 +936,15 @@ const VIA = {
   async saveXP(v){if(!currentUser)return;currentUser.xp=v;this.user=currentUser;if(!currentUser.is_guest)await this.saveLocalProfile(currentUser);renderApp();},
   openAuth(){window.location.href='./auth.html';},
   async signOut(){
-    if(_remoteAuth&&typeof _remoteAuth.signOut==='function'){
-      try{await _remoteAuth.signOut();}catch(error){console.error('Sign out error:', error);}
+    if(_sb&&_sb.auth&&typeof _sb.auth.signOut==='function'){
+      try{await _sb.auth.signOut();}catch(error){console.error('Sign out error:', error);}
     }
     currentUser=null;
     this.user=null;
     clearCachedProfile();
     authReady=true;
     renderApp();
+    refreshSocialSurfaces({ keepIndex:true });
     switchLayer('feed');
   }
 };
@@ -872,161 +954,44 @@ window.VIA = VIA;
 // FEED DATA  (storyKey links each card to a Deep Dive)
 // ════════════════════════════════════════════════════════════════
 const DEFAULT_CARDS = [
-  {id:101,cat:'viral',catLabel:'🔥 VIA Official',bg:'linear-gradient(160deg,#240b36 0%,#0B0B1A 60%)',emoji:'🇮🇳',
-   title:'Welcome to VIA - Bharat\'s own social platform. Discover stories that matter to you.',
-   author:'VIA Official',authorEmoji:'🇮🇳',location:'Official',time:'Just now',views:'1.2M',likes:1240,
-   storyKey:null},
-  {id:102,cat:'tech',catLabel:'⚡ Tech Bharat',bg:'linear-gradient(160deg,#0a1a3a 0%,#0B0B1A 60%)',emoji:'🚀',
-   title:'The future of digital India is here. Swipe to explore the latest innovations from our local creators.',
-   author:'Tech Bharat',authorEmoji:'🚀',location:'India',time:'1h ago',views:'850K',likes:850,
-   storyKey:null},
-  {id:103,cat:'culture',catLabel:'🎨 Culture Hub',bg:'linear-gradient(160deg,#1a1a00 0%,#0B0B1A 60%)',emoji:'🎨',
-   title:'Celebrating the vibrant colors and traditions of our diverse heritage. What\'s your favorite festival?',
-   author:'Culture Hub',authorEmoji:'🎨',location:'Heritage',time:'2h ago',views:'2.1M',likes:2100,
-   storyKey:null},
   {id:1,cat:'viral',catLabel:'🔥 Viral',bg:'linear-gradient(160deg,#1a0a3a 0%,#0B0B1A 60%)',emoji:'🎪',
    title:'Mumbai की <em>street food</em> revolution जो दिल्ली तक पहुँची',
-   author:'Priya Sharma',authorEmoji:'👩‍🍳',location:'Mumbai',time:'2h ago',views:'2.4M',likes:184000,
+   author:'Priya Sharma',authorEmoji:'👩‍🍳',location:'Mumbai',time:'2h ago',views:'2.4M',likes:'184K',
    storyKey:'food'},
   {id:2,cat:'bharat',catLabel:'🇮🇳 Bharat',bg:'linear-gradient(160deg,#0a1a00 0%,#0B0B1A 60%)',emoji:'🌾',
    title:'Bihar के किसान ने बनाया <em>drone tech</em> जो पूरे गाँव बदल रहा है',
-   author:'Rahul Kumar',authorEmoji:'👨‍🌾',location:'Patna',time:'5h ago',views:'890K',likes:67000,
+   author:'Rahul Kumar',authorEmoji:'👨‍🌾',location:'Patna',time:'5h ago',views:'890K',likes:'67K',
    storyKey:'drone'},
   {id:3,cat:'tech',catLabel:'⚡ Tech',bg:'linear-gradient(160deg,#0a0a2a 0%,#0B0B1A 60%)',emoji:'🤖',
    title:'IIT Bombay startup ने बनाया <em>AI doctor</em> — 5 रुपये में diagnosis',
-   author:'Dev Patel',authorEmoji:'🧑‍💻',location:'Bangalore',time:'1h ago',views:'3.1M',likes:221000,
+   author:'Dev Patel',authorEmoji:'🧑‍💻',location:'Bangalore',time:'1h ago',views:'3.1M',likes:'221K',
    storyKey:'ai'},
   {id:4,cat:'sport',catLabel:'🏏 Sport',bg:'linear-gradient(160deg,#001a2a 0%,#0B0B1A 60%)',emoji:'🏏',
    title:'IPL सिर्फ cricket नहीं — यह India की <em>biggest fintech</em> lab है',
-   author:'Arjun Singh',authorEmoji:'🏏',location:'Mumbai',time:'3h ago',views:'5.1M',likes:412000,
+   author:'Arjun Singh',authorEmoji:'🏏',location:'Mumbai',time:'3h ago',views:'5.1M',likes:'412K',
    storyKey:'ipl'},
   {id:5,cat:'tech',catLabel:'💳 FinTech',bg:'linear-gradient(160deg,#001a10 0%,#0B0B1A 60%)',emoji:'💳',
    title:'India का <em>UPI</em> — जो system दुनिया copy करना चाहती है',
-   author:'Neha Gupta',authorEmoji:'💼',location:'Delhi',time:'6h ago',views:'4.2M',likes:310000,
+   author:'Neha Gupta',authorEmoji:'💼',location:'Delhi',time:'6h ago',views:'4.2M',likes:'310K',
    storyKey:'upi'},
   {id:6,cat:'bharat',catLabel:'⚡ Mobility',bg:'linear-gradient(160deg,#001a05 0%,#0B0B1A 60%)',emoji:'⚡',
    title:'Tier-2 शहरों में <em>electric 2-wheelers</em> — जहाँ असली revolution है',
-   author:'Kiran Mehta',authorEmoji:'🏍',location:'Coimbatore',time:'4h ago',views:'1.9M',likes:145000,
+   author:'Kiran Mehta',authorEmoji:'🏍',location:'Coimbatore',time:'4h ago',views:'1.9M',likes:'145K',
    storyKey:'ev'},
   {id:7,cat:'culture',catLabel:'🎬 Creator',bg:'linear-gradient(160deg,#1a001a 0%,#0B0B1A 60%)',emoji:'🎬',
    title:'UP के लड़के ने बनाई <em>₹1 Cr/month</em> की content factory',
-   author:'Aakash Verma',authorEmoji:'🎥',location:'Gorakhpur',time:'8h ago',views:'3.6M',likes:278000,
+   author:'Aakash Verma',authorEmoji:'🎥',location:'Gorakhpur',time:'8h ago',views:'3.6M',likes:'278K',
    storyKey:'creator'},
   {id:8,cat:'tech',catLabel:'📚 EdTech',bg:'linear-gradient(160deg,#1a000f 0%,#0B0B1A 60%)',emoji:'📚',
    title:'BYJU\'s के बाद India ने सीखा — <em>असली edtech</em> YouTube पर है',
-   author:'Pooja Sharma',authorEmoji:'👩‍🏫',location:'Pune',time:'12h ago',views:'2.8M',likes:193000,
+   author:'Pooja Sharma',authorEmoji:'👩‍🏫',location:'Pune',time:'12h ago',views:'2.8M',likes:'193K',
    storyKey:'edtech'},
 ];
 
-const FEATURE_RUNTIME_BOOTSTRAP_ENABLED = true;
 const VIA_MICRO_CONTENT = typeof window.createMicroContentArchitecture === 'function'
   ? window.createMicroContentArchitecture()
   : null;
 const STORY_MICRO_CACHE = {};
-
-function createInlineFederatedRuntime(options = {}) {
-  const handlers = {};
-  const runtime = {
-    events: handlers,
-    deps: options.deps || {},
-    emit(event, payload) {
-      const listeners = Array.isArray(handlers[event]) ? handlers[event].slice() : [];
-      listeners.forEach((listener) => {
-        try {
-          listener(payload);
-        } catch (error) {
-          console.error('[VIA] Federated runtime subscriber failed:', error);
-        }
-      });
-      return payload;
-    },
-    subscribe(event, fn) {
-      if (typeof fn !== 'function') return () => {};
-      handlers[event] = handlers[event] || [];
-      handlers[event].push(fn);
-      return function unsubscribe() {
-        handlers[event] = (handlers[event] || []).filter((listener) => listener !== fn);
-      };
-    },
-    getSnapshot() {
-      return {
-        events: Object.fromEntries(Object.entries(handlers).map(([event, listeners]) => [event, listeners.length])),
-        pageContext: runtime.deps.pageContext || null
-      };
-    },
-    handoffToAgent(request = {}) {
-      const result = {
-        surfaceName: request.surfaceName || 'feed_surface',
-        message: request.message || 'where should I go next?',
-        route: request.pageContext && request.pageContext.pathname ? request.pageContext.pathname : window.location.pathname,
-        source: 'inline-federated-runtime'
-      };
-      runtime.emit('route_suggestion', result);
-      return Promise.resolve(result);
-    },
-    handoffToContent(request = {}) {
-      const result = {
-        surfaceName: request.surfaceName || 'feed_surface',
-        mode: request.mode || 'feed_units',
-        input: request.input || null,
-        source: 'inline-federated-runtime'
-      };
-      runtime.emit('content_request', { ...request, result });
-      return result;
-    }
-  };
-  return runtime;
-}
-
-function ensureVIAFederatedRuntimeBootstrap(options = {}) {
-  if (!FEATURE_RUNTIME_BOOTSTRAP_ENABLED) return null;
-  const existingRuntime = window.VIAFederatedRuntime;
-  if (existingRuntime && typeof existingRuntime.emit === 'function' && typeof existingRuntime.subscribe === 'function') {
-    existingRuntime.events = existingRuntime.events && typeof existingRuntime.events === 'object' ? existingRuntime.events : {};
-    return existingRuntime;
-  }
-  const runtime = createInlineFederatedRuntime(options);
-  window.VIAFederatedRuntime = runtime;
-  return runtime;
-}
-
-function createInlineMicroFrontendArchitecture(options = {}) {
-  const runtime = ensureVIAFederatedRuntimeBootstrap();
-  const surfaces = [
-    { name: 'feed_surface', mountSelector: '#app', loadingStrategy: 'eager' },
-    { name: 'discover_surface', mountSelector: '#app', loadingStrategy: 'prefetch' },
-    { name: 'about_surface', mountSelector: '#app', loadingStrategy: 'prefetch' },
-    { name: 'profile_surface', mountSelector: '#app', loadingStrategy: 'prefetch' }
-  ];
-  const registry = {
-    get(name) {
-      return surfaces.find((surface) => surface.name === name) || null;
-    },
-    getAll() {
-      return surfaces.slice();
-    }
-  };
-  const loader = {
-    async mountSurface(name, target) {
-      if (runtime) {
-        runtime.emit('surface_open', {
-          surfaceName: name,
-          target: target && target.id ? target.id : null,
-          pageContext: {
-            pathname: window.location.pathname,
-            title: document.title
-          }
-        });
-      }
-      return typeof options.openHandler === 'function' ? options.openHandler(name, {}) : false;
-    },
-    async prefetchSurface(name) {
-      if (runtime) runtime.emit('surface_prefetch', { surfaceName: name });
-      return true;
-    }
-  };
-  return { runtime, registry, loader };
-}
 
 function getStoryMicroPackage(key) {
   if (!VIA_MICRO_CONTENT || !key || !BLOG_DATA[key]) return null;
@@ -1068,10 +1033,10 @@ function hydrateFeedCardsWithMicroContent(cards) {
 let CARDS = DEFAULT_CARDS.slice();
 
 const DISCOVER_ITEMS = [
-  {emoji:'📦',cat:'Context',name:'Context Packager',desc:'Bundle text, code, and links into a single file payload for AI models.',toolPath:'https://via-decide.github.io/decide.engine-tools/'},
-  {emoji:'📖',cat:'Dives',name:'The Digital Bharat Revolution',desc:'How affordable data and smartphones transformed 1.4 billion lives.',storyKey:'digital-bharat',isDive:true,participants:'12K',readTime:'8',isFeatured:true},
+  {emoji:'📦',cat:'Context',name:'Context Packager',desc:'Bundle text, code, and links into a single file payload for AI models.',toolPath:'/tools/context-packager/'},
+  {emoji:'◂',cat:'Dives',name:'Deep Dives',desc:'Cinematic breakdowns of Bharat\'s biggest trends and innovations.',toolPath:null,isDive:true},
   {emoji:'⚗️',cat:'AI',name:'Prompt Alchemy',desc:'Refine raw ideas into structured, high-yield system prompts.',toolPath:'/prompt-alchemy/'},
-  {emoji:'⚙️',cat:'Dev',name:'Spec Builder',desc:'Generate production-ready feature specs and architecture documents.',toolPath:'./tools/spec-builder/index.html'},
+  {emoji:'⚙️',cat:'Dev',name:'Spec Builder',desc:'Generate production-ready feature specs and architecture documents.',toolPath:'/tools/spec-builder/'},
   {emoji:'🎯',cat:'Career',name:'Interview Prep',desc:'Run simulated high-pressure technical and behavioral interviews.',toolPath:'/interview-prep/'},
   {emoji:'📚',cat:'Learning',name:'StudyOS',desc:'A modular, offline learning OS for intensive UPSC and tech study.',toolPath:'/StudyOS/'},
 ];
@@ -1086,7 +1051,6 @@ const PROFILE_ITEMS = [
 ];
 
 const CREATOR_PUBLISHED_KEY = 'via_creator_published_drafts';
-const FEED_DEBUG_FLAG_KEY = 'via_feed_debug';
 const MICRO_FRONTEND_LAYER_MAP = {
   feed: 'feed_surface',
   discover: 'discover_surface',
@@ -1108,127 +1072,88 @@ function getPublishedCreatorDrafts() {
   return Array.isArray(published) ? published : [];
 }
 
-function transformDraftToPost(draft) {
-  if (!draft || typeof draft !== 'object') return null;
-  const titleSource = typeof draft.hook === 'string' && draft.hook.trim()
-    ? draft.hook.trim()
-    : typeof draft.title === 'string' && draft.title.trim()
-      ? draft.title.trim()
-      : '';
-  if (!titleSource) return null;
-
-  const ctaText = typeof draft.cta === 'string' ? draft.cta.trim() : '';
-  const contextText = typeof draft.context === 'string' ? draft.context.trim() : '';
-  const insightText = typeof draft.insight === 'string' ? draft.insight.trim() : '';
-  const summaryText = contextText || insightText || ctaText || 'Fresh creator draft from the VIA studio.';
-  const title = titleSource.includes('<em>')
-    ? titleSource
-    : `${titleSource} — <em>${draft.author || 'VIA Creator'}</em>`;
-
-  return {
-    id: draft.id || `creator-draft-${Date.now()}`,
-    type: draft.type || 'Draft',
-    hook: titleSource,
-    title,
-    cta: ctaText,
-    context: contextText,
-    insight: insightText,
-    summary: summaryText,
-    body: [contextText, insightText].filter(Boolean).join(' ').trim() || summaryText,
-    microSummary: summaryText,
-    microCTA: ctaText,
-    cat: draft.cat || 'create',
-    catLabel: draft.catLabel || '✍️ Creator',
-    bg: draft.bg || 'linear-gradient(160deg,#240b36 0%,#0B0B1A 60%)',
-    emoji: draft.emoji || (draft.type === 'Video Script' ? '🎬' : draft.type === 'Thread' ? '🧵' : '✍️'),
-    author: draft.author || 'VIA Creator',
-    authorEmoji: draft.authorEmoji || '✍️',
-    location: draft.location || 'Creator Studio',
-    time: draft.time || 'Just now',
-    views: draft.views || 'New',
-    likes: draft.likes || '0',
-    storyKey: draft.storyKey || 'creator',
-    publishedAt: draft.publishedAt || new Date().toISOString()
-  };
-}
-
-function getFeedDebugFlag() {
-  try {
-    return window.location.search.includes('feedDebug=1') || localStorage.getItem(FEED_DEBUG_FLAG_KEY) === '1' || window.__VIA_FEED_DEBUG === true;
-  } catch (_error) {
-    return false;
-  }
-}
-
-function updateFeedDebugControl() {
-  const button = document.getElementById('feed-debug-btn');
-  if (!button) return;
-  button.hidden = !getFeedDebugFlag();
-}
-
-function persistCreatorDraft(draft) {
-  if (!draft || typeof draft !== 'object') return null;
-  const published = getPublishedCreatorDrafts();
-  const normalizedDraft = {
-    id: draft.id || `draft-${Date.now()}`,
-    type: draft.type || 'Post',
-    title: draft.hook || draft.title || 'Creator Draft',
-    author: draft.author || 'VIA Creator',
-    context: draft.context || '',
-    insight: draft.insight || '',
-    structure: draft.structure || '',
-    cta: draft.cta || '',
-    created_at: draft.created_at || new Date().toISOString()
-  };
-  localStorage.setItem(CREATOR_PUBLISHED_KEY, JSON.stringify([normalizedDraft].concat(published).slice(0, 12)));
-  return normalizedDraft;
-}
-
-function hydrateFeed() {
-  const drafts = getPublishedCreatorDrafts();
-  window.__viaLatestCreatorDrafts = drafts;
-  console.log('Feed loaded');
-  syncCreatorContentSurface();
-  return drafts;
-}
-
 function getPublishedCreatorCards() {
-  return getPublishedCreatorDrafts()
-    .map((draft) => transformDraftToPost(draft))
-    .filter(Boolean)
-    .slice(0, 4);
+  return getPublishedCreatorDrafts().slice(0, 4).map((draft, index) => ({
+    id: `creator-draft-${draft.id || index}`,
+    cat: 'create',
+    catLabel: '✍️ Creator',
+    bg: 'linear-gradient(160deg,#240b36 0%,#0B0B1A 60%)',
+    emoji: draft.type === 'Video Script' ? '🎬' : draft.type === 'Thread' ? '🧵' : '✍️',
+    title: `${draft.title || 'Creator Draft'} — <em>${draft.author || 'VIA Creator'}</em>`,
+    author: draft.author || 'VIA Creator',
+    authorEmoji: '✍️',
+    location: 'Creator Studio',
+    time: 'Just now',
+    views: 'New',
+    likes: '0',
+    storyKey: 'creator'
+  }));
 }
 
-function publishDraft(draft) {
-  if (!draft || typeof draft !== 'object') return false;
-  const nextPost = transformDraftToPost(draft);
-  if (!nextPost) return false;
-  const draftList = getPublishedCreatorDrafts();
-  const updatedDrafts = [nextPost].concat(draftList);
-  localStorage.setItem(CREATOR_PUBLISHED_KEY, JSON.stringify(updatedDrafts));
-  syncCreatorContentSurface();
-  return nextPost;
+function getSocialFeedCards() {
+  const social=getSocialCore();
+  if(!social)return [];
+  return social.listFeed(8).map((post) => {
+    const author=post.author||{};
+    const body=String(post.body||'').trim();
+    const headline=truncateText(body, 110);
+    const summary=body.length>110?truncateText(body, 180):'Posted on VIA community feed';
+    return {
+      id: post.id,
+      socialPostId: post.id,
+      cat: 'create',
+      catLabel: '✦ Community',
+      bg: 'linear-gradient(160deg,#24103a 0%,#0B0B1A 60%)',
+      emoji: author.avatar_emoji || '✍️',
+      title: escapeHTML(headline).replace(/\n/g,'<br/>'),
+      author: author.display_name || author.username || 'VIA Creator',
+      authorEmoji: author.avatar_emoji || '✍️',
+      location: author.city || 'VIA',
+      time: getRelativeTime(post.created_at),
+      likes: formatCount(post.reaction_count || 0),
+      microSummary: escapeHTML(summary).replace(/\n/g,'<br/>'),
+      microCTA: 'Published on the VIA social layer',
+      storyKey: null
+    };
+  });
 }
 
 function getProfileItems() {
-  const draftItems = getPublishedCreatorDrafts().slice(0, 4).map((draft, index) => {
-    const post = transformDraftToPost(draft) || {};
-    return {
-      emoji: post.emoji || '✍️',
-      title: stripTags(post.hook || post.title || `Creator Draft ${index + 1}`),
-      type: 'Published',
-      views: 'Fresh',
-      color: '#240b36',
-      storyKey: post.storyKey || 'creator'
-    };
-  });
-  return draftItems.concat(PROFILE_ITEMS);
+  const social=getSocialCore();
+  const authoredItems=social&&isSignedInUser(currentUser)
+    ? social.listPostsByAuthor(currentUser.id, 6).map((post, index) => ({
+        emoji:(post.author&&post.author.avatar_emoji)||currentUser.avatar_emoji||'✍️',
+        title:truncateText(post.body || `Community Post ${index + 1}`, 42),
+        type:'Post',
+        views:formatCount(post.reaction_count || 0)+' reactions',
+        color:'#24103a',
+        storyKey:null,
+        socialPostId:post.id,
+        postBody:post.body || '',
+        createdAt:post.created_at || ''
+      }))
+    : [];
+  const draftItems = getPublishedCreatorDrafts().slice(0, 4).map((draft, index) => ({
+    emoji: draft.type === 'Video Script' ? '🎬' : '✍️',
+    title: draft.title || `Creator Draft ${index + 1}`,
+    type: 'Published',
+    views: 'Fresh',
+    color: '#240b36',
+    storyKey: 'creator'
+  }));
+  return authoredItems.concat(draftItems, PROFILE_ITEMS);
 }
 
-function syncCreatorContentSurface() {
-  const hydratedDefaults = hydrateFeedCardsWithMicroContent(DEFAULT_CARDS.slice());
-  CARDS = getPublishedCreatorCards().concat(hydratedDefaults);
-  if (currentCard >= CARDS.length) currentCard = 0;
+function syncCreatorContentSurface(options={}) {
+  const keepIndex=options.keepIndex!==false;
+  const previousIndex=currentCard;
+  const hydratedDefaults = typeof hydrateFeedCardsWithMicroContent === 'function'
+    ? hydrateFeedCardsWithMicroContent(DEFAULT_CARDS.slice())
+    : DEFAULT_CARDS.slice();
+  CARDS = getSocialFeedCards().concat(getPublishedCreatorCards(), hydratedDefaults);
+  if (!keepIndex) currentCard = 0;
+  else if (previousIndex >= CARDS.length) currentCard = 0;
+  else currentCard = previousIndex;
   if (document.getElementById('deck')) {
     buildProgressDots();
     buildDeck();
@@ -1238,21 +1163,12 @@ function syncCreatorContentSurface() {
   }
 }
 
-let hasDraftGenerateSubscription = false;
-function subscribeFeedDraftEvents() {
-  if (hasDraftGenerateSubscription) return;
-  const runtime = window.VIAFederatedRuntime;
-  if (!runtime || typeof runtime.subscribe !== 'function') return;
-  runtime.subscribe('draft_generate', function(payload) {
-    console.debug('[VIA feed] draft_generate payload', payload);
-    publishDraft(payload);
-  });
-  hasDraftGenerateSubscription = true;
-}
-
 window.addEventListener('storage', (event) => {
   if (event.key === CREATOR_PUBLISHED_KEY) {
-    hydrateFeed();
+    syncCreatorContentSurface();
+  }
+  if (event.key === SOCIAL_STORAGE_KEY) {
+    refreshSocialSurfaces({ keepIndex:true });
   }
 });
 
@@ -1483,62 +1399,6 @@ const BLOG_DATA = {
     ],
     clTitle:'Building the Next EdTech Wave',
     checklist:['Track \'completion rate\' above all other metrics — it\'s the only honest signal of pedagogical value.','Distribution is the product. The best content with no community dies; mediocre content inside a great cohort thrives.','Don\'t build a platform. Build an educator brand. Then license the platform as infrastructure.']
-  },
-  'digital-bharat': {
-    theme: '#FF6B00', catLabel: '· 🇮🇳 BHARAT INNOVATION',
-    hookTitle: 'The Rise of Digital Bharat',
-    hookLead: 'How connectivity is changing lives in rural India. A deep look into the impact of affordable internet on education, healthcare, and entrepreneurship in small villages.',
-    probTitle: 'The Connectivity Gap',
-    probBody: 'Rural India has historically lagged in digital access, limiting opportunities for growth and education.',
-    problems: [
-      {icon: '📶', text: '<strong>Infrastructure</strong> — Lack of reliable fiber and tower networks.'},
-      {icon: '📱', text: '<strong>Device Access</strong> — High cost of smartphones for low-income families.'},
-      {icon: '🎓', text: '<strong>Literacy</strong> — Digital skills gap preventing effective tool usage.'}
-    ],
-    insightTitle: 'The JIO Effect',
-    insightBody: 'Affordable data didn\'t just bring entertainment; it brought a massive demographic into the global digital economy.',
-    insightQuote: '"Data is the new oil, but for a village student, it\'s the new library."',
-    fwTitle: 'Empowerment Framework',
-    fwSteps: [
-      {title: 'Affordable Access', desc: 'World-low data prices enabling 24/7 connectivity.'},
-      {title: 'Vernacular Content', desc: 'Apps and education in regional languages for better adoption.'},
-      {title: 'Digital Payments', desc: 'UPI integration for local commerce and trade.'}
-    ],
-    exTitle: 'Lives Changed',
-    examples: [
-      {title: 'Online Schooling', desc: 'Students in remote hills attending classes via YouTube.'},
-      {title: 'Agri-Marketplace', desc: 'Farmers selling directly to cities via basic messaging apps.'}
-    ],
-    clTitle: 'Growth Signals',
-    checklist: ['Monitor regional language search volume growth.', 'Track penetration of budget 5G smartphones.', 'Look at non-metro service consumption patterns.']
-  },
-  'sustainable-farming': {
-    theme: '#F5C518', catLabel: '· 🌾 AGRI TECH',
-    hookTitle: 'Sustainable Farming 2.0',
-    hookLead: 'Modern tech meets ancient wisdom. Exploring how young farmers are using AI and IoT to optimize crop yields while preserving traditional organic methods.',
-    probTitle: 'The Soil Crisis',
-    probBody: 'Decades of chemical-heavy farming have depleted soil health, making agriculture increasingly unviable and unpredictable.',
-    problems: [
-      {icon: '📉', text: '<strong>Yield Decline</strong> — Chemical overuse eventually leads to diminishing returns.'},
-      {icon: '💧', text: '<strong>Water Scarcity</strong> — Traditional irrigation methods are incredibly wasteful.'},
-      {icon: '🌦️', text: '<strong>Climate Change</strong> — Unpredictable weather cycles destroying seasonal harvests.'}
-    ],
-    insightTitle: 'Data-Driven Traditions',
-    insightBody: 'Regenerative agriculture isn\'t about going backwards; it\'s about using high-tech sensors to validate ancestral knowledge.',
-    insightQuote: '"Ancient wisdom tells us when to plant; AI sensors tell us exactly how much water that specific root needs today."',
-    fwTitle: 'The Hybrid Framework',
-    fwSteps: [
-      {title: 'IoT Soil Sensors', desc: 'Monitoring moisture and nutrient levels in real-time.'},
-      {title: 'Regenerative Practice', desc: 'Using multi-cropping and organic composting for soil recovery.'},
-      {title: 'Predictive Analytics', desc: 'AI-driven weather and pest forecasting for better planning.'}
-    ],
-    exTitle: 'Real Impact',
-    examples: [
-      {title: 'Smart Orchards', desc: 'Drip irrigation controlled by smartphone apps based on soil data.'},
-      {title: 'Organic Yield Boost', desc: 'Farmers seeing 20% higher margins through direct-to-consumer organic sales.'}
-    ],
-    clTitle: 'Future Outlook',
-    checklist: ['Verify the quality of local soil sensor networks.', 'Track the transition speed from chemical to bio-fertilizers.', 'Monitor direct-to-consumer logistics for organic produce.']
   }
 };
 
@@ -1633,13 +1493,13 @@ function ddBuildFooter() {
   ddFooterBuilt = true;
 
   const tools = [
-    {title:'Context Packager', desc:'Bundle code and text into AI payloads.', cta:'Use Tool', url:'https://via-decide.github.io/decide.engine-tools/'},
-    {title:'StudyOS',          desc:'Modular, offline learning OS.',           cta:'Explore',  url:'./StudyOS/index.html'},
-    {title:'Prompt Alchemy',   desc:'Refine ideas into strict prompts.',        cta:'Launch',   url:'./prompt-alchemy/index.html'}
+    {title:'Context Packager', desc:'Bundle code and text into AI payloads.', cta:'Use Tool'},
+    {title:'StudyOS',          desc:'Modular, offline learning OS.',           cta:'Explore'},
+    {title:'Prompt Alchemy',   desc:'Refine ideas into strict prompts.',        cta:'Launch'}
   ];
   const tGrid = document.getElementById('dd-toolsGrid');
   if (tGrid) tools.forEach(t => tGrid.innerHTML += `
-    <a href="${t.url}" class="dd-car-card" ${/^https?:/.test(t.url)?'target="_blank" rel="noopener"':''}>
+    <a href="#" class="dd-car-card">
       <div class="dd-car-thumb"></div>
       <h4>${t.title}</h4><p>${t.desc}</p>
       <span class="dd-car-cta">${t.cta} →</span>
@@ -1648,8 +1508,8 @@ function ddBuildFooter() {
   const fNav = document.getElementById('dd-footerNav');
   if (fNav) {
     const cols = [
-      {h:'Tools',    items:[{l:'Engine Tools',route:'https://via-decide.github.io/decide.engine-tools/'},{l:'GN8R Bot',route:'https://t.me/GN8RBot'}]},
-      {h:'Platform', items:[{l:'VIA Social Feed',route:'javascript:switchLayer("feed")'},{l:'Discover',route:'javascript:switchLayer("discover")'},{l:'Creator Setup',route:'./creator-onboarding.html'}]},
+      {h:'Tools',    items:[{l:'Engine Tools',route:'#'},{l:'GN8R Bot',route:'https://t.me/GN8RBot'}]},
+      {h:'Platform', items:[{l:'VIA Social Feed',route:'#'},{l:'Discover',route:'#'},{l:'Creator Setup',route:'./creator-onboarding.html'}]},
       {h:'Network',  items:[{l:'About ViaDecide',route:'https://via-decide.github.io/decide.engine-tools/'},{l:'GitHub Repo',route:'https://github.com/via-decide'}]}
     ];
     cols.forEach(col => {
@@ -1697,10 +1557,6 @@ function makeCard(index) {
   const card = document.createElement('div');
   card.className='card'; card.id='card-'+index; card.dataset.index=index;
   const catClass = {viral:'cat-viral',bharat:'cat-bharat',tech:'cat-tech',sport:'cat-sport',culture:'cat-culture',create:'cat-create',about:'cat-about'}[d.cat]||'cat-viral';
-  
-  // Format likes/views for UI
-  const displayLikes = typeof d.likes === 'number' ? formatCount(d.likes) : (d.likes || '0');
-  
   card.innerHTML =
     '<div class="card-tilt-overlay"></div>'+
     '<div class="card-dir-hint like">🔥 LIKE</div>'+
@@ -1709,7 +1565,7 @@ function makeCard(index) {
       '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(6rem,30vw,12rem);opacity:.15;pointer-events:none">'+d.emoji+'</div>'+
     '</div>'+
     '<div class="card-actions">'+
-      '<div class="action-btn" onclick="likeCard('+index+')"><div class="action-icon">🔥</div><div class="action-label" id="like-label-'+index+'">'+displayLikes+'</div></div>'+
+      '<div class="action-btn" onclick="likeCard('+index+')"><div class="action-icon">🔥</div><div class="action-label" id="like-label-'+index+'">'+d.likes+'</div></div>'+
       '<div class="action-btn" onclick="openRibbon('+index+')"><div class="action-icon">📤</div><div class="action-label">Share</div></div>'+
       '<div class="action-btn" onclick="openStorySheet('+index+')"><div class="action-icon">📖</div><div class="action-label">Dive In</div></div>'+
     '</div>'+
@@ -1720,18 +1576,9 @@ function makeCard(index) {
       (d.microCTA?'<div class="card-cta">✦ '+d.microCTA+'</div>':'')+
       '<div class="card-meta">'+
         '<div class="card-avatar">'+d.authorEmoji+'</div>'+
-        '<div style="flex:1">'+
-          '<div style="display:flex;align-items:center;gap:6px">'+
-            '<span>'+d.author+'</span>'+
-            '<button class="follow-btn" onclick="event.stopPropagation();this.textContent=\'Following\';this.style.background=\'rgba(255,255,255,0.1)\';addXP(20)">Follow</button>'+
-          '</div>'+
-          '<div style="display:flex;align-items:center;gap:6px;font-size:.62rem;color:rgba(255,255,255,0.4);margin-top:2px">'+
-            '<span>'+d.location+'</span><div class="card-dot"></div><span>'+d.time+'</span>'+
-          '</div>'+
-        '</div>'+
-      '</div>'+
-      '<div style="display:flex;align-items:center;gap:6px;font-size:.6rem;font-weight:700;color:var(--gold);margin-top:12px;opacity:0.8">'+
-        '<span>🎵</span><span style="text-transform:uppercase;letter-spacing:0.1em">Original Sound - Bharat Beats</span>'+
+        '<span>'+d.author+'</span><div class="card-dot"></div>'+
+        '<span>'+d.location+'</span><div class="card-dot"></div>'+
+        '<span>'+d.time+'</span>'+
       '</div>'+
     '</div>';
   return card;
@@ -1817,7 +1664,7 @@ const GC = {
 
   _up(card){
     if(currentCard>=CARDS.length-1){this._snap(card);return;}
-    isAnimating=true;addXP(50);
+    isAnimating=true;addXP(15);
     card.style.transition='transform .3s cubic-bezier(.4,0,.6,1),opacity .25s ease';
     card.style.transform='translateY(-110vh)';card.style.opacity='0';
     currentCard++;
@@ -1839,13 +1686,8 @@ const GC = {
   // Swipe left → open the Deep Dive for this card
   _left(card){
     const c=CARDS[currentCard];
-    if(c&&c.storyKey){
-      switchLayer('deepdives',c.storyKey);
-    } else if(c&&c.socialPostId){
-      openSheet('story',{cardIndex:currentCard});
-    } else {
-      openSheet('platform-context');
-    }
+    if(c&&c.storyKey){switchLayer('deepdives',c.storyKey);}
+    else{openRibbon(currentCard);}
     this._snap(card);
   }
 };
@@ -1897,7 +1739,7 @@ function switchNav(name, el) {
 function openStorySheet(index) {
   const card = CARDS[index];
   if (!card) return;
-  addXP(20);
+  addXP(25);
   if (card.storyKey) {
     switchLayer('deepdives', card.storyKey);
     // Sync nav button
@@ -1908,17 +1750,31 @@ function openStorySheet(index) {
 }
 
 function likeCard(index) {
+  const cardData=CARDS[index];
   addXP(5);
   const wrap=document.createElement('div');wrap.className='affirmation-ripple';wrap.style.left='50%';wrap.style.top='50%';
   for(let i=0;i<3;i++){const r=document.createElement('div');r.className='ripple-ring';wrap.appendChild(r);}
   const b=document.createElement('div');b.className='ripple-burst';b.textContent='🔥';wrap.appendChild(b);
   document.body.appendChild(wrap);setTimeout(()=>wrap.remove(),850);
+  if(cardData&&cardData.socialPostId){
+    if(!isSignedInUser(currentUser)){
+      openSheet('auth-required',{ action:'react to community posts' });
+      return;
+    }
+    const social=getSocialCore();
+    if(!social) return;
+    social.reactToPost(cardData.socialPostId,'🔥',currentUser).then(()=>{
+      setTimeout(()=>refreshSocialSurfaces({ keepIndex:true }),120);
+    }).catch((error)=>{
+      console.error('Reaction failed:', error);
+    });
+  }
 }
 
 function openRibbon(index){activeRibbonCard=index;document.getElementById('action-ribbon').classList.add('open');}
 function closeRibbon(){const r=document.getElementById('action-ribbon');r.style.transform='';r.classList.remove('open');}
 function ribbonAction(type){
-  closeRibbon();addXP(10);
+  closeRibbon();addXP(5);
   if(type==='share')openSheet('share',{cardIndex:activeRibbonCard});
   else if(type==='save'){
     const c=CARDS[activeRibbonCard];
@@ -1943,54 +1799,103 @@ function updateXP(v){
 // ════════════════════════════════════════════════════════════════
 // BENTO GRIDS
 // ════════════════════════════════════════════════════════════════
-function buildDiscover() {
-  const grid=document.getElementById('discover-grid');grid.innerHTML='';
-  
-  // Section: Featured Dives
-  const diveHeader = document.createElement('div');
-  diveHeader.className = 'discover-header stagger-enter';
-  diveHeader.textContent = 'Trending Deep Dives';
-  grid.appendChild(diveHeader);
+function renderDiscoverUsers(profiles, query){
+  const results=document.getElementById('discover-user-results');
+  if(!results)return;
+  if(!profiles.length){
+    results.innerHTML='<div class="discover-user-empty">'+(query?'No VIA creators found for this search yet.':'No community profiles found yet. Sign in and publish the first post.')+'</div>';
+    return;
+  }
+  results.innerHTML=profiles.map((profile)=>{
+    const safeId=String(profile.id||'').replace(/'/g,'');
+    const following=isSignedInUser(currentUser)&&getSocialCore()&&getSocialCore().isFollowing(profile.id,currentUser);
+    const followerText=formatCount(profile.followers||0)+' followers · Level '+(profile.level||1);
+    return '<div class="discover-user-card">'+
+      '<div class="discover-user-main">'+
+        '<div class="discover-user-avatar">'+escapeHTML(profile.avatar_emoji||'🌟')+'</div>'+
+        '<div class="discover-user-copy">'+
+          '<div class="discover-user-name">'+escapeHTML(profile.display_name||profile.username||'VIA Creator')+'</div>'+
+          '<div class="discover-user-handle">@'+escapeHTML(profile.username||'user')+(profile.city?' · '+escapeHTML(profile.city):'')+'</div>'+
+          '<div class="discover-user-meta">'+escapeHTML(followerText)+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<button class="discover-user-btn'+(following?' following':'')+'" '+(following?'disabled ':'')+'onclick="followDiscoverUser(\''+safeId+'\')">'+(following?'Following':'Follow')+'</button>'+
+    '</div>';
+  }).join('');
+}
 
-  DISCOVER_ITEMS.filter(it => it.isFeatured).forEach((item, i) => {
-    const card = document.createElement('div');
-    card.className = 'dive-card-premium stagger-enter';
-    card.style.animationDelay = (i * 0.05) + 's';
-    card.innerHTML = `
-      <div class="dive-badge"><span>📖</span> Deep Dive</div>
-      <div class="dive-premium-title">${item.name}</div>
-      <div class="dive-card-desc" style="color:rgba(255,255,255,0.7);margin:0">${item.desc}</div>
-      <div class="dive-premium-stats">
-        <span>⏱️ ${item.readTime} min read</span>
-        <span>👥 ${item.participants} joined</span>
-      </div>
-    `;
-    card.addEventListener('click', () => {
-      addXP(15);
-      switchLayer('deepdives', item.storyKey);
-    });
-    grid.appendChild(card);
+async function fetchDiscoverProfiles(queryText){
+  const social=getSocialCore();
+  const query=String(queryText||'').trim();
+  const localProfiles=social
+    ? (query ? social.searchProfiles(query,12) : social.listProfiles(8))
+    : [];
+  let remoteProfiles=[];
+  if(_sb&&typeof _sb.from==='function'){
+    try{
+      let request=_sb.from('via_users').select('*').limit(query?12:6);
+      if(query){
+        const safeQuery=query.replace(/,/g,' ').replace(/\s+/g,' ').trim();
+        request=request.or(`username.ilike.%${safeQuery}%,display_name.ilike.%${safeQuery}%,city.ilike.%${safeQuery}%`);
+      }else{
+        request=request.order('xp',{ascending:false});
+      }
+      if(isSignedInUser(currentUser)) request=request.neq('id', currentUser.id);
+      const { data, error } = await request;
+      if(!error&&Array.isArray(data)) remoteProfiles=data;
+    }catch(error){
+      console.error('Discover search failed:', error);
+    }
+  }
+  const merged=[];
+  const seen=new Set();
+  remoteProfiles.concat(localProfiles).forEach((profile)=>{
+    if(!profile||!profile.id||seen.has(profile.id)||(isSignedInUser(currentUser)&&profile.id===currentUser.id)) return;
+    seen.add(profile.id);
+    const normalized={
+      ...profile,
+      display_name:profile.display_name||profile.name||profile.username||'VIA Creator',
+      avatar_emoji:profile.avatar_emoji||'🌟',
+      xp:Number(profile.xp||0),
+      level:Number(profile.level||1),
+      followers:Number(profile.followers||0),
+      following:Number(profile.following||0),
+      posts:Number(profile.posts||0)
+    };
+    if(social) social.bootstrapProfile(normalized);
+    merged.push(normalized);
   });
+  return merged.slice(0,query?10:6);
+}
 
-  // Section: Creator Tools
-  const toolsHeader = document.createElement('div');
-  toolsHeader.className = 'discover-header stagger-enter';
-  toolsHeader.style.animationDelay = '0.1s';
-  toolsHeader.textContent = 'Creator Tools';
-  grid.appendChild(toolsHeader);
-
-  DISCOVER_ITEMS.filter(it => !it.isFeatured).forEach((item,i)=>{
+async function buildDiscover() {
+  const grid=document.getElementById('discover-grid');if(grid){grid.innerHTML='';}
+  DISCOVER_ITEMS.forEach((item,i)=>{
+    if(!grid)return;
     const card=document.createElement('div');
     card.className='discover-card stagger-enter';
-    card.style.animationDelay=(0.15 + i*.04)+'s';
+    card.style.animationDelay=(i*.04)+'s';
     card.innerHTML=`<div class="discover-card-bg">${item.emoji}</div><div><div class="discover-card-cat">${item.cat}</div><div class="discover-card-name">${item.name}</div><div class="discover-card-desc">${item.desc}</div></div>`;
     card.addEventListener('click',()=>{
       addXP(10);
-      if(item.isDive){switchLayer('deepdives', item.storyKey);}
-      else{openSheet('discover-detail',{item});}
+      if(item.isDive){switchLayer('deepdives');return;}
+      openSheet('discover-detail',{item});
     });
     grid.appendChild(card);
   });
+
+  const input=document.getElementById('discover-user-search');
+  if(input&&!discoverState.inputBound){
+    input.addEventListener('input',()=>{discoverState.query=input.value||'';buildDiscover();});
+    discoverState.inputBound=true;
+  }
+  if(input&&input.value!==discoverState.query) input.value=discoverState.query;
+  renderDiscoverUsers([], discoverState.query);
+  const requestId=++discoverState.requestId;
+  const profiles=await fetchDiscoverProfiles(discoverState.query);
+  if(requestId!==discoverState.requestId) return;
+  discoverState.profiles=profiles;
+  renderDiscoverUsers(profiles, discoverState.query);
 }
 
 function buildProfile(){
@@ -2008,6 +1913,20 @@ function buildProfile(){
     });
     grid.appendChild(div);
   });
+}
+
+window.followDiscoverUser = async function(userId){
+  const social=getSocialCore();
+  if(!social||!userId)return;
+  if(!isSignedInUser(currentUser)){
+    openSheet('auth-required',{ action:'follow creators' });
+    return;
+  }
+  const target=discoverState.profiles.find((profile)=>profile.id===userId) || social.searchProfiles('',50).find((profile)=>profile.id===userId);
+  if(!target||social.isFollowing(userId,currentUser)) return;
+  await social.followUser(target,currentUser);
+  addXP(20);
+  refreshSocialSurfaces({ keepIndex:true });
 };
 
 window.publishComposerPost = async function(){
@@ -2071,7 +1990,8 @@ function applySurfaceFromUrl() {
 
 async function initMicroFrontendArchitecture() {
   try {
-    const architecture = await createInlineMicroFrontendArchitecture({
+    const microFrontendModule = await import('./src/core/frontend/micro-frontend-architecture/index.js');
+    const architecture = await microFrontendModule.createMicroFrontendArchitecture({
       openHandler(name, params) {
         const layer = Object.keys(MICRO_FRONTEND_LAYER_MAP).find((key) => MICRO_FRONTEND_LAYER_MAP[key] === name);
         if (!layer) return false;
@@ -2081,13 +2001,8 @@ async function initMicroFrontendArchitecture() {
     });
 
     window.VIAMicroFrontendArchitecture = architecture;
-    if (architecture.runtime && typeof architecture.runtime.subscribe === 'function') {
-      architecture.runtime.subscribe('content_events', () => {
-        syncCreatorContentSurface();
-      });
-    }
     architecture.runtime.subscribe('content_events', () => {
-      hydrateFeed();
+      syncCreatorContentSurface();
     });
 
     const legacySwitchLayer = window.__viaLegacySwitchLayer;
@@ -2112,32 +2027,16 @@ async function initMicroFrontendArchitecture() {
     prefetchSurfaces.forEach((surface) => {
       architecture.loader.prefetchSurface(surface.name);
     });
-  } catch (error) {
-    console.error('[VIA] Micro frontend initialization failed:', error);
-  }
+  } catch (_error) {}
 
   applySurfaceFromUrl();
 }
 
 let federatedRuntime=null;
-window.testPost = function (payload = {}) {
-  const draft = {
-    hook: payload.hook || 'Test creator hook from VIA feed debug',
-    context: payload.context || 'Hydration path verification from startup debug control.',
-    insight: payload.insight || 'Persist draft events locally so feed cards render on page load.',
-    structure: payload.structure || 'Hook → Context → Insight → CTA',
-    cta: payload.cta || 'Open the creator surface and verify the post appears.'
-  };
-  if (!window.VIAFederatedRuntime || typeof window.VIAFederatedRuntime.emit !== 'function') {
-    console.warn('VIAFederatedRuntime unavailable for testPost');
-    return null;
-  }
-  window.VIAFederatedRuntime.emit('draft_generate', draft);
-  return draft;
-};
 async function initFederatedRuntime(){
   try {
-    federatedRuntime = ensureVIAFederatedRuntimeBootstrap({
+    const runtimeModule = await import('./src/core/runtime/federated-agent-content-runtime/index.js');
+    federatedRuntime = await runtimeModule.createFederatedAgentContentRuntime({
       deps: {
         pageContext: {
           pathname: window.location.pathname,
@@ -2146,8 +2045,6 @@ async function initFederatedRuntime(){
         }
       }
     });
-    window.VIAFederatedRuntime = federatedRuntime;
-    console.log('Runtime:', window.VIAFederatedRuntime);
     federatedRuntime.emit('surface_open', {
       surfaceName: 'feed_surface',
       pageContext: {
@@ -2156,10 +2053,6 @@ async function initFederatedRuntime(){
         description: document.querySelector('meta[name="description"]') ? document.querySelector('meta[name="description"]').getAttribute('content') || '' : ''
       }
     });
-    window.VIAFederatedRuntime = federatedRuntime;
-    subscribeFeedDraftEvents();
-    window.publishDraft = publishDraft;
-    if (window.VIANavigation && typeof window.VIANavigation.handleLegacyRoutes === 'function') { window.VIANavigation.handleLegacyRoutes(); }
     window.VIAFeedRuntimeBridge = {
       getSnapshot(){
         return federatedRuntime ? federatedRuntime.getSnapshot() : null;
@@ -2190,10 +2083,9 @@ async function initFederatedRuntime(){
         window.__viaFeedContentPreview = payload.result;
       }
     });
-  } catch (error) {
-    console.error('[VIA] Federated runtime initialization failed:', error);
-  }
+  } catch (_error) {}
 }
+
 // ════════════════════════════════════════════════════════════════
 // SHEETS
 // ════════════════════════════════════════════════════════════════
@@ -2208,57 +2100,28 @@ const SHEETS = {
 function openSheet(type, extra={}) {
   const overlay=document.getElementById('sheet-overlay'),sheet=document.getElementById('sheet'),body=document.getElementById('sheet-body');
   let html='';
-  if(type==='discover-detail'&&extra.item){
+  if(type==='auth-required'){
+    const action=extra&&extra.action?extra.action:'continue';
+    html='<div class="sheet-title">Sign in required</div><div class="sheet-sub">Create a VIA account to '+escapeHTML(action)+'.</div><div class="sheet-actions"><div class="sheet-btn" onclick="closeSheet();VIA.openAuth()"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">→</div><div class="sheet-btn-text"><div class="sheet-btn-title">Open Auth</div><div class="sheet-btn-sub">Save progress, post, and follow creators</div></div><div class="sheet-btn-arrow">›</div></div></div>';
+  } else if(type==='create'){
+    html='<div class="sheet-title">Create on VIA</div><div class="sheet-sub">Publish a short post to the community feed. Your post will appear above the curated trend cards.</div><div class="sheet-actions">'+
+      '<div class="sheet-btn" onclick="window.open(\'https://t.me/GN8RBot\',\'_blank\');closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">📹</div><div class="sheet-btn-text"><div class="sheet-btn-title">Video</div><div class="sheet-btn-sub">Open GN8R Bot for video-first creation</div></div><div class="sheet-btn-arrow">›</div></div>'+
+      '<div class="sheet-btn" style="align-items:flex-start;cursor:default"><div class="sheet-btn-icon" style="background:rgba(108,99,255,.15)">✍️</div><div class="sheet-btn-text" style="width:100%"><div class="sheet-btn-title">Write on VIA</div><div class="sheet-btn-sub">Short note, idea, or update for your followers.</div><div class="via-agent-row" style="margin-top:.85rem;display:block"><textarea id="composer-body" placeholder="What are you building, learning, or thinking about today?" style="width:100%;min-height:120px"></textarea></div><div id="composer-status" class="sheet-btn-sub" style="margin-top:.6rem">Community posts persist locally via SocialCore and sync to Supabase when available.</div><div class="via-agent-row" style="margin-top:.8rem"><button type="button" class="via-agent-btn" onclick="publishComposerPost()">Publish</button><button type="button" class="via-agent-btn alt" onclick="closeSheet()">Cancel</button></div></div></div>'+
+    '</div>';
+  } else if(type==='discover-detail'&&extra.item){
     const {item}=extra;const safe=(item.toolPath||'').replace(/'/g,"\\'");
     html=`<div class="sheet-title">${item.emoji} ${item.name}</div><div class="sheet-sub">${item.cat}</div><div class="sheet-actions">${item.toolPath?`<div class="sheet-btn" onclick="window.location.href='${safe}';closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">▶</div><div class="sheet-btn-text"><div class="sheet-btn-title">Launch Tool</div><div class="sheet-btn-sub">Open ${item.name}</div></div><div class="sheet-btn-arrow">›</div></div>`:''}</div>`;
   } else if(type==='profile-detail'&&extra.item){
     const {item}=extra;
-    html=`<div class="sheet-title">${item.emoji} ${item.title}</div><div class="sheet-sub">${item.type}</div><div class="sheet-actions"><div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Close</div></div><div class="sheet-btn-arrow">›</div></div></div>`;
-  } else if(type==='platform-context'){
-    html='<div class="sheet-title">What is VIA?</div>'+
-    '<div class="sheet-sub">Bharat का अपना Platform — a sovereign, Bharat-first digital ecosystem.</div>'+
-    '<div class="sheet-actions">'+
-      '<div class="sheet-btn" onclick="closeSheet();window.open(\'https://via-decide.github.io/decide.engine-tools/\',\'_blank\')">'+
-        '<div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">⚙️</div>'+
-        '<div class="sheet-btn-text">'+
-          '<div class="sheet-btn-title">44+ Engine Tools</div>'+
-          '<div class="sheet-btn-sub">Browser tools for creators, coders, students & founders. No login needed.</div>'+
-        '</div>'+
-        '<div class="sheet-btn-arrow">›</div>'+
-      '</div>'+
-      '<div class="sheet-btn" onclick="closeSheet();switchLayer(\'about\')">'+
-        '<div class="sheet-btn-icon" style="background:rgba(108,99,255,.15)">ℹ️</div>'+
-        '<div class="sheet-btn-text">'+
-          '<div class="sheet-btn-title">About VIA</div>'+
-          '<div class="sheet-btn-sub">Mission, products, and the people building Bharat\'s decision layer.</div>'+
-        '</div>'+
-        '<div class="sheet-btn-arrow">›</div>'+
-      '</div>'+
-      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'/founder/\'">'+
-        '<div class="sheet-btn-icon" style="background:rgba(245,197,24,.1)">🧭</div>'+
-        '<div class="sheet-btn-text">'+
-          '<div class="sheet-btn-title">Founder Dashboard</div>'+
-          '<div class="sheet-btn-sub">Weekly decision reviews and founder tools.</div>'+
-        '</div>'+
-        '<div class="sheet-btn-arrow">›</div>'+
-      '</div>'+
-      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'/interview-prep/\'">'+
-        '<div class="sheet-btn-icon" style="background:rgba(57,255,136,.08)">🎤</div>'+
-        '<div class="sheet-btn-text">'+
-          '<div class="sheet-btn-title">Interview Prep</div>'+
-          '<div class="sheet-btn-sub">Offline retro interview practice.</div>'+
-        '</div>'+
-        '<div class="sheet-btn-arrow">›</div>'+
-      '</div>'+
-      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'/student-research/\'">'+
-        '<div class="sheet-btn-icon" style="background:rgba(108,99,255,.12)">📚</div>'+
-        '<div class="sheet-btn-text">'+
-          '<div class="sheet-btn-title">Decision Research</div>'+
-          '<div class="sheet-btn-sub">Voice-first research engine for students.</div>'+
-        '</div>'+
-        '<div class="sheet-btn-arrow">›</div>'+
-      '</div>'+
-    '</div>';
+    html=`<div class="sheet-title">${item.emoji} ${item.title}</div><div class="sheet-sub">${item.type}</div><div class="sheet-actions">${item.postBody?`<div class="sheet-btn" style="align-items:flex-start;cursor:default"><div class="sheet-btn-icon" style="background:rgba(108,99,255,.15)">✍️</div><div class="sheet-btn-text"><div class="sheet-btn-title">Post body</div><div class="sheet-btn-sub">${escapeHTML(item.postBody)}</div></div></div>`:''}<div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Close</div></div><div class="sheet-btn-arrow">›</div></div></div>`;
+  } else if(type==='story'&&typeof extra.cardIndex==='number'&&CARDS[extra.cardIndex]){
+    const card=CARDS[extra.cardIndex];
+    html='<div class="sheet-title">'+escapeHTML(card.author||'VIA Creator')+'</div><div class="sheet-sub">'+escapeHTML(card.time||'Just now')+'</div><div class="sheet-actions"><div class="sheet-btn" style="align-items:flex-start;cursor:default"><div class="sheet-btn-icon" style="background:rgba(108,99,255,.15)">'+escapeHTML(card.authorEmoji||'✍️')+'</div><div class="sheet-btn-text"><div class="sheet-btn-title">'+escapeHTML(stripTags(card.title||'Community post'))+'</div><div class="sheet-btn-sub">'+escapeHTML(stripTags(card.microSummary||'Published on the VIA feed.'))+'</div></div></div></div>';
+  } else if(type==='share'&&typeof extra.cardIndex==='number'&&CARDS[extra.cardIndex]){
+    const card=CARDS[extra.cardIndex];
+    html='<div class="sheet-title">Share this story</div><div class="sheet-sub">Copy the headline or open the deep dive to continue reading.</div><div class="sheet-actions"><div class="sheet-btn" onclick="copyFeedHeadline('+extra.cardIndex+')"><div class="sheet-btn-icon" style="background:rgba(245,197,24,.15)">⧉</div><div class="sheet-btn-text"><div class="sheet-btn-title">Copy headline</div><div class="sheet-btn-sub">'+escapeHTML(stripTags(card.title||'VIA story'))+'</div></div><div class="sheet-btn-arrow">›</div></div></div>';
+  } else if(type==='comment'){
+    html='<div class="sheet-title">Comments are next</div><div class="sheet-sub">The feed now persists posts and reactions. Comment threads can be added safely in the next pass.</div><div class="sheet-actions"><div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Close</div></div><div class="sheet-btn-arrow">›</div></div></div>';
   } else {
     const s=SHEETS[type];if(!s)return;
     html='<div class="sheet-title">'+s.title+'</div><div class="sheet-sub">'+s.sub+'</div><div class="sheet-actions">'+s.actions.map(a=>'<div class="sheet-btn" onclick="'+(a.url?'window.open(\''+a.url+'\',\'_blank\');closeSheet()':'addXP(5);closeSheet()')+'"><div class="sheet-btn-icon" style="background:'+a.iconBg+'">'+a.icon+'</div><div class="sheet-btn-text"><div class="sheet-btn-title">'+a.title+'</div><div class="sheet-btn-sub">'+a.sub+'</div></div><div class="sheet-btn-arrow">›</div></div>').join('')+'</div>';
@@ -2292,23 +2155,11 @@ function startApp(){
   if(appStarted)return;appStarted=true;
   setTimeout(async()=>{
     try{await VIA.init();}catch(error){console.error('Auth init failed:', error);currentUser=null;authReady=true;renderApp();}
-    if (FEATURE_RUNTIME_BOOTSTRAP_ENABLED) {
-      ensureVIAFederatedRuntimeBootstrap({
-        deps: {
-          pageContext: {
-            pathname: window.location.pathname,
-            title: document.title,
-            description: document.querySelector('meta[name="description"]') ? document.querySelector('meta[name="description"]').getAttribute('content') || '' : ''
-          }
-        }
-      });
-    }
     document.getElementById('boot').classList.add('exit');
     document.getElementById('app').classList.add('visible');
-    updateFeedDebugControl();
-    hydrateFeed();GC.init();buildDiscover();buildProfile();
+    syncCreatorContentSurface();GC.init();buildDiscover();buildProfile();
     renderApp();
-    // Pre-warm Deep Dive with first story so sections aren't empty on first open
+    // Pre-warm Deep Dive so sections aren't empty on first open
     if (typeof ddLoad === 'function') { try { ddLoad('food', null); } catch(_e){} }
     await initMicroFrontendArchitecture();
     await initFederatedRuntime();
