@@ -1006,38 +1006,85 @@ function getPublishedCreatorDrafts() {
   return Array.isArray(published) ? published : [];
 }
 
-function getPublishedCreatorCards() {
-  return getPublishedCreatorDrafts().slice(0, 4).map((draft, index) => ({
-    id: `creator-draft-${draft.id || index}`,
-    cat: 'create',
-    catLabel: '✍️ Creator',
-    bg: 'linear-gradient(160deg,#240b36 0%,#0B0B1A 60%)',
-    emoji: draft.type === 'Video Script' ? '🎬' : draft.type === 'Thread' ? '🧵' : '✍️',
-    title: `${draft.title || 'Creator Draft'} — <em>${draft.author || 'VIA Creator'}</em>`,
+function transformDraftToPost(draft) {
+  if (!draft || typeof draft !== 'object') return null;
+  const titleSource = typeof draft.hook === 'string' && draft.hook.trim()
+    ? draft.hook.trim()
+    : typeof draft.title === 'string' && draft.title.trim()
+      ? draft.title.trim()
+      : '';
+  if (!titleSource) return null;
+
+  const ctaText = typeof draft.cta === 'string' ? draft.cta.trim() : '';
+  const contextText = typeof draft.context === 'string' ? draft.context.trim() : '';
+  const insightText = typeof draft.insight === 'string' ? draft.insight.trim() : '';
+  const summaryText = contextText || insightText || ctaText || 'Fresh creator draft from the VIA studio.';
+  const title = titleSource.includes('<em>')
+    ? titleSource
+    : `${titleSource} — <em>${draft.author || 'VIA Creator'}</em>`;
+
+  return {
+    id: draft.id || `creator-draft-${Date.now()}`,
+    type: draft.type || 'Draft',
+    hook: titleSource,
+    title,
+    cta: ctaText,
+    context: contextText,
+    insight: insightText,
+    summary: summaryText,
+    body: [contextText, insightText].filter(Boolean).join(' ').trim() || summaryText,
+    microSummary: summaryText,
+    microCTA: ctaText,
+    cat: draft.cat || 'create',
+    catLabel: draft.catLabel || '✍️ Creator',
+    bg: draft.bg || 'linear-gradient(160deg,#240b36 0%,#0B0B1A 60%)',
+    emoji: draft.emoji || (draft.type === 'Video Script' ? '🎬' : draft.type === 'Thread' ? '🧵' : '✍️'),
     author: draft.author || 'VIA Creator',
-    authorEmoji: '✍️',
-    location: 'Creator Studio',
-    time: 'Just now',
-    views: 'New',
-    likes: '0',
-    storyKey: 'creator'
-  }));
+    authorEmoji: draft.authorEmoji || '✍️',
+    location: draft.location || 'Creator Studio',
+    time: draft.time || 'Just now',
+    views: draft.views || 'New',
+    likes: draft.likes || '0',
+    storyKey: draft.storyKey || 'creator',
+    publishedAt: draft.publishedAt || new Date().toISOString()
+  };
+}
+
+function getPublishedCreatorCards() {
+  return getPublishedCreatorDrafts()
+    .map((draft) => transformDraftToPost(draft))
+    .filter(Boolean)
+    .slice(0, 4);
+}
+
+function publishDraft(draft) {
+  if (!draft || typeof draft !== 'object') return false;
+  const nextPost = transformDraftToPost(draft);
+  if (!nextPost) return false;
+  const draftList = getPublishedCreatorDrafts();
+  const updatedDrafts = [nextPost].concat(draftList);
+  localStorage.setItem(CREATOR_PUBLISHED_KEY, JSON.stringify(updatedDrafts));
+  syncCreatorContentSurface();
+  return nextPost;
 }
 
 function getProfileItems() {
-  const draftItems = getPublishedCreatorDrafts().slice(0, 4).map((draft, index) => ({
-    emoji: draft.type === 'Video Script' ? '🎬' : '✍️',
-    title: draft.title || `Creator Draft ${index + 1}`,
-    type: 'Published',
-    views: 'Fresh',
-    color: '#240b36',
-    storyKey: 'creator'
-  }));
+  const draftItems = getPublishedCreatorDrafts().slice(0, 4).map((draft, index) => {
+    const post = transformDraftToPost(draft) || {};
+    return {
+      emoji: post.emoji || '✍️',
+      title: stripTags(post.hook || post.title || `Creator Draft ${index + 1}`),
+      type: 'Published',
+      views: 'Fresh',
+      color: '#240b36',
+      storyKey: post.storyKey || 'creator'
+    };
+  });
   return draftItems.concat(PROFILE_ITEMS);
 }
 
 function syncCreatorContentSurface() {
-  CARDS = getPublishedCreatorCards().concat(DEFAULT_CARDS.slice());
+  CARDS = getPublishedCreatorCards().concat(hydrateFeedCardsWithMicroContent(DEFAULT_CARDS.slice()));
   if (currentCard >= CARDS.length) currentCard = 0;
   if (document.getElementById('deck')) {
     buildProgressDots();
@@ -1046,6 +1093,18 @@ function syncCreatorContentSurface() {
   if (document.getElementById('profile-grid')) {
     buildProfile();
   }
+}
+
+let hasDraftGenerateSubscription = false;
+function subscribeFeedDraftEvents() {
+  if (hasDraftGenerateSubscription) return;
+  const runtime = window.VIAFederatedRuntime;
+  if (!runtime || typeof runtime.subscribe !== 'function') return;
+  runtime.subscribe('draft_generate', function(payload) {
+    console.debug('[VIA feed] draft_generate payload', payload);
+    publishDraft(payload);
+  });
+  hasDraftGenerateSubscription = true;
 }
 
 window.addEventListener('storage', (event) => {
@@ -1929,6 +1988,9 @@ async function initFederatedRuntime(){
         description: document.querySelector('meta[name="description"]') ? document.querySelector('meta[name="description"]').getAttribute('content') || '' : ''
       }
     });
+    window.VIAFederatedRuntime = federatedRuntime;
+    subscribeFeedDraftEvents();
+    window.publishDraft = publishDraft;
     window.VIAFeedRuntimeBridge = {
       getSnapshot(){
         return federatedRuntime ? federatedRuntime.getSnapshot() : null;
