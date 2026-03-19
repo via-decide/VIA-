@@ -51,6 +51,13 @@ const ProfileView: React.FC<ProfileViewProps> = ({ user, onLogout, onUpdateProfi
         <div className="space-y-2 mb-8">
           <h1 className="font-syne font-bold text-3xl tracking-tight">{user.displayName}</h1>
           <p className="text-white/40 text-sm font-medium">@{user.username}</p>
+          <p className="text-[11px] text-white/30 uppercase tracking-[0.2em]">Local profile is ready for feed authorship and future auth sync.</p>
+          <a
+            href="./profile.html"
+            className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-via-gold hover:text-white transition-colors"
+          >
+            Manage local profile →
+          </a>
           <p className="text-sm text-white/80 leading-relaxed max-w-md">
             {user.bio}
           </p>

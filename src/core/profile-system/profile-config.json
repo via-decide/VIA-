@@ -1,0 +1,5 @@
+{
+  "storage_key": "via_profile",
+  "default_username_prefix": "user",
+  "guest_username": "guest"
+}

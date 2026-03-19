@@ -13,6 +13,9 @@ interface FeedPostProps {
 
 const FeedPost: React.FC<FeedPostProps> = ({ post, isActive, onLike, onComment, onShare }) => {
   const [isLiked, setIsLiked] = React.useState(false);
+  const authorHandle = post.author?.username || `user_${post.userId.slice(0, 5)}`;
+  const authorName = post.author?.displayName || post.authorName;
+  const authorAvatar = post.author?.avatarEmoji || post.authorAvatar;
 
   const handleLike = () => {
     if (!isLiked) {
@@ -43,25 +46,31 @@ const FeedPost: React.FC<FeedPostProps> = ({ post, isActive, onLike, onComment, 
           className="flex items-center gap-3"
         >
           <div className="w-12 h-12 rounded-full glass-panel flex items-center justify-center text-2xl shadow-lg">
-            {post.authorAvatar}
+            {authorAvatar}
           </div>
           <div>
-            <h3 className="font-syne font-bold text-lg tracking-tight">{post.authorName}</h3>
-            <p className="text-xs text-white/60 font-medium">@user_{post.userId.slice(0, 5)}</p>
+            <h3 className="font-syne font-bold text-lg tracking-tight">{authorName}</h3>
+            <p className="text-xs text-white/60 font-medium">@{authorHandle}</p>
           </div>
           <button className="ml-2 px-4 py-1 rounded-full bg-white text-via-dark text-xs font-bold uppercase tracking-wider hover:bg-via-accent hover:text-white transition-colors">
             Follow
           </button>
         </motion.div>
 
-        <motion.p 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isActive ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.3 }}
-          className="text-sm leading-relaxed font-medium text-white/90 line-clamp-3"
+          transition={{ delay: 0.28 }}
+          className="space-y-2"
         >
-          {post.content}
-        </motion.p>
+          <p className="text-[11px] text-white/50 font-bold uppercase tracking-[0.25em]">
+            @{authorHandle}
+            {post.author?.isGuest ? ' · guest' : ''}
+          </p>
+          <p className="text-sm leading-relaxed font-medium text-white/90 line-clamp-3">
+            {post.content}
+          </p>
+        </motion.div>
 
         <motion.div 
           initial={{ opacity: 0 }}
@@ -81,7 +90,7 @@ const FeedPost: React.FC<FeedPostProps> = ({ post, isActive, onLike, onComment, 
             onClick={handleLike}
             className={`w-12 h-12 rounded-full glass-panel flex items-center justify-center transition-all ${isLiked ? 'text-via-accent scale-110' : 'hover:text-via-accent'}`}
           >
-            <Heart size={24} fill={isLiked ? "currentColor" : "none"} />
+            <Heart size={24} fill={isLiked ? 'currentColor' : 'none'} />
           </button>
           <span className="text-[10px] font-bold tracking-widest">
             {post.likes >= 1000 ? `${(post.likes / 1000).toFixed(1)}K` : post.likes}

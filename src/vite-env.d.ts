@@ -14,3 +14,23 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+interface VIAProfileData {
+  id: string
+  username: string
+  displayName?: string
+  avatarEmoji?: string
+  isGuest?: boolean
+  [key: string]: unknown
+}
+
+interface VIAProfileSystem {
+  getProfile: () => VIAProfileData
+  createProfile: (username: string) => VIAProfileData
+  updateProfile: (data: Partial<VIAProfileData>) => VIAProfileData
+  clearProfile?: () => void
+}
+
+interface Window {
+  VIAProfile?: VIAProfileSystem
+}
