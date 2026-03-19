@@ -5,6 +5,25 @@
 // Collection: users
 // Document ID: {userId} (Firebase Auth UID)
 // Fields:
+//   - uid: string (required) - Firebase Auth UID
+//   - displayName: string (optional) - User's public name
+//   - email: string (optional) - User's email
+//   - credits: number (required) - Current liquid capital
+//   - dataSeeds: number (required) - Current genetic data
+//   - day: number (required) - Current game day
+//   - upgrades: map (required) - Global upgrades state
+//   - tools: list (required) - List of owned tools and their levels
+//   - orchards: list (required) - List of orchards and their plants
+//   - weather: map (required) - Current weather conditions
+//   - createdAt: timestamp (optional) - When the user was created
+//
+// Collection: transfers
+// Document ID: {transferId} (Auto-generated)
+// Fields:
+//   - from: string (required) - Sender UID
+//   - to: string (required) - Receiver UID
+//   - amount: number (required) - Amount of credits transferred
+//   - timestamp: timestamp (required) - When the transfer occurred
 //   - uid: string (required)
 //   - username: string (required)
 //   - displayName: string (required)
@@ -65,6 +84,7 @@ service cloud.firestore {
 
     function isAdmin() {
       return isAuthenticated() &&
+        (request.auth.token.email == "via.decide@gmail.com" && request.auth.token.email_verified == true);
         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
           (request.auth.token.email == "daxini2404@gmail.com" && request.auth.token.email_verified == true));
@@ -74,10 +94,60 @@ service cloud.firestore {
       return request.resource.data.keys().hasAll(fields);
     }
 
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
     // ===============================================================
     // Domain Validators
     // ===============================================================
 
+    function isValidPlant(plant) {
+      return plant == null || (
+        plant.id is string && plant.id.size() < 50 &&
+        plant.type is string && plant.type.size() < 50 &&
+        plant.rootStrength is number &&
+        plant.water is number &&
+        plant.nutrients is number &&
+        plant.stress is number &&
+        plant.pests is number &&
+        plant.pestImmunity is number &&
+        plant.stageIndex is number &&
+        plant.isHarvestable is bool
+      );
+    }
+
+    function isValidOrchard(orchard) {
+      return orchard.id is string && orchard.id.size() < 50 &&
+             orchard.name is string && orchard.name.size() < 100 &&
+             orchard.plants is list && orchard.plants.size() == 9 &&
+             orchard.plants.all(p, isValidPlant(p)) &&
+             orchard.isUnlocked is bool &&
+             orchard.unlockCost is number;
+    }
+
+    function isValidUser(data) {
+      return (data.get('uid', request.auth.uid) == request.auth.uid) &&
+             (data.get('credits', 0) is number) &&
+             (data.get('dataSeeds', 0) is number) &&
+             (data.get('day', 1) is number) &&
+             (data.get('orchards', []) is list) &&
+             (data.get('orchards', []).size() <= 10) &&
+             (data.get('orchards', []).all(o, isValidOrchard(o))) &&
+             (data.get('upgrades', {}) is map) &&
+             (data.get('upgrades', {}).keys().size() <= 10) &&
+             (data.get('tools', []) is list) &&
+             (data.get('tools', []).size() <= 20) &&
+             (data.get('weather', {}) is map) &&
+             (data.get('displayName', '') == null || (data.get('displayName', '') is string && data.get('displayName', '').size() < 100)) &&
+             (data.get('email', '') == null || (data.get('email', '') is string && data.get('email', '').size() < 100));
+    }
+
+    function isValidTransfer(data) {
+      return data.from == request.auth.uid &&
+             data.to is string && data.to != request.auth.uid &&
+             data.amount is number && data.amount > 0 &&
+             data.timestamp == request.time;
     function isValidUser(data) {
       return data.uid is string &&
              data.username is string && data.username.size() >= 3 &&
@@ -138,6 +208,39 @@ service cloud.firestore {
     // ===============================================================
 
     match /users/{userId} {
+      // Users can only read their own profile
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Allow searching for other users by UID for transfers (only UID and displayName)
+      allow list: if isAuthenticated() && 
+                    request.query.limit <= 1 && 
+                    request.query.filters.size() == 1 && 
+                    request.query.filters[0].op == '==' && 
+                    request.query.filters[0].path == 'uid';
+
+      allow create: if isOwner(userId) && 
+                      isValidUser(request.resource.data) &&
+                      (request.resource.data.get('role', 'player') == 'player');
+
+      allow update: if (isOwner(userId) && 
+                       isValidUser(request.resource.data) &&
+                       request.resource.data.get('role', 'player') == resource.data.get('role', 'player')) || 
+                      isAdmin();
+    }
+
+    match /transfers/{transferId} {
+      // Only admins or involved parties can read transfers
+      allow read: if isAuthenticated() && (
+        request.auth.uid == resource.data.from || 
+        request.auth.uid == resource.data.to || 
+        isAdmin()
+      );
+
+      // Only authenticated users can create transfers, and they must be the sender
+      allow create: if isAuthenticated() && isValidTransfer(request.resource.data);
+      
+      // Transfers are immutable
+      allow update, delete: if false;
       // Users can only read their own profile (PII protection)
       // But we need public profiles for the feed.
       // So we'll allow read if the query is for non-PII fields or if owner.

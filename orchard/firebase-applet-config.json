@@ -1,3 +1,13 @@
+{
+  "projectId": "REPLACE_ME",
+  "appId": "REPLACE_ME",
+  "apiKey": "REPLACE_ME",
+  "authDomain": "REPLACE_ME.firebaseapp.com",
+  "firestoreDatabaseId": "REPLACE_ME",
+  "storageBucket": "REPLACE_ME.firebasestorage.app",
+  "messagingSenderId": "REPLACE_ME",
+  "measurementId": ""
+}
 window.VIA_FIREBASE_CONFIG = {
   projectId: "gen-lang-client-0662689801",
   appId: "1:899475982419:web:fc93af4d97e6a578b31ea6",
