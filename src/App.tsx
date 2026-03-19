@@ -83,6 +83,72 @@ type SubView =
   | { type: 'user-profile'; uid: string }
   | { type: 'dive-detail'; dive: DeepDive };
 
+// ─── VIARouter ambient type (router.js, loaded before React) ─────────────────
+declare global {
+  interface Window {
+    VIARouter?: {
+      navigate:         (path: string) => void;
+      registerReact:    (h: Partial<{ setTab: (t: string) => void; openProfile: (uid: string) => void; openDive: (id: string) => void }>) => void;
+      deregisterReact:  (key: 'setTab' | 'openProfile' | 'openDive') => void;
+      unregisterReact:  () => void;
+      resolve:          (hash: string) => boolean;
+      toUser:           (uid: string) => void;
+      toReactDive:      (id: string) => void;
+    };
+  }
+}
+
+// ─── SubViewErrorBoundary ─────────────────────────────────────────────────────
+// Wraps each sub-view overlay. On a React component crash:
+//   1. Deregisters its broken handler from VIARouter (prevents loops)
+//   2. For UserProfileSheet: calls VIARouter.navigate → hard redirect to profile.html
+//   3. For DiveDetailSheet:  closes the overlay (no standalone fallback page)
+//   4. Calls onCrash() to clear subView state in App
+
+interface SubViewErrorBoundaryProps {
+  children: React.ReactNode;
+  handlerKey?: 'openProfile' | 'openDive';
+  fallbackHash?: string;         // set for user-profile; omit for dive-detail
+  onCrash: () => void;
+}
+
+class SubViewErrorBoundary extends React.Component<
+  SubViewErrorBoundaryProps,
+  { crashed: boolean }
+> {
+  constructor(props: SubViewErrorBoundaryProps) {
+    super(props);
+    this.state = { crashed: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { crashed: true };
+  }
+
+  componentDidCatch(error: Error) {
+    console.error('[SubView] Component crashed — engaging router.js fallback:', error);
+
+    // Step 1: Remove the broken React handler so the router uses hard fallback
+    if (this.props.handlerKey) {
+      window.VIARouter?.deregisterReact(this.props.handlerKey);
+    }
+
+    // Step 2: For user profiles — navigate via router (goes to profile.html)
+    //         For dives — no standalone page exists; just close the overlay
+    if (this.props.fallbackHash) {
+      window.VIARouter?.navigate(this.props.fallbackHash);
+    }
+
+    // Step 3: Clean up React state
+    this.props.onCrash();
+  }
+
+  render() {
+    if (this.state.crashed) return null;
+    return this.props.children;
+  }
+}
+
 // ─── UserProfileSheet ────────────────────────────────────────────────────────
 const UserProfileSheet: React.FC<{
   uid: string;
@@ -342,6 +408,23 @@ const App: React.FC = () => {
 
   const closeSubView = useCallback(() => setSubView(null), []);
 
+  // ── Register React handlers with router.js (fallback system) ─────────────
+  // router.js is loaded before React (via <script src="./router.js"> in index.html).
+  // Once React mounts, we give it handles into React state so it delegates here.
+  // On unmount we clear the handles so the router uses hard fallbacks instead.
+  useEffect(() => {
+    window.VIARouter?.registerReact({
+      setTab:      (tab: string) => handleTabChange(tab as typeof activeTab),
+      openProfile: (uid: string) => setSubView({ type: 'user-profile', uid }),
+      // openDive via id only: find the dive from state
+      openDive:    (id: string) => {
+        const dive = dives.find(d => d.id === id);
+        if (dive) setSubView({ type: 'dive-detail', dive });
+      },
+    });
+    return () => { window.VIARouter?.unregisterReact(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleTabChange, dives]);
 
   useEffect(() => {
     const localProfile = profileSystemRef.current.getProfile();
@@ -1039,22 +1122,35 @@ const App: React.FC = () => {
           </AnimatePresence>
         </main>
 
-        {/* Sub-view overlays (slide in on top of main content, under nav) */}
+        {/* Sub-view overlays — PRIMARY: React state / FALLBACK: router.js */}
         <AnimatePresence>
           {subView?.type === 'user-profile' && profile && (
-            <UserProfileSheet
-              key={subView.uid}
-              uid={subView.uid}
-              currentUserUid={profile.uid}
-              onClose={closeSubView}
-            />
+            <SubViewErrorBoundary
+              key={'boundary-' + subView.uid}
+              handlerKey="openProfile"
+              fallbackHash={'#/user/' + subView.uid}
+              onCrash={closeSubView}
+            >
+              <UserProfileSheet
+                key={subView.uid}
+                uid={subView.uid}
+                currentUserUid={profile.uid}
+                onClose={closeSubView}
+              />
+            </SubViewErrorBoundary>
           )}
           {subView?.type === 'dive-detail' && (
-            <DiveDetailSheet
-              key={subView.dive.id}
-              dive={subView.dive}
-              onClose={closeSubView}
-            />
+            <SubViewErrorBoundary
+              key={'boundary-' + subView.dive.id}
+              handlerKey="openDive"
+              onCrash={closeSubView}
+            >
+              <DiveDetailSheet
+                key={subView.dive.id}
+                dive={subView.dive}
+                onClose={closeSubView}
+              />
+            </SubViewErrorBoundary>
           )}
         </AnimatePresence>
 
