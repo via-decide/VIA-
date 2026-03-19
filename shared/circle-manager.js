@@ -1,6 +1,6 @@
 (() => {
   const state = { circles: [] };
-  const fallbackProjectUrl = 'https://bfocxgtlemhxfwfuhlxn.supabase.co';
+  const fallbackProjectUrl = 'https://klzrddvocsutdeiwvrhs.supabase.co';
 
   let supabaseClient = null;
   let siegeChannel = null;

@@ -3,7 +3,7 @@
   const BACKEND_ACTIVITY_KEY = 'viadecide.backend.activity';
   const BACKEND_PENDING_KEY = 'viadecide.backend.activity.pending';
   const LOCAL_USER_KEY = 'via_user';
-  const DEFAULT_SUPABASE_URL = 'https://bfocxgtlemhxfwfuhlxn.supabase.co';
+  const DEFAULT_SUPABASE_URL = 'https://klzrddvocsutdeiwvrhs.supabase.co';
   const DEFAULT_ACTIVITY_TABLE = 'via_activity_log';
   const DEFAULT_PROFILE_TABLE = 'via_users';
   const MAX_ACTIVITY_ITEMS = 200;

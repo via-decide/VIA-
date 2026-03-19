@@ -690,7 +690,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 // ════════════════════════════════════════════════════════════════
 const _sbConfig = window.DatabaseService && typeof window.DatabaseService.getConfig === 'function'
   ? window.DatabaseService.getConfig()
-  : { url: window.ECO_SUPABASE_CONFIG?.url || 'https://bfocxgtlemhxfwfuhlxn.supabase.co', anonKey: window.ECO_SUPABASE_CONFIG?.anonKey || window.ECO_SUPABASE_ANON_KEY || '', isConfigured: !!(window.ECO_SUPABASE_CONFIG?.anonKey || window.ECO_SUPABASE_ANON_KEY) };
+  : { url: window.ECO_SUPABASE_CONFIG?.url || 'https://klzrddvocsutdeiwvrhs.supabase.co', anonKey: window.ECO_SUPABASE_CONFIG?.anonKey || window.ECO_SUPABASE_ANON_KEY || '', isConfigured: !!(window.ECO_SUPABASE_CONFIG?.anonKey || window.ECO_SUPABASE_ANON_KEY) };
 const SUPABASE_URL = _sbConfig.url;
 const SUPABASE_ANON_KEY = _sbConfig.anonKey;
 const SUPABASE_CONFIGURED = Boolean(_sbConfig.isConfigured);

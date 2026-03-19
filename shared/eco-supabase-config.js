@@ -2,7 +2,7 @@
 // window.ECO_SUPABASE_ANON_KEY during deployment or by running:
 // localStorage.setItem('eco_supabase_anon_key', 'your-anon-key')
 (function (global) {
-  const DEFAULT_SUPABASE_URL = 'https://bfocxgtlemhxfwfuhlxn.supabase.co';
+  const DEFAULT_SUPABASE_URL = 'https://klzrddvocsutdeiwvrhs.supabase.co';
 
   function readStoredValue(key) {
     try {

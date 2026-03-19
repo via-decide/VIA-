@@ -112,7 +112,7 @@ CREATE POLICY "Users can create moderation flags" ON via_moderation_queue FOR IN
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
 <title>VIA · Auth</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
@@ -130,7 +130,7 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:'DM 
 body{overflow:hidden}
 #boot{position:fixed;inset:0;background:var(--deep);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5;transition:opacity .6s,transform .6s}
 #boot.exit{opacity:0;transform:scale(1.03);pointer-events:none}
-.boot-logo{font-family:'Bebas Neue',sans-serif;font-size:clamp(5rem,20vw,8rem);background:linear-gradient(135deg,var(--saffron),var(--gold),var(--saffron2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.boot-logo{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,18vw,8rem);background:linear-gradient(135deg,var(--saffron),var(--gold),var(--saffron2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .boot-tagline{font-family:'Noto Sans Devanagari',sans-serif;font-size:.92rem;color:var(--muted);margin-top:1rem;letter-spacing:.12em;text-transform:uppercase}
 .boot-line{font-size:.7rem;color:rgba(255,107,0,.6);margin-top:1.1rem;opacity:0;animation:fade .4s forwards}
 .boot-line:nth-child(3){animation-delay:.3s}.boot-line:nth-child(4){animation-delay:.7s}.boot-line:nth-child(5){animation-delay:1.1s}
@@ -138,9 +138,15 @@ body{overflow:hidden}
 .boot-bar{width:220px;height:2px;background:rgba(255,255,255,.08);border-radius:99px;margin-top:1.3rem;overflow:hidden}
 .boot-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--saffron),var(--gold));animation:fill 1.6s ease forwards 1.2s}
 @keyframes fill{to{width:100%}}
-#auth-app{position:fixed;inset:0;display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .5s}
+#auth-app{position:fixed;inset:0;display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .5s;overflow-y:auto;padding-top:2rem}
 #auth-app.visible{opacity:1}
-.panel{width:min(430px,100%);min-height:72vh;background:linear-gradient(to bottom,var(--deep2),var(--deep));border-top:1px solid var(--border);border-top-left-radius:22px;border-top-right-radius:22px;padding:1.2rem}
+.panel{width:min(430px,100%);min-height:min-content;background:linear-gradient(to bottom,var(--deep2),var(--deep));border-top:1px solid var(--border);border-top-left-radius:22px;border-top-right-radius:22px;padding:1.2rem;margin-top:auto;padding-bottom:calc(1.2rem + env(safe-area-inset-bottom))}
+@media(max-height:700px){
+  .panel{padding-top:1rem;padding-bottom:1rem}
+  .tabs{margin-bottom:.6rem}
+  .form-group{margin-bottom:.8rem}
+  .sbtn{height:46px;margin-top:.8rem}
+}
 .banner{display:none;background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.3);color:var(--gold);padding:.6rem .7rem;border-radius:10px;font-size:.72rem;margin-bottom:.8rem}
 .tabs{display:flex;background:rgba(255,255,255,.04);border-radius:12px;padding:.25rem;margin-bottom:.9rem}
 .tab{flex:1;padding:.62rem;border:none;border-radius:9px;background:transparent;color:var(--muted);font-weight:700;cursor:pointer}
@@ -224,7 +230,7 @@ input.error,select.error{border-color:#ff6b6b}
   const sbConfig = window.DatabaseService && typeof window.DatabaseService.getConfig === 'function'
     ? window.DatabaseService.getConfig()
     : {
-        url: window.ECO_SUPABASE_CONFIG?.url || window.ECO_SUPABASE_URL || 'https://bfocxgtlemhxfwfuhlxn.supabase.co',
+        url: window.ECO_SUPABASE_CONFIG?.url || window.ECO_SUPABASE_URL || 'https://klzrddvocsutdeiwvrhs.supabase.co',
         anonKey: window.ECO_SUPABASE_CONFIG?.anonKey || window.ECO_SUPABASE_ANON_KEY || '',
         isConfigured: !!(window.ECO_SUPABASE_CONFIG?.anonKey || window.ECO_SUPABASE_ANON_KEY)
       };
