@@ -4,6 +4,91 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VIA Profile</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0b0b1a;
+        --panel: rgba(255, 255, 255, 0.06);
+        --border: rgba(255, 255, 255, 0.12);
+        --accent: #ff3d00;
+        --muted: rgba(255, 255, 255, 0.55);
+        --text: #ffffff;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Inter, system-ui, sans-serif;
+        background: radial-gradient(circle at top, rgba(255, 61, 0, 0.16), transparent 35%), var(--bg);
+        color: var(--text);
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .panel {
+        width: min(100%, 420px);
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 24px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      }
+
+      h1 { margin: 0 0 8px; font-size: 28px; }
+      p { margin: 0; color: var(--muted); line-height: 1.5; }
+      .meta { margin-top: 20px; padding: 16px; border-radius: 18px; background: rgba(255,255,255,0.04); }
+      label { display: block; margin: 20px 0 8px; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+      input {
+        width: 100%; border: 1px solid var(--border); border-radius: 16px; background: rgba(255,255,255,0.04);
+        color: var(--text); padding: 14px 16px; font-size: 16px;
+      }
+      button {
+        margin-top: 16px; width: 100%; border: 0; border-radius: 16px; padding: 14px 16px; font-size: 15px;
+        font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: var(--accent); color: white; cursor: pointer;
+      }
+      a { color: #ffd700; text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <section class="panel">
+      <h1>Profile</h1>
+      <p>Update the locally stored VIA identity used to attach authors to feed posts.</p>
+
+      <div class="meta">
+        <div>Current username: <strong id="currentUsername">guest</strong></div>
+        <div style="margin-top: 8px; font-size: 13px; color: var(--muted);">Profile ID: <span id="currentId">-</span></div>
+      </div>
+
+      <label for="username">Username</label>
+      <input id="username" type="text" placeholder="guest" maxlength="30" />
+      <button onclick="saveProfile()">Save</button>
+
+      <p style="margin-top: 16px; font-size: 13px;">
+        Return to <a href="./">the feed</a> after saving to publish with the updated author identity.
+      </p>
+    </section>
+
+    <script type="module">
+      import profileSystem from './src/core/profile-system/index.js';
+
+      const syncUi = () => {
+        const profile = profileSystem.getProfile();
+        document.getElementById('currentUsername').textContent = profile.username;
+        document.getElementById('currentId').textContent = profile.id;
+        document.getElementById('username').value = profile.username;
+      };
+
+      window.saveProfile = function saveProfile() {
+        const name = document.getElementById('username').value.trim();
+        window.VIAProfile.updateProfile({ username: name || 'guest', displayName: name || 'guest', isGuest: !name });
+        syncUi();
+        alert('Profile updated');
+      };
+
+      syncUi();
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
