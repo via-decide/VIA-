@@ -59,6 +59,8 @@ import {
 } from 'firebase/firestore';
 import { onAuthStateChanged, User as FirebaseUser, ConfirmationResult } from 'firebase/auth';
 import { UserProfile, Post, DeepDive, AppState } from './types';
+import { createProfileSystem } from './core/profile-system';
+import { attachAuthor, normalizePostAuthor } from './core/profile-system/AuthorAdapter';
 import { INITIAL_POSTS, INITIAL_DEEP_DIVES } from './constants';
 
 // Sub-components
@@ -116,6 +118,7 @@ const App: React.FC = () => {
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
   const [selectedPostForComments, setSelectedPostForComments] = useState<Post | null>(null);
   const [logs, setLogs] = useState<string[]>([]);
+  const profileSystemRef = useRef(createProfileSystem());
 
   // Phone Auth State
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -131,6 +134,29 @@ const App: React.FC = () => {
     setLogs(prev => [msg, ...prev].slice(0, 5));
     console.log(`[VIA] ${msg}`);
   };
+
+
+  useEffect(() => {
+    const localProfile = profileSystemRef.current.getProfile();
+
+    if (localProfile && !profile) {
+      setProfile((current) => current ?? ({
+        uid: localProfile.id,
+        id: localProfile.id,
+        username: localProfile.username,
+        displayName: localProfile.displayName || localProfile.username,
+        avatarEmoji: localProfile.avatarEmoji || '👤',
+        bio: 'Local profile ready for future auth sync.',
+        credits: 0,
+        xp: 0,
+        level: 1,
+        followers: 0,
+        following: 0,
+        posts: 0,
+        createdAt: new Date().toISOString()
+      } as UserProfile));
+    }
+  }, [profile]);
 
   // Auth Listener
   useEffect(() => {
@@ -171,23 +197,70 @@ const App: React.FC = () => {
             };
 
             await setDoc(userRef, profileData);
-            setProfile(profileData);
+            const syncedProfile = { ...profileData, id: profileData.uid };
+            profileSystemRef.current.updateProfile({
+              id: syncedProfile.uid,
+              username: syncedProfile.username,
+              displayName: syncedProfile.displayName,
+              avatarEmoji: syncedProfile.avatarEmoji,
+              isGuest: false,
+              email: syncedProfile.email,
+              phoneNumber: syncedProfile.phoneNumber
+            });
+            setProfile(syncedProfile);
           } else {
-            setProfile(userSnap.data() as UserProfile);
+            const storedProfile = userSnap.data() as UserProfile;
+            const syncedProfile = { ...storedProfile, id: storedProfile.uid };
+            profileSystemRef.current.updateProfile({
+              id: syncedProfile.uid,
+              username: syncedProfile.username,
+              displayName: syncedProfile.displayName,
+              avatarEmoji: syncedProfile.avatarEmoji,
+              isGuest: false,
+              email: syncedProfile.email,
+              phoneNumber: syncedProfile.phoneNumber
+            });
+            setProfile(syncedProfile);
           }
 
           // Real-time profile updates
           if (profileUnsub) profileUnsub();
           profileUnsub = onSnapshot(userRef, (doc) => {
             if (doc.exists()) {
-              setProfile(doc.data() as UserProfile);
+              const liveProfile = doc.data() as UserProfile;
+              const syncedProfile = { ...liveProfile, id: liveProfile.uid };
+              profileSystemRef.current.updateProfile({
+                id: syncedProfile.uid,
+                username: syncedProfile.username,
+                displayName: syncedProfile.displayName,
+                avatarEmoji: syncedProfile.avatarEmoji,
+                isGuest: false,
+                email: syncedProfile.email,
+                phoneNumber: syncedProfile.phoneNumber
+              });
+              setProfile(syncedProfile);
             }
           }, (err) => {
             console.error('Profile snapshot error:', err);
             handleFirestoreError(err, OperationType.GET, 'users');
           });
         } else {
-          setProfile(null);
+          const localProfile = profileSystemRef.current.getProfile();
+          setProfile(localProfile ? ({
+            uid: localProfile.id,
+            id: localProfile.id,
+            username: localProfile.username,
+            displayName: localProfile.displayName || localProfile.username,
+            avatarEmoji: localProfile.avatarEmoji || '👤',
+            bio: 'Local profile ready for future auth sync.',
+            credits: 0,
+            xp: 0,
+            level: 1,
+            followers: 0,
+            following: 0,
+            posts: 0,
+            createdAt: new Date().toISOString()
+          } as UserProfile) : null);
           if (profileUnsub) {
             profileUnsub();
             profileUnsub = null;
@@ -226,7 +299,7 @@ const App: React.FC = () => {
     );
 
     const postsUnsub = onSnapshot(postsQuery, (snapshot) => {
-      const fetchedPosts = snapshot.docs.map(doc => ({ 
+      const fetchedPosts = snapshot.docs.map(doc => normalizePostAuthor({ 
         id: doc.id, 
         ...doc.data() 
       } as Post));
@@ -318,6 +391,14 @@ const App: React.FC = () => {
     const userRef = doc(db, 'users', user.uid);
     try {
       await updateDoc(userRef, updatedProfile);
+      const nextLocalProfile = profileSystemRef.current.updateProfile({
+        id: user.uid,
+        username: updatedProfile.username || profile?.username || 'guest',
+        displayName: updatedProfile.displayName || profile?.displayName || updatedProfile.username || 'guest',
+        avatarEmoji: updatedProfile.avatarEmoji || profile?.avatarEmoji || '👤',
+        isGuest: false
+      });
+      setProfile((current) => current ? { ...current, ...updatedProfile, id: nextLocalProfile.id } : current);
       addLog('Profile updated successfully');
     } catch (err) {
       handleFirestoreError(err, OperationType.UPDATE, 'users');
@@ -327,17 +408,23 @@ const App: React.FC = () => {
   const handleCreatePost = async (content: string, imageUrl?: string) => {
     if (!profile) return;
     try {
-      const newPost: Omit<Post, 'id'> = {
-        userId: profile.uid,
-        authorName: profile.displayName,
-        authorAvatar: profile.avatarEmoji || '🇮🇳',
+      const activeProfile = window.VIAProfile?.getProfile() || {
+        id: profile.uid,
+        username: profile.username,
+        displayName: profile.displayName,
+        avatarEmoji: profile.avatarEmoji || '🇮🇳',
+        isGuest: false
+      };
+
+      const newPost = attachAuthor({
         content,
         imageUrl,
         likes: 0,
         comments: 0,
         shares: 0,
         createdAt: new Date().toISOString()
-      };
+      }, activeProfile);
+
       await addDoc(collection(db, 'posts'), newPost);
       addLog('Post created successfully');
       

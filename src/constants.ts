@@ -4,6 +4,13 @@ export const INITIAL_POSTS: Post[] = [
   {
     id: 'post-1',
     userId: 'system',
+    author: {
+      id: 'system',
+      username: 'via_official',
+      displayName: 'VIA Official',
+      avatarEmoji: '🇮🇳',
+      isGuest: false
+    },
     authorName: 'VIA Official',
     authorAvatar: '🇮🇳',
     content: 'Welcome to VIA - Bharat\'s own social platform. Discover stories that matter to you.',
@@ -16,6 +23,13 @@ export const INITIAL_POSTS: Post[] = [
   {
     id: 'post-2',
     userId: 'system',
+    author: {
+      id: 'system_tech',
+      username: 'tech_bharat',
+      displayName: 'Tech Bharat',
+      avatarEmoji: '🚀',
+      isGuest: false
+    },
     authorName: 'Tech Bharat',
     authorAvatar: '🚀',
     content: 'The future of digital India is here. Swipe to explore the latest innovations from our local creators.',
@@ -28,6 +42,13 @@ export const INITIAL_POSTS: Post[] = [
   {
     id: 'post-3',
     userId: 'system',
+    author: {
+      id: 'system_culture',
+      username: 'culture_hub',
+      displayName: 'Culture Hub',
+      avatarEmoji: '🎨',
+      isGuest: false
+    },
     authorName: 'Culture Hub',
     authorAvatar: '🎨',
     content: 'Celebrating the vibrant colors and traditions of our diverse heritage. What\'s your favorite festival?',

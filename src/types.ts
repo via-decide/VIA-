@@ -5,6 +5,7 @@
 
 export type UserProfile = {
   uid: string;
+  id?: string;
   username: string;
   displayName: string;
   email?: string;
@@ -21,9 +22,18 @@ export type UserProfile = {
   createdAt: any;
 };
 
+export type PostAuthor = {
+  id: string;
+  username: string;
+  displayName?: string;
+  avatarEmoji?: string;
+  isGuest?: boolean;
+};
+
 export type Post = {
   id: string;
   userId: string;
+  author: PostAuthor;
   authorName: string;
   authorAvatar: string;
   content: string;
