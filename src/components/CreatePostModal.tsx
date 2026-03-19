@@ -1,8 +1,128 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Image as ImageIcon, Loader2, Send } from 'lucide-react';
+import { X, Image as ImageIcon, Loader2, Send, Mic, MicOff, Sparkles, Youtube, Linkedin, Bot, ChevronRight } from 'lucide-react';
 import { UserProfile } from '../types';
 
+// ── Web Speech API types (browser-native, no package needed) ──────────────────
+declare global {
+  interface Window {
+    SpeechRecognition: new () => SpeechRecognition;
+    webkitSpeechRecognition: new () => SpeechRecognition;
+    // Agent system from shared/agent-layer.js (loaded via index.html)
+    AgentLayer?: {
+      createAgentWorkflow: (name: string, task: string, tools: unknown[]) => unknown;
+      runAgentTask: (workflow: unknown, tools: unknown[], opts?: unknown) => Promise<{ text?: string }>;
+    };
+    VIAToolRegistry?: { getTools: () => unknown[] };
+  }
+}
+
+// ── Slash commands ─────────────────────────────────────────────────────────────
+const COMMANDS = [
+  { cmd: '/post',     label: 'VIA Post',    icon: Sparkles,  color: 'text-via-accent', desc: 'Viral social post for Bharat' },
+  { cmd: '/linkedin', label: 'LinkedIn',    icon: Linkedin,  color: 'text-blue-400',   desc: 'Professional long-form post' },
+  { cmd: '/youtube',  label: 'YouTube',     icon: Youtube,   color: 'text-red-400',    desc: 'Video title + description' },
+  { cmd: '/task',     label: 'Agent Task',  icon: Bot,       color: 'text-via-gold',   desc: 'Run an agent workflow' },
+] as const;
+
+type CommandKey = typeof COMMANDS[number]['cmd'];
+
+// ── Content generation (template engine + optional LLM bridge) ────────────────
+// Mirrors the logic in tools/engine/script-generator-files/tool.js but adapted
+// for social/professional formats. Calls window.AgentLayer if available.
+function buildPostContent(cmd: CommandKey, topic: string, displayName: string): string {
+  const name = displayName || 'Creator';
+  const t = topic.trim() || 'this topic';
+
+  if (cmd === '/post') {
+    return `🔥 ${t.charAt(0).toUpperCase() + t.slice(1)} is changing the game in India.
+
+Here's what most people don't realise:
+
+→ The opportunity is bigger than it looks
+→ Early movers are already seeing results
+→ You don't need to wait for the "right time"
+
+Start now. Build in public. Learn as you go.
+
+What's your take on ${t}? Drop it below 👇
+
+#BharatBuilds #${t.replace(/\s+/g, '')} #VIA #India`;
+  }
+
+  if (cmd === '/linkedin') {
+    return `I've been thinking deeply about ${t}.
+
+Here's what I've learned after working on it:
+
+1️⃣ Most people overcomplicate the starting point
+2️⃣ The first 10% of progress comes from clarity, not effort
+3️⃣ Consistency over 90 days beats any shortcut
+
+The real insight? ${t.charAt(0).toUpperCase() + t.slice(1)} rewards those who stay in the game long enough to learn the patterns others give up on.
+
+What has your experience taught you about ${t}?
+
+I read every comment — genuinely curious to hear your perspective.
+
+— ${name}
+
+#${t.replace(/\s+/g, '')} #Leadership #BuildingInIndia #GrowthMindset`;
+  }
+
+  if (cmd === '/youtube') {
+    const title = `${t.charAt(0).toUpperCase() + t.slice(1)} Explained in 60 Seconds | Must Watch`;
+    return `📽 TITLE: ${title}
+
+📝 DESCRIPTION:
+In this video, I break down ${t} so you can understand it fast and apply it today.
+
+Whether you're a student, founder, or professional — this one's for you.
+
+What you'll learn:
+✅ What ${t} actually means
+✅ Why it matters right now in India
+✅ The one thing you should do first
+
+⏱ TIMESTAMPS:
+0:00 — Hook: Why ${t} matters
+0:20 — The core concept simplified
+0:45 — Real example from Bharat
+1:10 — What to do next
+
+👍 Like if this helped | Subscribe for more Bharat builds
+💬 Comment your biggest question about ${t}
+
+#${t.replace(/\s+/g, '')} #India #${name.replace(/\s+/g, '')}Builds`;
+  }
+
+  if (cmd === '/task') {
+    // For /task: attempt to call the agent system if loaded in window
+    return `[Agent Task: ${t}]\n\nProcessing via VIA Agent… check the agent surface at /agent.html for full output.\n\nQuick summary will appear here once the agent completes.`;
+  }
+
+  return topic;
+}
+
+// Try to call the global agent system (shared/agent-layer.js loaded by index.html).
+// Falls back to template generation if agent is unavailable.
+async function generateWithAgent(cmd: CommandKey, topic: string, displayName: string): Promise<string> {
+  // Only /task routes through the agent workflow; other commands use templates directly
+  // (the agent system requires WorkflowEngine which may not be ready in React context)
+  if (cmd === '/task' && window.AgentLayer && window.VIAToolRegistry) {
+    try {
+      const tools = window.VIAToolRegistry.getTools();
+      const workflow = window.AgentLayer.createAgentWorkflow('VIA Post Agent', topic, tools);
+      const result = await window.AgentLayer.runAgentTask(workflow, tools);
+      if (result?.text) return result.text;
+    } catch (err) {
+      console.warn('[VoicePost] Agent workflow failed, using template:', err);
+    }
+  }
+  return buildPostContent(cmd, topic, displayName);
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -17,18 +137,136 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, user
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSave = async () => {
-    if (!content.trim()) {
-      setError('Please write something first');
-      return;
-    }
+  // Voice state
+  const [isListening, setIsListening] = useState(false);
+  const [voiceSupported, setVoiceSupported] = useState(false);
+  const [voiceStatus, setVoiceStatus] = useState('');
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
+  // Command state
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [activeCommand, setActiveCommand] = useState<CommandKey | null>(null);
+  const [showCommands, setShowCommands] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Detect voice support on mount
+  useEffect(() => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    setVoiceSupported(!!SR);
+  }, []);
+
+  // Clean up recognition on unmount
+  useEffect(() => {
+    return () => { recognitionRef.current?.abort(); };
+  }, []);
+
+  // Show command picker when content starts with "/"
+  useEffect(() => {
+    if (content.startsWith('/') && !activeCommand) {
+      setShowCommands(true);
+    } else if (!content.startsWith('/')) {
+      setShowCommands(false);
+    }
+  }, [content, activeCommand]);
+
+  // ── Voice recognition ──────────────────────────────────────────────────────
+  const startListening = useCallback(() => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return;
+
+    const recognition = new SR();
+    recognitionRef.current = recognition;
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = 'en-IN'; // Indian English
+
+    recognition.onstart = () => {
+      setIsListening(true);
+      setVoiceStatus('Listening…');
+    };
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      const transcript = Array.from(event.results)
+        .map(r => r[0].transcript)
+        .join('');
+
+      // Normalise "slash post" / "slash task" spoken commands to /cmd
+      const normalised = transcript
+        .replace(/^slash\s+/i, '/')
+        .replace(/\bslash post\b/gi, '/post')
+        .replace(/\bslash linkedin\b/gi, '/linkedin')
+        .replace(/\bslash youtube\b/gi, '/youtube')
+        .replace(/\bslash task\b/gi, '/task');
+
+      setContent(normalised);
+      setVoiceStatus(event.results[event.results.length - 1].isFinal ? 'Got it!' : 'Hearing you…');
+    };
+
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+      setVoiceStatus(event.error === 'not-allowed' ? 'Mic blocked — check browser permissions' : 'Couldn\'t hear that, try again');
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+      setTimeout(() => setVoiceStatus(''), 2000);
+      recognitionRef.current = null;
+    };
+
+    recognition.start();
+  }, []);
+
+  const stopListening = useCallback(() => {
+    recognitionRef.current?.stop();
+  }, []);
+
+  const toggleMic = useCallback(() => {
+    if (isListening) { stopListening(); } else { startListening(); }
+  }, [isListening, startListening, stopListening]);
+
+  // ── Slash command execution ────────────────────────────────────────────────
+  const runCommand = useCallback(async (cmd: CommandKey, topicOverride?: string) => {
+    // Extract topic: everything after the command token
+    const topic = topicOverride
+      ?? content.replace(new RegExp(`^${cmd}\\s*`, 'i'), '').trim()
+      || 'innovation in Bharat';
+
+    setActiveCommand(cmd);
+    setShowCommands(false);
+    setIsGenerating(true);
+    setError('');
+
+    try {
+      const generated = await generateWithAgent(cmd, topic, user.displayName);
+      setContent(generated);
+      setTimeout(() => textareaRef.current?.focus(), 50);
+    } catch (err) {
+      setError('Generation failed — you can still write manually');
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [content, user.displayName]);
+
+  // Handle pressing Enter or Tab to confirm a command
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (!showCommands) return;
+    const matched = COMMANDS.find(c => content.startsWith(c.cmd));
+    if (matched && (e.key === 'Enter' || e.key === 'Tab')) {
+      e.preventDefault();
+      runCommand(matched.cmd);
+    }
+  }, [showCommands, content, runCommand]);
+
+  // ── Post save ──────────────────────────────────────────────────────────────
+  const handleSave = async () => {
+    if (!content.trim()) { setError('Please write something first'); return; }
     setIsSaving(true);
     setError('');
     try {
       await onSave(content, imageUrl || undefined);
       setContent('');
       setImageUrl('');
+      setActiveCommand(null);
       onClose();
     } catch (err: any) {
       setError(err.message || 'Failed to create post');
@@ -37,51 +275,170 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, user
     }
   };
 
+  const handleClose = () => {
+    recognitionRef.current?.abort();
+    setIsListening(false);
+    setActiveCommand(null);
+    setShowCommands(false);
+    onClose();
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
+            onClick={handleClose}
             className="absolute inset-0 bg-via-dark/80 backdrop-blur-sm"
           />
-          
+
           <motion.div
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 100 }}
             className="relative w-full max-w-lg bg-via-dark border-t sm:border border-white/10 rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden shadow-2xl"
           >
+            {/* Header */}
             <div className="p-6 border-b border-white/5 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-xl">
                   {user.avatarEmoji || '🇮🇳'}
                 </div>
                 <div>
-                  <h2 className="font-bold text-sm">Create Post</h2>
-                  <p className="text-white/40 text-[10px] uppercase tracking-widest">Sharing with Bharat</p>
+                  <h2 className="font-bold text-sm flex items-center gap-2">
+                    Create Post
+                    {activeCommand && (
+                      <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-white/10 ${
+                        activeCommand === '/post' ? 'text-via-accent' :
+                        activeCommand === '/linkedin' ? 'text-blue-400' :
+                        activeCommand === '/youtube' ? 'text-red-400' : 'text-via-gold'
+                      }`}>
+                        {activeCommand.slice(1)}
+                      </span>
+                    )}
+                  </h2>
+                  <p className="text-white/40 text-[10px] uppercase tracking-widest">
+                    {isListening ? '🔴 Listening…' : voiceStatus || 'Sharing with Bharat'}
+                  </p>
                 </div>
               </div>
-              <button onClick={onClose} className="text-white/40 hover:text-white transition-colors">
+              <button onClick={handleClose} className="text-white/40 hover:text-white transition-colors">
                 <X size={24} />
               </button>
             </div>
 
-            <div className="p-6 space-y-6">
-              <textarea
-                autoFocus
-                placeholder="What's happening in your part of Bharat?"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                rows={4}
-                className="w-full bg-transparent text-lg text-white placeholder:text-white/20 focus:outline-none resize-none"
-              />
+            <div className="p-6 space-y-4">
+              {/* Slash command picker */}
+              <AnimatePresence>
+                {showCommands && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    className="grid grid-cols-2 gap-2"
+                  >
+                    {COMMANDS.map((cmd) => {
+                      const Icon = cmd.icon;
+                      const isMatch = content.toLowerCase().startsWith(cmd.cmd);
+                      return (
+                        <button
+                          key={cmd.cmd}
+                          onClick={() => runCommand(cmd.cmd)}
+                          className={`flex items-center gap-3 p-3 rounded-xl text-left transition-all border ${
+                            isMatch
+                              ? 'bg-white/10 border-white/20'
+                              : 'bg-white/5 border-white/5 hover:bg-white/10'
+                          }`}
+                        >
+                          <Icon size={16} className={cmd.color} />
+                          <div>
+                            <div className={`text-xs font-bold ${cmd.color}`}>{cmd.label}</div>
+                            <div className="text-[10px] text-white/40">{cmd.desc}</div>
+                          </div>
+                          {isMatch && <ChevronRight size={12} className="ml-auto text-white/40" />}
+                        </button>
+                      );
+                    })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
+              {/* Voice status bar */}
+              <AnimatePresence>
+                {isListening && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-red-500/10 border border-red-500/20"
+                  >
+                    <div className="flex gap-1">
+                      {[0, 1, 2].map(i => (
+                        <motion.div
+                          key={i}
+                          animate={{ scaleY: [1, 2.5, 1] }}
+                          transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
+                          className="w-1 h-4 bg-red-400 rounded-full origin-bottom"
+                        />
+                      ))}
+                    </div>
+                    <span className="text-red-400 text-xs font-bold uppercase tracking-widest">
+                      Listening — say a command or your post
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Generating state */}
+              <AnimatePresence>
+                {isGenerating && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-via-accent/10 border border-via-accent/20"
+                  >
+                    <Sparkles size={14} className="text-via-accent animate-pulse" />
+                    <span className="text-via-accent text-xs font-bold uppercase tracking-widest">
+                      Agent is writing…
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Main textarea */}
+              <div className="relative">
+                <textarea
+                  ref={textareaRef}
+                  autoFocus
+                  placeholder={`What's happening in your part of Bharat?\n\nTip: type / or tap the mic to use voice commands\n  /post  /linkedin  /youtube  /task`}
+                  value={content}
+                  onChange={(e) => {
+                    setContent(e.target.value);
+                    if (activeCommand && !e.target.value.startsWith('/')) setActiveCommand(null);
+                  }}
+                  onKeyDown={handleKeyDown}
+                  rows={5}
+                  disabled={isGenerating}
+                  className="w-full bg-transparent text-base text-white placeholder:text-white/20 focus:outline-none resize-none disabled:opacity-50 leading-relaxed"
+                />
+                {/* Command hint when empty */}
+                {!content && !isListening && !isGenerating && (
+                  <div className="absolute bottom-0 right-0 flex gap-1 pointer-events-none">
+                    {COMMANDS.map(c => (
+                      <span key={c.cmd} className="text-[9px] font-bold text-white/15 uppercase tracking-widest">{c.cmd}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Image input */}
               {showImageInput && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   className="space-y-2"
@@ -99,21 +456,67 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, user
 
               {error && <p className="text-red-400 text-xs ml-2">{error}</p>}
 
+              {/* Action bar */}
               <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                <button 
-                  onClick={() => setShowImageInput(!showImageInput)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-colors ${showImageInput ? 'bg-via-accent text-white' : 'text-white/40 hover:bg-white/5'}`}
-                >
-                  <ImageIcon size={20} />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Add Image</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  {/* Mic button */}
+                  {voiceSupported && (
+                    <motion.button
+                      whileTap={{ scale: 0.9 }}
+                      onClick={toggleMic}
+                      title={isListening ? 'Stop listening' : 'Speak your post or command'}
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                        isListening
+                          ? 'bg-red-500 text-white shadow-lg shadow-red-500/30'
+                          : 'text-white/40 hover:bg-white/5 hover:text-white'
+                      }`}
+                    >
+                      {isListening ? <MicOff size={18} /> : <Mic size={18} />}
+                    </motion.button>
+                  )}
+
+                  {/* Image button */}
+                  <button
+                    onClick={() => setShowImageInput(!showImageInput)}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-colors ${
+                      showImageInput ? 'bg-via-accent text-white' : 'text-white/40 hover:bg-white/5'
+                    }`}
+                  >
+                    <ImageIcon size={18} />
+                    <span className="text-[10px] font-bold uppercase tracking-widest hidden sm:block">Image</span>
+                  </button>
+
+                  {/* Quick command buttons */}
+                  {!isGenerating && !activeCommand && (
+                    <button
+                      onClick={() => { setContent('/'); textareaRef.current?.focus(); }}
+                      className="flex items-center gap-1 px-3 py-2 rounded-xl text-white/30 hover:text-via-accent hover:bg-white/5 transition-colors"
+                      title="Open command menu"
+                    >
+                      <Sparkles size={15} />
+                      <span className="text-[10px] font-bold uppercase tracking-widest hidden sm:block">AI</span>
+                    </button>
+                  )}
+
+                  {/* Clear generated content */}
+                  {activeCommand && !isGenerating && (
+                    <button
+                      onClick={() => { setContent(''); setActiveCommand(null); textareaRef.current?.focus(); }}
+                      className="text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white px-2 py-1 rounded transition-colors"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
 
                 <button
                   onClick={handleSave}
-                  disabled={isSaving || !content.trim()}
+                  disabled={isSaving || isGenerating || !content.trim()}
                   className="px-8 py-3 rounded-xl bg-via-accent text-white font-bold flex items-center justify-center gap-2 hover:bg-via-accent/80 transition-all disabled:opacity-50 disabled:grayscale"
                 >
-                  {isSaving ? <Loader2 className="animate-spin" size={20} /> : (
+                  {isSaving ? (
+                    <Loader2 className="animate-spin" size={20} />
+                  ) : (
                     <>
                       <Send size={18} />
                       <span>Post</span>
