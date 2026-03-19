@@ -1629,13 +1629,13 @@ function ddBuildFooter() {
   ddFooterBuilt = true;
 
   const tools = [
-    {title:'Context Packager', desc:'Bundle code and text into AI payloads.', cta:'Use Tool'},
-    {title:'StudyOS',          desc:'Modular, offline learning OS.',           cta:'Explore'},
-    {title:'Prompt Alchemy',   desc:'Refine ideas into strict prompts.',        cta:'Launch'}
+    {title:'Context Packager', desc:'Bundle code and text into AI payloads.', cta:'Use Tool', url:'https://via-decide.github.io/decide.engine-tools/'},
+    {title:'StudyOS',          desc:'Modular, offline learning OS.',           cta:'Explore',  url:'./StudyOS/index.html'},
+    {title:'Prompt Alchemy',   desc:'Refine ideas into strict prompts.',        cta:'Launch',   url:'./prompt-alchemy/index.html'}
   ];
   const tGrid = document.getElementById('dd-toolsGrid');
   if (tGrid) tools.forEach(t => tGrid.innerHTML += `
-    <a href="https://via-decide.github.io/decide.engine-tools/" class="dd-car-card">
+    <a href="${t.url}" class="dd-car-card" ${/^https?:/.test(t.url)?'target="_blank" rel="noopener"':''}>
       <div class="dd-car-thumb"></div>
       <h4>${t.title}</h4><p>${t.desc}</p>
       <span class="dd-car-cta">${t.cta} →</span>
@@ -1645,7 +1645,7 @@ function ddBuildFooter() {
   if (fNav) {
     const cols = [
       {h:'Tools',    items:[{l:'Engine Tools',route:'https://via-decide.github.io/decide.engine-tools/'},{l:'GN8R Bot',route:'https://t.me/GN8RBot'}]},
-      {h:'Platform', items:[{l:'VIA Social Feed',route:'./index.html'},{l:'Discover',route:'./discover.html'},{l:'Creator Setup',route:'./creator-onboarding.html'}]},
+      {h:'Platform', items:[{l:'VIA Social Feed',route:'javascript:switchLayer("feed")'},{l:'Discover',route:'javascript:switchLayer("discover")'},{l:'Creator Setup',route:'./creator-onboarding.html'}]},
       {h:'Network',  items:[{l:'About ViaDecide',route:'https://via-decide.github.io/decide.engine-tools/'},{l:'GitHub Repo',route:'https://github.com/via-decide'}]}
     ];
     cols.forEach(col => {
@@ -1835,8 +1835,13 @@ const GC = {
   // Swipe left → open the Deep Dive for this card
   _left(card){
     const c=CARDS[currentCard];
-    if(c&&c.storyKey){switchLayer('deepdives',c.storyKey);}
-    else{openRibbon(currentCard);}
+    if(c&&c.storyKey){
+      switchLayer('deepdives',c.storyKey);
+    } else if(c&&c.socialPostId){
+      openSheet('story',{cardIndex:currentCard});
+    } else {
+      openSheet('platform-context');
+    }
     this._snap(card);
   }
 };
@@ -2205,6 +2210,51 @@ function openSheet(type, extra={}) {
   } else if(type==='profile-detail'&&extra.item){
     const {item}=extra;
     html=`<div class="sheet-title">${item.emoji} ${item.title}</div><div class="sheet-sub">${item.type}</div><div class="sheet-actions"><div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Close</div></div><div class="sheet-btn-arrow">›</div></div></div>`;
+  } else if(type==='platform-context'){
+    html='<div class="sheet-title">What is VIA?</div>'+
+    '<div class="sheet-sub">Bharat का अपना Platform — a sovereign, Bharat-first digital ecosystem.</div>'+
+    '<div class="sheet-actions">'+
+      '<div class="sheet-btn" onclick="closeSheet();window.open(\'https://via-decide.github.io/decide.engine-tools/\',\'_blank\')">'+
+        '<div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">⚙️</div>'+
+        '<div class="sheet-btn-text">'+
+          '<div class="sheet-btn-title">44+ Engine Tools</div>'+
+          '<div class="sheet-btn-sub">Browser tools for creators, coders, students & founders. No login needed.</div>'+
+        '</div>'+
+        '<div class="sheet-btn-arrow">›</div>'+
+      '</div>'+
+      '<div class="sheet-btn" onclick="closeSheet();switchLayer(\'about\')">'+
+        '<div class="sheet-btn-icon" style="background:rgba(108,99,255,.15)">ℹ️</div>'+
+        '<div class="sheet-btn-text">'+
+          '<div class="sheet-btn-title">About VIA</div>'+
+          '<div class="sheet-btn-sub">Mission, products, and the people building Bharat\'s decision layer.</div>'+
+        '</div>'+
+        '<div class="sheet-btn-arrow">›</div>'+
+      '</div>'+
+      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'./founder/index.html\'">'+
+        '<div class="sheet-btn-icon" style="background:rgba(245,197,24,.1)">🧭</div>'+
+        '<div class="sheet-btn-text">'+
+          '<div class="sheet-btn-title">Founder Dashboard</div>'+
+          '<div class="sheet-btn-sub">Weekly decision reviews and founder tools.</div>'+
+        '</div>'+
+        '<div class="sheet-btn-arrow">›</div>'+
+      '</div>'+
+      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'./interview-prep/index.html\'">'+
+        '<div class="sheet-btn-icon" style="background:rgba(57,255,136,.08)">🎤</div>'+
+        '<div class="sheet-btn-text">'+
+          '<div class="sheet-btn-title">Interview Prep</div>'+
+          '<div class="sheet-btn-sub">Offline retro interview practice.</div>'+
+        '</div>'+
+        '<div class="sheet-btn-arrow">›</div>'+
+      '</div>'+
+      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'./student-research/index.html\'">'+
+        '<div class="sheet-btn-icon" style="background:rgba(108,99,255,.12)">📚</div>'+
+        '<div class="sheet-btn-text">'+
+          '<div class="sheet-btn-title">Decision Research</div>'+
+          '<div class="sheet-btn-sub">Voice-first research engine for students.</div>'+
+        '</div>'+
+        '<div class="sheet-btn-arrow">›</div>'+
+      '</div>'+
+    '</div>';
   } else {
     const s=SHEETS[type];if(!s)return;
     html='<div class="sheet-title">'+s.title+'</div><div class="sheet-sub">'+s.sub+'</div><div class="sheet-actions">'+s.actions.map(a=>'<div class="sheet-btn" onclick="'+(a.url?'window.open(\''+a.url+'\',\'_blank\');closeSheet()':'addXP(5);closeSheet()')+'"><div class="sheet-btn-icon" style="background:'+a.iconBg+'">'+a.icon+'</div><div class="sheet-btn-text"><div class="sheet-btn-title">'+a.title+'</div><div class="sheet-btn-sub">'+a.sub+'</div></div><div class="sheet-btn-arrow">›</div></div>').join('')+'</div>';
