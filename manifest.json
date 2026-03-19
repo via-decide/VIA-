@@ -1,0 +1,10 @@
+{
+  "name": "VIA",
+  "short_name": "VIA",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b0b1a",
+  "theme_color": "#0b0b1a",
+  "description": "VIA multi-page social and creator surfaces.",
+  "icons": []
+}

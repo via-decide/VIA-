@@ -31,6 +31,8 @@ window.VIA_FIREBASE_CONFIG = {
 <script src="./shared/firebase-config.js"></script>
 <script src="./shared/tool-storage.js"></script>
 <script src="./shared/social-core.js"></script>
+<script src="./js/via-navigation.js"></script>
+<script src="./js/via-bootstrap.js"></script>
 <style>
 /* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -459,7 +461,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 <!-- ── APP ── -->
 <div id="app">
   <div class="status-bar">
-    <div class="status-logo" onclick="switchLayer('feed')">VIA</div>
+    <div class="status-logo" onclick="VIANavigation.openSurface('feed')">VIA</div>
     <div class="status-actions">
       <button class="status-auth-btn" id="feed-debug-btn" type="button" hidden onclick="window.testPost && window.testPost()">Test Post</button>
       <div class="status-xp"><div class="xp-dot"></div><span id="xp-counter">0 XP</span></div>
@@ -468,10 +470,10 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
   </div>
 
   <div class="layer-tabs" id="layer-tabs">
-    <button class="layer-tab active" data-layer="feed">Feed</button>
-    <button class="layer-tab" data-layer="discover">Discover</button>
-    <button class="layer-tab" data-layer="about">About</button>
-    <button class="layer-tab" data-layer="profile">Profile</button>
+    <button class="layer-tab active" data-layer="feed" onclick="VIANavigation.openSurface('feed')">Feed</button>
+    <button class="layer-tab" data-layer="discover" onclick="VIANavigation.openSurface('discover')">Discover</button>
+    <button class="layer-tab" data-layer="about" onclick="VIANavigation.openSurface('about')">About</button>
+    <button class="layer-tab" data-layer="profile" onclick="VIANavigation.openSurface('profile')">Profile</button>
   </div>
 
   <!-- FEED DECK -->
@@ -498,7 +500,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 
     <!-- Fixed top bar: back + story switcher -->
     <div class="dd-topbar">
-      <button class="dd-back" onclick="switchLayer('feed')" title="Back to Feed">←</button>
+      <button class="dd-back" onclick="VIANavigation.openSurface('feed')" title="Back to Feed">←</button>
       <div class="dd-story-scroll" id="dd-story-scroll">
         <button class="dd-story-btn active" data-story="food"    onclick="ddLoad('food',this)">🔥 Mumbai Food</button>
         <button class="dd-story-btn"        data-story="drone"   onclick="ddLoad('drone',this)">🌾 Agri Drone</button>
@@ -627,7 +629,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
           <div class="about-product-info"><div class="about-product-name">GN8R Bot</div><div class="about-product-desc">AI command center in Telegram. Generate real files, run pipelines.</div></div>
           <div class="about-product-arrow">›</div>
         </div>
-        <div class="about-product" onclick="switchLayer('feed')">
+        <div class="about-product" onclick="VIANavigation.openSurface('feed')">
           <div class="about-product-icon">📱</div>
           <div class="about-product-info"><div class="about-product-name">VIA Social Feed</div><div class="about-product-desc">Swipe-native social platform for Bharat.</div></div>
           <div class="about-product-arrow">›</div>
@@ -637,7 +639,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
           <div class="about-product-info"><div class="about-product-name">Deep Dives</div><div class="about-product-desc">Cinematic story breakdowns on Bharat's biggest trends.</div></div>
           <div class="about-product-arrow">›</div>
         </div>
-        <div class="about-product" onclick="window.location.href='./creator-onboarding.html'">
+        <div class="about-product" onclick="VIANavigation.openSurface('creator_onboarding')">
           <div class="about-product-icon">🎬</div>
           <div class="about-product-info"><div class="about-product-name">Creator Setup</div><div class="about-product-desc">Start the creator onboarding flow and set up your VIA publishing path.</div></div>
           <div class="about-product-arrow">›</div>
@@ -680,17 +682,17 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
-    <button class="nav-item active" data-nav="feed" onclick="switchNav('feed',this)">
+    <button class="nav-item active" data-nav="feed" data-page="feed" onclick="VIANavigation.openSurface('feed')">
       <div class="nav-icon">🏠</div><div class="nav-label">Feed</div>
     </button>
-    <button class="nav-item" data-nav="discover" onclick="switchNav('discover',this)">
+    <button class="nav-item" data-nav="discover" data-page="discover" onclick="VIANavigation.openSurface('discover')">
       <div class="nav-icon">🔍</div><div class="nav-label">Explore</div>
     </button>
     <button class="nav-create" onclick="openSheet('create')">＋</button>
-    <button class="nav-item" data-nav="about" onclick="switchNav('about',this)">
+    <button class="nav-item" data-nav="about" data-page="about" onclick="VIANavigation.openSurface('about')">
       <div class="nav-icon">ℹ️</div><div class="nav-label">About</div>
     </button>
-    <button class="nav-item" data-nav="profile" onclick="switchNav('profile',this)">
+    <button class="nav-item" data-nav="profile" data-page="profile" onclick="VIANavigation.openSurface('profile')">
       <div class="nav-icon">👤</div><div class="nav-label">Profile</div>
     </button>
   </nav>
@@ -717,7 +719,7 @@ function logAuthSnapshot(){console.log('Auth Ready:', authReady);console.log('Cu
 function updateAuthUI(user){
   const guest=!user||user.is_guest||!user.id;
   const sb=document.getElementById('status-auth-btn');
-  if(sb){sb.textContent=guest?'Sign In':'Account';sb.onclick=guest?()=>VIA.openAuth():()=>switchLayer('profile');}
+  if(sb){sb.textContent=guest?'Sign In':'Account';sb.onclick=guest?()=>VIA.openAuth():()=>VIANavigation.openSurface('profile');}
   const pb=document.getElementById('profile-auth-btn');
   if(pb){pb.textContent=guest?'Sign In to Save Progress':'Sign Out';pb.classList.toggle('guest',guest);pb.onclick=guest?()=>VIA.openAuth():()=>VIA.signOut();}
 }
@@ -1061,7 +1063,7 @@ function hydrateFeedCardsWithMicroContent(cards) {
 let CARDS = DEFAULT_CARDS.slice();
 
 const DISCOVER_ITEMS = [
-  {emoji:'📦',cat:'Context',name:'Context Packager',desc:'Bundle text, code, and links into a single file payload for AI models.',toolPath:'./tools/context-packager/index.html'},
+  {emoji:'📦',cat:'Context',name:'Context Packager',desc:'Bundle text, code, and links into a single file payload for AI models.',toolPath:'https://via-decide.github.io/decide.engine-tools/'},
   {emoji:'📖',cat:'Dives',name:'The Digital Bharat Revolution',desc:'How affordable data and smartphones transformed 1.4 billion lives.',storyKey:'digital-bharat',isDive:true,participants:'12K',readTime:'8',isFeatured:true},
   {emoji:'⚗️',cat:'AI',name:'Prompt Alchemy',desc:'Refine raw ideas into structured, high-yield system prompts.',toolPath:'./prompt-alchemy/index.html'},
   {emoji:'⚙️',cat:'Dev',name:'Spec Builder',desc:'Generate production-ready feature specs and architecture documents.',toolPath:'./tools/spec-builder/index.html'},
@@ -1633,7 +1635,7 @@ function ddBuildFooter() {
   ];
   const tGrid = document.getElementById('dd-toolsGrid');
   if (tGrid) tools.forEach(t => tGrid.innerHTML += `
-    <a href="#" class="dd-car-card">
+    <a href="https://via-decide.github.io/decide.engine-tools/" class="dd-car-card">
       <div class="dd-car-thumb"></div>
       <h4>${t.title}</h4><p>${t.desc}</p>
       <span class="dd-car-cta">${t.cta} →</span>
@@ -1642,8 +1644,8 @@ function ddBuildFooter() {
   const fNav = document.getElementById('dd-footerNav');
   if (fNav) {
     const cols = [
-      {h:'Tools',    items:[{l:'Engine Tools',route:'#'},{l:'GN8R Bot',route:'https://t.me/GN8RBot'}]},
-      {h:'Platform', items:[{l:'VIA Social Feed',route:'#'},{l:'Discover',route:'#'},{l:'Creator Setup',route:'./creator-onboarding.html'}]},
+      {h:'Tools',    items:[{l:'Engine Tools',route:'https://via-decide.github.io/decide.engine-tools/'},{l:'GN8R Bot',route:'https://t.me/GN8RBot'}]},
+      {h:'Platform', items:[{l:'VIA Social Feed',route:'./index.html'},{l:'Discover',route:'./discover.html'},{l:'Creator Setup',route:'./creator-onboarding.html'}]},
       {h:'Network',  items:[{l:'About ViaDecide',route:'https://via-decide.github.io/decide.engine-tools/'},{l:'GitHub Repo',route:'https://github.com/via-decide'}]}
     ];
     cols.forEach(col => {
@@ -2148,6 +2150,7 @@ async function initFederatedRuntime(){
     window.VIAFederatedRuntime = federatedRuntime;
     subscribeFeedDraftEvents();
     window.publishDraft = publishDraft;
+    if (window.VIANavigation && typeof window.VIANavigation.handleLegacyRoutes === 'function') { window.VIANavigation.handleLegacyRoutes(); }
     window.VIAFeedRuntimeBridge = {
       getSnapshot(){
         return federatedRuntime ? federatedRuntime.getSnapshot() : null;

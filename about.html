@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About VIA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/via-pages.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="./shared/vd-nav-fix.js"></script>
+    <script src="./shared/firebase-config.js"></script>
+    <script src="./shared/tool-storage.js"></script>
+    <script src="./shared/social-core.js"></script>
+    <script src="./js/via-navigation.js"></script>
+    <script src="./js/via-bootstrap.js"></script>
+  </head>
+  <body data-page="about">
+    <div class="via-shell">
+      <header class="via-topbar">
+        <a class="via-brand" href="./index.html" data-page="feed">
+          <span class="via-wordmark">VIA</span>
+          <span class="via-kicker">About Surface</span>
+        </a>
+        <div class="via-topbar-actions">
+          <a class="via-pill" href="https://github.com/via-decide" target="_blank" rel="noopener">GitHub</a>
+          <button class="via-button via-button--primary" type="button" data-open-surface="agent">Open agent</button>
+        </div>
+      </header>
+
+      <main class="via-main">
+        <section class="via-hero">
+          <div class="via-eyebrow">Bharat-first platform</div>
+          <h1>Tools that help you think, build, and decide.</h1>
+          <p>VIA now runs as a cluster of direct HTML surfaces backed by a shared runtime. Feed, discover, profile, creator, and agent pages each open on their own URL and still share local state.</p>
+        </section>
+
+        <section class="via-section">
+          <div class="via-stat-row">
+            <div class="via-stat"><strong>7</strong><span class="via-caption">Core surfaces</span></div>
+            <div class="via-stat"><strong>0</strong><span class="via-caption">SPA router assumptions</span></div>
+            <div class="via-stat"><strong>∞</strong><span class="via-caption">Shared browser state</span></div>
+          </div>
+        </section>
+
+        <section class="via-section via-grid via-grid--2">
+          <article class="via-card">
+            <div class="via-tag">Architecture</div>
+            <h3>Subpage-first by default</h3>
+            <p>Each major surface is a standalone HTML page. Shared logic lives in plain JavaScript, and active navigation is derived from <code>window.location.pathname</code>.</p>
+          </article>
+          <article class="via-card" id="digital-bharat">
+            <div class="via-tag">Mission</div>
+            <h3>Digital Bharat, direct links, resilient state</h3>
+            <p>The same creator-flow philosophy now powers feed, discover, about, profile, and agent pages. Local profile data, creator drafts, and feed state survive page transitions because they live in browser storage, not router memory.</p>
+          </article>
+        </section>
+
+        <section class="via-section">
+          <div class="via-section-header">
+            <div>
+              <div class="via-caption">Surfaces</div>
+              <h2>What VIA now exposes</h2>
+            </div>
+          </div>
+          <div class="via-surface-grid">
+            <article>
+              <h3>Feed</h3>
+              <p>Main entry point for posts, drafts, and launch actions.</p>
+              <a class="via-link-button" href="./index.html">Open feed</a>
+            </article>
+            <article>
+              <h3>Discover</h3>
+              <p>Search local profiles and jump to tools or creator pages.</p>
+              <a class="via-link-button" href="./discover.html">Open discover</a>
+            </article>
+            <article>
+              <h3>Profile</h3>
+              <p>Manage the identity that follows you across every VIA subpage.</p>
+              <a class="via-link-button" href="./profile.html">Open profile</a>
+            </article>
+            <article>
+              <h3>Creator</h3>
+              <p>Conviction plus onboarding, both as standalone pages.</p>
+              <a class="via-link-button" href="./creator-story.html">Open creator flow</a>
+            </article>
+            <article>
+              <h3>Agent</h3>
+              <p>Command center for tools, diagnostics, and direct navigation.</p>
+              <a class="via-link-button" href="./agent.html">Open agent</a>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <nav class="via-nav">
+        <a href="./index.html" data-page="feed">Feed</a>
+        <a href="./discover.html" data-page="discover">Discover</a>
+        <a href="./about.html" data-page="about">About</a>
+        <a href="./profile.html" data-page="profile">Profile</a>
+        <a href="./agent.html" data-page="agent">Agent</a>
+      </nav>
+    </div>
+  </body>
+</html>

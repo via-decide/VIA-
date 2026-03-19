@@ -4,91 +4,164 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VIA Profile</title>
-    <style>
-      :root {
-        color-scheme: dark;
-        --bg: #0b0b1a;
-        --panel: rgba(255, 255, 255, 0.06);
-        --border: rgba(255, 255, 255, 0.12);
-        --accent: #ff3d00;
-        --muted: rgba(255, 255, 255, 0.55);
-        --text: #ffffff;
-      }
-
-      * { box-sizing: border-box; }
-      body {
-        margin: 0;
-        min-height: 100vh;
-        font-family: Inter, system-ui, sans-serif;
-        background: radial-gradient(circle at top, rgba(255, 61, 0, 0.16), transparent 35%), var(--bg);
-        color: var(--text);
-        display: grid;
-        place-items: center;
-        padding: 24px;
-      }
-
-      .panel {
-        width: min(100%, 420px);
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 24px;
-        padding: 24px;
-        backdrop-filter: blur(20px);
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-      }
-
-      h1 { margin: 0 0 8px; font-size: 28px; }
-      p { margin: 0; color: var(--muted); line-height: 1.5; }
-      .meta { margin-top: 20px; padding: 16px; border-radius: 18px; background: rgba(255,255,255,0.04); }
-      label { display: block; margin: 20px 0 8px; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
-      input {
-        width: 100%; border: 1px solid var(--border); border-radius: 16px; background: rgba(255,255,255,0.04);
-        color: var(--text); padding: 14px 16px; font-size: 16px;
-      }
-      button {
-        margin-top: 16px; width: 100%; border: 0; border-radius: 16px; padding: 14px 16px; font-size: 15px;
-        font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: var(--accent); color: white; cursor: pointer;
-      }
-      a { color: #ffd700; text-decoration: none; }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/via-pages.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="./shared/vd-nav-fix.js"></script>
+    <script src="./shared/firebase-config.js"></script>
+    <script src="./shared/tool-storage.js"></script>
+    <script src="./shared/social-core.js"></script>
+    <script src="./js/via-navigation.js"></script>
+    <script src="./js/via-bootstrap.js"></script>
   </head>
-  <body>
-    <section class="panel">
-      <h1>Profile</h1>
-      <p>Update the locally stored VIA identity used to attach authors to feed posts.</p>
+  <body data-page="profile">
+    <div class="via-shell">
+      <header class="via-topbar">
+        <a class="via-brand" href="./profile.html" data-page="profile">
+          <span class="via-wordmark">VIA</span>
+          <span class="via-kicker">Profile surface</span>
+        </a>
+        <div class="via-topbar-actions">
+          <button class="via-pill" type="button" data-open-surface="feed">Feed</button>
+          <button class="via-button via-button--primary" type="button" data-open-surface="creator_onboarding">Creator onboarding</button>
+        </div>
+      </header>
 
-      <div class="meta">
-        <div>Current username: <strong id="currentUsername">guest</strong></div>
-        <div style="margin-top: 8px; font-size: 13px; color: var(--muted);">Profile ID: <span id="currentId">-</span></div>
-      </div>
+      <main class="via-main">
+        <section class="via-panel via-profile-head">
+          <div class="via-avatar" id="profile-avatar">👤</div>
+          <div>
+            <div class="via-caption">Local identity</div>
+            <h2 id="profile-name">Guest Explorer</h2>
+            <p id="profile-handle">@guest</p>
+          </div>
+          <div class="via-stat-row">
+            <div class="via-stat"><strong id="profile-post-count">0</strong><span class="via-caption">Posts</span></div>
+            <div class="via-stat"><strong id="profile-followers">0</strong><span class="via-caption">Followers</span></div>
+            <div class="via-stat"><strong id="profile-following">0</strong><span class="via-caption">Following</span></div>
+          </div>
+        </section>
 
-      <label for="username">Username</label>
-      <input id="username" type="text" placeholder="guest" maxlength="30" />
-      <button onclick="saveProfile()">Save</button>
+        <section class="via-section via-split">
+          <article class="via-composer">
+            <form class="via-form" id="profile-form">
+              <div class="via-field">
+                <label for="profile-username">Username</label>
+                <input id="profile-username" type="text" maxlength="30" />
+              </div>
+              <div class="via-field">
+                <label for="profile-display-name">Display name</label>
+                <input id="profile-display-name" type="text" maxlength="40" />
+              </div>
+              <div class="via-field">
+                <label for="profile-city">City</label>
+                <input id="profile-city" type="text" maxlength="40" />
+              </div>
+              <div class="via-field">
+                <label for="profile-bio">Bio</label>
+                <textarea id="profile-bio" maxlength="240"></textarea>
+              </div>
+              <div class="via-actions">
+                <button class="via-button via-button--primary" type="submit">Save profile</button>
+                <button class="via-button" type="button" id="profile-clear">Reset</button>
+              </div>
+              <div class="via-note" id="profile-status">This profile persists across all VIA pages.</div>
+            </form>
+          </article>
 
-      <p style="margin-top: 16px; font-size: 13px;">
-        Return to <a href="./">the feed</a> after saving to publish with the updated author identity.
-      </p>
-    </section>
+          <article class="via-card">
+            <div class="via-tag">Shared state</div>
+            <h3>Recent local posts and creator drafts</h3>
+            <div class="via-list" id="profile-activity"></div>
+          </article>
+        </section>
+      </main>
 
-    <script type="module">
-      import profileSystem from './src/core/profile-system/index.js';
+      <nav class="via-nav">
+        <a href="./index.html" data-page="feed">Feed</a>
+        <a href="./discover.html" data-page="discover">Discover</a>
+        <a href="./about.html" data-page="about">About</a>
+        <a href="./profile.html" data-page="profile">Profile</a>
+        <a href="./agent.html" data-page="agent">Agent</a>
+      </nav>
+    </div>
 
-      const syncUi = () => {
-        const profile = profileSystem.getProfile();
-        document.getElementById('currentUsername').textContent = profile.username;
-        document.getElementById('currentId').textContent = profile.id;
-        document.getElementById('username').value = profile.username;
-      };
+    <script>
+      (function () {
+        var form = document.getElementById('profile-form');
+        var clearButton = document.getElementById('profile-clear');
+        var status = document.getElementById('profile-status');
+        var activity = document.getElementById('profile-activity');
+        var fields = {
+          username: document.getElementById('profile-username'),
+          displayName: document.getElementById('profile-display-name'),
+          city: document.getElementById('profile-city'),
+          bio: document.getElementById('profile-bio')
+        };
 
-      window.saveProfile = function saveProfile() {
-        const name = document.getElementById('username').value.trim();
-        window.VIAProfile.updateProfile({ username: name || 'guest', displayName: name || 'guest', isGuest: !name });
-        syncUi();
-        alert('Profile updated');
-      };
+        function render() {
+          var profile = window.VIAProfile.getProfile();
+          var posts = window.VIAFeed.listPosts();
+          document.getElementById('profile-avatar').textContent = profile.avatar_emoji || '👤';
+          document.getElementById('profile-name').textContent = profile.display_name || 'Guest Explorer';
+          document.getElementById('profile-handle').textContent = '@' + (profile.username || 'guest') + ' · ' + (profile.city || 'Bharat');
+          document.getElementById('profile-post-count').textContent = String(profile.posts || posts.filter(function (post) {
+            return post.author && post.author.username === profile.username;
+          }).length);
+          document.getElementById('profile-followers').textContent = String(profile.followers || 0);
+          document.getElementById('profile-following').textContent = String(profile.following || 0);
+          fields.username.value = profile.username || '';
+          fields.displayName.value = profile.display_name || '';
+          fields.city.value = profile.city || '';
+          fields.bio.value = profile.bio || '';
 
-      syncUi();
+          if (!posts.length) {
+            activity.innerHTML = '<div class="via-empty">No local posts or drafts yet. Create one from the feed or creator onboarding.</div>';
+            return;
+          }
+
+          activity.innerHTML = posts.slice(0, 6).map(function (post) {
+            var author = post.author && post.author.display_name ? post.author.display_name : (post.author && post.author.username ? post.author.username : 'VIA');
+            return '' +
+              '<div class="via-list-item">' +
+                '<div class="via-list-item-main">' +
+                  '<strong>' + (post.title || 'Feed post') + '</strong>' +
+                  '<p>' + (post.body || '').slice(0, 140) + '</p>' +
+                  '<div class="via-inline-meta"><span>' + author + '</span><span>' + (post.tag || 'Post') + '</span></div>' +
+                '</div>' +
+                '<a class="via-link-button" href="./index.html">View feed</a>' +
+              '</div>';
+          }).join('');
+        }
+
+        form.addEventListener('submit', function (event) {
+          event.preventDefault();
+          var saved = window.VIAProfile.updateProfile({
+            username: fields.username.value.trim() || 'guest',
+            display_name: fields.displayName.value.trim() || fields.username.value.trim() || 'Guest Explorer',
+            city: fields.city.value.trim() || 'Bharat',
+            bio: fields.bio.value.trim() || 'Local-first VIA profile stored in your browser.',
+            avatar_emoji: '🌟',
+            is_guest: false
+          });
+          status.textContent = 'Saved profile for @' + saved.username + '.';
+          render();
+        });
+
+        clearButton.addEventListener('click', function () {
+          window.VIAProfile.clearProfile();
+          status.textContent = 'Profile reset to guest mode.';
+          render();
+        });
+
+        window.VIAFederatedRuntime.subscribe('storage_sync', render);
+        window.VIAFederatedRuntime.subscribe('post_created', render);
+        render();
+      })();
     </script>
   </body>
 </html>
