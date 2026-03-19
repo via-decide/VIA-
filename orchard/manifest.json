@@ -1,0 +1,17 @@
+{
+  "name": "Orchard: Growth Milestone Engine",
+  "short_name": "Orchard",
+  "description": "Grow, breed, and harvest digital plants. Part of the VIA ecosystem.",
+  "start_url": "/orchard/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "name": "VIA",
+  "short_name": "VIA",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b0b1a",
+  "theme_color": "#0b0b1a",
+  "description": "VIA multi-page social and creator surfaces.",
+  "icons": []
+}

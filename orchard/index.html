@@ -1,3 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orchard · Growth Milestone Engine · VIA</title>
+    <meta name="description" content="Grow, breed, and harvest digital plants in a multi-layered ecosystem simulation. Part of the VIA platform."/>
+    <meta name="theme-color" content="#0a0a0a"/>
+    <link rel="manifest" href="/orchard/manifest.json"/>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,18 +33,27 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
-// VIA Firebase config — set real values via Cloudflare Pages env vars
-// or replace the values below for local dev only (never commit real keys)
-window.VIA_FIREBASE_CONFIG = {
-  apiKey:            "REPLACE_ME",
-  authDomain:        "REPLACE_ME.firebaseapp.com",
-  projectId:         "REPLACE_ME",
-  storageBucket:     "REPLACE_ME.appspot.com",
-  messagingSenderId: "REPLACE_ME",
-  appId:             "REPLACE_ME"
-};
+(function () {
+  function loadFirebaseBootstrap() {
+    var script = document.createElement('script');
+    script.src = './shared/firebase-config.js';
+    document.head.appendChild(script);
+  }
+
+  fetch('./firebase-applet-config.json', { cache: 'no-cache' })
+    .then(function (response) {
+      return response.text();
+    })
+    .then(function (source) {
+      (0, Function)(source)();
+      loadFirebaseBootstrap();
+    })
+    .catch(function (error) {
+      console.warn('VIA Firebase Orchard config load failed:', error && error.message ? error.message : error);
+      loadFirebaseBootstrap();
+    });
+})();
 </script>
-<script src="./shared/firebase-config.js"></script>
 <script src="./shared/tool-storage.js"></script>
 <script src="./shared/social-core.js"></script>
 <script src="./js/via-navigation.js"></script>
@@ -43,6 +68,11 @@ window.VIA_FIREBASE_CONFIG = {
   --glow-saffron:rgba(255,107,0,.4);--r:20px;
 }
 html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased;touch-action:none;overscroll-behavior:none;}
+
+.orchard-via-nav{position:fixed;top:calc(12px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:1200;display:flex;align-items:center;justify-content:center;gap:.65rem;padding:.7rem 1rem;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(11,11,26,.82);box-shadow:0 12px 30px rgba(0,0,0,.28);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
+.orchard-via-nav a{color:var(--white);text-decoration:none;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+.orchard-via-nav span{color:rgba(255,255,255,.45);font-size:.72rem;}
+.orchard-via-nav__current{color:var(--gold)!important;}
 
 /* ── BOOT ── */
 #boot{position:fixed;inset:0;background:var(--deep);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;transition:opacity .6s ease,transform .6s ease;}
@@ -446,6 +476,13 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 </style>
 </head>
 <body>
+<div class="orchard-via-nav" aria-label="VIA navigation">
+  <a href="../index.html">VIA Home</a>
+  <span>•</span>
+  <a href="./discover.html">Discover</a>
+  <span>•</span>
+  <a class="orchard-via-nav__current" href="./index.html" aria-current="page">Orchard</a>
+</div>
 
 <!-- ── BOOT ── -->
 <div id="boot">
@@ -642,11 +679,6 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
         <div class="about-product" onclick="VIANavigation.openSurface('creator_onboarding')">
           <div class="about-product-icon">🎬</div>
           <div class="about-product-info"><div class="about-product-name">Creator Setup</div><div class="about-product-desc">Start the creator onboarding flow and set up your VIA publishing path.</div></div>
-          <div class="about-product-arrow">›</div>
-        </div>
-        <div class="about-product" onclick="window.open('https://orchard.viadecide.com','_blank')">
-          <div class="about-product-icon">🌱</div>
-          <div class="about-product-info"><div class="about-product-name">Orchard Game</div><div class="about-product-desc">Grow digital plants, breed hybrids, and transfer credits in this live multiplayer simulation.</div></div>
           <div class="about-product-arrow">›</div>
         </div>
       </div>
@@ -1070,10 +1102,10 @@ let CARDS = DEFAULT_CARDS.slice();
 const DISCOVER_ITEMS = [
   {emoji:'📦',cat:'Context',name:'Context Packager',desc:'Bundle text, code, and links into a single file payload for AI models.',toolPath:'https://via-decide.github.io/decide.engine-tools/'},
   {emoji:'📖',cat:'Dives',name:'The Digital Bharat Revolution',desc:'How affordable data and smartphones transformed 1.4 billion lives.',storyKey:'digital-bharat',isDive:true,participants:'12K',readTime:'8',isFeatured:true},
-  {emoji:'⚗️',cat:'AI',name:'Prompt Alchemy',desc:'Refine raw ideas into structured, high-yield system prompts.',toolPath:'/prompt-alchemy/'},
+  {emoji:'⚗️',cat:'AI',name:'Prompt Alchemy',desc:'Refine raw ideas into structured, high-yield system prompts.',toolPath:'./prompt-alchemy/index.html'},
   {emoji:'⚙️',cat:'Dev',name:'Spec Builder',desc:'Generate production-ready feature specs and architecture documents.',toolPath:'./tools/spec-builder/index.html'},
-  {emoji:'🎯',cat:'Career',name:'Interview Prep',desc:'Run simulated high-pressure technical and behavioral interviews.',toolPath:'/interview-prep/'},
-  {emoji:'📚',cat:'Learning',name:'StudyOS',desc:'A modular, offline learning OS for intensive UPSC and tech study.',toolPath:'/StudyOS/'},
+  {emoji:'🎯',cat:'Career',name:'Interview Prep',desc:'Run simulated high-pressure technical and behavioral interviews.',toolPath:'./interview-prep/index.html'},
+  {emoji:'📚',cat:'Learning',name:'StudyOS',desc:'A modular, offline learning OS for intensive UPSC and tech study.',toolPath:'./StudyOS/index.html'},
 ];
 
 const PROFILE_ITEMS = [
@@ -1226,8 +1258,7 @@ function getProfileItems() {
 }
 
 function syncCreatorContentSurface() {
-  const hydratedDefaults = hydrateFeedCardsWithMicroContent(DEFAULT_CARDS.slice());
-  CARDS = getPublishedCreatorCards().concat(hydratedDefaults);
+  CARDS = getPublishedCreatorCards().concat(hydrateFeedCardsWithMicroContent(DEFAULT_CARDS.slice()));
   if (currentCard >= CARDS.length) currentCard = 0;
   if (document.getElementById('deck')) {
     buildProgressDots();
@@ -1541,6 +1572,8 @@ const BLOG_DATA = {
     checklist: ['Verify the quality of local soil sensor networks.', 'Track the transition speed from chemical to bio-fertilizers.', 'Monitor direct-to-consumer logistics for organic produce.']
   }
 };
+
+CARDS = hydrateFeedCardsWithMicroContent(DEFAULT_CARDS.slice());
 
 // ════════════════════════════════════════════════════════════════
 // DEEP DIVES ENGINE
@@ -2234,7 +2267,7 @@ function openSheet(type, extra={}) {
         '</div>'+
         '<div class="sheet-btn-arrow">›</div>'+
       '</div>'+
-      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'/founder/\'">'+
+      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'./founder/index.html\'">'+
         '<div class="sheet-btn-icon" style="background:rgba(245,197,24,.1)">🧭</div>'+
         '<div class="sheet-btn-text">'+
           '<div class="sheet-btn-title">Founder Dashboard</div>'+
@@ -2242,7 +2275,7 @@ function openSheet(type, extra={}) {
         '</div>'+
         '<div class="sheet-btn-arrow">›</div>'+
       '</div>'+
-      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'/interview-prep/\'">'+
+      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'./interview-prep/index.html\'">'+
         '<div class="sheet-btn-icon" style="background:rgba(57,255,136,.08)">🎤</div>'+
         '<div class="sheet-btn-text">'+
           '<div class="sheet-btn-title">Interview Prep</div>'+
@@ -2250,7 +2283,7 @@ function openSheet(type, extra={}) {
         '</div>'+
         '<div class="sheet-btn-arrow">›</div>'+
       '</div>'+
-      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'/student-research/\'">'+
+      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'./student-research/index.html\'">'+
         '<div class="sheet-btn-icon" style="background:rgba(108,99,255,.12)">📚</div>'+
         '<div class="sheet-btn-text">'+
           '<div class="sheet-btn-title">Decision Research</div>'+
@@ -2308,8 +2341,6 @@ function startApp(){
     updateFeedDebugControl();
     hydrateFeed();GC.init();buildDiscover();buildProfile();
     renderApp();
-    // Pre-warm Deep Dive with first story so sections aren't empty on first open
-    if (typeof ddLoad === 'function') { try { ddLoad('food', null); } catch(_e){} }
     await initMicroFrontendArchitecture();
     await initFederatedRuntime();
   },2600);

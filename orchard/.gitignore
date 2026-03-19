@@ -1,0 +1,15 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# Firebase real config — inject via Cloudflare Pages VITE_FIREBASE_CONFIG env var
+firebase-applet-config.real.json
+
+# OS
+.DS_Store
+

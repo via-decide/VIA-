@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VIA Creator Story</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/via-pages.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="./shared/vd-nav-fix.js"></script>
+    <script src="./shared/firebase-config.js"></script>
+    <script src="./shared/tool-storage.js"></script>
+    <script src="./shared/social-core.js"></script>
+    <script src="./js/via-navigation.js"></script>
+    <script src="./js/via-bootstrap.js"></script>
+  </head>
+  <body data-page="creator_story">
+    <div class="via-shell">
+      <header class="via-topbar">
+        <a class="via-brand" href="./creator-story.html" data-page="creator_story">
+          <span class="via-wordmark">VIA</span>
+          <span class="via-kicker">Creator conviction</span>
+        </a>
+        <div class="via-topbar-actions">
+          <button class="via-pill" type="button" data-go-back="feed">Back</button>
+          <button class="via-button via-button--primary" type="button" data-open-surface="creator_onboarding">Start onboarding</button>
+        </div>
+      </header>
+
+      <main class="via-main">
+        <section class="via-hero">
+          <div class="via-eyebrow">Creator flow</div>
+          <h1>VIA creators should publish like a modular web, not like a trapped SPA tab.</h1>
+          <p>The creator architecture proves the pattern: separate pages, shared runtime, direct page links, and browser-backed continuity. The rest of VIA now follows the same rule.</p>
+        </section>
+
+        <section class="via-split via-section">
+          <article class="via-card">
+            <div class="via-tag">Belief</div>
+            <h3>Direct surfaces are more reliable</h3>
+            <p>Every major step in the creator journey should be URL-addressable, reload-safe, and easy to share. Your story page is not dependent on one live router process staying healthy.</p>
+          </article>
+          <article class="via-card">
+            <div class="via-tag">Result</div>
+            <h3>Shared state still survives</h3>
+            <p>Profiles, drafts, and local posts stay available because the runtime writes to localStorage and shared helpers instead of ephemeral tab state.</p>
+          </article>
+        </section>
+
+        <section class="via-section">
+          <div class="via-panel">
+            <div class="via-section-header">
+              <div>
+                <div class="via-caption">Flow</div>
+                <h2>What happens next</h2>
+              </div>
+            </div>
+            <ol class="via-checklist">
+              <li>Open creator onboarding to define your publishing identity.</li>
+              <li>Save your profile once and let every VIA page reuse it.</li>
+              <li>Return directly to feed, profile, or agent pages with no router handoff.</li>
+            </ol>
+            <div class="via-actions" style="margin-top: 16px;">
+              <button class="via-button via-button--primary" type="button" data-open-surface="creator_onboarding">Continue to onboarding</button>
+              <button class="via-button" type="button" data-open-surface="feed">Open feed</button>
+              <button class="via-button" type="button" data-open-surface="agent">Open agent</button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <nav class="via-nav">
+        <a href="./index.html" data-page="feed">Feed</a>
+        <a href="./discover.html" data-page="discover">Discover</a>
+        <a href="./creator-story.html" data-page="creator_story">Story</a>
+        <a href="./creator-onboarding.html" data-page="creator_onboarding">Onboard</a>
+        <a href="./agent.html" data-page="agent">Agent</a>
+      </nav>
+    </div>
+  </body>
+</html>

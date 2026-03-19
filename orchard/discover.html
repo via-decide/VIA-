@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VIA Discover</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/via-pages.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="./shared/vd-nav-fix.js"></script>
+    <script src="./shared/firebase-config.js"></script>
+    <script src="./shared/tool-storage.js"></script>
+    <script src="./shared/social-core.js"></script>
+    <script src="./js/via-navigation.js"></script>
+    <script src="./js/via-bootstrap.js"></script>
+  </head>
+  <body data-page="discover">
+    <div class="via-shell">
+      <header class="via-topbar">
+        <a class="via-brand" href="./index.html" data-page="feed">
+          <span class="via-wordmark">VIA</span>
+          <span class="via-kicker">Discover Surface</span>
+        </a>
+        <div class="via-topbar-actions">
+          <button class="via-pill" type="button" data-open-surface="feed">Feed</button>
+          <button class="via-button via-button--primary" type="button" data-open-surface="creator_story">Creator flow</button>
+        </div>
+      </header>
+
+      <main class="via-main">
+        <section class="via-hero">
+          <div class="via-eyebrow">Standalone HTML surface</div>
+          <h1>Discover people, tools, and VIA pathways without a router shell.</h1>
+          <p>Everything on this page opens with direct links, shared browser state, and localStorage-backed data. No client-side tab router required.</p>
+        </section>
+
+        <section class="via-section">
+          <div class="via-section-header">
+            <div>
+              <div class="via-caption">Shared runtime</div>
+              <h2>Surfaces and launch points</h2>
+            </div>
+          </div>
+          <div class="via-surface-grid" id="discover-items"></div>
+        </section>
+
+        <section class="via-section">
+          <div class="via-section-header">
+            <div>
+              <div class="via-caption">Local profiles</div>
+              <h2>People around your VIA graph</h2>
+            </div>
+          </div>
+          <div class="via-panel">
+            <div class="via-form" style="margin-bottom: 18px;">
+              <div class="via-field">
+                <label for="discover-search">Search profiles</label>
+                <input id="discover-search" type="text" placeholder="Search by username, display name, or city" />
+              </div>
+            </div>
+            <div class="via-list" id="discover-profiles"></div>
+          </div>
+        </section>
+      </main>
+
+      <nav class="via-nav">
+        <a href="./index.html" data-page="feed">Feed</a>
+        <a href="./discover.html" data-page="discover">Discover</a>
+        <a href="./about.html" data-page="about">About</a>
+        <a href="./profile.html" data-page="profile">Profile</a>
+        <a href="./agent.html" data-page="agent">Agent</a>
+      </nav>
+    </div>
+
+    <script>
+      (function () {
+        var discoverItems = document.getElementById('discover-items');
+        var profileList = document.getElementById('discover-profiles');
+        var searchInput = document.getElementById('discover-search');
+
+        function renderDiscover() {
+          var items = window.VIAFeed.getDiscoverItems();
+          discoverItems.innerHTML = items.map(function (item) {
+            return '' +
+              '<article>' +
+                '<div class="via-tag">' + item.cat + '</div>' +
+                '<h3>' + item.emoji + ' ' + item.name + '</h3>' +
+                '<p>' + item.desc + '</p>' +
+                '<a class="via-link-button" href="' + item.path + '">Open</a>' +
+              '</article>';
+          }).join('');
+        }
+
+        function renderProfiles(query) {
+          var profiles = query ? window.VIAFeed.searchProfiles(query) : window.VIAFeed.listProfiles();
+          if (!profiles.length) {
+            profileList.innerHTML = '<div class="via-empty">No profiles match this search yet.</div>';
+            return;
+          }
+          profileList.innerHTML = profiles.map(function (profile) {
+            var selfProfile = window.VIAProfile.getProfile();
+            var action = profile.id && selfProfile.id && profile.id !== selfProfile.id
+              ? '<button class="via-link-button" type="button" data-follow="' + profile.id + '">Follow</button>'
+              : '<a class="via-link-button" href="./profile.html">Open profile</a>';
+            return '' +
+              '<div class="via-list-item">' +
+                '<div class="via-list-item-main">' +
+                  '<strong>' + (profile.avatar_emoji || '👤') + ' ' + profile.display_name + '</strong>' +
+                  '<p>@' + profile.username + ' · ' + (profile.city || 'Bharat') + '</p>' +
+                  '<div class="via-inline-meta"><span>' + (profile.followers || 0) + ' followers</span><span>' + (profile.posts || 0) + ' posts</span></div>' +
+                '</div>' +
+                action +
+              '</div>';
+          }).join('');
+
+          profileList.querySelectorAll('[data-follow]').forEach(function (button) {
+            button.addEventListener('click', function () {
+              var targetId = button.getAttribute('data-follow');
+              var target = window.VIAFeed.listProfiles().find(function (profile) { return profile.id === targetId; });
+              if (!target) return;
+              window.VIAFeed.followProfile(target).then(function () {
+                renderProfiles(searchInput.value.trim());
+              });
+            });
+          });
+        }
+
+        searchInput.addEventListener('input', function () {
+          renderProfiles(searchInput.value.trim());
+        });
+
+        renderDiscover();
+        renderProfiles('');
+      })();
+    </script>
+  </body>
+</html>

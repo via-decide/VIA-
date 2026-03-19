@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VIA Creator Onboarding</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/via-pages.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="./shared/vd-nav-fix.js"></script>
+    <script src="./shared/firebase-config.js"></script>
+    <script src="./shared/tool-storage.js"></script>
+    <script src="./shared/social-core.js"></script>
+    <script src="./js/via-navigation.js"></script>
+    <script src="./js/via-bootstrap.js"></script>
+  </head>
+  <body data-page="creator_onboarding">
+    <div class="via-shell">
+      <header class="via-topbar">
+        <a class="via-brand" href="./creator-story.html" data-page="creator_story">
+          <span class="via-wordmark">VIA</span>
+          <span class="via-kicker">Creator onboarding</span>
+        </a>
+        <div class="via-topbar-actions">
+          <button class="via-pill" type="button" data-open-surface="creator_story">Story</button>
+          <button class="via-button" type="button" data-open-surface="profile">Profile</button>
+        </div>
+      </header>
+
+      <main class="via-main">
+        <section class="via-hero">
+          <div class="via-eyebrow">Shared state setup</div>
+          <h1>Set the creator identity that every VIA page will reuse.</h1>
+          <p>Your profile is stored locally and shared across feed, discover, profile, and agent surfaces. This keeps the creator flow standalone while still connected.</p>
+        </section>
+
+        <section class="via-split via-section">
+          <article class="via-composer">
+            <form class="via-form" id="creator-form">
+              <div class="via-field">
+                <label for="creator-name">Display name</label>
+                <input id="creator-name" type="text" maxlength="40" required />
+              </div>
+              <div class="via-field">
+                <label for="creator-username">Username</label>
+                <input id="creator-username" type="text" maxlength="30" required />
+              </div>
+              <div class="via-field">
+                <label for="creator-city">City</label>
+                <input id="creator-city" type="text" maxlength="40" />
+              </div>
+              <div class="via-field">
+                <label for="creator-bio">Bio</label>
+                <textarea id="creator-bio" maxlength="240"></textarea>
+              </div>
+              <div class="via-field">
+                <label for="creator-draft">First creator draft hook</label>
+                <textarea id="creator-draft" placeholder="Optional: save a hook to verify feed/profile continuity."></textarea>
+              </div>
+              <div class="via-actions">
+                <button class="via-button via-button--primary" type="submit">Save & open feed</button>
+                <button class="via-button" type="button" id="save-profile-only">Save & open profile</button>
+              </div>
+              <div class="via-note" id="creator-status"></div>
+            </form>
+          </article>
+
+          <article class="via-card">
+            <div class="via-tag">Why this matters</div>
+            <h3>No router memory required</h3>
+            <p>As soon as you save, the same profile data is available on every page through the shared bootstrap layer.</p>
+            <ul class="via-checklist">
+              <li>Feed can immediately show your author identity.</li>
+              <li>Profile uses the same local data store.</li>
+              <li>Agent and discover surfaces can launch the same pages directly.</li>
+            </ul>
+          </article>
+        </section>
+      </main>
+
+      <nav class="via-nav">
+        <a href="./index.html" data-page="feed">Feed</a>
+        <a href="./discover.html" data-page="discover">Discover</a>
+        <a href="./creator-story.html" data-page="creator_story">Story</a>
+        <a href="./creator-onboarding.html" data-page="creator_onboarding">Onboard</a>
+        <a href="./profile.html" data-page="profile">Profile</a>
+      </nav>
+
+      <script>
+        (function () {
+          var profile = window.VIAProfile.getProfile();
+          var form = document.getElementById('creator-form');
+          var status = document.getElementById('creator-status');
+          var saveProfileOnly = document.getElementById('save-profile-only');
+          var displayName = document.getElementById('creator-name');
+          var username = document.getElementById('creator-username');
+          var city = document.getElementById('creator-city');
+          var bio = document.getElementById('creator-bio');
+          var draft = document.getElementById('creator-draft');
+
+          displayName.value = profile.display_name || '';
+          username.value = profile.username || '';
+          city.value = profile.city || '';
+          bio.value = profile.bio || '';
+
+          function saveProfile(openTarget) {
+            var nextProfile = window.VIAProfile.updateProfile({
+              id: profile.id,
+              username: username.value.trim() || 'guest',
+              display_name: displayName.value.trim() || username.value.trim() || 'Guest Explorer',
+              city: city.value.trim() || 'Bharat',
+              bio: bio.value.trim() || 'Creator profile configured in VIA onboarding.',
+              avatar_emoji: '🎬',
+              is_guest: false
+            });
+            if (draft.value.trim()) {
+              window.VIAFeed.publishDraft({
+                hook: draft.value.trim(),
+                title: draft.value.trim(),
+                context: 'Draft seeded from creator onboarding.',
+                insight: 'Shared runtime keeps this available on feed and profile pages.',
+                author: nextProfile.display_name
+              });
+            }
+            status.textContent = 'Saved. Redirecting...';
+            window.VIANavigation.openSurface(openTarget);
+          }
+
+          form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            saveProfile('feed');
+          });
+
+          saveProfileOnly.addEventListener('click', function () {
+            saveProfile('profile');
+          });
+        })();
+      </script>
+    </div>
+  </body>
+</html>

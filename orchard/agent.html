@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VIA Agent Surface</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/via-pages.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="./shared/vd-nav-fix.js"></script>
+    <script src="./shared/firebase-config.js"></script>
+    <script src="./shared/tool-storage.js"></script>
+    <script src="./shared/social-core.js"></script>
+    <script src="./js/via-navigation.js"></script>
+    <script src="./js/via-bootstrap.js"></script>
+  </head>
+  <body data-page="agent">
+    <div class="via-shell">
+      <header class="via-topbar">
+        <a class="via-brand" href="./agent.html" data-page="agent">
+          <span class="via-wordmark">VIA</span>
+          <span class="via-kicker">Agent surface</span>
+        </a>
+        <div class="via-topbar-actions">
+          <button class="via-pill" type="button" data-open-surface="feed">Feed</button>
+          <button class="via-button via-button--primary" type="button" data-open-surface="creator_story">Creator</button>
+        </div>
+      </header>
+
+      <main class="via-main">
+        <section class="via-hero">
+          <div class="via-eyebrow">Command center</div>
+          <h1>Launch tools, inspect runtime state, and move across VIA with direct page links.</h1>
+          <p>The agent page is now just another standalone surface. It shares profile, feed, and draft state through the same bootstrap layer as every other page.</p>
+        </section>
+
+        <section class="via-split via-section">
+          <article class="via-card">
+            <div class="via-tag">Launch</div>
+            <h3>Primary actions</h3>
+            <div class="via-actions">
+              <button class="via-button" type="button" data-open-surface="discover">Open discover</button>
+              <button class="via-button" type="button" data-open-surface="profile">Open profile</button>
+              <a class="via-link-button" href="https://via-decide.github.io/decide.engine-tools/">Context Packager</a>
+              <a class="via-link-button" href="https://via-decide.github.io/decide.engine-tools/" target="_blank" rel="noopener">Engine tools</a>
+            </div>
+          </article>
+          <article class="via-card">
+            <div class="via-tag">Runtime</div>
+            <h3>Current snapshot</h3>
+            <pre id="agent-snapshot" style="white-space: pre-wrap; margin: 0; color: #ffd29d;"></pre>
+          </article>
+        </section>
+      </main>
+
+      <nav class="via-nav">
+        <a href="./index.html" data-page="feed">Feed</a>
+        <a href="./discover.html" data-page="discover">Discover</a>
+        <a href="./about.html" data-page="about">About</a>
+        <a href="./profile.html" data-page="profile">Profile</a>
+        <a href="./agent.html" data-page="agent">Agent</a>
+      </nav>
+    </div>
+
+    <script>
+      (function () {
+        var snapshotEl = document.getElementById('agent-snapshot');
+        function renderSnapshot() {
+          snapshotEl.textContent = JSON.stringify(window.VIA_RUNTIME.getSnapshot(), null, 2);
+        }
+        renderSnapshot();
+        window.VIAFederatedRuntime.subscribe('storage_sync', renderSnapshot);
+        window.VIAFederatedRuntime.subscribe('profile_updated', renderSnapshot);
+        window.VIAFederatedRuntime.subscribe('post_created', renderSnapshot);
+      })();
+    </script>
+  </body>
+</html>

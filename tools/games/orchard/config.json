@@ -1,0 +1,22 @@
+{
+  "id": "orchard-growth-engine",
+  "name": "Orchard: Growth Milestone Engine",
+  "category": "games",
+  "description": "Multi-layered ecosystem simulation. Grow, breed, and harvest digital plants across 3 orchards. Real-time Firebase multiplayer with credit transfers.",
+  "icon": "🌱",
+  "route": "https://orchard.viadecide.com",
+  "external": true,
+  "tags": ["game", "simulation", "firebase", "multiplayer", "strategy"],
+  "status": "beta",
+  "tech": ["React", "TypeScript", "Firebase", "Three.js", "Vite"]
+  "id": "orchard",
+  "name": "Orchard",
+  "description": "Launch the Orchard experience inside VIA from the engine tools manifest.",
+  "category": "games",
+  "audience": ["students", "creators", "researchers"],
+  "inputs": ["navigation_request"],
+  "outputs": ["orchard_launch"],
+  "relatedTools": ["orchard-profile-builder", "orchard-discovery-search"],
+  "entry": "tools/games/orchard/index.html",
+  "tags": ["game", "orchard", "redirect", "standalone"]
+}
