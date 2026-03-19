@@ -1,77 +1,161 @@
-# VIA — Cloudflare Pages _redirects
-# Generated: 2026-03-19
-# Rule order: specific subpages first, SPA fallback last
+# VIA â€” Cloudflare Pages _redirects
+# viadecide.com | via-decide/VIA
+# Rules are matched top-to-bottom. First match wins.
+# All subpages use 200 (rewrite) so the URL stays clean.
+# SPA fallback /* must be LAST.
 
-# ── Auth ──────────────────────────────────────────────
-/auth                     /auth.html              200
-/auth/                    /auth.html              200
+# â”€â”€ Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/auth                               /auth.html                          200
+/auth/                              /auth.html                          200
+/sign-in                            /auth.html                          200
+/login                              /auth.html                          200
 
-# ── Creator flows ─────────────────────────────────────
-/creator-onboarding       /creator-onboarding.html   200
-/creator-onboarding/      /creator-onboarding.html   200
-/creator-story            /creator-story.html         200
-/creator-story/           /creator-story.html         200
+# â”€â”€ Creator flows â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/creator-onboarding                 /creator-onboarding.html            200
+/creator-onboarding/                /creator-onboarding.html            200
+/creator-story                      /creator-story.html                 200
+/creator-story/                     /creator-story.html                 200
 
-# ── Subpages (folder/index.html) ──────────────────────
-/founder                  /founder/index.html         200
-/founder/                 /founder/index.html         200
-/founder/*                /founder/index.html         200
+# â”€â”€ Feature subpages â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/founder                            /founder/index.html                 200
+/founder/                           /founder/index.html                 200
 
-/interview-prep           /interview-prep/index.html  200
-/interview-prep/          /interview-prep/index.html  200
-/interview-prep/*         /interview-prep/index.html  200
+/interview-prep                     /interview-prep/index.html          200
+/interview-prep/                    /interview-prep/index.html          200
+/interview                          /interview-prep/index.html          200
 
-/student-research         /student-research/index.html  200
-/student-research/        /student-research/index.html  200
-/student-research/*       /student-research/index.html  200
+/student-research                   /student-research/index.html        200
+/student-research/                  /student-research/index.html        200
 
-/StudyOS                  /StudyOS/index.html         200
-/StudyOS/                 /StudyOS/index.html         200
-/StudyOS/*                /StudyOS/index.html         200
+/StudyOS                            /StudyOS/index.html                 200
+/StudyOS/                           /StudyOS/index.html                 200
 
-/prompt-alchemy           /prompt-alchemy/index.html  200
-/prompt-alchemy/          /prompt-alchemy/index.html  200
-/prompt-alchemy/*         /prompt-alchemy/index.html  200
+/prompt-alchemy                     /prompt-alchemy/index.html          200
+/prompt-alchemy/                    /prompt-alchemy/index.html          200
 
-/agent                    /agent/index.html           200
-/agent/                   /agent/index.html           200
-/agent/*                  /agent/index.html           200
+/agent                              /agent/index.html                   200
+/agent/                             /agent/index.html                   200
 
-/founder-tools            /founder/index.html         200
-/app-generator            /app-generator/index.html   200
-/app-generator/           /app-generator/index.html   200
-/app-generator/*          /app-generator/index.html   200
+/app-generator                      /app-generator/index.html           200
+/app-generator/                     /app-generator/index.html           200
 
-/decision-brief-guide     /decision-brief-guide/index.html  200
-/decision-brief-guide/    /decision-brief-guide/index.html  200
+/sales-dashboard                    /sales-dashboard/index.html         200
+/sales-dashboard/                   /sales-dashboard/index.html         200
 
-/multi-source-research-explained    /multi-source-research-explained/index.html  200
-/multi-source-research-explained/   /multi-source-research-explained/index.html  200
+/decision-brief-guide               /decision-brief-guide/index.html    200
+/decision-brief-guide/              /decision-brief-guide/index.html    200
+/decision-brief                     /decision-brief-guide/index.html    200
 
-/sales-dashboard          /sales-dashboard/index.html  200
-/sales-dashboard/         /sales-dashboard/index.html  200
+/multi-source-research-explained    /multi-source-research-explained/index.html   200
+/multi-source-research-explained/   /multi-source-research-explained/index.html   200
+/multi-source-research              /multi-source-research-explained/index.html   200
 
-/wings-of-fire-quiz       /wings-of-fire-quiz/index.html  200
-/wings-of-fire-quiz/      /wings-of-fire-quiz/index.html  200
+/wings-of-fire-quiz                 /wings-of-fire-quiz/index.html      200
+/wings-of-fire-quiz/                /wings-of-fire-quiz/index.html      200
+/wof                                /wings-of-fire-quiz/index.html      200
 
-/interview                /interview-prep/index.html  200
-/interview/               /interview-prep/index.html  200
+# â”€â”€ Tools â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/tools/context-packager             /tools/context-packager/index.html          200
+/tools/context-packager/            /tools/context-packager/index.html          200
+/tools/spec-builder                 /tools/spec-builder/index.html              200
+/tools/spec-builder/                /tools/spec-builder/index.html              200
+/tools/task-splitter                /tools/task-splitter/index.html             200
+/tools/task-splitter/               /tools/task-splitter/index.html             200
+/tools/code-generator               /tools/code-generator/index.html            200
+/tools/code-generator/              /tools/code-generator/index.html            200
+/tools/code-reviewer                /tools/code-reviewer/index.html             200
+/tools/code-reviewer/               /tools/code-reviewer/index.html             200
+/tools/output-evaluator             /tools/output-evaluator/index.html          200
+/tools/output-evaluator/            /tools/output-evaluator/index.html          200
+/tools/idea-remixer                 /tools/idea-remixer/index.html              200
+/tools/idea-remixer/                /tools/idea-remixer/index.html              200
+/tools/template-vault               /tools/template-vault/index.html            200
+/tools/template-vault/              /tools/template-vault/index.html            200
+/tools/export-studio                /tools/export-studio/index.html             200
+/tools/export-studio/               /tools/export-studio/index.html             200
+/tools/tool-router                  /tools/tool-router/index.html               200
+/tools/tool-router/                 /tools/tool-router/index.html               200
+/tools/script-generator             /tools/script-generator/index.html          200
+/tools/script-generator/            /tools/script-generator/index.html          200
+/tools/json-formatter               /tools/json-formatter/index.html            200
+/tools/json-formatter/              /tools/json-formatter/index.html            200
+/tools/regex-tester                 /tools/regex-tester/index.html              200
+/tools/regex-tester/                /tools/regex-tester/index.html              200
+/tools/pomodoro                     /tools/pomodoro/index.html                  200
+/tools/pomodoro/                    /tools/pomodoro/index.html                  200
+/tools/color-palette                /tools/color-palette/index.html             200
+/tools/color-palette/               /tools/color-palette/index.html             200
+/tools/revenue-forecaster           /tools/revenue-forecaster/index.html        200
+/tools/revenue-forecaster/          /tools/revenue-forecaster/index.html        200
+/tools/prompt-compare               /tools/prompt-compare/index.html            200
+/tools/prompt-compare/              /tools/prompt-compare/index.html            200
+/tools/repo-improvement-brief       /tools/repo-improvement-brief/index.html    200
+/tools/repo-improvement-brief/      /tools/repo-improvement-brief/index.html    200
+/tools/workflow-template-gallery    /tools/workflow-template-gallery/index.html  200
+/tools/workflow-template-gallery/   /tools/workflow-template-gallery/index.html  200
+/tools/tool-search-discovery        /tools/tool-search-discovery/index.html     200
+/tools/tool-search-discovery/       /tools/tool-search-discovery/index.html     200
 
-# ── Tools subpages ────────────────────────────────────
-/tools/context-packager           /tools/context-packager/index.html           200
-/tools/context-packager/          /tools/context-packager/index.html           200
-/tools/spec-builder               /tools/spec-builder/index.html               200
-/tools/spec-builder/              /tools/spec-builder/index.html               200
-/tools/task-splitter              /tools/task-splitter/index.html              200
-/tools/task-splitter/             /tools/task-splitter/index.html              200
-/tools/games/hex-wars             /tools/games/hex-wars/index.html             200
-/tools/games/hex-wars/            /tools/games/hex-wars/index.html             200
-/tools/games/snake-game           /tools/games/snake-game/index.html           200
-/tools/games/snake-game/          /tools/games/snake-game/index.html           200
-/tools/games/wings-of-fire-quiz   /tools/games/wings-of-fire-quiz/index.html   200
-/tools/games/wings-of-fire-quiz/  /tools/games/wings-of-fire-quiz/index.html   200
+# â”€â”€ Games â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/tools/games/hex-wars               /tools/games/hex-wars/index.html            200
+/tools/games/hex-wars/              /tools/games/hex-wars/index.html            200
+/tools/games/snake-game             /tools/games/snake-game/index.html          200
+/tools/games/snake-game/            /tools/games/snake-game/index.html          200
+/tools/games/wings-of-fire-quiz     /tools/games/wings-of-fire-quiz/index.html  200
+/tools/games/wings-of-fire-quiz/    /tools/games/wings-of-fire-quiz/index.html  200
 /tools/games/skillhex-mission-control    /tools/games/skillhex-mission-control/index.html   200
 /tools/games/skillhex-mission-control/   /tools/games/skillhex-mission-control/index.html   200
 
-# ── SPA fallback — MUST be last ───────────────────────
-/*                        /index.html             200
+# â”€â”€ Engine tools â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/tools/engine/meeting-cost-calculator     /tools/engine/meeting-cost-calculator/index.html      200
+/tools/engine/meeting-cost-calculator/    /tools/engine/meeting-cost-calculator/index.html      200
+/tools/engine/player-signup               /tools/engine/player-signup/index.html                200
+/tools/engine/player-signup/              /tools/engine/player-signup/index.html                200
+/tools/engine/balance-dashboard           /tools/engine/balance-dashboard/index.html            200
+/tools/engine/balance-dashboard/          /tools/engine/balance-dashboard/index.html            200
+/tools/engine/simulation-runner           /tools/engine/simulation-runner/index.html            200
+/tools/engine/simulation-runner/          /tools/engine/simulation-runner/index.html            200
+/tools/engine/hire-readiness-scorer       /tools/engine/hire-readiness-scorer/index.html        200
+/tools/engine/hire-readiness-scorer/      /tools/engine/hire-readiness-scorer/index.html        200
+/tools/engine/ai-coach-console            /tools/engine/ai-coach-console/index.html             200
+/tools/engine/ai-coach-console/           /tools/engine/ai-coach-console/index.html             200
+/tools/engine/growth-path-recommender     /tools/engine/growth-path-recommender/index.html      200
+/tools/engine/growth-path-recommender/    /tools/engine/growth-path-recommender/index.html      200
+/tools/engine/trust-score-engine          /tools/engine/trust-score-engine/index.html           200
+/tools/engine/trust-score-engine/         /tools/engine/trust-score-engine/index.html           200
+/tools/engine/recruiter-dashboard         /tools/engine/recruiter-dashboard/index.html          200
+/tools/engine/recruiter-dashboard/        /tools/engine/recruiter-dashboard/index.html          200
+/tools/engine/seed-exchange               /tools/engine/seed-exchange/index.html                200
+/tools/engine/seed-exchange/              /tools/engine/seed-exchange/index.html                200
+/tools/engine/fruit-sharing               /tools/engine/fruit-sharing/index.html                200
+/tools/engine/fruit-sharing/              /tools/engine/fruit-sharing/index.html                200
+/tools/engine/circle-builder              /tools/engine/circle-builder/index.html               200
+/tools/engine/circle-builder/             /tools/engine/circle-builder/index.html               200
+/tools/engine/peer-validation-engine      /tools/engine/peer-validation-engine/index.html       200
+/tools/engine/peer-validation-engine/     /tools/engine/peer-validation-engine/index.html       200
+/tools/engine/fair-ranking-engine         /tools/engine/fair-ranking-engine/index.html          200
+/tools/engine/fair-ranking-engine/        /tools/engine/fair-ranking-engine/index.html          200
+/tools/engine/weekly-harvest-engine       /tools/engine/weekly-harvest-engine/index.html        200
+/tools/engine/weekly-harvest-engine/      /tools/engine/weekly-harvest-engine/index.html        200
+/tools/engine/daily-quest-generator       /tools/engine/daily-quest-generator/index.html        200
+/tools/engine/daily-quest-generator/      /tools/engine/daily-quest-generator/index.html        200
+/tools/engine/root-strength-calculator    /tools/engine/root-strength-calculator/index.html     200
+/tools/engine/root-strength-calculator/   /tools/engine/root-strength-calculator/index.html     200
+/tools/engine/trunk-growth-calculator     /tools/engine/trunk-growth-calculator/index.html      200
+/tools/engine/trunk-growth-calculator/    /tools/engine/trunk-growth-calculator/index.html      200
+/tools/engine/fruit-yield-engine          /tools/engine/fruit-yield-engine/index.html           200
+/tools/engine/fruit-yield-engine/         /tools/engine/fruit-yield-engine/index.html           200
+/tools/engine/starter-farm-generator      /tools/engine/starter-farm-generator/index.html       200
+/tools/engine/starter-farm-generator/     /tools/engine/starter-farm-generator/index.html       200
+/tools/engine/orchard-discovery-search    /tools/engine/orchard-discovery-search/index.html     200
+/tools/engine/orchard-discovery-search/   /tools/engine/orchard-discovery-search/index.html     200
+/tools/engine/synthetic-player-generator  /tools/engine/synthetic-player-generator/index.html   200
+/tools/engine/synthetic-player-generator/ /tools/engine/synthetic-player-generator/index.html   200
+/tools/engine/wave1-simulation-runner     /tools/engine/wave1-simulation-runner/index.html      200
+/tools/engine/wave1-simulation-runner/    /tools/engine/wave1-simulation-runner/index.html      200
+/tools/engine/orchard-profile-builder     /tools/engine/orchard-profile-builder/index.html      200
+/tools/engine/orchard-profile-builder/    /tools/engine/orchard-profile-builder/index.html      200
+
+# â”€â”€ SPA fallback â€” MUST be last â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# All unmatched routes serve index.html (client-side hash routing takes over)
+/*                                  /index.html                         200
