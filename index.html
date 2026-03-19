@@ -455,6 +455,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
   <div class="status-bar">
     <div class="status-logo" onclick="switchLayer('feed')">VIA</div>
     <div class="status-actions">
+      <button class="status-auth-btn" id="feed-debug-btn" type="button" hidden onclick="window.testPost && window.testPost()">Test Post</button>
       <div class="status-xp"><div class="xp-dot"></div><span id="xp-counter">0 XP</span></div>
       <button class="status-auth-btn" id="status-auth-btn" onclick="VIA.openAuth()">Sign In</button>
     </div>
@@ -985,6 +986,7 @@ const PROFILE_ITEMS = [
 ];
 
 const CREATOR_PUBLISHED_KEY = 'via_creator_published_drafts';
+const FEED_DEBUG_FLAG_KEY = 'via_feed_debug';
 const MICRO_FRONTEND_LAYER_MAP = {
   feed: 'feed_surface',
   discover: 'discover_surface',
@@ -1004,6 +1006,46 @@ function getPublishedCreatorDrafts() {
   const raw = localStorage.getItem(CREATOR_PUBLISHED_KEY);
   const published = safeParseJSON(raw || '[]', []);
   return Array.isArray(published) ? published : [];
+}
+
+function getFeedDebugFlag() {
+  try {
+    return window.location.search.includes('feedDebug=1') || localStorage.getItem(FEED_DEBUG_FLAG_KEY) === '1' || window.__VIA_FEED_DEBUG === true;
+  } catch (_error) {
+    return false;
+  }
+}
+
+function updateFeedDebugControl() {
+  const button = document.getElementById('feed-debug-btn');
+  if (!button) return;
+  button.hidden = !getFeedDebugFlag();
+}
+
+function persistCreatorDraft(draft) {
+  if (!draft || typeof draft !== 'object') return null;
+  const published = getPublishedCreatorDrafts();
+  const normalizedDraft = {
+    id: draft.id || `draft-${Date.now()}`,
+    type: draft.type || 'Post',
+    title: draft.hook || draft.title || 'Creator Draft',
+    author: draft.author || 'VIA Creator',
+    context: draft.context || '',
+    insight: draft.insight || '',
+    structure: draft.structure || '',
+    cta: draft.cta || '',
+    created_at: draft.created_at || new Date().toISOString()
+  };
+  localStorage.setItem(CREATOR_PUBLISHED_KEY, JSON.stringify([normalizedDraft].concat(published).slice(0, 12)));
+  return normalizedDraft;
+}
+
+function hydrateFeed() {
+  const drafts = getPublishedCreatorDrafts();
+  window.__viaLatestCreatorDrafts = drafts;
+  console.log('Feed loaded');
+  syncCreatorContentSurface();
+  return drafts;
 }
 
 function getPublishedCreatorCards() {
@@ -1050,7 +1092,7 @@ function syncCreatorContentSurface() {
 
 window.addEventListener('storage', (event) => {
   if (event.key === CREATOR_PUBLISHED_KEY) {
-    syncCreatorContentSurface();
+    hydrateFeed();
   }
 });
 
@@ -1878,7 +1920,7 @@ async function initMicroFrontendArchitecture() {
 
     window.VIAMicroFrontendArchitecture = architecture;
     architecture.runtime.subscribe('content_events', () => {
-      syncCreatorContentSurface();
+      hydrateFeed();
     });
 
     const legacySwitchLayer = window.__viaLegacySwitchLayer;
@@ -1909,6 +1951,21 @@ async function initMicroFrontendArchitecture() {
 }
 
 let federatedRuntime=null;
+window.testPost = function (payload = {}) {
+  const draft = {
+    hook: payload.hook || 'Test creator hook from VIA feed debug',
+    context: payload.context || 'Hydration path verification from startup debug control.',
+    insight: payload.insight || 'Persist draft events locally so feed cards render on page load.',
+    structure: payload.structure || 'Hook → Context → Insight → CTA',
+    cta: payload.cta || 'Open the creator surface and verify the post appears.'
+  };
+  if (!window.VIAFederatedRuntime || typeof window.VIAFederatedRuntime.emit !== 'function') {
+    console.warn('VIAFederatedRuntime unavailable for testPost');
+    return null;
+  }
+  window.VIAFederatedRuntime.emit('draft_generate', draft);
+  return draft;
+};
 async function initFederatedRuntime(){
   try {
     const runtimeModule = await import('./src/core/runtime/federated-agent-content-runtime/index.js');
@@ -1921,6 +1978,8 @@ async function initFederatedRuntime(){
         }
       }
     });
+    window.VIAFederatedRuntime = federatedRuntime;
+    console.log('Runtime:', window.VIAFederatedRuntime);
     federatedRuntime.emit('surface_open', {
       surfaceName: 'feed_surface',
       pageContext: {
@@ -1958,6 +2017,11 @@ async function initFederatedRuntime(){
       if(payload && payload.surfaceName==='feed_surface'){
         window.__viaFeedContentPreview = payload.result;
       }
+    });
+    federatedRuntime.subscribe('draft_generate', function(draft){
+      console.log('Feed received draft:', draft);
+      persistCreatorDraft(draft);
+      hydrateFeed();
     });
   } catch (_error) {}
 }
@@ -2017,7 +2081,8 @@ function startApp(){
     try{await VIA.init();}catch(error){console.error('Auth init failed:', error);currentUser=null;authReady=true;renderApp();}
     document.getElementById('boot').classList.add('exit');
     document.getElementById('app').classList.add('visible');
-    syncCreatorContentSurface();GC.init();buildDiscover();buildProfile();
+    updateFeedDebugControl();
+    hydrateFeed();GC.init();buildDiscover();buildProfile();
     renderApp();
     await initMicroFrontendArchitecture();
     await initFederatedRuntime();
@@ -2028,4 +2093,3 @@ window.addEventListener('load',startApp,{once:true});
 </script>
 </body>
 </html>
-
