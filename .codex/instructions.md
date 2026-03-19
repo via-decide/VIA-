@@ -2,6 +2,172 @@
 # Place this file at: .codex/instructions.md
 # Codex reads this before every task in this repo.
 
+# CODEX PRE-TASK PROTOCOL — via-decide/VIA
+# Place at: .codex/instructions.md (merge with existing rules)
+# Run this protocol BEFORE every task, every commit, every file touch.
+
+════════════════════════════════════════════
+STEP 0 — READ BEFORE YOU WRITE
+════════════════════════════════════════════
+
+Before touching any file:
+
+1. If the task targets a specific tool folder (e.g. tools/task-splitter/):
+   - READ tools/<tool-name>/README.md if it exists
+   - READ tools/<tool-name>/config.json
+   - READ tools/<tool-name>/index.html (first 60 lines only)
+   - READ tools/<tool-name>/tool.js (first 60 lines only)
+   Understand what the tool does before writing a single line.
+
+2. If no README.md exists for the tool → your first output MUST be README.md.
+   Do not create or modify any other file until README.md is written.
+
+3. If the task touches index.html or shared/ files:
+   - READ the top-level README.md of the repo first.
+   - If it does not exist, note it. Do not block the task, but flag it.
+
+════════════════════════════════════════════
+STEP 1 — TOOL INTEGRITY CHECK
+════════════════════════════════════════════
+
+Every tool folder under tools/ MUST have exactly these 4 files:
+
+  config.json   — tool metadata (name, description, category, route)
+  index.html    — standalone UI, no build step, no framework
+  tool.js       — core logic, exported on window
+  README.md     — what it does, inputs, outputs, how to test
+
+Before committing any new or modified tool, verify all 4 exist.
+If any are missing, create the missing ones as stubs before committing.
+
+CATEGORY FOLDERS (no files required — skip the check):
+  tools/business/   tools/coders/    tools/creators/
+  tools/education/  tools/engine/    tools/games/
+  tools/misc/       tools/researchers/ tools/simulations/
+  tools/system/
+
+════════════════════════════════════════════
+STEP 2 — README.md STANDARD FORMAT
+════════════════════════════════════════════
+
+Every tool README.md must follow this exact template.
+Keep it under 60 lines. No fluff.
+
+```
+# <Tool Name>
+
+**Category:** <category>
+**Route:** /tools/<folder-name>/
+**Status:** stable | beta | wip
+
+## What It Does
+One paragraph. What problem it solves. Who uses it.
+
+## Inputs
+- <input name>: <type> — <description>
+
+## Outputs
+- <output name>: <what it produces>
+
+## Files
+| File | Purpose |
+|------|---------|
+| config.json | Tool metadata and routing |
+| index.html | UI shell |
+| tool.js | Core logic (exported as window.<ToolName>) |
+| README.md | This file |
+
+## How to Test
+1. Open index.html in browser (no server needed)
+2. <specific step for this tool>
+3. Expected: <what should happen>
+
+## Notes
+- Any important constraints, known issues, or dependencies
+```
+
+════════════════════════════════════════════
+STEP 3 — TOOLS MISSING tool.js (FIX LIST)
+════════════════════════════════════════════
+
+The following tools have config.json + index.html but are MISSING tool.js.
+Do NOT add logic to index.html. Create tool.js stubs for these first if the
+task involves them:
+
+  tools/color-palette/
+  tools/eco-engine-test/
+  tools/business/grid-evolution/
+  tools/business/market-dynamics/
+  tools/business/meeting-cost-calculator/
+  tools/business/traffic-router/
+  tools/business/typography-scale-calculator/
+  tools/games/hex-wars/
+  tools/games/snake-game/
+  tools/games/wings-of-fire-quiz/
+  tools/json-formatter/
+  tools/pomodoro/
+  tools/regex-tester/
+  tools/revenue-forecaster/
+
+STUB FORMAT for tool.js:
+```js
+// <ToolName> — tool.js
+// Auto-stubbed. Implement logic here.
+(function (global) {
+  'use strict';
+
+  const <ToolName> = {
+    // TODO: implement
+  };
+
+  global.<ToolName> = <ToolName>;
+})(window);
+```
+
+════════════════════════════════════════════
+STEP 4 — COMMIT CHECKLIST (run before every commit)
+════════════════════════════════════════════
+
+□ Did I READ the existing README.md before starting?
+□ Does the tool have all 4 files: config.json, index.html, tool.js, README.md?
+□ Is README.md updated to reflect any changes I made?
+□ Did I avoid modifying PROTECTED functions? (see full .codex/instructions.md)
+□ Did I avoid touching tools-manifest.json entries I didn't add?
+□ Are my edits surgical? (No full-file rewrites unless the file is new)
+□ Does the tool still work with no build step, no npm, no framework?
+
+════════════════════════════════════════════
+STEP 5 — TOKEN EFFICIENCY RULES
+════════════════════════════════════════════
+
+To complete tasks with minimum tokens:
+
+1. READ only what is needed. For large files (index.html > 500 lines),
+   read only the relevant section — use line ranges, not full file.
+
+2. WRITE diffs, not full files. Use str_replace for edits to existing files.
+   Only output full file content when creating a NEW file.
+
+3. ONE file at a time. Complete and verify each file before moving to the next.
+
+4. NO explanation prose inside code. Comments only where logic is non-obvious.
+
+5. If a task requires touching more than 3 files, break it into sub-tasks.
+   Complete sub-task 1 fully before starting sub-task 2.
+
+════════════════════════════════════════════
+CURRENT TOOL HEALTH SNAPSHOT (as of 2026-03-19)
+════════════════════════════════════════════
+
+Total tool folders scanned: 68
+Complete (all 4 files):     ~38
+Missing tool.js:            ~14
+Missing README.md:          ALL (0 have README yet)
+Category folders (exempt):  10
+
+Priority: Write README.md for any tool touched in the current task.
+          Fix missing tool.js stubs before adding new tools.
+
 ════════════════════════════════════════════
 REPO IDENTITY
 ════════════════════════════════════════════
