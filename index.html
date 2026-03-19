@@ -1226,7 +1226,8 @@ function getProfileItems() {
 }
 
 function syncCreatorContentSurface() {
-  CARDS = getPublishedCreatorCards().concat(hydrateFeedCardsWithMicroContent(DEFAULT_CARDS.slice()));
+  const hydratedDefaults = hydrateFeedCardsWithMicroContent(DEFAULT_CARDS.slice());
+  CARDS = getPublishedCreatorCards().concat(hydratedDefaults);
   if (currentCard >= CARDS.length) currentCard = 0;
   if (document.getElementById('deck')) {
     buildProgressDots();
@@ -1540,8 +1541,6 @@ const BLOG_DATA = {
     checklist: ['Verify the quality of local soil sensor networks.', 'Track the transition speed from chemical to bio-fertilizers.', 'Monitor direct-to-consumer logistics for organic produce.']
   }
 };
-
-CARDS = hydrateFeedCardsWithMicroContent(DEFAULT_CARDS.slice());
 
 // ════════════════════════════════════════════════════════════════
 // DEEP DIVES ENGINE
@@ -2309,6 +2308,8 @@ function startApp(){
     updateFeedDebugControl();
     hydrateFeed();GC.init();buildDiscover();buildProfile();
     renderApp();
+    // Pre-warm Deep Dive with first story so sections aren't empty on first open
+    if (typeof ddLoad === 'function') { try { ddLoad('food', null); } catch(_e){} }
     await initMicroFrontendArchitecture();
     await initFederatedRuntime();
   },2600);
