@@ -72,7 +72,12 @@
       username: profile.username,
       display_name: profile.display_name,
       city: profile.city,
-      avatar_emoji: profile.avatar_emoji
+      avatar_emoji: profile.avatar_emoji,
+      xp: Number(profile.xp || 0),
+      level: Number(profile.level || 1),
+      followers: Number(profile.followers || 0),
+      following: Number(profile.following || 0),
+      posts: Number(profile.posts || 0)
     };
   }
 
@@ -133,14 +138,6 @@
     storeUserProfile(state, merged);
     writeState(state);
     saveLocalUserIfCurrent(merged);
-    state.users[merged.id] = {
-      id: merged.id,
-      username: merged.username,
-      display_name: merged.display_name,
-      city: merged.city,
-      avatar_emoji: merged.avatar_emoji
-    };
-    writeState(state);
     saveLocalUser(merged);
     return merged;
   }
@@ -150,13 +147,6 @@
     if (!normalized || !normalized.id) return normalized;
     const state = readState();
     storeUserProfile(state, normalized);
-    state.users[normalized.id] = {
-      id: normalized.id,
-      username: normalized.username,
-      display_name: normalized.display_name,
-      city: normalized.city,
-      avatar_emoji: normalized.avatar_emoji
-    };
     writeState(state);
     return syncProfileCounts(normalized);
   }
@@ -165,6 +155,20 @@
     const state = readState();
     return state.posts
       .slice()
+      .sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')))
+      .slice(0, limit)
+      .map((post) => ({
+        ...post,
+        reaction_count: state.reactions.filter((item) => item.post_id === post.id).length,
+        author: state.users[post.author_id] || null
+      }));
+  }
+
+  function listPostsByAuthor(authorId, limit = 12) {
+    if (!authorId) return [];
+    const state = readState();
+    return state.posts
+      .filter((post) => post.author_id === authorId)
       .sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')))
       .slice(0, limit)
       .map((post) => ({
@@ -321,6 +325,7 @@
     const createdCircle = await insertRemote('via_circles', circle);
     if (createdCircle) {
       await insertRemote('via_circle_members', member);
+    }
     const client = getClient();
     if (client) {
       try {
@@ -379,6 +384,7 @@
     syncProfileCounts,
     getProfileCounts,
     listFeed,
+    listPostsByAuthor,
     createPost,
     followUser,
     reactToPost,
