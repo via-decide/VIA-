@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0b1a" />
+    <meta name="description" content="Alchemist quiz surface imported from decide.engine and adapted for VIA-safe local fallbacks." />
+    <title>VIA Alchemist Quiz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/via-pages.css" />
+    <script src="./shared/vd-nav-fix.js"></script>
+    <script src="./js/via-transition.js"></script>
+    <script src="./js/via-navigation.js"></script>
+    <script src="./js/via-bootstrap.js"></script>
+    <script src="./js/via-source-bridge.js"></script>
+  </head>
+  <body data-page="alchemist">
+    <div class="via-shell">
+      <header class="via-topbar">
+        <a class="via-brand" href="./alchemist.html" data-page="alchemist">
+          <span class="via-wordmark">VIA</span>
+          <span class="via-kicker">Alchemist quiz</span>
+        </a>
+        <div class="via-topbar-actions">
+          <button class="via-pill" type="button" data-open-surface="app_generator">App generator</button>
+          <button class="via-button via-button--primary" type="button" id="load-sample-quiz">Load sample quiz</button>
+        </div>
+      </header>
+
+      <main class="via-main">
+        <section class="via-hero">
+          <div class="via-eyebrow">Imported from decide.engine</div>
+          <h1>Transform raw facts into decisions you can remember.</h1>
+          <p>This quiz launcher keeps the original Alchemist intent from decide.engine, but it also works inside VIA even when no upstream research payload has been injected.</p>
+        </section>
+
+        <section class="via-split via-section">
+          <article class="via-card">
+            <div class="via-tag">Question</div>
+            <h3 id="quiz-question">Load a quiz to begin.</h3>
+            <div class="via-actions" id="quiz-options"></div>
+            <div class="via-note" id="quiz-feedback">If no local payload exists, use the sample dataset button.</div>
+          </article>
+          <article class="via-card">
+            <div class="via-tag">Score</div>
+            <h3 id="quiz-score">0 / 0</h3>
+            <p id="quiz-progress">No active quiz yet.</p>
+          </article>
+        </section>
+      </main>
+
+      <nav class="via-nav">
+        <a href="./index.html" data-page="feed">Feed</a>
+        <a href="./alchemist.html" data-page="alchemist">Quiz</a>
+        <a href="./app-generator.html" data-page="app_generator">Generator</a>
+        <a href="./about.html" data-page="about">About</a>
+        <a href="./agent.html" data-page="agent">Agent</a>
+      </nav>
+    </div>
+
+    <script>
+      (function () {
+        var STORAGE_KEY = 'ALCHEMIST_INJECTED_DATA';
+        var SAMPLE_QUESTIONS = [
+          {
+            question: 'Why was a bridge layer added before importing more decide.engine surfaces?',
+            options: ['To preserve creator/social systems while normalizing routes', 'To remove every existing VIA page', 'To avoid using localStorage'],
+            answer: 'To preserve creator/social systems while normalizing routes',
+            explanation: 'The bridge allows imported pages and tool utilities to connect to VIA without erasing the creator-focused runtime.'
+          },
+          {
+            question: 'Which repo should remain the primary source for reusable tool modules and helpers?',
+            options: ['via-decide/decide.engine-tools', 'A new React monorepo', 'Only the current 404 page'],
+            answer: 'via-decide/decide.engine-tools',
+            explanation: 'The task explicitly calls for using decide.engine-tools as the source for tool modules and utilities.'
+          },
+          {
+            question: 'What architecture is preferred after this migration?',
+            options: ['Direct .html subpages with shared JS utilities', 'A heavy SPA router rewrite', 'Server-only rendered pages with no local state'],
+            answer: 'Direct .html subpages with shared JS utilities',
+            explanation: 'The goal is static-hosting-safe navigation with local shared runtime support.'
+          }
+        ];
+
+        var state = {
+          questions: [],
+          index: 0,
+          score: 0,
+          answered: false
+        };
+
+        var questionEl = document.getElementById('quiz-question');
+        var optionsEl = document.getElementById('quiz-options');
+        var feedbackEl = document.getElementById('quiz-feedback');
+        var scoreEl = document.getElementById('quiz-score');
+        var progressEl = document.getElementById('quiz-progress');
+        var sampleButton = document.getElementById('load-sample-quiz');
+
+        function readQuestions() {
+          try {
+            var raw = localStorage.getItem(STORAGE_KEY);
+            var parsed = raw ? JSON.parse(raw) : null;
+            return Array.isArray(parsed) && parsed.length ? parsed : SAMPLE_QUESTIONS;
+          } catch (_error) {
+            return SAMPLE_QUESTIONS;
+          }
+        }
+
+        function updateMeta() {
+          scoreEl.textContent = state.score + ' / ' + state.questions.length;
+          progressEl.textContent = state.questions.length
+            ? 'Question ' + (state.index + 1) + ' of ' + state.questions.length
+            : 'No active quiz yet.';
+        }
+
+        function render() {
+          var current = state.questions[state.index];
+          updateMeta();
+          if (!current) {
+            questionEl.textContent = 'Quiz complete.';
+            optionsEl.innerHTML = '<button class="via-button via-button--primary" type="button" id="restart-quiz">Restart</button>';
+            feedbackEl.textContent = 'Final score: ' + state.score + ' / ' + state.questions.length + '.';
+            document.getElementById('restart-quiz').addEventListener('click', function () {
+              state.index = 0;
+              state.score = 0;
+              state.answered = false;
+              render();
+            });
+            return;
+          }
+
+          questionEl.textContent = current.question;
+          feedbackEl.textContent = current.explanation ? 'Choose the best answer.' : 'Choose the best answer.';
+          optionsEl.innerHTML = current.options.map(function (option, index) {
+            return '<button class="via-button" type="button" data-option-index="' + index + '">' + option + '</button>';
+          }).join('');
+
+          Array.prototype.slice.call(optionsEl.querySelectorAll('[data-option-index]')).forEach(function (button) {
+            button.addEventListener('click', function () {
+              if (state.answered) return;
+              state.answered = true;
+              var chosen = current.options[Number(button.getAttribute('data-option-index'))] || '';
+              var correct = chosen === current.answer;
+              if (correct) {
+                state.score += 1;
+                feedbackEl.textContent = 'Correct. ' + (current.explanation || '');
+              } else {
+                feedbackEl.textContent = 'Not quite. Correct answer: ' + current.answer + '. ' + (current.explanation || '');
+              }
+              updateMeta();
+              window.setTimeout(function () {
+                state.index += 1;
+                state.answered = false;
+                render();
+              }, 900);
+            });
+          });
+        }
+
+        sampleButton.addEventListener('click', function () {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(SAMPLE_QUESTIONS));
+          state.questions = readQuestions();
+          state.index = 0;
+          state.score = 0;
+          state.answered = false;
+          render();
+        });
+
+        state.questions = readQuestions();
+        render();
+      })();
+    </script>
+  </body>
+</html>

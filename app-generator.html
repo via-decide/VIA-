@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0b1a" />
+    <meta name="description" content="App Generator surface adapted from decide.engine and connected to VIA's local tool modules." />
+    <title>VIA App Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/via-pages.css" />
+    <script src="./shared/vd-nav-fix.js"></script>
+    <script src="./shared/tool-bridge.js"></script>
+    <script src="./js/via-transition.js"></script>
+    <script src="./js/via-navigation.js"></script>
+    <script src="./js/via-bootstrap.js"></script>
+    <script src="./js/via-source-bridge.js"></script>
+  </head>
+  <body data-page="app_generator">
+    <div class="via-shell">
+      <header class="via-topbar">
+        <a class="via-brand" href="./app-generator.html" data-page="app_generator">
+          <span class="via-wordmark">VIA</span>
+          <span class="via-kicker">App generator</span>
+        </a>
+        <div class="via-topbar-actions">
+          <button class="via-pill" type="button" data-open-surface="alchemist">Alchemist</button>
+          <button class="via-button via-button--primary" type="button" id="launch-ai-generator">Open generator tool</button>
+        </div>
+      </header>
+
+      <main class="via-main">
+        <section class="via-hero">
+          <div class="via-eyebrow">Adapted from decide.engine</div>
+          <h1>Generate app specs without leaving VIA’s tool stack.</h1>
+          <p>The original decide.engine app-generator surface was a rich standalone page. VIA keeps the surface as a direct subpage, but routes execution into local tool modules from decide.engine-tools so maintenance stays consistent.</p>
+        </section>
+
+        <section class="via-split via-section">
+          <article class="via-composer">
+            <form class="via-form" id="generator-form">
+              <div class="via-field">
+                <label for="generator-problem">Problem to solve</label>
+                <textarea id="generator-problem" placeholder="What should the app help a creator, founder, or team do?"></textarea>
+              </div>
+              <div class="via-field">
+                <label for="generator-users">Primary users</label>
+                <textarea id="generator-users" placeholder="Who will use it first?"></textarea>
+              </div>
+              <div class="via-field">
+                <label for="generator-outcomes">Success outcomes</label>
+                <textarea id="generator-outcomes" placeholder="What must improve if this app ships?"></textarea>
+              </div>
+              <div class="via-actions">
+                <button class="via-button via-button--primary" type="submit">Save concept</button>
+                <button class="via-button" type="button" id="send-to-code-generator">Send to Code Generator</button>
+              </div>
+              <div class="via-note" id="generator-status">This launcher stores concept notes locally before handing them to imported tool modules.</div>
+            </form>
+          </article>
+
+          <article class="via-card">
+            <div class="via-tag">Handoff</div>
+            <h3>Next tool chain</h3>
+            <ul class="via-checklist">
+              <li>AI Tool Generator for concept structure.</li>
+              <li>Spec Builder for implementation detail.</li>
+              <li>Code Generator for execution prompts.</li>
+              <li>Code Reviewer and Output Evaluator for quality checks.</li>
+            </ul>
+          </article>
+        </section>
+      </main>
+
+      <nav class="via-nav">
+        <a href="./index.html" data-page="feed">Feed</a>
+        <a href="./app-generator.html" data-page="app_generator">Generator</a>
+        <a href="./decision-brief.html" data-page="decision_brief">Brief</a>
+        <a href="./about.html" data-page="about">About</a>
+        <a href="./agent.html" data-page="agent">Agent</a>
+      </nav>
+    </div>
+
+    <script>
+      (function () {
+        var STORAGE_KEY = 'via.imported.app-generator';
+        var form = document.getElementById('generator-form');
+        var status = document.getElementById('generator-status');
+        var launchButton = document.getElementById('launch-ai-generator');
+        var handoffButton = document.getElementById('send-to-code-generator');
+        var fields = {
+          problem: document.getElementById('generator-problem'),
+          users: document.getElementById('generator-users'),
+          outcomes: document.getElementById('generator-outcomes')
+        };
+
+        function collect() {
+          return {
+            problem: fields.problem.value.trim(),
+            users: fields.users.value.trim(),
+            outcomes: fields.outcomes.value.trim(),
+            updated_at: new Date().toISOString()
+          };
+        }
+
+        function save() {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(collect()));
+        }
+
+        function hydrate() {
+          try {
+            var raw = localStorage.getItem(STORAGE_KEY);
+            var parsed = raw ? JSON.parse(raw) : {};
+            fields.problem.value = parsed.problem || '';
+            fields.users.value = parsed.users || '';
+            fields.outcomes.value = parsed.outcomes || '';
+          } catch (_error) {
+            fields.problem.value = '';
+            fields.users.value = '';
+            fields.outcomes.value = '';
+          }
+        }
+
+        form.addEventListener('submit', function (event) {
+          event.preventDefault();
+          save();
+          status.textContent = 'Saved concept locally. Launch any downstream generator when ready.';
+        });
+
+        launchButton.addEventListener('click', function () {
+          save();
+          window.location.href = './tools/ai-tool-generator/index.html';
+        });
+
+        handoffButton.addEventListener('click', function () {
+          var payload = collect();
+          if (typeof window.ToolBridge !== 'undefined' && window.ToolBridge && typeof window.ToolBridge.sendContext === 'function') {
+            window.ToolBridge.sendContext('app-generator', 'code-generator', payload);
+          }
+          window.location.href = './tools/code-generator/index.html';
+        });
+
+        hydrate();
+      })();
+    </script>
+  </body>
+</html>

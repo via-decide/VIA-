@@ -8,7 +8,12 @@
     profile: './profile.html',
     agent: './agent.html',
     discover: './discover.html',
-    about: './about.html'
+    about: './about.html',
+    decision_brief: './decision-brief.html',
+    studyos: './StudyOS.html',
+    app_generator: './app-generator.html',
+    finance_dashboard_msme: './finance-dashboard-msme.html',
+    alchemist: './alchemist.html'
   };
   var LEGACY_PATHS = {
     '/creator-onboarding': ROUTES.creator_onboarding,
@@ -22,7 +27,17 @@
     '/discover': ROUTES.discover,
     '/discover/': ROUTES.discover,
     '/about': ROUTES.about,
-    '/about/': ROUTES.about
+    '/about/': ROUTES.about,
+    '/decision-brief': ROUTES.decision_brief,
+    '/decision-brief/': ROUTES.decision_brief,
+    '/StudyOS': ROUTES.studyos,
+    '/StudyOS/': ROUTES.studyos,
+    '/app-generator': ROUTES.app_generator,
+    '/app-generator/': ROUTES.app_generator,
+    '/finance-dashboard-msme': ROUTES.finance_dashboard_msme,
+    '/finance-dashboard-msme/': ROUTES.finance_dashboard_msme,
+    '/alchemist': ROUTES.alchemist,
+    '/alchemist/': ROUTES.alchemist
   };
 
   function normalizePath(path) {
