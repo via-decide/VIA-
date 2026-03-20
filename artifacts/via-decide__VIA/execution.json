@@ -2,6 +2,11 @@
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
   "branch": "simba/implement-a-secure-sandboxed-tool-execution-engi",
+  "branch": "simba/implement-the-core-multi-agent-routing-engine-ca",
+  "branch": "simba/implement-a-lightweight-cross-platform-developer",
+  "branch": "simba/implement-a-highly-scalable-bi-directional-event",
+  "branch": "simba/implement-a-multi-agent-collaboration-framework-",
+  "branch": "simba/implement-a-scalable-distributed-memory-pipeline",
   "files_to_create": [
     "codex-task.md",
     "antigravity-repair-task.md",
