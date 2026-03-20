@@ -32,6 +32,41 @@
       name: 'Agent Surface',
       desc: 'A direct-launch command surface for tools, pages, and runtime checks.',
       path: './agent.html'
+    },
+    {
+      emoji: '🧭',
+      cat: 'Imported',
+      name: 'Decision Brief',
+      desc: 'Constraint-first decision brief page adapted from decide.engine.',
+      path: './decision-brief.html'
+    },
+    {
+      emoji: '📚',
+      cat: 'Imported',
+      name: 'StudyOS Classic',
+      desc: 'Direct launcher to the imported StudyOS workspace.',
+      path: './StudyOS.html'
+    },
+    {
+      emoji: '🛠️',
+      cat: 'Imported',
+      name: 'App Generator',
+      desc: 'Generator surface normalized to VIA tool paths.',
+      path: './app-generator.html'
+    },
+    {
+      emoji: '💰',
+      cat: 'Imported',
+      name: 'Finance Dashboard MSME',
+      desc: 'Standalone finance workspace based on decide.engine patterns.',
+      path: './finance-dashboard-msme.html'
+    },
+    {
+      emoji: '🧪',
+      cat: 'Imported',
+      name: 'Alchemist Quiz',
+      desc: 'Quiz surface migrated with a VIA-safe fallback dataset.',
+      path: './alchemist.html'
     }
   ];
   var DEFAULT_FEED_POSTS = [

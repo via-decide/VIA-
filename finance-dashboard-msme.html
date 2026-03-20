@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0b1a" />
+    <meta name="description" content="Finance Dashboard MSME surface adapted from decide.engine for VIA's static subpage architecture." />
+    <title>VIA Finance Dashboard MSME</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/via-pages.css" />
+    <script src="./shared/vd-nav-fix.js"></script>
+    <script src="./js/via-transition.js"></script>
+    <script src="./js/via-navigation.js"></script>
+    <script src="./js/via-bootstrap.js"></script>
+    <script src="./js/via-source-bridge.js"></script>
+  </head>
+  <body data-page="finance_dashboard_msme">
+    <div class="via-shell">
+      <header class="via-topbar">
+        <a class="via-brand" href="./finance-dashboard-msme.html" data-page="finance_dashboard_msme">
+          <span class="via-wordmark">VIA</span>
+          <span class="via-kicker">Finance dashboard</span>
+        </a>
+        <div class="via-topbar-actions">
+          <button class="via-pill" type="button" data-open-surface="decision_brief">Decision brief</button>
+          <button class="via-button via-button--primary" type="button" id="load-msme-template">Load MSME template</button>
+        </div>
+      </header>
+
+      <main class="via-main">
+        <section class="via-hero">
+          <div class="via-eyebrow">Adapted from decide.engine</div>
+          <h1>Simple MSME finance planning, still static-hosting safe.</h1>
+          <p>The original decide.engine finance dashboard was a dense standalone workspace. This VIA adaptation keeps the direct-page workflow, local persistence, and planning focus while avoiding legacy routing assumptions.</p>
+        </section>
+
+        <section class="via-grid via-grid--3 via-section" id="finance-kpis"></section>
+
+        <section class="via-split via-section">
+          <article class="via-composer">
+            <form class="via-form" id="finance-form">
+              <div class="via-field">
+                <label for="revenue">Monthly revenue</label>
+                <input id="revenue" type="number" min="0" step="0.01" />
+              </div>
+              <div class="via-field">
+                <label for="costs">Monthly costs</label>
+                <input id="costs" type="number" min="0" step="0.01" />
+              </div>
+              <div class="via-field">
+                <label for="cash">Cash reserve</label>
+                <input id="cash" type="number" min="0" step="0.01" />
+              </div>
+              <div class="via-field">
+                <label for="receivables">Receivables</label>
+                <input id="receivables" type="number" min="0" step="0.01" />
+              </div>
+              <div class="via-field">
+                <label for="payables">Payables</label>
+                <input id="payables" type="number" min="0" step="0.01" />
+              </div>
+              <div class="via-field">
+                <label for="notes">Operator notes</label>
+                <textarea id="notes" placeholder="What decisions or risks should the team revisit this week?"></textarea>
+              </div>
+              <div class="via-actions">
+                <button class="via-button via-button--primary" type="submit">Save dashboard</button>
+                <button class="via-button" type="button" id="open-brief-from-finance">Open decision brief</button>
+              </div>
+              <div class="via-note" id="finance-status">This surface persists planning inputs in localStorage.</div>
+            </form>
+          </article>
+
+          <article class="via-card">
+            <div class="via-tag">Assessment</div>
+            <h3>Operating view</h3>
+            <div class="via-list" id="finance-insights"></div>
+          </article>
+        </section>
+      </main>
+
+      <nav class="via-nav">
+        <a href="./index.html" data-page="feed">Feed</a>
+        <a href="./finance-dashboard-msme.html" data-page="finance_dashboard_msme">Finance</a>
+        <a href="./decision-brief.html" data-page="decision_brief">Brief</a>
+        <a href="./about.html" data-page="about">About</a>
+        <a href="./agent.html" data-page="agent">Agent</a>
+      </nav>
+    </div>
+
+    <script>
+      (function () {
+        var STORAGE_KEY = 'via.imported.finance-dashboard-msme';
+        var form = document.getElementById('finance-form');
+        var kpiRoot = document.getElementById('finance-kpis');
+        var insightRoot = document.getElementById('finance-insights');
+        var status = document.getElementById('finance-status');
+        var loadTemplateButton = document.getElementById('load-msme-template');
+        var briefButton = document.getElementById('open-brief-from-finance');
+        var fields = {
+          revenue: document.getElementById('revenue'),
+          costs: document.getElementById('costs'),
+          cash: document.getElementById('cash'),
+          receivables: document.getElementById('receivables'),
+          payables: document.getElementById('payables'),
+          notes: document.getElementById('notes')
+        };
+
+        function number(value) {
+          var parsed = Number(value || 0);
+          return Number.isFinite(parsed) ? parsed : 0;
+        }
+
+        function collect() {
+          return {
+            revenue: number(fields.revenue.value),
+            costs: number(fields.costs.value),
+            cash: number(fields.cash.value),
+            receivables: number(fields.receivables.value),
+            payables: number(fields.payables.value),
+            notes: fields.notes.value.trim(),
+            updated_at: new Date().toISOString()
+          };
+        }
+
+        function save(payload) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        }
+
+        function read() {
+          try {
+            var raw = localStorage.getItem(STORAGE_KEY);
+            return raw ? JSON.parse(raw) : null;
+          } catch (_error) {
+            return null;
+          }
+        }
+
+        function currency(value) {
+          return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value || 0);
+        }
+
+        function render(payload) {
+          var margin = payload.revenue - payload.costs;
+          var runway = payload.costs > 0 ? payload.cash / payload.costs : 0;
+          var workingCapital = payload.cash + payload.receivables - payload.payables;
+          var collectionCoverage = payload.payables > 0 ? payload.receivables / payload.payables : 0;
+
+          kpiRoot.innerHTML = [
+            { label: 'Net margin', value: currency(margin), note: margin >= 0 ? 'Positive monthly spread' : 'Negative monthly spread' },
+            { label: 'Runway', value: runway ? runway.toFixed(1) + ' months' : '0.0 months', note: 'Cash divided by monthly costs' },
+            { label: 'Working capital', value: currency(workingCapital), note: 'Cash + receivables - payables' }
+          ].map(function (item) {
+            return '<article class="via-card"><div class="via-tag">KPI</div><h3>' + item.label + '</h3><p><strong>' + item.value + '</strong></p><p>' + item.note + '</p></article>';
+          }).join('');
+
+          var insights = [];
+          insights.push(margin >= 0 ? 'Monthly margin is positive; preserve it while improving collection speed.' : 'Costs exceed revenue; reduce burn or increase collections before scaling.');
+          insights.push(runway >= 6 ? 'Cash runway is comfortable for short-term experimentation.' : 'Cash runway is thin; tighten spend and create a weekly cash review.');
+          insights.push(collectionCoverage >= 1 ? 'Receivables can cover current payables if collected on time.' : 'Payables are outrunning receivables; renegotiate terms or speed up invoicing.');
+          if (payload.notes) insights.push(payload.notes);
+
+          insightRoot.innerHTML = insights.map(function (text, index) {
+            return '<div class="via-list-item"><div class="via-list-item-main"><strong>Insight ' + (index + 1) + '</strong><p>' + text + '</p></div></div>';
+          }).join('');
+        }
+
+        function hydrate(payload) {
+          var state = payload || read() || {};
+          fields.revenue.value = state.revenue || '';
+          fields.costs.value = state.costs || '';
+          fields.cash.value = state.cash || '';
+          fields.receivables.value = state.receivables || '';
+          fields.payables.value = state.payables || '';
+          fields.notes.value = state.notes || '';
+          render({
+            revenue: number(state.revenue),
+            costs: number(state.costs),
+            cash: number(state.cash),
+            receivables: number(state.receivables),
+            payables: number(state.payables),
+            notes: state.notes || ''
+          });
+        }
+
+        loadTemplateButton.addEventListener('click', function () {
+          var payload = {
+            revenue: 850000,
+            costs: 620000,
+            cash: 1800000,
+            receivables: 340000,
+            payables: 220000,
+            notes: 'Imported launcher seeded with an MSME operating example for founder planning.'
+          };
+          hydrate(payload);
+          save(payload);
+          status.textContent = 'Loaded a starter MSME planning template.';
+        });
+
+        form.addEventListener('submit', function (event) {
+          event.preventDefault();
+          var payload = collect();
+          save(payload);
+          render(payload);
+          status.textContent = 'Saved dashboard locally at ' + new Date(payload.updated_at).toLocaleString() + '.';
+        });
+
+        briefButton.addEventListener('click', function () {
+          window.location.href = './decision-brief.html?surface=finance_dashboard_msme';
+        });
+
+        hydrate(read());
+      })();
+    </script>
+  </body>
+</html>

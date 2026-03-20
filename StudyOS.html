@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0b1a" />
+    <meta name="description" content="StudyOS launcher adapted from decide.engine into VIA's static subpage architecture." />
+    <title>VIA StudyOS Classic</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/via-pages.css" />
+    <script src="./shared/vd-nav-fix.js"></script>
+    <script src="./js/via-transition.js"></script>
+    <script src="./js/via-navigation.js"></script>
+    <script src="./js/via-bootstrap.js"></script>
+    <script src="./js/via-source-bridge.js"></script>
+  </head>
+  <body data-page="studyos">
+    <div class="via-shell">
+      <header class="via-topbar">
+        <a class="via-brand" href="./StudyOS.html" data-page="studyos">
+          <span class="via-wordmark">VIA</span>
+          <span class="via-kicker">StudyOS classic</span>
+        </a>
+        <div class="via-topbar-actions">
+          <button class="via-pill" type="button" data-open-surface="creator_story">Creator story</button>
+          <button class="via-button via-button--primary" type="button" id="launch-studyos">Open workspace</button>
+        </div>
+      </header>
+
+      <main class="via-main">
+        <section class="via-hero">
+          <div class="via-eyebrow">Imported from decide.engine</div>
+          <h1>StudyOS remains direct-page first.</h1>
+          <p>The original decide.engine StudyOS surface proved that a focused workspace can live as its own page without a fragile SPA dependency. VIA keeps that model and routes it into the existing StudyOS workspace directory.</p>
+        </section>
+
+        <section class="via-grid via-grid--3 via-section">
+          <article class="via-card">
+            <div class="via-tag">Pattern</div>
+            <h3>Static-hosting safe</h3>
+            <p>Launches the existing <code>./StudyOS/index.html</code> workspace using direct links instead of router-only assumptions.</p>
+          </article>
+          <article class="via-card">
+            <div class="via-tag">Creator-safe</div>
+            <h3>Preserves VIA systems</h3>
+            <p>Creator story, onboarding, profile, and feed surfaces remain untouched while StudyOS gets its own stable entry point.</p>
+          </article>
+          <article class="via-card">
+            <div class="via-tag">Bridge</div>
+            <h3>Agent-friendly</h3>
+            <p>The agent and discover layers can now launch StudyOS through a normalized route exposed by <code>via-source-bridge.js</code>.</p>
+          </article>
+        </section>
+      </main>
+
+      <nav class="via-nav">
+        <a href="./index.html" data-page="feed">Feed</a>
+        <a href="./StudyOS.html" data-page="studyos">StudyOS</a>
+        <a href="./creator-story.html" data-page="creator_story">Story</a>
+        <a href="./about.html" data-page="about">About</a>
+        <a href="./agent.html" data-page="agent">Agent</a>
+      </nav>
+    </div>
+
+    <script>
+      (function () {
+        document.getElementById('launch-studyos').addEventListener('click', function () {
+          window.location.href = './StudyOS/index.html';
+        });
+      })();
+    </script>
+  </body>
+</html>
