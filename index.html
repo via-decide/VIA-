@@ -19,6 +19,20 @@
 window.ECO_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtsenJkZHZvY3N1dGRlaXd2cmhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NzAzNDAsImV4cCI6MjA4OTM0NjM0MH0.4oLh-_y0MkgdO6F98Y4D8FTwy4pOTAjc1eeERkjkQJk";
 </script>
 <script src="./shared/eco-supabase-config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+window.VIA_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCQMIvNgKJPZmxVHRC8lKL79k6n0wh0EKo",
+  authDomain: "gen-lang-client-0662689801.firebaseapp.com",
+  projectId: "gen-lang-client-0662689801",
+  storageBucket: "gen-lang-client-0662689801.firebasestorage.app",
+  messagingSenderId: "899475982419",
+  appId: "1:899475982419:web:fc93af4d97e6a578b31ea6"
+};
+</script>
+<script src="./shared/firebase-config.js"></script>
 <script src="./shared/tool-storage.js"></script>
 <script src="./shared/social-core.js"></script>
 <script src="./js/via-micro-content.js"></script>
@@ -970,16 +984,92 @@ const VIA = {
       });
       this.authSubscription=data?.subscription||null;
     }
+    // Firebase auth state listener — restores Google sign-in sessions
+    const _fb = window.viaFirebase;
+    if (_fb && _fb.auth && !this._fbAuthSub) {
+      this._fbAuthSub = true;
+      _fb.auth.onAuthStateChanged(async (fbUser) => {
+        if (fbUser && (!currentUser || currentUser.is_guest)) {
+          const profile = {
+            id: fbUser.uid, email: fbUser.email || '',
+            username: (fbUser.displayName || fbUser.email || 'user').toLowerCase().replace(/[^a-z0-9_.]/g,'_').slice(0,20),
+            display_name: fbUser.displayName || fbUser.email || 'VIA User',
+            name: fbUser.displayName || '', avatar: fbUser.photoURL || '',
+            avatar_url: fbUser.photoURL || '', avatar_emoji: '🌟',
+            city: '', xp: 0, level: 1, followers: 0, following: 0, posts: 0,
+            is_guest: false,
+            user_metadata: { name: fbUser.displayName, avatar_url: fbUser.photoURL, full_name: fbUser.displayName }
+          };
+          if (window.SocialCore && typeof window.SocialCore.bootstrapProfile === 'function') {
+            window.SocialCore.bootstrapProfile(profile);
+          }
+          localStorage.setItem('via_user', JSON.stringify(profile));
+          currentUser = profile; this.user = profile;
+          authReady = true; renderApp();
+          refreshSocialSurfaces({ keepIndex: true });
+        }
+      });
+    }
     return currentUser;
   },
   applyToUI(){
     renderApp();
   },
   async saveXP(v){if(!currentUser)return;currentUser.xp=v;this.user=currentUser;if(!currentUser.is_guest)await this.saveLocalProfile(currentUser);renderApp();},
-  openAuth(){if(window.VIATransition&&typeof window.VIATransition.navigate==='function'){window.VIATransition.navigate('./auth.html');return;}window.location.href='./auth.html';},
+  async openAuth(){
+    // Inline Google popup auth — one tap, no page navigation
+    const _fb = window.viaFirebase;
+    if (_fb && _fb.auth) {
+      try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('email');
+        provider.addScope('profile');
+        const cred = await _fb.auth.signInWithPopup(provider);
+        const user = cred.user;
+        const profile = {
+          id: user.uid,
+          email: user.email || '',
+          username: (user.displayName || user.email || 'user').toLowerCase().replace(/[^a-z0-9_.]/g,'_').slice(0,20),
+          display_name: user.displayName || user.email || 'VIA User',
+          name: user.displayName || '',
+          avatar: user.photoURL || '',
+          avatar_url: user.photoURL || '',
+          avatar_emoji: '🌟',
+          city: '',
+          xp: 0, level: 1, followers: 0, following: 0, posts: 0,
+          is_guest: false,
+          user_metadata: { name: user.displayName, avatar_url: user.photoURL, full_name: user.displayName }
+        };
+        if (_fb.db) {
+          try { await _fb.db.collection('users').doc(user.uid).set(profile, { merge: true }); } catch(e) { console.warn('Firestore save:', e.message); }
+        }
+        if (window.SocialCore && typeof window.SocialCore.bootstrapProfile === 'function') {
+          window.SocialCore.bootstrapProfile(profile);
+        }
+        localStorage.setItem('via_user', JSON.stringify(profile));
+        currentUser = profile;
+        this.user = profile;
+        authReady = true;
+        renderApp();
+        refreshSocialSurfaces({ keepIndex: true });
+        return profile;
+      } catch(err) {
+        if (err.code === 'auth/popup-closed-by-user') return null;
+        console.error('Google sign-in error:', err);
+      }
+    }
+    // Fallback: navigate to auth.html if Firebase not available
+    if(window.VIATransition&&typeof window.VIATransition.navigate==='function'){window.VIATransition.navigate('./auth.html');return;}
+    window.location.href='./auth.html';
+  },
   async signOut(){
     if(_sb&&_sb.auth&&typeof _sb.auth.signOut==='function'){
       try{await _sb.auth.signOut();}catch(error){console.error('Sign out error:', error);}
+    }
+    // Also sign out from Firebase (Google sessions)
+    const _fb = window.viaFirebase;
+    if (_fb && _fb.auth && typeof _fb.auth.signOut === 'function') {
+      try { await _fb.auth.signOut(); } catch(e) { console.warn('Firebase signOut:', e.message); }
     }
     currentUser=null;
     this.user=null;
