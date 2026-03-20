@@ -1,13 +1,13 @@
-Branch: simba/implement-a-core-backend-middleware-module-calle
-Title: > Implement a core backend middleware module called via-predictive-ro...
+Branch: simba/implement-a-comprehensive-telemetry-and-billing-
+Title: Implement a comprehensive telemetry and billing engine called via-aud...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: > Upgrade the VIA core architecture into a robust, highly scalable backend capable of intelligently load-balancing massive concurrent agent or user requests. This lays the infrastructural foundation necessary to support advanced, dynamic social-media-style engine tools. /end_task
+- Goal: Ensure the platform is financially sustainable and highly observable, protecting administrators from runaway API bills.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
-- [ ] Validate Telegram command flow
+- [ ] Validate command flow
 - [ ] Validate generated artifact files
 
 ## Risks
