@@ -1,9 +1,9 @@
-Branch: simba/1-extract-core-authentication-logic-from-legacy-
-Title: 1. Extract core authentication logic from legacy-auth-repo and port i...
+Branch: simba/finalize-the-cloud-deployment-and-spa-routing-1-
+Title: Finalize the cloud deployment and SPA routing. 1. Deploy the viadecid...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Centralize and standardize authentication within the VIA monorepo to enable seamless Single Sign-On (SSO) across all consolidated tools.
+- Goal: Make the platform live and accessible via a unified production domain.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
