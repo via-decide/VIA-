@@ -128,8 +128,8 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, user
   const runCommand = useCallback(async (cmd: CommandKey, topicOverride?: string) => {
     // Extract topic: everything after the command token
     const topic = topicOverride
-      ?? content.replace(new RegExp(`^${cmd}\\s*`, 'i'), '').trim()
-      || 'innovation in Bharat';
+      ?? (content.replace(new RegExp(`^${cmd}\\s*`, 'i'), '').trim()
+      || 'innovation in Bharat');
 
     setActiveCommand(cmd);
     setShowCommands(false);
