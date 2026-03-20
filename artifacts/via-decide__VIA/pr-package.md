@@ -1,3 +1,9 @@
+Branch: simba/implement-a-secure-sandboxed-tool-execution-engi
+Title: Implement a secure, sandboxed tool execution engine called via-agent-...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Give the AI swarm actual agency to perform complex, multi-system tasks autonomously without compromising host security.
 Branch: simba/implement-the-core-multi-agent-routing-engine-ca
 Title: Implement the core multi-agent routing engine called via-agent-swarm ...
 

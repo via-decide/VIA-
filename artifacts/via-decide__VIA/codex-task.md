@@ -1,6 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
+Implement a secure, sandboxed tool execution engine called via-agent-tools allowing LLMs to safely execute code and API calls. 1. Create src/core/ai/tools/. 2. Implement ToolRegistry.ts to maintain dynamic OpenAPI JSON Schemas for function calling. 3. Create SandboxExecutor.ts using WebAssembly (Pyodide) or isolated-vm to execute LLM-generated code with strict memory/CPU quotas and zero network access. 4. Implement ApiIntegrator.ts for standardized HTTP interactions using user-authenticated OAuth tokens. 5. Build HumanInTheLoop.ts (HITL) to pause agent execution and require explicit user UI approval for high-risk actions (e.g., dropping a database table, spending money).
+
+CONSTRAINTS
+Under absolutely no circumstances should LLM-generated code be executed directly on the host Node.js environment using eval(). The sandbox MUST have a hard timeout.
 Implement the core multi-agent routing engine called via-agent-swarm to manage contextual handoffs between specialized LLMs. 1. Create src/core/ai/swarm/. 2. Implement SwarmOrchestrator.ts to act as the primary brain, routing user intents to specialized agents (e.g., Coder, Researcher, Critic). 3. Create ContextManager.ts to manage the sliding context window. It must intelligently truncate, summarize, or inject past conversational turns to stay under the token limit (e.g., 128k tokens). 4. Implement ModelGateway.ts to abstract the API calls to OpenAI, Anthropic, or local LLMs, handling rate limits and automatic retries. 5. Build PromptTemplates.ts to inject dynamic system prompts based on the active agent's persona and available tools.
 
 CONSTRAINTS
