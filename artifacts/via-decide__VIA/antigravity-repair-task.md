@@ -4,7 +4,11 @@ TARGET
 Validate and repair only the files touched by the previous implementation.
 
 TASK
+<<<<<<< simba/implement-a-unified-analytics-service-for-the-en
+Implement a unified analytics service for the entire platform. 1. Create services/analytics.js to track tool usage and performance. 2. Implement an event-forwarding layer in the Shell to collect data from tool iframes. 3. Connect the service to a central database/dashboard.
+=======
 Create a shared CSS library to standardize the look and feel of all tools. 1. Build shared/styles/via-theme.css with a core set of CSS variables (colors, spacing, fonts). 2. Implement a theme-switching listener in the Shell that propagates to all tool iframes. 3. Update Batch 1 & 2 tools to use the standardized via-theme.
+>>>>>>> main
 
 RULES
 1. Audit touched files first and identify regressions.
