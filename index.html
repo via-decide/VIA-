@@ -21,12 +21,9 @@ window.ECO_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
 <script src="./shared/eco-supabase-config.js"></script>
 <script src="./shared/tool-storage.js"></script>
 <script src="./shared/social-core.js"></script>
-<script src="./src/core/content/micro-content-architecture/MicroContentParser.js"></script>
-<script src="./src/core/content/micro-content-architecture/MicroContentComposer.js"></script>
-<script src="./src/core/content/micro-content-architecture/MicroContentRegistry.js"></script>
-<script src="./src/core/content/micro-content-architecture/index.js"></script>
-    <script src="./js/via-transition.js"></script>
-    <script src="./js/via-navigation.js"></script>
+<script src="./js/via-micro-content.js"></script>
+<script src="./js/via-transition.js"></script>
+<script src="./js/via-navigation.js"></script>
 <style>
 /* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -754,7 +751,6 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 
 <script src="./onboarding/onboarding.js"></script>
 <script src="./js/viadecide-agent.js"></script>
-<script src="./router.js"></script>
 <script>
 // ════════════════════════════════════════════════════════════════
 // SUPABASE + HELPERS
@@ -2516,101 +2512,49 @@ function applySurfaceFromUrl() {
 }
 
 async function initMicroFrontendArchitecture() {
-  try {
-    const microFrontendModule = await import('./src/core/frontend/micro-frontend-architecture/index.js');
-    const architecture = await microFrontendModule.createMicroFrontendArchitecture({
-      openHandler(name, params) {
-        const layer = Object.keys(MICRO_FRONTEND_LAYER_MAP).find((key) => MICRO_FRONTEND_LAYER_MAP[key] === name);
-        if (!layer) return false;
-        window.__viaLegacySwitchLayer(layer, params && params.storyKey ? params.storyKey : undefined);
-        return true;
-      }
-    });
-
-    window.VIAMicroFrontendArchitecture = architecture;
-    architecture.runtime.subscribe('content_events', () => {
-      syncCreatorContentSurface();
-    });
-
-    const legacySwitchLayer = window.__viaLegacySwitchLayer;
-    switchLayer = function (layer, storyKey) {
-      if (!storyKey && MICRO_FRONTEND_LAYER_MAP[layer]) {
-        const surfaceName = MICRO_FRONTEND_LAYER_MAP[layer];
-        const moduleDef = architecture.registry.get(surfaceName);
-        const target = moduleDef ? document.querySelector(moduleDef.mountSelector) : document.getElementById('app');
-        return architecture.loader.mountSurface(surfaceName, target);
-      }
-      return legacySwitchLayer(layer, storyKey);
-    };
-
-    window.switchLayer = switchLayer;
-
-    const eagerSurfaces = architecture.registry.getAll().filter((surface) => surface.loadingStrategy === 'eager');
-    for (const surface of eagerSurfaces) {
-      await architecture.loader.prefetchSurface(surface.name);
-    }
-
-    const prefetchSurfaces = architecture.registry.getAll().filter((surface) => surface.loadingStrategy === 'prefetch');
-    prefetchSurfaces.forEach((surface) => {
-      architecture.loader.prefetchSurface(surface.name);
-    });
-  } catch (_error) {}
-
+  window.VIAMicroFrontendArchitecture = {
+    mode: 'static-multi-page',
+    surfaces: MICRO_FRONTEND_LAYER_MAP
+  };
   applySurfaceFromUrl();
 }
 
 let federatedRuntime=null;
 async function initFederatedRuntime(){
-  try {
-    const runtimeModule = await import('./src/core/runtime/federated-agent-content-runtime/index.js');
-    federatedRuntime = await runtimeModule.createFederatedAgentContentRuntime({
-      deps: {
-        pageContext: {
+  federatedRuntime = {
+    getSnapshot(){
+      return {
+        mode:'static-multi-page',
+        pageContext:{
           pathname: window.location.pathname,
           title: document.title,
           description: document.querySelector('meta[name="description"]') ? document.querySelector('meta[name="description"]').getAttribute('content') || '' : ''
         }
-      }
-    });
-    federatedRuntime.emit('surface_open', {
-      surfaceName: 'feed_surface',
-      pageContext: {
-        pathname: window.location.pathname,
+      };
+    },
+    handoffToAgent(){
+      return Promise.resolve(null);
+    },
+    handoffToContent(args){
+      return args && args.input ? args.input : null;
+    },
+    emit(){},
+    subscribe(){}
+  };
+  window.VIAFeedRuntimeBridge = {
+    getSnapshot(){
+      return federatedRuntime.getSnapshot();
+    },
+    requestRouteSuggestion(){
+      return Promise.resolve(null);
+    },
+    requestContentPreview(input){
+      return federatedRuntime.handoffToContent({ input: input || {
         title: document.title,
-        description: document.querySelector('meta[name="description"]') ? document.querySelector('meta[name="description"]').getAttribute('content') || '' : ''
-      }
-    });
-    window.VIAFeedRuntimeBridge = {
-      getSnapshot(){
-        return federatedRuntime ? federatedRuntime.getSnapshot() : null;
-      },
-      requestRouteSuggestion(message){
-        if(!federatedRuntime)return Promise.resolve(null);
-        return federatedRuntime.handoffToAgent({
-          surfaceName:'feed_surface',
-          message:message || 'where should I go next?',
-          pageContext:{ pathname: window.location.pathname, title: document.title },
-          openSurface:false
-        });
-      },
-      requestContentPreview(input){
-        if(!federatedRuntime)return null;
-        return federatedRuntime.handoffToContent({
-          surfaceName:'feed_surface',
-          mode:'feed_units',
-          input:input || { title: document.title, body: document.querySelector('meta[name="description"]') ? document.querySelector('meta[name="description"]').getAttribute('content') || '' : '' }
-        });
-      }
-    };
-    federatedRuntime.subscribe('route_suggestion',function(payload){
-      window.__viaFeedRouteSuggestion = payload;
-    });
-    federatedRuntime.subscribe('content_request',function(payload){
-      if(payload && payload.surfaceName==='feed_surface'){
-        window.__viaFeedContentPreview = payload.result;
-      }
-    });
-  } catch (_error) {}
+        body: document.querySelector('meta[name="description"]') ? document.querySelector('meta[name="description"]').getAttribute('content') || '' : ''
+      } });
+    }
+  };
 }
 
 // ════════════════════════════════════════════════════════════════

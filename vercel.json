@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "",
+  "installCommand": "",
+  "outputDirectory": ".",
+  "cleanUrls": false,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/creator-story", "destination": "/creator-story.html" },
+    { "source": "/creator-onboarding", "destination": "/creator-onboarding.html" },
+    { "source": "/agent", "destination": "/agent.html" },
+    { "source": "/profile", "destination": "/profile.html" },
+    { "source": "/discover", "destination": "/discover.html" },
+    { "source": "/about", "destination": "/about.html" }
+  ]
+}
