@@ -1,3 +1,9 @@
+Branch: simba/implement-a-comprehensive-telemetry-and-billing-
+Title: Implement a comprehensive telemetry and billing engine called via-aud...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Ensure the platform is financially sustainable and highly observable, protecting administrators from runaway API bills.
 Branch: simba/implement-an-intelligent-long-term-memory-and-re
 Title: Implement an intelligent long-term memory and Retrieval-Augmented Gen...
 

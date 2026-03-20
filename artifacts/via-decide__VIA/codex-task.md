@@ -1,6 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
+Implement a comprehensive telemetry and billing engine called via-audit-core to track token usage and enforce quotas. 1. Create src/core/telemetry/auditing/. 2. Implement CostTracker.ts to intercept API headers, extract exact prompt_tokens/completion_tokens, and calculate real-world costs. 3. Create UserQuotaManager.ts backed by a Redis token bucket to enforce daily/monthly spending limits and instantly reject requests (HTTP 402) if exceeded. 4. Implement LatencyMonitor.ts to track TTFT and tool execution overhead. 5. Build AuditLogger.ts for enterprise compliance, logging sanitized metadata (Agent ID, Cost, Success) without storing PII/prompt text.
+
+CONSTRAINTS
+Telemetry MUST be non-blocking. Push metrics to a background queue to be flushed in batches. Never log raw user prompts in the billing database.
 Implement an intelligent long-term memory and Retrieval-Augmented Generation (RAG) system called via-vector-memory. 1. Create src/core/ai/memory/. 2. Implement DocumentProcessor.ts to chunk large incoming PDFs, codebases, or plain text into semantically meaningful segments. 3. Create EmbeddingGenerator.ts to convert text chunks into high-dimensional vector arrays. 4. Implement VectorDatabase.ts using a fast similarity search engine (like pgvector or Pinecone) to store and retrieve contextual embeddings. 5. Build a SemanticSearch.ts module to intercept user queries, search the vector DB for context, and prepend the retrieved data to the LLM's system prompt.
 
 CONSTRAINTS
