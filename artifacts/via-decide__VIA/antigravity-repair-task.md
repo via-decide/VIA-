@@ -4,7 +4,7 @@ TARGET
 Validate and repair only the files touched by the previous implementation.
 
 TASK
-1. Extract core authentication logic from legacy-auth-repo and port it to packages/auth-service within the monorepo. 2. Refactor the login payload to align with the unified monorepo API schema. 3. Update shell/router.js to protect internal routing paths using the newly ported auth middleware. 4. Write unit tests to verify token validation and session timeout behaviors in the new environment.
+Migrate the most critical tools into the new shell system. 1. Move code for decide.engine-tools into tools/core/engine-tools/. 2. Update tool internal links to use the StateBridge for cross-platform context. 3. Register the tool as "Active" in the nav-registry.json.
 
 RULES
 1. Audit touched files first and identify regressions.
