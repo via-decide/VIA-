@@ -1,6 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
+Push the Phase 0 initialized monorepo structure to the GitHub repository. 1. Initialize a git repository in viadecide-monorepo/. 2. Add the remote origin https://github.com/via-decide/VIA.git. 3. Commit the Phase 0 skeleton (shell, tools/*, services, shared, configs). 4. Push the main branch.
+
+CONSTRAINTS
+Direct push to main is allowed for this initialization. Do NOT include node_modules.
 Implement the visual platform shell in shell/index.html. 1. Create a premium dark-mode layout with a fixed sidebar and centered tool area. 2. Implement the RealtimeBus connection for status indicators. 3. Build the tool-loading logic using iframes to isolate tool-specific JS/CSS.
 
 CONSTRAINTS

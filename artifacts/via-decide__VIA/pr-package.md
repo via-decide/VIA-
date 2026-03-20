@@ -1,3 +1,9 @@
+Branch: simba/push-the-phase-0-initialized-monorepo-structure-
+Title: Push the Phase 0 initialized monorepo structure to the GitHub reposit...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Establish the monorepo source of truth on GitHub.
 Branch: simba/implement-the-visual-platform-shell-in-shellinde
 Title: Implement the visual platform shell in shell/index.html. 1. Create a ...
 
