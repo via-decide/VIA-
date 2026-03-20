@@ -7,6 +7,14 @@
 
   if (global.VIAAgent) return; // already loaded
 
+  function navigate(url) {
+    if (typeof global.VIATransition !== 'undefined' && global.VIATransition && typeof global.VIATransition.navigate === 'function') {
+      global.VIATransition.navigate(url);
+      return;
+    }
+    global.location.href = url;
+  }
+
   global.VIAAgent = {
     version: '1.0.0',
 
@@ -14,7 +22,7 @@
      * Open the full agent surface.
      */
     open() {
-      window.location.href = './agent.html';
+      navigate('./agent.html');
     },
 
     /**
@@ -27,7 +35,7 @@
       if (typeof window.generateContent === 'function') {
         return window.generateContent(command, topic);
       }
-      window.location.href = `./agent.html?cmd=${encodeURIComponent(command)}&topic=${encodeURIComponent(topic || '')}`;
+      navigate(`./agent.html?cmd=${encodeURIComponent(command)}&topic=${encodeURIComponent(topic || '')}`);
     },
 
     /**

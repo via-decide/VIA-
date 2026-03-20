@@ -35,8 +35,16 @@
     return target.toString();
   }
 
+  function navigate(url) {
+    if (typeof global.VIATransition !== 'undefined' && global.VIATransition && typeof global.VIATransition.navigate === 'function') {
+      global.VIATransition.navigate(url);
+      return;
+    }
+    global.location.href = url;
+  }
+
   function openPage(path, params) {
-    global.location.href = buildUrl(path, params);
+    navigate(buildUrl(path, params));
   }
 
   function openSurface(name, params) {

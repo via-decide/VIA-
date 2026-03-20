@@ -23,6 +23,7 @@ window.VIA_FIREBASE_CONFIG = {
 <script src="./shared/firebase-config.js"></script>
 <script src="./shared/tool-storage.js"></script>
 <script src="./shared/social-core.js"></script>
+<script src="./js/via-transition.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--saffron:#FF6B00;--saffron2:#FF9500;--deep:#0B0B1A;--deep2:#13132A;--deep3:#1C1C38;--gold:#F5C518;--white:#fff;--muted:#8B8BAD;--border:rgba(255,255,255,.08)}
@@ -222,7 +223,7 @@ input.error,select.error{border-color:#ff6b6b}
     return currentUser;
   }
 
-  function renderUserUI() { if (currentUser) window.location.href = './index.html'; }
+  function renderUserUI() { if (currentUser && window.VIATransition && typeof window.VIATransition.navigate === 'function') { window.VIATransition.navigate('./index.html'); return; } if (currentUser) window.location.href = './index.html'; }
   function renderGuestUI() { document.getElementById('auth-app').classList.add('visible'); }
   function renderApp() { if (!authReady) return; logAuthSnapshot(); if (currentUser) { renderUserUI(currentUser); } else { renderGuestUI(); } }
 
@@ -377,7 +378,11 @@ input.error,select.error{border-color:#ff6b6b}
         await _fbDb.collection('users').doc(uid).set(profile, { merge: true });
       }
       saveProfileCache(profile);
-      window.location.href = './index.html';
+      if (window.VIATransition && typeof window.VIATransition.navigate === 'function') {
+        window.VIATransition.navigate('./index.html');
+      } else {
+        window.location.href = './index.html';
+      }
     } catch(err) {
       setErr('signup-main-err', err.message || 'Sign up failed');
     }
@@ -425,7 +430,11 @@ input.error,select.error{border-color:#ff6b6b}
         await _fbDb.collection('users').doc(user.uid).set(profile, { merge: true });
       }
       saveProfileCache(profile);
-      window.location.href = './index.html';
+      if (window.VIATransition && typeof window.VIATransition.navigate === 'function') {
+        window.VIATransition.navigate('./index.html');
+      } else {
+        window.location.href = './index.html';
+      }
     } catch(err) {
       setErr('signin-main-err', err.message || 'Google sign-in failed.');
     }

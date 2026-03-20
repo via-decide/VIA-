@@ -56,7 +56,8 @@
 </script>
 <script src="./shared/tool-storage.js"></script>
 <script src="./shared/social-core.js"></script>
-<script src="./js/via-navigation.js"></script>
+    <script src="./js/via-transition.js"></script>
+    <script src="./js/via-navigation.js"></script>
 <script src="./js/via-bootstrap.js"></script>
 <style>
 /* ── RESET ── */
@@ -885,7 +886,7 @@ const VIA = {
     renderApp();
   },
   async saveXP(v){if(!currentUser)return;currentUser.xp=v;this.user=currentUser;if(!currentUser.is_guest)await this.saveLocalProfile(currentUser);renderApp();},
-  openAuth(){window.location.href='./auth.html';},
+  openAuth(){if(window.VIATransition&&typeof window.VIATransition.navigate==='function'){window.VIATransition.navigate('./auth.html');return;}window.location.href='./auth.html';},
   async signOut(){
     if(_remoteAuth&&typeof _remoteAuth.signOut==='function'){
       try{await _remoteAuth.signOut();}catch(error){console.error('Sign out error:', error);}
@@ -2243,7 +2244,7 @@ function openSheet(type, extra={}) {
   let html='';
   if(type==='discover-detail'&&extra.item){
     const {item}=extra;const safe=(item.toolPath||'').replace(/'/g,"\\'");
-    html=`<div class="sheet-title">${item.emoji} ${item.name}</div><div class="sheet-sub">${item.cat}</div><div class="sheet-actions">${item.toolPath?`<div class="sheet-btn" onclick="window.location.href='${safe}';closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">▶</div><div class="sheet-btn-text"><div class="sheet-btn-title">Launch Tool</div><div class="sheet-btn-sub">Open ${item.name}</div></div><div class="sheet-btn-arrow">›</div></div>`:''}</div>`;
+    html=`<div class="sheet-title">${item.emoji} ${item.name}</div><div class="sheet-sub">${item.cat}</div><div class="sheet-actions">${item.toolPath?`<div class="sheet-btn" onclick="if(window.VIATransition&&typeof window.VIATransition.navigate==='function'){window.VIATransition.navigate('${safe}');}else{window.location.href='${safe}';}closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">▶</div><div class="sheet-btn-text"><div class="sheet-btn-title">Launch Tool</div><div class="sheet-btn-sub">Open ${item.name}</div></div><div class="sheet-btn-arrow">›</div></div>`:''}</div>`;
   } else if(type==='profile-detail'&&extra.item){
     const {item}=extra;
     html=`<div class="sheet-title">${item.emoji} ${item.title}</div><div class="sheet-sub">${item.type}</div><div class="sheet-actions"><div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Close</div></div><div class="sheet-btn-arrow">›</div></div></div>`;
@@ -2267,7 +2268,7 @@ function openSheet(type, extra={}) {
         '</div>'+
         '<div class="sheet-btn-arrow">›</div>'+
       '</div>'+
-      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'./founder/index.html\'">'+
+      '<div class="sheet-btn" onclick="closeSheet();if(window.VIATransition&&typeof window.VIATransition.navigate===\'function\'){window.VIATransition.navigate(\'./founder/index.html\');}else{window.location.href=\'./founder/index.html\';}">'+
         '<div class="sheet-btn-icon" style="background:rgba(245,197,24,.1)">🧭</div>'+
         '<div class="sheet-btn-text">'+
           '<div class="sheet-btn-title">Founder Dashboard</div>'+
@@ -2275,7 +2276,7 @@ function openSheet(type, extra={}) {
         '</div>'+
         '<div class="sheet-btn-arrow">›</div>'+
       '</div>'+
-      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'./interview-prep/index.html\'">'+
+      '<div class="sheet-btn" onclick="closeSheet();if(window.VIATransition&&typeof window.VIATransition.navigate===\'function\'){window.VIATransition.navigate(\'./interview-prep/index.html\');}else{window.location.href=\'./interview-prep/index.html\';}">'+
         '<div class="sheet-btn-icon" style="background:rgba(57,255,136,.08)">🎤</div>'+
         '<div class="sheet-btn-text">'+
           '<div class="sheet-btn-title">Interview Prep</div>'+
@@ -2283,7 +2284,7 @@ function openSheet(type, extra={}) {
         '</div>'+
         '<div class="sheet-btn-arrow">›</div>'+
       '</div>'+
-      '<div class="sheet-btn" onclick="closeSheet();window.location.href=\'./student-research/index.html\'">'+
+      '<div class="sheet-btn" onclick="closeSheet();if(window.VIATransition&&typeof window.VIATransition.navigate===\'function\'){window.VIATransition.navigate(\'./student-research/index.html\');}else{window.location.href=\'./student-research/index.html\';}">'+
         '<div class="sheet-btn-icon" style="background:rgba(108,99,255,.12)">📚</div>'+
         '<div class="sheet-btn-text">'+
           '<div class="sheet-btn-title">Decision Research</div>'+

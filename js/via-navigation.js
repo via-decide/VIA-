@@ -49,13 +49,21 @@
     return target.toString();
   }
 
+  function navigate(url) {
+    if (typeof global.VIATransition !== 'undefined' && global.VIATransition && typeof global.VIATransition.navigate === 'function') {
+      global.VIATransition.navigate(url);
+      return;
+    }
+    global.location.href = url;
+  }
+
   function openPage(name, params) {
     var path = resolvePage(name);
     if (!path) {
       console.error('Route not found:', name);
       return;
     }
-    global.location.href = buildUrl(path, params);
+    navigate(buildUrl(path, params));
   }
 
   function openSurface(name, params) {

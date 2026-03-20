@@ -25,7 +25,8 @@ window.ECO_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
 <script src="./src/core/content/micro-content-architecture/MicroContentComposer.js"></script>
 <script src="./src/core/content/micro-content-architecture/MicroContentRegistry.js"></script>
 <script src="./src/core/content/micro-content-architecture/index.js"></script>
-<script src="./js/via-navigation.js"></script>
+    <script src="./js/via-transition.js"></script>
+    <script src="./js/via-navigation.js"></script>
 <style>
 /* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -975,7 +976,7 @@ const VIA = {
     renderApp();
   },
   async saveXP(v){if(!currentUser)return;currentUser.xp=v;this.user=currentUser;if(!currentUser.is_guest)await this.saveLocalProfile(currentUser);renderApp();},
-  openAuth(){window.location.href='./auth.html';},
+  openAuth(){if(window.VIATransition&&typeof window.VIATransition.navigate==='function'){window.VIATransition.navigate('./auth.html');return;}window.location.href='./auth.html';},
   async signOut(){
     if(_sb&&_sb.auth&&typeof _sb.auth.signOut==='function'){
       try{await _sb.auth.signOut();}catch(error){console.error('Sign out error:', error);}
@@ -2636,7 +2637,7 @@ function openSheet(type, extra={}) {
     '</div>';
   } else if(type==='discover-detail'&&extra.item){
     const {item}=extra;const safe=(item.toolPath||'').replace(/'/g,"\\'");
-    html=`<div class="sheet-title">${item.emoji} ${item.name}</div><div class="sheet-sub">${item.cat}</div><div class="sheet-actions">${item.toolPath?`<div class="sheet-btn" onclick="window.location.href='${safe}';closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">▶</div><div class="sheet-btn-text"><div class="sheet-btn-title">Launch Tool</div><div class="sheet-btn-sub">Open ${item.name}</div></div><div class="sheet-btn-arrow">›</div></div>`:''}</div>`;
+    html=`<div class="sheet-title">${item.emoji} ${item.name}</div><div class="sheet-sub">${item.cat}</div><div class="sheet-actions">${item.toolPath?`<div class="sheet-btn" onclick="if(window.VIATransition&&typeof window.VIATransition.navigate==='function'){window.VIATransition.navigate('${safe}');}else{window.location.href='${safe}';}closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">▶</div><div class="sheet-btn-text"><div class="sheet-btn-title">Launch Tool</div><div class="sheet-btn-sub">Open ${item.name}</div></div><div class="sheet-btn-arrow">›</div></div>`:''}</div>`;
   } else if(type==='profile-detail'&&extra.item){
     const {item}=extra;
     html=`<div class="sheet-title">${item.emoji} ${item.title}</div><div class="sheet-sub">${item.type}</div><div class="sheet-actions">${item.postBody?`<div class="sheet-btn" style="align-items:flex-start;cursor:default"><div class="sheet-btn-icon" style="background:rgba(108,99,255,.15)">✍️</div><div class="sheet-btn-text"><div class="sheet-btn-title">Post body</div><div class="sheet-btn-sub">${escapeHTML(item.postBody)}</div></div></div>`:''}<div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Close</div></div><div class="sheet-btn-arrow">›</div></div></div>`;
