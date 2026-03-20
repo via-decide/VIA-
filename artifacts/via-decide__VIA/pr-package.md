@@ -1,27 +1,9 @@
-Branch: simba/push-the-phase-0-initialized-monorepo-structure-
-Title: Push the Phase 0 initialized monorepo structure to the GitHub reposit...
+Branch: simba/implement-a-unified-analytics-service-for-the-en
+Title: Implement a unified analytics service for the entire platform. 1. Cre...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Establish the monorepo source of truth on GitHub.
-Branch: simba/implement-the-visual-platform-shell-in-shellinde
-Title: Implement the visual platform shell in shell/index.html. 1. Create a ...
-
-## Summary
-- Repo orchestration task for via-decide/VIA
-- Goal: Provide a professional "Mission Control" interface for the ViaDécide ecosystem.
-Branch: simba/finalize-the-cloud-deployment-and-spa-routing-1-
-Title: Finalize the cloud deployment and SPA routing. 1. Deploy the viadecid...
-
-## Summary
-- Repo orchestration task for via-decide/VIA
-- Goal: Make the platform live and accessible via a unified production domain.
-Branch: simba/migrate-the-most-critical-tools-into-the-new-she
-Title: Migrate the most critical tools into the new shell system. 1. Move co...
-
-## Summary
-- Repo orchestration task for via-decide/VIA
-- Goal: Prove the monorepo architecture with high-impact core tools.
+- Goal: Gain deep insights into tool popularity and performance across the monorepo.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
