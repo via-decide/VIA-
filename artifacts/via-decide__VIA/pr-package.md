@@ -1,3 +1,9 @@
+Branch: simba/implement-a-lightweight-cross-platform-developer
+Title: Implement a lightweight, cross-platform Developer SDK and CLI tool ca...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Transform VIA from an isolated web application into a ubiquitous developer platform. By providing a clean SDK and a powerful CLI, engineers can embed the multi-agent swarm directly into their CI/CD pipelines (e.g., auto-reviewing PRs) or build their own custom UIs on top of your orchestration engine.
 Branch: simba/implement-a-highly-scalable-bi-directional-event
 Title: Implement a highly scalable, bi-directional event stream called via-r...
 
