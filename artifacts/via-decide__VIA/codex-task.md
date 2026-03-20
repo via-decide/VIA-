@@ -1,10 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
-1. Extract core authentication logic from legacy-auth-repo and port it to packages/auth-service within the monorepo. 2. Refactor the login payload to align with the unified monorepo API schema. 3. Update shell/router.js to protect internal routing paths using the newly ported auth middleware. 4. Write unit tests to verify token validation and session timeout behaviors in the new environment.
+Migrate the most critical tools into the new shell system. 1. Move code for decide.engine-tools into tools/core/engine-tools/. 2. Update tool internal links to use the StateBridge for cross-platform context. 3. Register the tool as "Active" in the nav-registry.json.
 
 CONSTRAINTS
-Must maintain backward compatibility with existing active JWT tokens for currently logged-in users. Ensure strict TypeScript typing for the auth middleware. Clean up and remove legacy CI/CD pipeline triggers from the old repository.
+Zero downtime for the legacy tool. Verify that the iframe induction works without scroll-lock issues.
 
 PROCESS (MANDATORY)
 1. Read README.md and AGENTS.md before editing.
