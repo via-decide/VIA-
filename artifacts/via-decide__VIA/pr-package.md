@@ -1,13 +1,13 @@
-Branch: simba/implement-a-core-backend-middleware-module-calle
-Title: > Implement a core backend middleware module called via-predictive-ro...
+Branch: simba/implement-an-automated-documentation-pipeline-ca
+Title: Implement an automated documentation pipeline called via-docs-engine ...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: > Upgrade the VIA core architecture into a robust, highly scalable backend capable of intelligently load-balancing massive concurrent agent or user requests. This lays the infrastructural foundation necessary to support advanced, dynamic social-media-style engine tools. /end_task
+- Goal: Solidify the platform's long-term maintainability and Developer Experience (DevEx). By generating a definitive, auto-updating architecture map and API reference, onboarding new developers becomes frictionless, and security protocols are strictly documented across the entire team.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
-- [ ] Validate Telegram command flow
+- [ ] Validate command flow
 - [ ] Validate generated artifact files
 
 ## Risks
