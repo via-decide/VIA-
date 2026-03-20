@@ -40,12 +40,14 @@
     document.head.appendChild(script);
   }
 
+  // Load the Orchard Firebase config. The file is a JSON payload rather than an executable script.
   fetch('./firebase-applet-config.json', { cache: 'no-cache' })
     .then(function (response) {
-      return response.text();
+      return response.json();
     })
-    .then(function (source) {
-      (0, Function)(source)();
+    .then(function (config) {
+      // Assign the config onto the global namespace so that shared/firebase-config.js can pick it up.
+      window.VIA_FIREBASE_CONFIG = config;
       loadFirebaseBootstrap();
     })
     .catch(function (error) {

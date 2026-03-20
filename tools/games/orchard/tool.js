@@ -8,6 +8,7 @@
       window.open('https://orchard.viadecide.com', '_blank');
     }
   };
+})(window);
 // Orchard — tool.js
 // Auto-stubbed. Implement logic here.
 (function (global) {
