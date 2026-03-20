@@ -1,13 +1,13 @@
-Branch: simba/implement-a-core-backend-middleware-module-calle
-Title: > Implement a core backend middleware module called via-predictive-ro...
+Branch: simba/implement-the-core-multi-agent-routing-engine-ca
+Title: Implement the core multi-agent routing engine called via-agent-swarm ...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: > Upgrade the VIA core architecture into a robust, highly scalable backend capable of intelligently load-balancing massive concurrent agent or user requests. This lays the infrastructural foundation necessary to support advanced, dynamic social-media-style engine tools. /end_task
+- Goal: Create a fluid, multi-agent ecosystem where specialized AIs can collaborate, debate, and pass context seamlessly to solve complex user requests.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
-- [ ] Validate Telegram command flow
+- [ ] Validate command flow
 - [ ] Validate generated artifact files
 
 ## Risks
