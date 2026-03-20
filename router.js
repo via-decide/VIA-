@@ -60,13 +60,13 @@
   // ─────────────────────────────────────────────────────────────
   const SUBPAGES = {
     // Core subpages
-    'auth':                          '/auth.html',
-    'sign-in':                       '/auth.html',
-    'login':                         '/auth.html',
-    'creator-onboarding':            '/creator-onboarding.html',
-    'creator':                       '/creator-onboarding.html',
-    'create':                        '/creator-onboarding.html',
-    'creator-story':                 '/creator-story.html',
+    'auth':                          './auth.html',
+    'sign-in':                       './auth.html',
+    'login':                         './auth.html',
+    'creator-onboarding':            './creator-onboarding.html',
+    'creator':                       './creator-onboarding.html',
+    'create':                        './creator-onboarding.html',
+    'creator-story':                 './creator-story.html',
 
     // Feature subpages
     'founder':                       '/founder/',
@@ -78,7 +78,7 @@
     'studyos':                       '/StudyOS/',
     'study':                         '/StudyOS/',
     'prompt-alchemy':                '/prompt-alchemy/',
-    'agent':                         '/agent/',
+    'agent':                         './agent.html',
     'app-generator':                 '/app-generator/',
     'sales-dashboard':               '/sales-dashboard/',
     'decision-brief-guide':          '/decision-brief-guide/',

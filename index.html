@@ -25,6 +25,7 @@ window.ECO_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
 <script src="./src/core/content/micro-content-architecture/MicroContentComposer.js"></script>
 <script src="./src/core/content/micro-content-architecture/MicroContentRegistry.js"></script>
 <script src="./src/core/content/micro-content-architecture/index.js"></script>
+<script src="./js/via-navigation.js"></script>
 <style>
 /* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -478,7 +479,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 <!-- ── APP ── -->
 <div id="app">
   <div class="status-bar">
-    <div class="status-logo" onclick="switchLayer('feed')">VIA</div>
+    <div class="status-logo" onclick="window.VIANav.openPage('feed')">VIA</div>
     <div class="status-actions">
       <div class="status-xp"><div class="xp-dot"></div><span id="xp-counter">0 XP</span></div>
       <button class="status-auth-btn" id="status-auth-btn" onclick="VIA.openAuth()">Sign In</button>
@@ -676,7 +677,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
           <div class="about-product-info"><div class="about-product-name">Deep Dives</div><div class="about-product-desc">Cinematic story breakdowns on Bharat's biggest trends.</div></div>
           <div class="about-product-arrow">›</div>
         </div>
-        <div class="about-product" onclick="window.location.href='./creator-onboarding.html'">
+        <div class="about-product" onclick="window.VIANav.openPage('creator_onboarding')">
           <div class="about-product-icon">🎬</div>
           <div class="about-product-info"><div class="about-product-name">Creator Setup</div><div class="about-product-desc">Start the creator onboarding flow and set up your VIA publishing path.</div></div>
           <div class="about-product-arrow">›</div>
@@ -730,17 +731,17 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
   </div>
 
   <nav class="bottom-nav">
-    <button class="nav-item active" data-nav="feed" onclick="switchNav('feed',this)">
+    <button class="nav-item active" data-nav="feed" onclick="window.VIANav.openPage('feed')">
       <div class="nav-icon">🏠</div><div class="nav-label">Feed</div>
     </button>
-    <button class="nav-item" data-nav="discover" onclick="switchNav('discover',this)">
+    <button class="nav-item" data-nav="discover" onclick="window.VIANav.openPage('discover')">
       <div class="nav-icon">🔍</div><div class="nav-label">Explore</div>
     </button>
     <button class="nav-create" onclick="openSheet('create')">＋</button>
-    <button class="nav-item" data-nav="about" onclick="switchNav('about',this)">
+    <button class="nav-item" data-nav="about" onclick="window.VIANav.openPage('about')">
       <div class="nav-icon">ℹ️</div><div class="nav-label">About</div>
     </button>
-    <button class="nav-item" data-nav="profile" onclick="switchNav('profile',this)">
+    <button class="nav-item" data-nav="profile" onclick="window.VIANav.openPage('profile')">
       <div class="nav-icon">👤</div><div class="nav-label">Profile</div>
     </button>
   </nav>
@@ -2181,7 +2182,26 @@ function switchLayer(layer, storyKey) {
   if (layer==='profile')  buildProfile();
 }
 
-document.querySelectorAll('.layer-tab').forEach(tab=>tab.addEventListener('click',()=>switchLayer(tab.dataset.layer)));
+document.querySelectorAll('.layer-tab').forEach(tab=>tab.addEventListener('click',(event)=>{
+  if(tab.dataset.layer==='feed'){switchLayer('feed');return;}
+  if(window.VIANav){event.preventDefault();window.VIANav.openPage(tab.dataset.layer);}
+}));
+
+(function handleLegacyStandaloneRoutes(){
+  const legacyStandaloneRoutes={
+    '/creator-onboarding':'creator_onboarding',
+    '/creator-story':'creator_story',
+    '/profile':'profile',
+    '/agent':'agent',
+    '/discover':'discover',
+    '/about':'about'
+  };
+  const normalizedPath=window.location.pathname.replace(/\/$/, '');
+  const target=legacyStandaloneRoutes[normalizedPath];
+  if(target&&window.VIANav){
+    window.location.replace(window.VIANavigation.buildUrl(target));
+  }
+})();
 
 // ── TOOL VIEWER ──────────────────────────────────────────────────────
 let _tvPrevLayer = 'discover';
