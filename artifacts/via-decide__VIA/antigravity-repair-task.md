@@ -4,10 +4,7 @@ TARGET
 Validate and repair only the files touched by the previous implementation.
 
 TASK
-Push the Phase 0 initialized monorepo structure to the GitHub repository. 1. Initialize a git repository in viadecide-monorepo/. 2. Add the remote origin https://github.com/via-decide/VIA.git. 3. Commit the Phase 0 skeleton (shell, tools/*, services, shared, configs). 4. Push the main branch.
-Implement the visual platform shell in shell/index.html. 1. Create a premium dark-mode layout with a fixed sidebar and centered tool area. 2. Implement the RealtimeBus connection for status indicators. 3. Build the tool-loading logic using iframes to isolate tool-specific JS/CSS.
-Finalize the cloud deployment and SPA routing. 1. Deploy the viadecide-monorepo to Vercel. 2. Configure vercel.json to handle SPA rewrites for /tool/*. 3. Verify that the shell handles URL parameter parsing for tool induction.
-Migrate the most critical tools into the new shell system. 1. Move code for decide.engine-tools into tools/core/engine-tools/. 2. Update tool internal links to use the StateBridge for cross-platform context. 3. Register the tool as "Active" in the nav-registry.json.
+Implement a unified analytics service for the entire platform. 1. Create services/analytics.js to track tool usage and performance. 2. Implement an event-forwarding layer in the Shell to collect data from tool iframes. 3. Connect the service to a central database/dashboard.
 
 RULES
 1. Audit touched files first and identify regressions.
