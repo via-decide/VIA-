@@ -167,3 +167,8 @@
 # â”€â”€ SPA fallback â€” MUST be last â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # All unmatched routes serve index.html (client-side hash routing takes over)
 /*                                  /index.html                         200
+
+# -- Articles (from decide.engine) -----------------------------------------
+/articles/*                         /articles/:splat                    200
+/articles                           /index.html                         200
+

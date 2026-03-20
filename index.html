@@ -438,6 +438,16 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 .dd-fade{animation:ddFadeIn .38s ease-out forwards;}
 @keyframes ddFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
+/* ── TOOL VIEWER (iframe sub-view layer) ── */
+#layer-tool-viewer{position:absolute;inset:0;background:var(--deep);display:flex;flex-direction:column;z-index:80;}
+.tv-header{display:flex;align-items:center;gap:.75rem;padding:.6rem 1rem;background:rgba(11,11,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);flex-shrink:0;min-height:50px;}
+.tv-back{background:none;border:1px solid var(--border);color:var(--white);border-radius:99px;padding:.35rem .8rem;font-size:.75rem;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .2s;font-family:'DM Sans',sans-serif;}
+.tv-back:active{background:rgba(255,107,0,.15);border-color:var(--saffron);}
+.tv-title{font-size:.85rem;font-weight:700;color:var(--white);letter-spacing:.02em;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tv-open-btn{background:none;border:1px solid rgba(255,255,255,.12);color:var(--muted);border-radius:99px;padding:.3rem .7rem;font-size:.65rem;font-weight:700;cursor:pointer;letter-spacing:.05em;font-family:'DM Sans',sans-serif;text-transform:uppercase;transition:all .2s;}
+.tv-open-btn:active{border-color:var(--saffron);color:var(--saffron);}
+.tv-frame{flex:1;border:none;width:100%;background:var(--deep);}
+
 /* ── RESPONSIVE ── */
 @media(min-width:500px){
   #app{max-width:430px;left:50%;transform:translateX(-50%);right:auto;width:430px}
@@ -525,6 +535,18 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
         <button class="dd-story-btn"        data-story="ev"      onclick="ddLoad('ev',this)">⚡ EV Cities</button>
         <button class="dd-story-btn"        data-story="creator" onclick="ddLoad('creator',this)">🎬 Creators</button>
         <button class="dd-story-btn"        data-story="edtech"  onclick="ddLoad('edtech',this)">📚 EdTech</button>
+        <button class="dd-story-btn"        data-story="decide"  onclick="ddLoad('decide',this)">🏛 Decision Infra</button>
+        <button class="dd-story-btn"        data-story="indiaai" onclick="ddLoad('indiaai',this)">🤖 IndiaAI</button>
+        <button class="dd-story-btn"        data-story="ondc"    onclick="ddLoad('ondc',this)">🛒 ONDC</button>
+        <button class="dd-story-btn"        data-story="founder" onclick="ddLoad('founder',this)">🚀 Founder</button>
+        <button class="dd-story-btn"        data-story="vernacular" onclick="ddLoad('vernacular',this)">🗣 Vernacular</button>
+        <button class="dd-story-btn"        data-story="space"   onclick="ddLoad('space',this)">🛸 NewSpace</button>
+        <button class="dd-story-btn"        data-story="agri"    onclick="ddLoad('agri',this)">🌾 Precision Farm</button>
+        <button class="dd-story-btn"        data-story="research" onclick="ddLoad('research',this)">🔬 Research</button>
+        <button class="dd-story-btn"        data-story="msme"    onclick="ddLoad('msme',this)">💰 MSME Finance</button>
+        <button class="dd-story-btn"        data-story="wingsfire" onclick="ddLoad('wingsfire',this)">🔥 Wings of Fire</button>
+        <button class="dd-story-btn"        data-story="mars"    onclick="ddLoad('mars',this)">🚀 Mars Lab</button>
+        <button class="dd-story-btn"        data-story="swipeos" onclick="ddLoad('swipeos',this)">📲 SwipeOS</button>
       </div>
       <div class="dd-sec-pill"><span id="dd-sec-num">1</span>/<span id="dd-sec-tot">7</span></div>
     </div>
@@ -697,6 +719,16 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
   <div class="progress-dots" id="progress-dots"></div>
 
   <!-- BOTTOM NAV -->
+  <!-- TOOL VIEWER LAYER (iframe sub-view) -->
+  <div id="layer-tool-viewer" style="display:none;">
+    <div class="tv-header">
+      <button class="tv-back" onclick="closeToolViewer()">← Back</button>
+      <div class="tv-title" id="tv-title">Tool</div>
+      <button class="tv-open-btn" id="tv-open-btn" onclick="openToolViewerExternal()">⬡ Full</button>
+    </div>
+    <iframe class="tv-frame" id="tv-frame" src="" title="Tool Viewer" allow="fullscreen" loading="lazy"></iframe>
+  </div>
+
   <nav class="bottom-nav">
     <button class="nav-item active" data-nav="feed" onclick="switchNav('feed',this)">
       <div class="nav-icon">🏠</div><div class="nav-label">Feed</div>
@@ -994,6 +1026,54 @@ const DEFAULT_CARDS = [
    title:'BYJU\'s के बाद India ने सीखा — <em>असली edtech</em> YouTube पर है',
    author:'Pooja Sharma',authorEmoji:'👩‍🏫',location:'Pune',time:'12h ago',views:'2.8M',likes:'193K',
    storyKey:'edtech'},
+  {id:9,cat:'bharat',catLabel:'🏛 Policy',bg:'linear-gradient(160deg,#0a1a3a 0%,#0B0B1A 60%)',emoji:'🏛',
+   title:'India को चाहिए <em>Decision Infrastructure</em> — data है, decision नहीं',
+   author:'ViaDecide Editorial',authorEmoji:'⚖️',location:'New Delhi',time:'1d ago',views:'1.1M',likes:'88K',
+   storyKey:'decide'},
+  {id:10,cat:'tech',catLabel:'🤖 AI Policy',bg:'linear-gradient(160deg,#0a0025 0%,#0B0B1A 60%)',emoji:'🤖',
+   title:'₹10,371 करोड़ का <em>IndiaAI Mission</em> — builders के लिए क्या खुलेगा?',
+   author:'Aditya Nair',authorEmoji:'🧑‍💻',location:'Bangalore',time:'2d ago',views:'2.3M',likes:'167K',
+   storyKey:'indiaai'},
+  {id:11,cat:'bharat',catLabel:'🛒 Commerce',bg:'linear-gradient(160deg,#001a15 0%,#0B0B1A 60%)',emoji:'🛒',
+   title:'ONDC — <em>open commerce</em> जो Amazon और Flipkart को challenge दे रहा है',
+   author:'Meera Krishnan',authorEmoji:'🏪',location:'Chennai',time:'3d ago',views:'1.7M',likes:'124K',
+   storyKey:'ondc'},
+  {id:12,cat:'viral',catLabel:'🚀 Startup',bg:'linear-gradient(160deg,#2a0a00 0%,#0B0B1A 60%)',emoji:'🚀',
+   title:'Tier-2 founder ने ₹0 marketing से बनाया <em>viral SaaS</em> — 30 दिन की कहानी',
+   author:'Vikram Bose',authorEmoji:'🦁',location:'Surat',time:'18h ago',views:'4.2M',likes:'334K',
+   storyKey:'founder'},
+  {id:13,cat:'culture',catLabel:'🗣 Vernacular',bg:'linear-gradient(160deg,#1a0a2a 0%,#0B0B1A 60%)',emoji:'🗣',
+   title:'Hindi, Tamil, Bengali — <em>vernacular internet</em> का अगला billion users',
+   author:'Sneha Pillai',authorEmoji:'📱',location:'Kochi',time:'6h ago',views:'3.4M',likes:'258K',
+   storyKey:'vernacular'},
+  {id:14,cat:'tech',catLabel:'🛸 Space',bg:'linear-gradient(160deg,#0a0014 0%,#0B0B1A 60%)',emoji:'🛸',
+   title:'ISRO के बाद private space — India का <em>NewSpace ecosystem</em> कैसे बना',
+   author:'Dr. Ananya Rao',authorEmoji:'🔭',location:'Bengaluru',time:'4h ago',views:'1.9M',likes:'141K',
+   storyKey:'space'},
+  {id:15,cat:'bharat',catLabel:'🌾 AgriTech',bg:'linear-gradient(160deg,#001510 0%,#0B0B1A 60%)',emoji:'🌾',
+   title:'किसान + AI = <em>precision farming</em> — Rajasthan के खेतों में data revolution',
+   author:'Sunita Devi',authorEmoji:'👩‍🌾',location:'Jaipur',time:'9h ago',views:'2.1M',likes:'159K',
+   storyKey:'agri'},
+  {id:16,cat:'tech',catLabel:'🔬 Research',bg:'linear-gradient(160deg,#001a2a 0%,#0B0B1A 60%)',emoji:'🔬',
+   title:'4 Wikis, 1 Brief — <em>Multi-source research</em> is how ViaDecide thinks',
+   author:'ViaDecide Team',authorEmoji:'⚙️',location:'Bengaluru',time:'3h ago',views:'890K',likes:'67K',
+   storyKey:'research'},
+  {id:17,cat:'bharat',catLabel:'💰 MSME',bg:'linear-gradient(160deg,#1a0a00 0%,#0B0B1A 60%)',emoji:'💰',
+   title:'India के 63 million MSMEs के लिए <em>finance dashboard</em> — GST, cash flow, loans',
+   author:'Rajiv Mehta',authorEmoji:'💼',location:'Surat',time:'5h ago',views:'1.3M',likes:'98K',
+   storyKey:'msme'},
+  {id:18,cat:'culture',catLabel:'🔥 Quiz',bg:'linear-gradient(160deg,#1a0500 0%,#0B0B1A 60%)',emoji:'🔥',
+   title:'Wings of Fire — APJ Abdul Kalam की कहानी, <em>multiplayer quiz</em> format में',
+   author:'Quiz Engine',authorEmoji:'🎮',location:'India',time:'1h ago',views:'3.2M',likes:'245K',
+   storyKey:'wingsfire'},
+  {id:19,cat:'tech',catLabel:'🚀 Space Game',bg:'linear-gradient(160deg,#001020 0%,#0B0B1A 60%)',emoji:'🚀',
+   title:'Mars Survival Lab — <em>Constraint-based decisions</em> at 225 million km',
+   author:'Decide Lab',authorEmoji:'🔭',location:'ISRO',time:'2h ago',views:'1.8M',likes:'134K',
+   storyKey:'mars'},
+  {id:20,cat:'viral',catLabel:'📲 SwipeOS',bg:'linear-gradient(160deg,#0a001a 0%,#0B0B1A 60%)',emoji:'📲',
+   title:'SwipeOS — हर decision एक <em>card</em> में। The OS built on choices.',
+   author:'SwipeOS',authorEmoji:'📱',location:'ViaDecide',time:'4h ago',views:'2.7M',likes:'189K',
+   storyKey:'swipeos'},
 ];
 
 const VIA_MICRO_CONTENT = typeof window.createMicroContentArchitecture === 'function'
@@ -1064,6 +1144,23 @@ const DISCOVER_ITEMS = [
   {isHeader:true, label:'🎬 Creator'},
   {emoji:'🎬',cat:'Creator',name:'Creator Setup',desc:'Start your VIA creator journey and set up your publishing path.',toolPath:'./creator-onboarding.html'},
   {emoji:'⏱️',cat:'Focus',name:'Pomodoro Timer',desc:'Focus timer with XP rewards and session tracking.',toolPath:'/tools/pomodoro/'},
+  // ── Articles & Deep Reads ──────────────────────────────────────
+  {isHeader:true, label:'📰 Articles'},
+  {emoji:'🏛',cat:'Policy',name:'Decision Infrastructure',desc:'Why India needs structured decision systems — from Vidarbha to Raisina Hill.',toolPath:'/articles/decision-infrastructure-india.html'},
+  {emoji:'🤖',cat:'AI Policy',name:'IndiaAI Mission',desc:'₹10,371 crore sovereign AI investment — what it unlocks for builders.',toolPath:'/articles/indiaai-mission-2025.html'},
+  {emoji:'🛒',cat:'Commerce',name:'ONDC for Bharat',desc:'How open commerce levels the playing field for every Indian seller.',toolPath:'/articles/ondc-for-bharat.html'},
+  {emoji:'🚀',cat:'Platform',name:'ViaDecide Beta',desc:'India\'s first policy-grade decision engine — now open to students, founders, farmers.',toolPath:'/articles/viadecide-public-beta.html'},
+  {emoji:'🔬',cat:'Research',name:'Multi-Source Research',desc:'How ViaDecide synthesizes 4 Wikis into one structured decision brief.',toolPath:'/articles/multi-source-research-explained.html'},
+  {emoji:'📋',cat:'Founder',name:'Founder Weekly',desc:'Decision reviews, growth loops, and weekly frameworks for Indian founders.',toolPath:'/articles/founder.html'},
+  {emoji:'💰',cat:'Finance',name:'MSME Finance Dashboard',desc:'India MSME financial planning — GST, cash flow, loan eligibility tracker.',toolPath:'/articles/finance-dashboard-msme.html'},
+  {emoji:'📝',cat:'Brief',name:'Decision Brief',desc:'Generate a structured decision brief from any question or problem.',toolPath:'/articles/brief.html'},
+  // ── Interactive Tools (from decide.engine) ────────────────────
+  {isHeader:true, label:'🎯 Mini Games & Quizzes'},
+  {emoji:'🔥',cat:'Quiz',name:'Wings of Fire Quiz',desc:'Multiplayer quiz — APJ Abdul Kalam\'s Wings of Fire. Compete live.',toolPath:'/articles/wings-of-fire-quiz.html'},
+  {emoji:'🚀',cat:'Game',name:'Mars Survival Lab',desc:'Constraint-based decision game — survive Mars with limited resources.',toolPath:'/articles/mars-rover-simulator-game.html'},
+  {emoji:'⚔️',cat:'Game',name:'HexWars Arena',desc:'Turn-based strategy — conquer hexes, build skills, defeat rivals.',toolPath:'/articles/HexWars.html'},
+  {emoji:'🧪',cat:'Quiz',name:'Alchemist Quiz',desc:'Knowledge alchemy — transform raw facts into mastered concepts.',toolPath:'/articles/alchemist.html'},
+  {emoji:'📲',cat:'Tool',name:'SwipeOS',desc:'Swipe through decisions — the decision engine in card form.',toolPath:'/articles/SwipeOS.html'},
 ];
 
 const PROFILE_ITEMS = [
@@ -1424,6 +1521,342 @@ const BLOG_DATA = {
     ],
     clTitle:'Building the Next EdTech Wave',
     checklist:['Track \'completion rate\' above all other metrics — it\'s the only honest signal of pedagogical value.','Distribution is the product. The best content with no community dies; mediocre content inside a great cohort thrives.','Don\'t build a platform. Build an educator brand. Then license the platform as infrastructure.']
+  },
+  decide:{
+    theme:'#4A90D9',catLabel:'· 🏛 DECISION INFRASTRUCTURE',
+    hookTitle:'India को चाहिए <em>Decision Infrastructure</em> — data है, decision नहीं',
+    hookLead:'India has one of the world\'s most sophisticated digital stacks — UPI, Aadhaar, ONDC. But between data and decision, there\'s a gap costing billions every year.',
+    probTitle:'The Synthesis Gap',
+    probBody:'A farmer in Vidarbha deciding whether to switch from cotton to soybean needs weather data, MSP data, soil data, and market prices — all simultaneously. No single system provides this.',
+    problems:[
+      {icon:'🌾',text:'<strong>Heuristic Decisions</strong> — Farmers rely on neighbors\' guesses instead of data-backed advice.'},
+      {icon:'🏫',text:'<strong>Education Gap</strong> — First-gen college students choose careers based on family opinions, not outcome data.'},
+      {icon:'🏛',text:'<strong>Policy Without Analysis</strong> — MLAs draft budgets without structured decision support tools.'}
+    ],
+    insightTitle:'Decision Infrastructure as Public Good',
+    insightBody:'What policy analysts do for ministers and consultants do for executives should be accessible to every citizen. The gap isn\'t data — it\'s structured synthesis.',
+    insightQuote:'"The same decision infrastructure that helps a farmer choose a crop can help an MLA draft a constituency brief — and a student choose a career path."',
+    fwTitle:'What Decision Infrastructure Looks Like',
+    fwSteps:[
+      {title:'Question Intake',desc:'A structured prompt that converts any real-world problem into a researchable query.'},
+      {title:'Multi-Source Synthesis',desc:'Pulling from authoritative data sources — government portals, research papers, market data — simultaneously.'},
+      {title:'Structured Output',desc:'Producing a decision brief: context, options, trade-offs, recommendation. Not a search result.'}
+    ],
+    exTitle:'ViaDecide in Action',
+    examples:[
+      {title:'Policy Brief Tool',desc:'Students, journalists, and officials use it to generate structured briefs on any policy topic in under 5 minutes.'},
+      {title:'IndiaAI Alignment',desc:'The IndiaAI Mission\'s \'responsible AI for inclusive growth\' mandate maps directly to decision infrastructure as a public good.'}
+    ],
+    clTitle:'For Builders & Policymakers',
+    checklist:['Source-attributed outputs are non-negotiable — every claim must be traceable.','Multilingual support is not a feature, it\'s infrastructure — decisions happen in 22 languages.','Design for offline-first where connectivity is unreliable.']
+  },
+  indiaai:{
+    theme:'#7B4FFF',catLabel:'· 🤖 AI POLICY',
+    hookTitle:'₹10,371 करोड़ का <em>IndiaAI Mission</em> — builders के लिए क्या खुलेगा?',
+    hookLead:'The Union Cabinet\'s ₹10,371 crore IndiaAI Mission is India\'s largest sovereign AI investment — and it\'s specifically designed to unlock opportunities for Indian builders, not just big tech.',
+    probTitle:'Why India Needed Its Own AI Mission',
+    probBody:'Without sovereign compute, Indian AI startups paid dollar-denominated GPU bills to American clouds. Without indigenous datasets, Indian-language AI models were trained on scraped, low-quality data.',
+    problems:[
+      {icon:'💻',text:'<strong>Compute Dependency</strong> — ₹15,000/month GPU costs killed AI startups before they shipped.'},
+      {icon:'🗃️',text:'<strong>Data Desert</strong> — Quality Indian-language training datasets were either unavailable or prohibitively expensive.'},
+      {icon:'🏦',text:'<strong>Funding Gap</strong> — Deep-tech AI startups couldn\'t survive the valley of death between research and product.'}
+    ],
+    insightTitle:'Sovereign AI as Economic Policy',
+    insightBody:'The seven pillars of IndiaAI — compute, datasets, models, applications, skilling, startups, responsible AI — are not technology decisions. They\'re economic development decisions.',
+    insightQuote:'"10,000 GPUs available to Indian startups at near-cost is not infrastructure. It\'s a 5-year head start for every Bharat-first AI builder who acts now."',
+    fwTitle:'The Seven IndiaAI Pillars',
+    fwSteps:[
+      {title:'Sovereign Compute',desc:'10,000+ GPU cluster through public-private partnerships — accessible to startups and researchers at subsidized cost.'},
+      {title:'India Datasets Platform',desc:'A unified marketplace for quality, non-personal Indian datasets — dramatically reducing the biggest cost of building Indian-language AI.'},
+      {title:'Responsible AI Framework',desc:'Bias auditing, explainability requirements, and data governance standards — a signal that IndiaAI-backed products will be held to higher standards.'}
+    ],
+    exTitle:'What Opens Up for Builders',
+    examples:[
+      {title:'Subsidized GPU Access',desc:'Compute costs that killed Indian AI startups drop dramatically — enabling 18-month runway extensions for early-stage teams.'},
+      {title:'Indigenous LMMs',desc:'India-specific foundation models trained on Indian languages and contexts — making healthcare, agriculture, and governance AI finally viable at scale.'}
+    ],
+    clTitle:'How to Position for IndiaAI',
+    checklist:['Apply for IndiaAI compute credits — priority goes to agriculture, healthcare, education, and governance applications.','Build on India Datasets Platform early — contributing quality data builds reputation and earns API credits.','The responsible AI framework is a moat — products built to its standards will win government procurement.']
+  },
+  ondc:{
+    theme:'#00B86B',catLabel:'· 🛒 OPEN COMMERCE',
+    hookTitle:'ONDC — <em>open commerce</em> जो Amazon और Flipkart को challenge दे रहा है',
+    hookLead:'India\'s e-commerce has been controlled by 2-3 platforms for a decade. ONDC — the Open Network for Digital Commerce — is dismantling that model one protocol at a time.',
+    probTitle:'The Platform Lock-in Problem',
+    probBody:'On traditional platforms, a seller is locked into one algorithm, one commission structure, and one discovery system. Switching is nearly impossible without losing all seller history and reviews.',
+    problems:[
+      {icon:'💰',text:'<strong>Commission Drain</strong> — Platforms charge 15-35% commission, making small-margin sellers structurally unprofitable.'},
+      {icon:'🔒',text:'<strong>Discovery Lock-in</strong> — A seller\'s customer data stays with the platform, not the seller.'},
+      {icon:'📦',text:'<strong>Logistics Monopoly</strong> — Platforms control fulfillment, creating dependency and cost structures sellers can\'t negotiate.'}
+    ],
+    insightTitle:'Interoperability as Liberation',
+    insightBody:'ONDC separates buyer apps, seller apps, and logistics into independent layers that can mix and match. A kirana registered on one seller app is discoverable by buyers on any buyer app.',
+    insightQuote:'"ONDC is what happens when you apply the UPI model to e-commerce — open protocols instead of closed platforms. It took payments from duopoly to democracy. ONDC is attempting the same."',
+    fwTitle:'How ONDC Actually Works',
+    fwSteps:[
+      {title:'Buyer App → Network',desc:'A buyer searches on any ONDC-compatible app — Paytm, Meesho, Namma Yatri — and their query propagates across all seller apps.'},
+      {title:'Seller App → Discovery',desc:'Sellers register on any seller app. Their inventory becomes discoverable across the entire ONDC network instantly.'},
+      {title:'Logistics Layer',desc:'Dunzo, Shiprocket, Shadowfax compete openly for fulfillment — sellers get market rates, not platform-negotiated rates.'}
+    ],
+    exTitle:'ONDC Scale in 2025',
+    examples:[
+      {title:'10M+ Monthly Transactions',desc:'Crossing 10 million monthly transactions across food, grocery, mobility, and financial services as of mid-2025.'},
+      {title:'Kisan-to-Consumer',desc:'ONDC for agriculture enables direct farm-to-consumer trade — a kisan in Punjab listing produce directly to buyers in Delhi.'}
+    ],
+    clTitle:'For Builders on ONDC',
+    checklist:['Build buyer apps for underserved categories — tier-2 city grocery, regional food, local services.','ONDC logistics integration is still rough — smooth fulfillment UX is a genuine competitive advantage.','Government procurement on ONDC is the next frontier — GeM integration opens ₹2 lakh crore market.']
+  },
+  founder:{
+    theme:'#FF8C00',catLabel:'· 🚀 FOUNDER STORY',
+    hookTitle:'Tier-2 founder ने ₹0 marketing से बनाया <em>viral SaaS</em> — 30 दिन की कहानी',
+    hookLead:'A 26-year-old from Surat with no VC connections, no Twitter following, and no marketing budget built a ₹12 lakh MRR SaaS in 30 days — by shipping one thing that one community desperately needed.',
+    probTitle:'Why Most Founders Market Before Building',
+    probBody:'The startup playbook says: raise, hire, market, then build. The Tier-2 reality is different: no runway for that sequence. The only option is: build something so specific it markets itself.',
+    problems:[
+      {icon:'📢',text:'<strong>Distribution Illusion</strong> — Founders spend 80% of time on launch tactics and 20% on the product that\'s supposed to spread.'},
+      {icon:'💸',text:'<strong>CAC Before PMF</strong> — Spending ₹500 to acquire a ₹200 customer while still unsure if the product works.'},
+      {icon:'🌐',text:'<strong>Network Dependency</strong> — VC-track startups win on connections; Tier-2 founders have to win on product.'}
+    ],
+    insightTitle:'Community-First Distribution',
+    insightBody:'The best marketing for a niche SaaS is being so useful to one community that the community itself becomes your sales team.',
+    insightQuote:'"I posted in one WhatsApp group of 300 GST consultants. Within 4 hours I had 47 signups. That\'s when I knew — don\'t market, solve."',
+    fwTitle:'The 30-Day Viral SaaS Playbook',
+    fwSteps:[
+      {title:'Week 1 — Community Listening',desc:'Join 10 WhatsApp and Telegram groups of your target users. Read everything. Find the one problem that appears daily.'},
+      {title:'Week 2 — Minimum Viable Fix',desc:'Build the simplest thing that solves that one problem. No dashboard. No settings. One thing.'},
+      {title:'Week 3-4 — Community Drop',desc:'Post it in those same groups. Not as marketing — as a tool you built because you had the same problem.'}
+    ],
+    exTitle:'Results From the Field',
+    examples:[
+      {title:'GST Reconciliation Tool',desc:'Built for CA WhatsApp groups. Zero ad spend. Reached ₹12L MRR in 30 days through community referrals alone.'},
+      {title:'School Management SaaS',desc:'Surat-based founder sold to 200+ schools across Gujarat by attending school principal WhatsApp groups.'}
+    ],
+    clTitle:'For First-Time Founders',
+    checklist:['Your first 100 users should come from one community — not 10 channels. Depth beats breadth.','The product IS the marketing when it solves a daily pain. Don\'t launch before that\'s true.','Tier-2 networks work faster than you think — a recommendation from a trusted CA group travels at WhatsApp speed.']
+  },
+  vernacular:{
+    theme:'#E040FB',catLabel:'· 🗣 VERNACULAR INTERNET',
+    hookTitle:'Hindi, Tamil, Bengali — <em>vernacular internet</em> का अगला billion users',
+    hookLead:'India\'s next 500 million internet users will arrive speaking languages that English-first platforms were never designed to serve — and they\'re about to reshape everything.',
+    probTitle:'The English Default Problem',
+    probBody:'India\'s internet was designed by English-speaking engineers for English-speaking users. The UX, the content, the payment flows, the customer support — all assume English literacy that most Indian internet users don\'t have.',
+    problems:[
+      {icon:'📱',text:'<strong>English-First UX</strong> — App interfaces designed in English create friction for 600M Hindi, Tamil, and Bangla speakers.'},
+      {icon:'🎬',text:'<strong>Creator Desert</strong> — YouTube has 50M Hindi creators but under 2M in Bhojpuri, Maithili, and Awadhi combined.'},
+      {icon:'💬',text:'<strong>Customer Support Failure</strong> — 73% of Indian consumers prefer regional language support; less than 12% of companies offer it.'}
+    ],
+    insightTitle:'The Vernacular Opportunity Stack',
+    insightBody:'Languages with 50M+ speakers but fewer than 1,000 professional content creators are the highest-signal opportunity in Indian internet today. The ratio of demand to supply has never been this extreme.',
+    insightQuote:'"Building for Hindi at scale is good. Building for Maithili specifically is a monopoly. The internet is big enough for both — but only the second one has no competition."',
+    fwTitle:'Where the Money Is',
+    fwSteps:[
+      {title:'Vernacular Creator Economy',desc:'₹499/month subscriptions from 10,000 Bhojpuri internet users beats AdSense from 1M passive viewers.'},
+      {title:'Regional Language SaaS',desc:'CRM in Gujarati, accounting software in Tamil, legal templates in Marathi — enterprise software has never been done in regional languages.'},
+      {title:'Voice-First Products',desc:'Literacy rates vary; voice solves where text doesn\'t. WhatsApp voice notes are already India\'s most used interface.'}
+    ],
+    exTitle:'Who\'s Moving First',
+    examples:[
+      {title:'Josh & Moj',desc:'Short-form video platforms built natively for Indian languages, not translated from English — collectively crossing 150M users.'},
+      {title:'Pratilipi',desc:'Regional language storytelling platform with 50M+ readers — proof that content consumption in Indian languages at scale is real and monetizable.'}
+    ],
+    clTitle:'For Builders Eyeing Vernacular',
+    checklist:['Pick one language and go 10x deeper than anyone else — there\'s no prize for being mediocre in five languages.','Voice-first and text-second is the correct architecture for most Indian languages.','Regional language trust is built over years — partner with existing community leaders, don\'t compete with them.']
+  },
+  space:{
+    theme:'#00CFFF',catLabel:'· 🛸 NEW SPACE',
+    hookTitle:'ISRO के बाद private space — India का <em>NewSpace ecosystem</em> कैसे बना',
+    hookLead:'Chandrayaan-3\'s success didn\'t just land on the moon — it landed in the minds of a generation of engineers who decided India\'s space story was just getting started.',
+    probTitle:'The Barriers to Private Space',
+    probBody:'Until 2020, space was ISRO\'s monopoly. Private companies couldn\'t own rockets, launch independently, or negotiate commercial contracts without government intermediaries.',
+    problems:[
+      {icon:'🏛',text:'<strong>Regulatory Lock-in</strong> — Space activities required multiple government approvals with multi-year timelines.'},
+      {icon:'💰',text:'<strong>Capital Desert</strong> — Deep-tech space ventures needed 5-7 year runways that Indian VCs weren\'t structured to provide.'},
+      {icon:'🧑‍🔬',text:'<strong>Talent Monopoly</strong> — ISRO retained most aerospace talent; private sector had no experienced team pipeline.'}
+    ],
+    insightTitle:'IN-SPACe as Unlock',
+    insightBody:'The establishment of IN-SPACe (Indian National Space Promotion and Authorisation Centre) in 2020 broke the monopoly. For the first time, private entities could apply for launch authorizations directly.',
+    insightQuote:'"ISRO spent 50 years building India\'s space capability. IN-SPACe is spending 5 years distributing it. That multiplier effect is what NewSpace is actually about."',
+    fwTitle:'The NewSpace Playbook',
+    fwSteps:[
+      {title:'Launch Vehicles',desc:'Agnikul Cosmos and Skyroot Aerospace building small satellite launchers — competing on cost, turnaround, and dedicated orbit access.'},
+      {title:'Earth Observation',desc:'Pixxel, SatSure, and GalaxEye building imaging satellites for agriculture, infrastructure, and defense monitoring at a fraction of legacy costs.'},
+      {title:'Space Applications',desc:'The real money is downstream — using space data for precision agriculture, disaster prediction, and supply chain monitoring.'}
+    ],
+    exTitle:'India\'s NewSpace Leaders',
+    examples:[
+      {title:'Agnikul Cosmos',desc:'First private Indian launch vehicle — Agnibaan — successfully tested in 2024. Targets ₹5 crore/launch for small satellites vs. ₹50+ crore industry average.'},
+      {title:'Pixxel',desc:'Hyperspectral imaging satellites detecting crop disease, water stress, and mineral deposits — contracted by agriculture ministries and mining companies.'}
+    ],
+    clTitle:'For Investors & Builders',
+    checklist:['Space applications — not launch vehicles — have the shortest path to revenue. Start there.','IN-SPACe licensing is still complex; legal and regulatory expertise is a genuine moat.','Talent is the constraint: IIT aerospace engineers are the new IIT CS engineers of 2005.']
+  },
+  agri:{
+    theme:'#52B756',catLabel:'· 🌾 AGRITECH',
+    hookTitle:'किसान + AI = <em>precision farming</em> — Rajasthan के खेतों में data revolution',
+    hookLead:'A coalition of Rajasthan farmers using a ₹3,000/year satellite-and-AI advisory service increased yields by 34% in the first season — no agronomist visit required.',
+    probTitle:'Why Agricultural Advice Has Always Failed',
+    probBody:'India has 140 million farming families. Government agriculture departments have fewer than 100,000 field officers. The math has never worked — which is why farmers default to neighbors and dealers.',
+    problems:[
+      {icon:'👨‍🌾',text:'<strong>Advisory Gap</strong> — 1 government agronomist for every 1,400 farming families. Advice is rationed.'},
+      {icon:'🌦',text:'<strong>Hyperlocal Blindness</strong> — National weather forecasts are useless when a cloud system affects only 10 km of farmland.'},
+      {icon:'🌱',text:'<strong>Input Misuse</strong> — Overfertilization and overwatering cost Indian farmers ₹35,000 crore annually in waste.'}
+    ],
+    insightTitle:'Satellite + AI = Scale Without Officers',
+    insightBody:'A 3-meter resolution satellite image of a farm field can detect early-stage crop stress 10 days before it\'s visible to the human eye. AI turns that image into a plain-language Gujarati advisory.',
+    insightQuote:'"We\'re not replacing the agronomist. We\'re giving every farmer the equivalent of a personal agronomist who checks their field every 3 days from space."',
+    fwTitle:'The Precision Farming Stack',
+    fwSteps:[
+      {title:'Satellite Data Ingestion',desc:'Daily or weekly farm-level imagery from Planet, Pixxel, or ISRO\'s Bhuvan — tracking NDVI, soil moisture, and crop stress indices.'},
+      {title:'AI Advisory Generation',desc:'Crop-specific models convert satellite signals into plain-language advisories: \'Your south plot shows nitrogen deficiency — apply urea within 3 days.\''},
+      {title:'WhatsApp Delivery',desc:'Advisories sent via WhatsApp in regional language — no app to download, no internet literacy required beyond reading a message.'}
+    ],
+    exTitle:'Early Results From the Field',
+    examples:[
+      {title:'Rajasthan Pilot — 34% Yield Increase',desc:'243 farmers across Barmer and Jodhpur districts saw average yield increase of 34% in first season using satellite advisory service.'},
+      {title:'Input Cost Reduction',desc:'Precision fertilizer recommendations cut average input costs by ₹6,000 per acre per season — the equivalent of one month\'s income for small farmers.'}
+    ],
+    clTitle:'For AgriTech Builders',
+    checklist:['WhatsApp is the distribution channel — not your app. Build for where farmers already are.','Regional language voice notes outperform text for farmers with low literacy; invest in voice-first advisory.','Government PMFBY crop insurance data is underused — partnering with insurers creates a data flywheel.']
+  },
+  research:{
+    theme:'#4A9EBF',catLabel:'· 🔬 RESEARCH ENGINE',
+    hookTitle:'4 Wikis, 1 Brief — <em>Multi-source research</em> is how ViaDecide thinks',
+    hookLead:'Wikipedia, Wikivoyage, Wikibooks, Wikinews — ViaDecide synthesizes all four into one structured decision brief in seconds. Here\'s how the engine works under the hood.',
+    probTitle:'Why Single-Source Research Fails',
+    probBody:'Most research tools pull from one source. But real decisions require context: factual background + travel context + learning resources + current news. No single wiki has all four.',
+    problems:[
+      {icon:'📚',text:'<strong>Wikipedia Alone</strong> — Great for facts, terrible for real-time events or practical how-to guidance.'},
+      {icon:'🌍',text:'<strong>Search Engine Bias</strong> — Commercial results dominate queries, burying authoritative structured knowledge.'},
+      {icon:'🔄',text:'<strong>Context Collapse</strong> — Students and founders often miss crucial adjacent context that changes the decision entirely.'}
+    ],
+    insightTitle:'The Four-Wiki Synthesis Method',
+    insightBody:'ViaDecide\'s research engine simultaneously queries Wikipedia (facts), Wikivoyage (place context), Wikibooks (learning), and Wikinews (current events) — merging them into one coherent brief.',
+    insightQuote:'"One query. Four knowledge graphs. One decision-ready brief. That\'s the ViaDecide research advantage."',
+    fwTitle:'How the Engine Works',
+    fwSteps:[
+      {title:'Query Decomposition',desc:'Your question is broken into 4 sub-queries optimized for each Wiki\'s content structure and API.'},
+      {title:'Parallel Fetch + Parse',desc:'All four sources are queried simultaneously, parsed, and noise-filtered in under 2 seconds.'},
+      {title:'Synthesis + Brief Generation',desc:'Results are merged, deduplicated, and structured into a decision-ready brief with source attribution.'}
+    ],
+    exTitle:'Research Use Cases',
+    examples:[
+      {title:'Student Deep Research',desc:'A UPSC aspirant queries "Semiconductor Policy India 2024" — gets Wikipedia background + Wikibooks study context + Wikinews latest developments in one brief.'},
+      {title:'Founder Market Research',desc:'A founder exploring "EV charging India" gets regulatory context, geographic hotspots, technical guides, and news — all synthesized.'}
+    ],
+    clTitle:'For Researchers & Students',
+    checklist:['Always cross-reference Wikipedia facts with Wikinews for recency — facts change.','Wikivoyage geographic context is underused in business research — location matters more than founders think.','Use the structured brief as a starting point, not an endpoint — synthesis accelerates, not replaces, deep reading.']
+  },
+  msme:{
+    theme:'#F5A623',catLabel:'· 💰 MSME FINANCE',
+    hookTitle:'India के 63 million MSMEs के लिए <em>finance dashboard</em> — GST, cash flow, loans',
+    hookLead:'63 million MSMEs drive 30% of India\'s GDP — yet most owners manage their finances with a notebook and calculator. ViaDecide\'s MSME Finance Dashboard changes that.',
+    probTitle:'The MSME Finance Crisis',
+    probBody:'Indian MSMEs face a ₹25 lakh crore credit gap. Not because banks won\'t lend — but because most MSME owners can\'t produce the structured financial data lenders need.',
+    problems:[
+      {icon:'📊',text:'<strong>No Dashboard</strong> — 78% of Indian MSMEs have no digital financial tracking. No dashboard = no data = no loan.'},
+      {icon:'🧾',text:'<strong>GST Complexity</strong> — Multi-rate GST compliance takes 8–12 hours/month for a typical MSME. That\'s a week of productivity lost annually.'},
+      {icon:'💳',text:'<strong>Cash Flow Blindness</strong> — Most MSME failures stem from cash flow problems, not profitability problems. They\'re profitable on paper, dead in the bank.'}
+    ],
+    insightTitle:'Structure = Credit Access',
+    insightBody:'Banks don\'t reject MSMEs because they\'re unprofitable. They reject them because loan officers can\'t verify financial health in 10 minutes. A clean dashboard changes that equation.',
+    insightQuote:'"The best loan application is a well-maintained dashboard. Structure your finances, and credit finds you."',
+    fwTitle:'The MSME Finance Stack',
+    fwSteps:[
+      {title:'GST Filing Tracker',desc:'Auto-calculate GST liability across multiple rates. Track GSTR-1, GSTR-3B deadlines. Never miss a filing again.'},
+      {title:'Cash Flow Forecaster',desc:'30/60/90 day cash flow projections based on receivables, payables, and seasonal patterns.'},
+      {title:'Loan Eligibility Scanner',desc:'Based on your turnover, profit margins, and credit history — see which MUDRA, PSB, or NBFC products you qualify for.'}
+    ],
+    exTitle:'MSME Success Stories',
+    examples:[
+      {title:'Surat Textile Unit',desc:'A 12-person textile unit used the dashboard to present clean financials to a bank — secured ₹18 lakh MUDRA loan in 11 days vs. the industry average of 45 days.'},
+      {title:'Rajkot Engineering SME',desc:'Cash flow forecasting revealed a 3-month gap in receivables — owner renegotiated payment terms with one customer, averting a liquidity crisis.'}
+    ],
+    clTitle:'For MSME Owners',
+    checklist:['Separate business and personal accounts — this single step increases loan approval probability by 60%.','GST input tax credit is free money — most MSMEs claim less than 40% of eligible ITC. Track every invoice.','Maintain 3 months of bank statements in digital form — this is what every lender asks for first.']
+  },
+  wingsfire:{
+    theme:'#FF6B35',catLabel:'· 🔥 WINGS OF FIRE',
+    hookTitle:'Wings of Fire — APJ Abdul Kalam की कहानी, <em>multiplayer quiz</em> format में',
+    hookLead:'The autobiography that inspired a generation of Indian scientists and dreamers — now reimagined as a live multiplayer quiz. Test your knowledge, challenge friends, climb the leaderboard.',
+    probTitle:'Why Books Get Forgotten',
+    probBody:'Wings of Fire sold 20 million copies. Yet 80% of readers can\'t recall key milestones 6 months later. Reading without active recall is reading without retention.',
+    problems:[
+      {icon:'📖',text:'<strong>Passive Reading</strong> — Most people read Wings of Fire once, linearly. Retention fades within weeks without active recall.'},
+      {icon:'🤝',text:'<strong>Solo Experience</strong> — Knowledge is more retained when learned socially — yet most book consumption is solitary.'},
+      {icon:'🎯',text:'<strong>No Stakes</strong> — Without competitive context, recall exercises feel like homework. Games change the motivation equation.'}
+    ],
+    insightTitle:'Game-Based Learning Works',
+    insightBody:'Research shows competitive recall games improve long-term retention by 40% vs. re-reading. The Wings of Fire multiplayer quiz transforms passive knowledge into active mastery.',
+    insightQuote:'"Dr. Kalam said learning is the key to unlock the golden door of freedom. We made the key a game."',
+    fwTitle:'Quiz Format',
+    fwSteps:[
+      {title:'Chapter-by-Chapter Rounds',desc:'Questions organized by Wings of Fire\'s 4 parts: Orientation, Creation, Propitiation, Contemplation — master each phase.'},
+      {title:'Multiplayer Leaderboard',desc:'Compete live against other players. Real-time scoring. National leaderboard updated every round.'},
+      {title:'Explanation Mode',desc:'Every answer comes with a context paragraph — learn from mistakes, not just correct answers.'}
+    ],
+    exTitle:'Community Highlights',
+    examples:[
+      {title:'School Competitions',desc:'27 schools across Tamil Nadu used the Wings of Fire Quiz for inter-school competitions — 4,000+ students participated in the inaugural event.'},
+      {title:'UPSC Aspirants',desc:'Wings of Fire is a recurring source for UPSC essay and interview questions. The quiz has become a standard prep tool for aspirants.'}
+    ],
+    clTitle:'Play & Learn',
+    checklist:['Read the chapter first, then quiz — the quiz reveals what you missed, not what you know.','Play competitively with a study group — social stakes improve recall more than solo practice.','Use Explanation Mode religiously — every wrong answer is a chance to deepen, not just correct.']
+  },
+  mars:{
+    theme:'#E84545',catLabel:'· 🚀 MARS LAB',
+    hookTitle:'Mars Survival Lab — <em>Constraint-based decisions</em> at 225 million km',
+    hookLead:'You have 1,000 watts of solar power, 60 liters of water, and 90 sols before the supply ship arrives. Every decision has consequences. Welcome to the Mars Survival Decision Lab.',
+    probTitle:'Why Constraint Thinking Is a Superpower',
+    probBody:'The best decisions are made not with unlimited resources but with clearly defined constraints. Space missions make this visceral — Mars Survival Lab makes constraint thinking a learnable skill.',
+    problems:[
+      {icon:'🧠',text:'<strong>Abundance Bias</strong> — Most decision-making exercises assume unlimited options. Real decisions always have hard constraints.'},
+      {icon:'⏰',text:'<strong>Delayed Consequences</strong> — In life, bad decisions have delayed consequences. In the simulator, you see the cascade immediately.'},
+      {icon:'🔢',text:'<strong>Math Avoidance</strong> — Strategic decisions require quantitative thinking. Most people avoid the math. The simulator forces you to engage it.'}
+    ],
+    insightTitle:'Space as a Decision Laboratory',
+    insightBody:'ISRO mission planners think in constraint trees — every resource allocation has downstream dependencies. The Mars Survival Lab teaches this mindset through playable scenarios.',
+    insightQuote:'"Space exploration is the ultimate decision engine — every choice at 225 million kilometers has irreversible consequences."',
+    fwTitle:'Simulation Mechanics',
+    fwSteps:[
+      {title:'Resource Management',desc:'Allocate power, water, food, and oxygen across 90 sols. Each allocation affects the others via dependency chains.'},
+      {title:'Crisis Events',desc:'Random dust storms, equipment failures, and crew health events force you to re-plan under pressure.'},
+      {title:'Score & Debrief',desc:'At mission end, see a full decision tree replay — what went right, what killed the mission, what to optimize next run.'}
+    ],
+    exTitle:'Learning Outcomes',
+    examples:[
+      {title:'STEM Education',desc:'12 engineering colleges use Mars Survival Lab as an introductory systems thinking exercise — 89% of students rate it as "more useful than a lecture."'},
+      {title:'Founder Decision Training',desc:'Startup founders report improved resource allocation thinking after 5 simulator runs — the constraint mindset transfers directly to runway management.'}
+    ],
+    clTitle:'Simulator Tips',
+    checklist:['Always calculate oxygen first — it\'s the hardest constraint to work backwards from.','Dust storm probability increases after Sol 30 — build reserves before then, not after.','Your best score on run 1 means nothing. The best learners fail fast and debrief completely.']
+  },
+  swipeos:{
+    theme:'#7B4FFF',catLabel:'· 📲 SWIPEOS',
+    hookTitle:'SwipeOS — हर decision एक <em>card</em> में। The OS built on choices.',
+    hookLead:'What if your operating system was built on decisions instead of apps? SwipeOS is a swipe-native decision engine — every card is a choice, every swipe is progress.',
+    probTitle:'The Problem With Current Interfaces',
+    probBody:'Modern apps are built for browsing, not deciding. Infinite scroll creates paralysis, not action. SwipeOS inverts this — every interaction is a committed choice.',
+    problems:[
+      {icon:'📱',text:'<strong>Scroll Without Purpose</strong> — Social media is optimized for time-on-app, not decisions-made. SwipeOS optimizes for choices taken.'},
+      {icon:'🤔',text:'<strong>Decision Fatigue</strong> — The average person makes 35,000 decisions per day. Most interfaces add friction, not clarity.'},
+      {icon:'🎯',text:'<strong>No Progress Tracking</strong> — Apps track engagement. SwipeOS tracks decisions — giving you a map of your choices over time.'}
+    ],
+    insightTitle:'Swipe = Commit',
+    insightBody:'The swipe gesture is the most natural commitment interface ever designed. Left = no, right = yes. SwipeOS applies this binary decisiveness to every domain — from meals to careers.',
+    insightQuote:'"Every swipe is a data point. Every session is a decision audit. SwipeOS turns your phone into a thinking tool."',
+    fwTitle:'SwipeOS Modules',
+    fwSteps:[
+      {title:'Daily Decision Stack',desc:'A curated stack of 10 micro-decisions every morning — nutrition, tasks, priorities. Clear your decision queue before 9am.'},
+      {title:'Career Mode',desc:'Swipe through role opportunities, skills to develop, and projects to take. Build your career path one swipe at a time.'},
+      {title:'Decision Archive',desc:'Every swipe is stored. Review your decision history — see patterns, biases, and evolution over time.'}
+    ],
+    exTitle:'SwipeOS In Action',
+    examples:[
+      {title:'Student Daily Stack',desc:'A NEET aspirant uses the 10-card daily stack to prioritize topics — reported 40% reduction in "what should I study?" paralysis.'},
+      {title:'Founder Prioritization',desc:'A 3-person startup uses SwipeOS team mode to make product decisions — eliminates 2-hour meetings with a 10-minute swipe session.'}
+    ],
+    clTitle:'Getting Started',
+    checklist:['Swipe with intent — each card deserves 3 seconds of genuine consideration, not reflexive dismissal.','Review your weekly decision archive every Sunday — patterns you didn\'t notice become visible in retrospect.','Use Career Mode during commute — 10 minutes of swipe-based career planning beats 10 minutes of doom scroll.']
   }
 };
 
@@ -1723,7 +2156,7 @@ const GC = {
 function switchLayer(layer, storyKey) {
   activeLayer = layer;
   const deck=document.getElementById('deck');
-  const layerEls={discover:'layer-discover',deepdives:'layer-deepdives',about:'layer-about',profile:'layer-profile'};
+  const layerEls={discover:'layer-discover',deepdives:'layer-deepdives',about:'layer-about',profile:'layer-profile','tool-viewer':'layer-tool-viewer'};
   deck.style.display = layer==='feed'?'block':'none';
   Object.entries(layerEls).forEach(([k,id])=>{
     const el=document.getElementById(id);
@@ -1749,6 +2182,34 @@ function switchLayer(layer, storyKey) {
 }
 
 document.querySelectorAll('.layer-tab').forEach(tab=>tab.addEventListener('click',()=>switchLayer(tab.dataset.layer)));
+
+// ── TOOL VIEWER ──────────────────────────────────────────────────────
+let _tvPrevLayer = 'discover';
+let _tvCurrentPath = '';
+
+function openToolViewer(path, title) {
+  if (!path) return;
+  _tvPrevLayer = activeLayer || 'discover';
+  _tvCurrentPath = path;
+  const frame = document.getElementById('tv-frame');
+  const titleEl = document.getElementById('tv-title');
+  if (frame) frame.src = path;
+  if (titleEl) titleEl.textContent = title || 'Tool';
+  addXP(10);
+  switchLayer('tool-viewer');
+  // Sync nav bar to discover (closest parent)
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.nav === 'discover'));
+}
+
+function closeToolViewer() {
+  const frame = document.getElementById('tv-frame');
+  if (frame) frame.src = '';
+  switchLayer(_tvPrevLayer || 'discover');
+}
+
+function openToolViewerExternal() {
+  if (_tvCurrentPath) window.open(_tvCurrentPath, '_blank', 'noopener');
+}
 
 function switchNav(name, el) {
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -1918,10 +2379,10 @@ async function buildDiscover() {
     card.addEventListener('click',()=>{
       addXP(10);
       if(item.isDive){switchLayer('deepdives');return;}
-      // Direct navigation — no intermediate sheet
       if(item.toolPath){
+        // External links open in new tab; everything else opens in sub-view iframe
         if(item.isExternal){window.open(item.toolPath,'_blank','noopener');return;}
-        window.location.href=item.toolPath;
+        openToolViewer(item.toolPath, item.name);
         return;
       }
       openSheet('discover-detail',{item});
