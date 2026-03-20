@@ -1,6 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
+Implement an intelligent long-term memory and Retrieval-Augmented Generation (RAG) system called via-vector-memory. 1. Create src/core/ai/memory/. 2. Implement DocumentProcessor.ts to chunk large incoming PDFs, codebases, or plain text into semantically meaningful segments. 3. Create EmbeddingGenerator.ts to convert text chunks into high-dimensional vector arrays. 4. Implement VectorDatabase.ts using a fast similarity search engine (like pgvector or Pinecone) to store and retrieve contextual embeddings. 5. Build a SemanticSearch.ts module to intercept user queries, search the vector DB for context, and prepend the retrieved data to the LLM's system prompt.
+
+CONSTRAINTS
+Ensure embeddings are cached to prevent redundant API calls. The search pipeline must execute in under 200ms to avoid degrading the conversational latency.
 Implement a secure, sandboxed tool execution engine called via-agent-tools allowing LLMs to safely execute code and API calls. 1. Create src/core/ai/tools/. 2. Implement ToolRegistry.ts to maintain dynamic OpenAPI JSON Schemas for function calling. 3. Create SandboxExecutor.ts using WebAssembly (Pyodide) or isolated-vm to execute LLM-generated code with strict memory/CPU quotas and zero network access. 4. Implement ApiIntegrator.ts for standardized HTTP interactions using user-authenticated OAuth tokens. 5. Build HumanInTheLoop.ts (HITL) to pause agent execution and require explicit user UI approval for high-risk actions (e.g., dropping a database table, spending money).
 
 CONSTRAINTS

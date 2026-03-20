@@ -1,3 +1,9 @@
+Branch: simba/implement-an-intelligent-long-term-memory-and-re
+Title: Implement an intelligent long-term memory and Retrieval-Augmented Gen...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Break the context window barrier, giving the AI swarm near-infinite recall of past conversations, uploaded documents, and enterprise knowledge.
 Branch: simba/implement-a-secure-sandboxed-tool-execution-engi
 Title: Implement a secure, sandboxed tool execution engine called via-agent-...
 
