@@ -1,6 +1,7 @@
 {
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
+  "branch": "simba/implement-a-highly-scalable-bi-directional-event",
   "branch": "simba/implement-a-multi-agent-collaboration-framework-",
   "branch": "simba/implement-a-scalable-distributed-memory-pipeline",
   "files_to_create": [
