@@ -22,6 +22,8 @@
   import { inject } from 'https://cdn.jsdelivr.net/npm/@vercel/analytics@1/+esm';
   inject();
 </script>
+    <script src="./js/via-source-bridge.js"></script>
+    <script src="./js/viadecide-agent.js"></script>
   </head>
   <body data-page="agent">
     <div class="via-shell">
@@ -50,8 +52,9 @@
             <div class="via-actions">
               <button class="via-button" type="button" data-open-surface="discover">Open discover</button>
               <button class="via-button" type="button" data-open-surface="profile">Open profile</button>
-              <a class="via-link-button" href="https://via-decide.github.io/decide.engine-tools/">Context Packager</a>
-              <a class="via-link-button" href="https://via-decide.github.io/decide.engine-tools/" target="_blank" rel="noopener">Engine tools</a>
+              <button class="via-button" type="button" data-open-surface="decision_brief">Decision brief</button>
+              <button class="via-button" type="button" data-open-surface="studyos">StudyOS</button>
+              <button class="via-button" type="button" id="open-context-packager">Context Packager</button>
             </div>
           </article>
           <article class="via-card">
@@ -59,6 +62,26 @@
             <h3>Current snapshot</h3>
             <pre id="agent-snapshot" style="white-space: pre-wrap; margin: 0; color: #ffd29d;"></pre>
           </article>
+        </section>
+
+        <section class="via-section">
+          <div class="via-section-header">
+            <div>
+              <div class="via-caption">Imported launchers</div>
+              <h2>decide.engine surfaces normalized for VIA</h2>
+            </div>
+          </div>
+          <div class="via-surface-grid" data-via-import-list="surfaces"></div>
+        </section>
+
+        <section class="via-section">
+          <div class="via-section-header">
+            <div>
+              <div class="via-caption">Tool-source utilities</div>
+              <h2>Shared engine-tools files available in this repo</h2>
+            </div>
+          </div>
+          <div class="via-surface-grid" data-via-import-list="tools"></div>
         </section>
       </main>
 
@@ -74,9 +97,29 @@
     <script>
       (function () {
         var snapshotEl = document.getElementById('agent-snapshot');
+        var contextPackagerButton = document.getElementById('open-context-packager');
+
         function renderSnapshot() {
-          snapshotEl.textContent = JSON.stringify(window.VIA_RUNTIME.getSnapshot(), null, 2);
+          var runtimeSnapshot = window.VIA_RUNTIME.getSnapshot();
+          var sourceBridge = typeof window.VIASourceBridge !== 'undefined' ? window.VIASourceBridge : null;
+          snapshotEl.textContent = JSON.stringify({
+            runtime: runtimeSnapshot,
+            importedSurfaces: sourceBridge ? sourceBridge.listImportedSurfaces() : [],
+            toolSources: sourceBridge ? sourceBridge.listToolSources() : [],
+            agentRoutes: typeof window.VIAAgent !== 'undefined' && window.VIAAgent ? window.VIAAgent.suggestRoutes() : []
+          }, null, 2);
         }
+
+        if (contextPackagerButton) {
+          contextPackagerButton.addEventListener('click', function () {
+            if (typeof window.VIASourceBridge !== 'undefined' && window.VIASourceBridge && typeof window.VIASourceBridge.openTool === 'function') {
+              window.VIASourceBridge.openTool('./tools/context-packager/index.html');
+              return;
+            }
+            window.location.href = './tools/context-packager/index.html';
+          });
+        }
+
         renderSnapshot();
         window.VIAFederatedRuntime.subscribe('storage_sync', renderSnapshot);
         window.VIAFederatedRuntime.subscribe('profile_updated', renderSnapshot);

@@ -22,6 +22,7 @@
   import { inject } from 'https://cdn.jsdelivr.net/npm/@vercel/analytics@1/+esm';
   inject();
 </script>
+    <script src="./js/via-source-bridge.js"></script>
   </head>
   <body data-page="about">
     <div class="via-shell">
@@ -45,7 +46,7 @@
 
         <section class="via-section">
           <div class="via-stat-row">
-            <div class="via-stat"><strong>7</strong><span class="via-caption">Core surfaces</span></div>
+            <div class="via-stat"><strong>12</strong><span class="via-caption">Core surfaces</span></div>
             <div class="via-stat"><strong>0</strong><span class="via-caption">SPA router assumptions</span></div>
             <div class="via-stat"><strong>∞</strong><span class="via-caption">Shared browser state</span></div>
           </div>
@@ -98,6 +99,26 @@
               <a class="via-link-button" href="./agent.html">Open agent</a>
             </article>
           </div>
+        </section>
+
+        <section class="via-section">
+          <div class="via-section-header">
+            <div>
+              <div class="via-caption">Imported from decide.engine</div>
+              <h2>Stable subpages migrated into VIA</h2>
+            </div>
+          </div>
+          <div class="via-surface-grid" data-via-import-list="surfaces"></div>
+        </section>
+
+        <section class="via-section">
+          <div class="via-section-header">
+            <div>
+              <div class="via-caption">Tool source layer</div>
+              <h2>Utilities inherited from decide.engine-tools</h2>
+            </div>
+          </div>
+          <div class="via-surface-grid" data-via-import-list="tools"></div>
         </section>
       </main>
 
