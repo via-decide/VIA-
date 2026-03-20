@@ -4,7 +4,7 @@ TARGET
 Validate and repair only the files touched by the previous implementation.
 
 TASK
-1. Extract core authentication logic from legacy-auth-repo and port it to packages/auth-service within the monorepo. 2. Refactor the login payload to align with the unified monorepo API schema. 3. Update shell/router.js to protect internal routing paths using the newly ported auth middleware. 4. Write unit tests to verify token validation and session timeout behaviors in the new environment.
+Implement the visual platform shell in shell/index.html. 1. Create a premium dark-mode layout with a fixed sidebar and centered tool area. 2. Implement the RealtimeBus connection for status indicators. 3. Build the tool-loading logic using iframes to isolate tool-specific JS/CSS.
 
 RULES
 1. Audit touched files first and identify regressions.
