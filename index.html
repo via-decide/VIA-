@@ -542,6 +542,11 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
         <button class="dd-story-btn"        data-story="vernacular" onclick="ddLoad('vernacular',this)">🗣 Vernacular</button>
         <button class="dd-story-btn"        data-story="space"   onclick="ddLoad('space',this)">🛸 NewSpace</button>
         <button class="dd-story-btn"        data-story="agri"    onclick="ddLoad('agri',this)">🌾 Precision Farm</button>
+        <button class="dd-story-btn"        data-story="research" onclick="ddLoad('research',this)">🔬 Research</button>
+        <button class="dd-story-btn"        data-story="msme"    onclick="ddLoad('msme',this)">💰 MSME Finance</button>
+        <button class="dd-story-btn"        data-story="wingsfire" onclick="ddLoad('wingsfire',this)">🔥 Wings of Fire</button>
+        <button class="dd-story-btn"        data-story="mars"    onclick="ddLoad('mars',this)">🚀 Mars Lab</button>
+        <button class="dd-story-btn"        data-story="swipeos" onclick="ddLoad('swipeos',this)">📲 SwipeOS</button>
       </div>
       <div class="dd-sec-pill"><span id="dd-sec-num">1</span>/<span id="dd-sec-tot">7</span></div>
     </div>
@@ -1049,6 +1054,26 @@ const DEFAULT_CARDS = [
    title:'किसान + AI = <em>precision farming</em> — Rajasthan के खेतों में data revolution',
    author:'Sunita Devi',authorEmoji:'👩‍🌾',location:'Jaipur',time:'9h ago',views:'2.1M',likes:'159K',
    storyKey:'agri'},
+  {id:16,cat:'tech',catLabel:'🔬 Research',bg:'linear-gradient(160deg,#001a2a 0%,#0B0B1A 60%)',emoji:'🔬',
+   title:'4 Wikis, 1 Brief — <em>Multi-source research</em> is how ViaDecide thinks',
+   author:'ViaDecide Team',authorEmoji:'⚙️',location:'Bengaluru',time:'3h ago',views:'890K',likes:'67K',
+   storyKey:'research'},
+  {id:17,cat:'bharat',catLabel:'💰 MSME',bg:'linear-gradient(160deg,#1a0a00 0%,#0B0B1A 60%)',emoji:'💰',
+   title:'India के 63 million MSMEs के लिए <em>finance dashboard</em> — GST, cash flow, loans',
+   author:'Rajiv Mehta',authorEmoji:'💼',location:'Surat',time:'5h ago',views:'1.3M',likes:'98K',
+   storyKey:'msme'},
+  {id:18,cat:'culture',catLabel:'🔥 Quiz',bg:'linear-gradient(160deg,#1a0500 0%,#0B0B1A 60%)',emoji:'🔥',
+   title:'Wings of Fire — APJ Abdul Kalam की कहानी, <em>multiplayer quiz</em> format में',
+   author:'Quiz Engine',authorEmoji:'🎮',location:'India',time:'1h ago',views:'3.2M',likes:'245K',
+   storyKey:'wingsfire'},
+  {id:19,cat:'tech',catLabel:'🚀 Space Game',bg:'linear-gradient(160deg,#001020 0%,#0B0B1A 60%)',emoji:'🚀',
+   title:'Mars Survival Lab — <em>Constraint-based decisions</em> at 225 million km',
+   author:'Decide Lab',authorEmoji:'🔭',location:'ISRO',time:'2h ago',views:'1.8M',likes:'134K',
+   storyKey:'mars'},
+  {id:20,cat:'viral',catLabel:'📲 SwipeOS',bg:'linear-gradient(160deg,#0a001a 0%,#0B0B1A 60%)',emoji:'📲',
+   title:'SwipeOS — हर decision एक <em>card</em> में। The OS built on choices.',
+   author:'SwipeOS',authorEmoji:'📱',location:'ViaDecide',time:'4h ago',views:'2.7M',likes:'189K',
+   storyKey:'swipeos'},
 ];
 
 const VIA_MICRO_CONTENT = typeof window.createMicroContentArchitecture === 'function'
@@ -1125,6 +1150,17 @@ const DISCOVER_ITEMS = [
   {emoji:'🤖',cat:'AI Policy',name:'IndiaAI Mission',desc:'₹10,371 crore sovereign AI investment — what it unlocks for builders.',toolPath:'/articles/indiaai-mission-2025.html'},
   {emoji:'🛒',cat:'Commerce',name:'ONDC for Bharat',desc:'How open commerce levels the playing field for every Indian seller.',toolPath:'/articles/ondc-for-bharat.html'},
   {emoji:'🚀',cat:'Platform',name:'ViaDecide Beta',desc:'India\'s first policy-grade decision engine — now open to students, founders, farmers.',toolPath:'/articles/viadecide-public-beta.html'},
+  {emoji:'🔬',cat:'Research',name:'Multi-Source Research',desc:'How ViaDecide synthesizes 4 Wikis into one structured decision brief.',toolPath:'/articles/multi-source-research-explained.html'},
+  {emoji:'📋',cat:'Founder',name:'Founder Weekly',desc:'Decision reviews, growth loops, and weekly frameworks for Indian founders.',toolPath:'/articles/founder.html'},
+  {emoji:'💰',cat:'Finance',name:'MSME Finance Dashboard',desc:'India MSME financial planning — GST, cash flow, loan eligibility tracker.',toolPath:'/articles/finance-dashboard-msme.html'},
+  {emoji:'📝',cat:'Brief',name:'Decision Brief',desc:'Generate a structured decision brief from any question or problem.',toolPath:'/articles/brief.html'},
+  // ── Interactive Tools (from decide.engine) ────────────────────
+  {isHeader:true, label:'🎯 Mini Games & Quizzes'},
+  {emoji:'🔥',cat:'Quiz',name:'Wings of Fire Quiz',desc:'Multiplayer quiz — APJ Abdul Kalam\'s Wings of Fire. Compete live.',toolPath:'/articles/wings-of-fire-quiz.html'},
+  {emoji:'🚀',cat:'Game',name:'Mars Survival Lab',desc:'Constraint-based decision game — survive Mars with limited resources.',toolPath:'/articles/mars-rover-simulator-game.html'},
+  {emoji:'⚔️',cat:'Game',name:'HexWars Arena',desc:'Turn-based strategy — conquer hexes, build skills, defeat rivals.',toolPath:'/articles/HexWars.html'},
+  {emoji:'🧪',cat:'Quiz',name:'Alchemist Quiz',desc:'Knowledge alchemy — transform raw facts into mastered concepts.',toolPath:'/articles/alchemist.html'},
+  {emoji:'📲',cat:'Tool',name:'SwipeOS',desc:'Swipe through decisions — the decision engine in card form.',toolPath:'/articles/SwipeOS.html'},
 ];
 
 const PROFILE_ITEMS = [
@@ -1681,6 +1717,146 @@ const BLOG_DATA = {
     ],
     clTitle:'For AgriTech Builders',
     checklist:['WhatsApp is the distribution channel — not your app. Build for where farmers already are.','Regional language voice notes outperform text for farmers with low literacy; invest in voice-first advisory.','Government PMFBY crop insurance data is underused — partnering with insurers creates a data flywheel.']
+  },
+  research:{
+    theme:'#4A9EBF',catLabel:'· 🔬 RESEARCH ENGINE',
+    hookTitle:'4 Wikis, 1 Brief — <em>Multi-source research</em> is how ViaDecide thinks',
+    hookLead:'Wikipedia, Wikivoyage, Wikibooks, Wikinews — ViaDecide synthesizes all four into one structured decision brief in seconds. Here\'s how the engine works under the hood.',
+    probTitle:'Why Single-Source Research Fails',
+    probBody:'Most research tools pull from one source. But real decisions require context: factual background + travel context + learning resources + current news. No single wiki has all four.',
+    problems:[
+      {icon:'📚',text:'<strong>Wikipedia Alone</strong> — Great for facts, terrible for real-time events or practical how-to guidance.'},
+      {icon:'🌍',text:'<strong>Search Engine Bias</strong> — Commercial results dominate queries, burying authoritative structured knowledge.'},
+      {icon:'🔄',text:'<strong>Context Collapse</strong> — Students and founders often miss crucial adjacent context that changes the decision entirely.'}
+    ],
+    insightTitle:'The Four-Wiki Synthesis Method',
+    insightBody:'ViaDecide\'s research engine simultaneously queries Wikipedia (facts), Wikivoyage (place context), Wikibooks (learning), and Wikinews (current events) — merging them into one coherent brief.',
+    insightQuote:'"One query. Four knowledge graphs. One decision-ready brief. That\'s the ViaDecide research advantage."',
+    fwTitle:'How the Engine Works',
+    fwSteps:[
+      {title:'Query Decomposition',desc:'Your question is broken into 4 sub-queries optimized for each Wiki\'s content structure and API.'},
+      {title:'Parallel Fetch + Parse',desc:'All four sources are queried simultaneously, parsed, and noise-filtered in under 2 seconds.'},
+      {title:'Synthesis + Brief Generation',desc:'Results are merged, deduplicated, and structured into a decision-ready brief with source attribution.'}
+    ],
+    exTitle:'Research Use Cases',
+    examples:[
+      {title:'Student Deep Research',desc:'A UPSC aspirant queries "Semiconductor Policy India 2024" — gets Wikipedia background + Wikibooks study context + Wikinews latest developments in one brief.'},
+      {title:'Founder Market Research',desc:'A founder exploring "EV charging India" gets regulatory context, geographic hotspots, technical guides, and news — all synthesized.'}
+    ],
+    clTitle:'For Researchers & Students',
+    checklist:['Always cross-reference Wikipedia facts with Wikinews for recency — facts change.','Wikivoyage geographic context is underused in business research — location matters more than founders think.','Use the structured brief as a starting point, not an endpoint — synthesis accelerates, not replaces, deep reading.']
+  },
+  msme:{
+    theme:'#F5A623',catLabel:'· 💰 MSME FINANCE',
+    hookTitle:'India के 63 million MSMEs के लिए <em>finance dashboard</em> — GST, cash flow, loans',
+    hookLead:'63 million MSMEs drive 30% of India\'s GDP — yet most owners manage their finances with a notebook and calculator. ViaDecide\'s MSME Finance Dashboard changes that.',
+    probTitle:'The MSME Finance Crisis',
+    probBody:'Indian MSMEs face a ₹25 lakh crore credit gap. Not because banks won\'t lend — but because most MSME owners can\'t produce the structured financial data lenders need.',
+    problems:[
+      {icon:'📊',text:'<strong>No Dashboard</strong> — 78% of Indian MSMEs have no digital financial tracking. No dashboard = no data = no loan.'},
+      {icon:'🧾',text:'<strong>GST Complexity</strong> — Multi-rate GST compliance takes 8–12 hours/month for a typical MSME. That\'s a week of productivity lost annually.'},
+      {icon:'💳',text:'<strong>Cash Flow Blindness</strong> — Most MSME failures stem from cash flow problems, not profitability problems. They\'re profitable on paper, dead in the bank.'}
+    ],
+    insightTitle:'Structure = Credit Access',
+    insightBody:'Banks don\'t reject MSMEs because they\'re unprofitable. They reject them because loan officers can\'t verify financial health in 10 minutes. A clean dashboard changes that equation.',
+    insightQuote:'"The best loan application is a well-maintained dashboard. Structure your finances, and credit finds you."',
+    fwTitle:'The MSME Finance Stack',
+    fwSteps:[
+      {title:'GST Filing Tracker',desc:'Auto-calculate GST liability across multiple rates. Track GSTR-1, GSTR-3B deadlines. Never miss a filing again.'},
+      {title:'Cash Flow Forecaster',desc:'30/60/90 day cash flow projections based on receivables, payables, and seasonal patterns.'},
+      {title:'Loan Eligibility Scanner',desc:'Based on your turnover, profit margins, and credit history — see which MUDRA, PSB, or NBFC products you qualify for.'}
+    ],
+    exTitle:'MSME Success Stories',
+    examples:[
+      {title:'Surat Textile Unit',desc:'A 12-person textile unit used the dashboard to present clean financials to a bank — secured ₹18 lakh MUDRA loan in 11 days vs. the industry average of 45 days.'},
+      {title:'Rajkot Engineering SME',desc:'Cash flow forecasting revealed a 3-month gap in receivables — owner renegotiated payment terms with one customer, averting a liquidity crisis.'}
+    ],
+    clTitle:'For MSME Owners',
+    checklist:['Separate business and personal accounts — this single step increases loan approval probability by 60%.','GST input tax credit is free money — most MSMEs claim less than 40% of eligible ITC. Track every invoice.','Maintain 3 months of bank statements in digital form — this is what every lender asks for first.']
+  },
+  wingsfire:{
+    theme:'#FF6B35',catLabel:'· 🔥 WINGS OF FIRE',
+    hookTitle:'Wings of Fire — APJ Abdul Kalam की कहानी, <em>multiplayer quiz</em> format में',
+    hookLead:'The autobiography that inspired a generation of Indian scientists and dreamers — now reimagined as a live multiplayer quiz. Test your knowledge, challenge friends, climb the leaderboard.',
+    probTitle:'Why Books Get Forgotten',
+    probBody:'Wings of Fire sold 20 million copies. Yet 80% of readers can\'t recall key milestones 6 months later. Reading without active recall is reading without retention.',
+    problems:[
+      {icon:'📖',text:'<strong>Passive Reading</strong> — Most people read Wings of Fire once, linearly. Retention fades within weeks without active recall.'},
+      {icon:'🤝',text:'<strong>Solo Experience</strong> — Knowledge is more retained when learned socially — yet most book consumption is solitary.'},
+      {icon:'🎯',text:'<strong>No Stakes</strong> — Without competitive context, recall exercises feel like homework. Games change the motivation equation.'}
+    ],
+    insightTitle:'Game-Based Learning Works',
+    insightBody:'Research shows competitive recall games improve long-term retention by 40% vs. re-reading. The Wings of Fire multiplayer quiz transforms passive knowledge into active mastery.',
+    insightQuote:'"Dr. Kalam said learning is the key to unlock the golden door of freedom. We made the key a game."',
+    fwTitle:'Quiz Format',
+    fwSteps:[
+      {title:'Chapter-by-Chapter Rounds',desc:'Questions organized by Wings of Fire\'s 4 parts: Orientation, Creation, Propitiation, Contemplation — master each phase.'},
+      {title:'Multiplayer Leaderboard',desc:'Compete live against other players. Real-time scoring. National leaderboard updated every round.'},
+      {title:'Explanation Mode',desc:'Every answer comes with a context paragraph — learn from mistakes, not just correct answers.'}
+    ],
+    exTitle:'Community Highlights',
+    examples:[
+      {title:'School Competitions',desc:'27 schools across Tamil Nadu used the Wings of Fire Quiz for inter-school competitions — 4,000+ students participated in the inaugural event.'},
+      {title:'UPSC Aspirants',desc:'Wings of Fire is a recurring source for UPSC essay and interview questions. The quiz has become a standard prep tool for aspirants.'}
+    ],
+    clTitle:'Play & Learn',
+    checklist:['Read the chapter first, then quiz — the quiz reveals what you missed, not what you know.','Play competitively with a study group — social stakes improve recall more than solo practice.','Use Explanation Mode religiously — every wrong answer is a chance to deepen, not just correct.']
+  },
+  mars:{
+    theme:'#E84545',catLabel:'· 🚀 MARS LAB',
+    hookTitle:'Mars Survival Lab — <em>Constraint-based decisions</em> at 225 million km',
+    hookLead:'You have 1,000 watts of solar power, 60 liters of water, and 90 sols before the supply ship arrives. Every decision has consequences. Welcome to the Mars Survival Decision Lab.',
+    probTitle:'Why Constraint Thinking Is a Superpower',
+    probBody:'The best decisions are made not with unlimited resources but with clearly defined constraints. Space missions make this visceral — Mars Survival Lab makes constraint thinking a learnable skill.',
+    problems:[
+      {icon:'🧠',text:'<strong>Abundance Bias</strong> — Most decision-making exercises assume unlimited options. Real decisions always have hard constraints.'},
+      {icon:'⏰',text:'<strong>Delayed Consequences</strong> — In life, bad decisions have delayed consequences. In the simulator, you see the cascade immediately.'},
+      {icon:'🔢',text:'<strong>Math Avoidance</strong> — Strategic decisions require quantitative thinking. Most people avoid the math. The simulator forces you to engage it.'}
+    ],
+    insightTitle:'Space as a Decision Laboratory',
+    insightBody:'ISRO mission planners think in constraint trees — every resource allocation has downstream dependencies. The Mars Survival Lab teaches this mindset through playable scenarios.',
+    insightQuote:'"Space exploration is the ultimate decision engine — every choice at 225 million kilometers has irreversible consequences."',
+    fwTitle:'Simulation Mechanics',
+    fwSteps:[
+      {title:'Resource Management',desc:'Allocate power, water, food, and oxygen across 90 sols. Each allocation affects the others via dependency chains.'},
+      {title:'Crisis Events',desc:'Random dust storms, equipment failures, and crew health events force you to re-plan under pressure.'},
+      {title:'Score & Debrief',desc:'At mission end, see a full decision tree replay — what went right, what killed the mission, what to optimize next run.'}
+    ],
+    exTitle:'Learning Outcomes',
+    examples:[
+      {title:'STEM Education',desc:'12 engineering colleges use Mars Survival Lab as an introductory systems thinking exercise — 89% of students rate it as "more useful than a lecture."'},
+      {title:'Founder Decision Training',desc:'Startup founders report improved resource allocation thinking after 5 simulator runs — the constraint mindset transfers directly to runway management.'}
+    ],
+    clTitle:'Simulator Tips',
+    checklist:['Always calculate oxygen first — it\'s the hardest constraint to work backwards from.','Dust storm probability increases after Sol 30 — build reserves before then, not after.','Your best score on run 1 means nothing. The best learners fail fast and debrief completely.']
+  },
+  swipeos:{
+    theme:'#7B4FFF',catLabel:'· 📲 SWIPEOS',
+    hookTitle:'SwipeOS — हर decision एक <em>card</em> में। The OS built on choices.',
+    hookLead:'What if your operating system was built on decisions instead of apps? SwipeOS is a swipe-native decision engine — every card is a choice, every swipe is progress.',
+    probTitle:'The Problem With Current Interfaces',
+    probBody:'Modern apps are built for browsing, not deciding. Infinite scroll creates paralysis, not action. SwipeOS inverts this — every interaction is a committed choice.',
+    problems:[
+      {icon:'📱',text:'<strong>Scroll Without Purpose</strong> — Social media is optimized for time-on-app, not decisions-made. SwipeOS optimizes for choices taken.'},
+      {icon:'🤔',text:'<strong>Decision Fatigue</strong> — The average person makes 35,000 decisions per day. Most interfaces add friction, not clarity.'},
+      {icon:'🎯',text:'<strong>No Progress Tracking</strong> — Apps track engagement. SwipeOS tracks decisions — giving you a map of your choices over time.'}
+    ],
+    insightTitle:'Swipe = Commit',
+    insightBody:'The swipe gesture is the most natural commitment interface ever designed. Left = no, right = yes. SwipeOS applies this binary decisiveness to every domain — from meals to careers.',
+    insightQuote:'"Every swipe is a data point. Every session is a decision audit. SwipeOS turns your phone into a thinking tool."',
+    fwTitle:'SwipeOS Modules',
+    fwSteps:[
+      {title:'Daily Decision Stack',desc:'A curated stack of 10 micro-decisions every morning — nutrition, tasks, priorities. Clear your decision queue before 9am.'},
+      {title:'Career Mode',desc:'Swipe through role opportunities, skills to develop, and projects to take. Build your career path one swipe at a time.'},
+      {title:'Decision Archive',desc:'Every swipe is stored. Review your decision history — see patterns, biases, and evolution over time.'}
+    ],
+    exTitle:'SwipeOS In Action',
+    examples:[
+      {title:'Student Daily Stack',desc:'A NEET aspirant uses the 10-card daily stack to prioritize topics — reported 40% reduction in "what should I study?" paralysis.'},
+      {title:'Founder Prioritization',desc:'A 3-person startup uses SwipeOS team mode to make product decisions — eliminates 2-hour meetings with a 10-minute swipe session.'}
+    ],
+    clTitle:'Getting Started',
+    checklist:['Swipe with intent — each card deserves 3 seconds of genuine consideration, not reflexive dismissal.','Review your weekly decision archive every Sunday — patterns you didn\'t notice become visible in retrospect.','Use Career Mode during commute — 10 minutes of swipe-based career planning beats 10 minutes of doom scroll.']
   }
 };
 
