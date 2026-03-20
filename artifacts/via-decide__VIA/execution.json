@@ -1,6 +1,7 @@
 {
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
+  "branch": "simba/implement-an-automated-documentation-pipeline-ca",
   "branch": "simba/implement-a-lightweight-developer-sdk-and-cli-to",
   "branch": "simba/implement-a-comprehensive-telemetry-and-billing-",
   "branch": "simba/implement-an-intelligent-long-term-memory-and-re",

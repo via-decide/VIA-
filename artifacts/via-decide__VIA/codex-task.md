@@ -1,6 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
+Implement an automated documentation pipeline called via-docs-engine and draft the Master ARCHITECTURE.md. 1. Create docs/architecture/ and a Docusaurus/VitePress workspace. 2. Draft ARCHITECTURE.md mapping data flow: Client -> Bus -> Gateway -> Swarm -> Tools/Memory. 3. Implement DocGenerator.ts using an AST parser to scrape exported TypeScript interfaces and OpenAPI schemas directly from src/. 4. Include a strict "Security Boundaries" section defining isolation layers between LLM outputs and the Node host. 5. Enforce a lint:docs rule in pre-commit hooks to fail builds if new tools lack OpenAPI annotations.
+
+CONSTRAINTS
+Do NOT rely on manually updated API wikis. The docs pipeline MUST automatically derive the source of truth directly from TS types and Zod schemas.
 Implement a lightweight Developer SDK and CLI tool called via-sdk-core for programmatic access to the swarm. 1. Create src/tools/sdk/ (Node/Browser) and src/tools/cli/ (Terminal). 2. Implement ViaClient.ts exposing clean methods: via.agents.spawn(), via.swarm.execute(). 3. Create AsyncStreamHandler.ts to wrap WebSockets/SSE into standard async iterables (for await). 4. Implement cli.ts (using Commander.js) supporting commands like via run "analyze codebase" --context=./src. 5. Hook the CLI into the via-agent-tools to allow cloud agents local file-system access via secure tunnels.
 
 CONSTRAINTS
