@@ -5,6 +5,7 @@ Validate and repair only the files touched by the previous implementation.
 
 TASK
 Finalize the cloud deployment and SPA routing. 1. Deploy the viadecide-monorepo to Vercel. 2. Configure vercel.json to handle SPA rewrites for /tool/*. 3. Verify that the shell handles URL parameter parsing for tool induction.
+Migrate the most critical tools into the new shell system. 1. Move code for decide.engine-tools into tools/core/engine-tools/. 2. Update tool internal links to use the StateBridge for cross-platform context. 3. Register the tool as "Active" in the nav-registry.json.
 
 RULES
 1. Audit touched files first and identify regressions.
