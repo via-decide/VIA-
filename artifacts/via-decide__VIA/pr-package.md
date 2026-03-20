@@ -1,13 +1,13 @@
-Branch: simba/implement-a-core-backend-middleware-module-calle
-Title: > Implement a core backend middleware module called via-predictive-ro...
+Branch: simba/implement-a-highly-scalable-bi-directional-event
+Title: Implement a highly scalable, bi-directional event stream called via-r...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: > Upgrade the VIA core architecture into a robust, highly scalable backend capable of intelligently load-balancing massive concurrent agent or user requests. This lays the infrastructural foundation necessary to support advanced, dynamic social-media-style engine tools. /end_task
+- Goal: Provide a glass-box user experience. By streaming the internal monologue, tool usage, and text generation of the AI swarm in real-time, you turn a slow, black-box loading spinner into an engaging, transparent, and interactive collaboration between the human and the machine.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
-- [ ] Validate Telegram command flow
+- [ ] Validate command flow
 - [ ] Validate generated artifact files
 
 ## Risks
