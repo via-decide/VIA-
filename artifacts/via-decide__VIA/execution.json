@@ -2,6 +2,10 @@
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
   "branch": "simba/finalize-and-deploy-the-via-realtime-bus-system-",
+  "branch": "simba/migrate-the-second-batch-of-productivity-tools-a",
+  "branch": "simba/implement-a-unified-analytics-service-for-the-en",
+  "branch": "simba/create-a-shared-css-library-to-standardize-the-l",
+
   "files_to_create": [
     "codex-task.md",
     "antigravity-repair-task.md",
