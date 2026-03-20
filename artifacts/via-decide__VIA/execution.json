@@ -1,10 +1,7 @@
 {
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
-  "branch": "simba/push-the-phase-0-initialized-monorepo-structure-",
-  "branch": "simba/implement-the-visual-platform-shell-in-shellinde",
-  "branch": "simba/finalize-the-cloud-deployment-and-spa-routing-1-",
-  "branch": "simba/migrate-the-most-critical-tools-into-the-new-she",
+  "branch": "simba/create-a-shared-css-library-to-standardize-the-l",
   "files_to_create": [
     "codex-task.md",
     "antigravity-repair-task.md",
