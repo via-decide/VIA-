@@ -1,10 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
-1. Extract core authentication logic from legacy-auth-repo and port it to packages/auth-service within the monorepo. 2. Refactor the login payload to align with the unified monorepo API schema. 3. Update shell/router.js to protect internal routing paths using the newly ported auth middleware. 4. Write unit tests to verify token validation and session timeout behaviors in the new environment.
+Push the Phase 0 initialized monorepo structure to the GitHub repository. 1. Initialize a git repository in viadecide-monorepo/. 2. Add the remote origin https://github.com/via-decide/VIA.git. 3. Commit the Phase 0 skeleton (shell, tools/*, services, shared, configs). 4. Push the main branch.
 
 CONSTRAINTS
-Must maintain backward compatibility with existing active JWT tokens for currently logged-in users. Ensure strict TypeScript typing for the auth middleware. Clean up and remove legacy CI/CD pipeline triggers from the old repository.
+Direct push to main is allowed for this initialization. Do NOT include node_modules.
 
 PROCESS (MANDATORY)
 1. Read README.md and AGENTS.md before editing.
