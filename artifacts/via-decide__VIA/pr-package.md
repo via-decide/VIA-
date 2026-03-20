@@ -1,3 +1,9 @@
+Branch: simba/implement-the-visual-platform-shell-in-shellinde
+Title: Implement the visual platform shell in shell/index.html. 1. Create a ...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Provide a professional "Mission Control" interface for the ViaDécide ecosystem.
 Branch: simba/finalize-the-cloud-deployment-and-spa-routing-1-
 Title: Finalize the cloud deployment and SPA routing. 1. Deploy the viadecid...
 

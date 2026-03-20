@@ -1,6 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
+Implement the visual platform shell in shell/index.html. 1. Create a premium dark-mode layout with a fixed sidebar and centered tool area. 2. Implement the RealtimeBus connection for status indicators. 3. Build the tool-loading logic using iframes to isolate tool-specific JS/CSS.
+
+CONSTRAINTS
+Must be 100% mobile-responsive. Use zero external CSS frameworks (Vanilla CSS only).
 Finalize the cloud deployment and SPA routing. 1. Deploy the viadecide-monorepo to Vercel. 2. Configure vercel.json to handle SPA rewrites for /tool/*. 3. Verify that the shell handles URL parameter parsing for tool induction.
 
 CONSTRAINTS
