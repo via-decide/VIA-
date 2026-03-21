@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>VIA · Tool Explorer</title>
+<meta name="theme-color" content="#0a0a0a"/>
+<meta name="description" content="Browse and search all VIA tools — 58+ tools across coders, creators, operators, researchers, games & more."/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--surface:#111;--surface2:#1a1a1a;--border:#222;
+  --text:#e8e8e8;--text2:#888;--accent:#ff671f;--accent2:#ff8a4c;
+  --green:#22c55e;--blue:#3b82f6;--purple:#a855f7;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --mono:"SF Mono",SFMono-Regular,Consolas,"Liberation Mono",Menlo,monospace;
+  --radius:10px;
+}
+html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* Header */
+.header{position:sticky;top:0;z-index:100;background:rgba(10,10,10,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;gap:14px}
+.logo{font-size:18px;font-weight:800;letter-spacing:-0.5px;color:var(--accent);text-decoration:none;white-space:nowrap}
+.logo span{color:var(--text)}
+.search-box{flex:1;max-width:480px;position:relative}
+.search-box input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px 10px 36px;color:var(--text);font-size:14px;outline:none;transition:border .2s}
+.search-box input:focus{border-color:var(--accent)}
+.search-box::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.5;pointer-events:none}
+.back-link{color:var(--text2);text-decoration:none;font-size:13px;white-space:nowrap}
+.back-link:hover{color:var(--text)}
+.stat-badge{background:var(--surface);border:1px solid var(--border);padding:4px 10px;border-radius:6px;font-size:12px;color:var(--accent);font-weight:600;white-space:nowrap}
+
+/* Categories */
+.cat-bar{display:flex;gap:8px;padding:12px 20px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border)}
+.cat-bar::-webkit-scrollbar{display:none}
+.cat-btn{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:6px 14px;color:var(--text2);font-size:13px;cursor:pointer;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:5px}
+.cat-btn:hover{border-color:var(--text2);color:var(--text)}
+.cat-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.cat-btn .count{font-size:11px;opacity:.6}
+
+/* Grid */
+.content{padding:20px;max-width:1200px;margin:0 auto}
+.section-title{font-size:15px;font-weight:600;color:var(--text2);margin:20px 0 12px;text-transform:uppercase;letter-spacing:1px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .2s;text-decoration:none;color:var(--text);display:block;position:relative;overflow:hidden}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,103,31,0.08)}
+.card-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.card-icon{font-size:24px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--surface2);border-radius:8px;flex-shrink:0}
+.card-title{font-size:15px;font-weight:600;line-height:1.3}
+.card-desc{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-meta{display:flex;gap:6px;flex-wrap:wrap}
+.tag{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:11px;color:var(--text2)}
+.tag.cat{color:var(--accent);border-color:rgba(255,103,31,0.3)}
+.card-status{position:absolute;top:12px;right:12px;width:7px;height:7px;border-radius:50%;background:var(--green)}
+
+/* Empty */
+.empty{text-align:center;padding:60px 20px;color:var(--text2)}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.empty-text{font-size:15px}
+
+/* Footer */
+.footer{text-align:center;padding:40px 20px;color:var(--text2);font-size:12px;border-top:1px solid var(--border);margin-top:40px}
+
+/* Mobile */
+@media(max-width:600px){
+  .header{flex-wrap:wrap;gap:10px}
+  .search-box{order:3;max-width:100%;flex-basis:100%}
+  .grid{grid-template-columns:1fr}
+}
+
+/* Loading */
+.loading{display:flex;align-items:center;justify-content:center;padding:80px 20px;flex-direction:column;gap:12px;color:var(--text2)}
+.spinner{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a href="/" class="back-link">← VIA</a>
+  <a href="/tool-explorer.html" class="logo">⚡ <span>Tool Explorer</span></a>
+  <div class="search-box"><input type="search" id="search" placeholder="Search tools…" autocomplete="off" spellcheck="false"/></div>
+  <div class="stat-badge" id="stat-badge">…</div>
+</header>
+
+<div class="cat-bar" id="cat-bar"></div>
+
+<div class="content" id="content">
+  <div class="loading"><div class="spinner"></div><span>Loading registry…</span></div>
+</div>
+
+<div class="footer">VIA · Tool Explorer · Phase 1 · via-decide.github.io/VIA</div>
+
+<script src="/shared/registry-loader.js"></script>
+<script>
+(async function(){
+  await VIARegistry.init('/nav-registry.json');
+
+  const tools = VIARegistry.allTools();
+  const cats = VIARegistry.allCategories();
+  const stats = VIARegistry.stats();
+
+  // Stat badge
+  document.getElementById('stat-badge').textContent = stats.totalTools + ' tools';
+
+  // Category bar
+  let activeCat = null;
+  const catBar = document.getElementById('cat-bar');
+  let catHtml = '<button class="cat-btn active" data-cat="all">All <span class="count">'+stats.totalTools+'</span></button>';
+  for(const [id,c] of Object.entries(cats).sort((a,b)=>a[1].priority-b[1].priority)){
+    catHtml += '<button class="cat-btn" data-cat="'+id+'">'+c.icon+' '+c.label+' <span class="count">'+c.count+'</span></button>';
+  }
+  catBar.innerHTML = catHtml;
+
+  catBar.addEventListener('click', e => {
+    const btn = e.target.closest('.cat-btn');
+    if(!btn) return;
+    catBar.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeCat = btn.dataset.cat === 'all' ? null : btn.dataset.cat;
+    render();
+  });
+
+  // Search
+  const searchInput = document.getElementById('search');
+  let searchQuery = '';
+  searchInput.addEventListener('input', ()=>{
+    searchQuery = searchInput.value.trim();
+    render();
+  });
+
+  // Render
+  function render(){
+    let filtered;
+    if(searchQuery){
+      filtered = VIARegistry.search(searchQuery);
+    } else {
+      filtered = activeCat ? VIARegistry.byCategory(activeCat) : tools;
+    }
+
+    if(activeCat && searchQuery){
+      filtered = filtered.filter(t=>t.category===activeCat);
+    }
+
+    const content = document.getElementById('content');
+    if(!filtered.length){
+      content.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">No tools found'+(searchQuery?' for "'+searchQuery+'"':'')+'</div></div>';
+      return;
+    }
+
+    // Group by category if not filtering by one
+    if(!activeCat && !searchQuery){
+      let html = '';
+      const grouped = {};
+      for(const t of filtered){
+        (grouped[t.category] = grouped[t.category]||[]).push(t);
+      }
+      for(const [catId,catInfo] of Object.entries(cats).sort((a,b)=>a[1].priority-b[1].priority)){
+        const catTools = grouped[catId];
+        if(!catTools || !catTools.length) continue;
+        html += '<div class="section-title">'+catInfo.icon+' '+catInfo.label+' ('+catTools.length+')</div>';
+        html += '<div class="grid">'+catTools.map(cardHtml).join('')+'</div>';
+      }
+      content.innerHTML = html;
+    } else {
+      content.innerHTML = '<div class="section-title">'+(searchQuery?'Results':'')+(activeCat?' · '+(cats[activeCat]||{}).label:'')+ ' ('+filtered.length+')</div><div class="grid">'+filtered.map(cardHtml).join('')+'</div>';
+    }
+  }
+
+  function cardHtml(t){
+    const href = t.path || '/tools/'+t.id+'/';
+    return '<a class="card" href="'+href+'">' +
+      '<div class="card-status" title="active"></div>' +
+      '<div class="card-top"><div class="card-icon">'+t.icon+'</div><div class="card-title">'+esc(t.title)+'</div></div>' +
+      '<div class="card-desc">'+esc(t.description)+'</div>' +
+      '<div class="card-meta"><span class="tag cat">'+esc(t.category)+'</span>'+(t.tags||[]).slice(0,3).map(tg=>'<span class="tag">'+esc(tg)+'</span>').join('')+'</div>' +
+      '</a>';
+  }
+
+  function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+  render();
+})();
+</script>
+</body>
+</html>

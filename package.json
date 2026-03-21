@@ -7,7 +7,9 @@
     "build": "node -e \"console.log('Static site: no build step required.')\"",
     "preview": "python3 -m http.server 4173",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "registry": "node generate-registry.js",
+    "validate": "node -e \"const r = require('./nav-registry.json'); console.log('✅ Registry valid:', r.totalTools, 'tools,', Object.keys(r.categories).length, 'categories');\""
   },
   "dependencies": {
     "@google/genai": "^1.29.0",

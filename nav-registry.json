@@ -1,0 +1,1795 @@
+{
+  "$schema": "nav-registry-v1",
+  "version": "1.0.0",
+  "generatedAt": "2026-03-21T00:00:00Z",
+  "organization": "via-decide",
+  "totalTools": 58,
+  "categories": {
+    "business": {
+      "label": "Business",
+      "icon": "\ud83d\udcbc",
+      "priority": 8,
+      "count": 1
+    },
+    "coders": {
+      "label": "Coder Tools",
+      "icon": "\ud83d\udcbb",
+      "priority": 1,
+      "count": 8
+    },
+    "creators": {
+      "label": "Creator Tools",
+      "icon": "\ud83c\udfa8",
+      "priority": 2,
+      "count": 4
+    },
+    "engine": {
+      "label": "Engine",
+      "icon": "\ud83d\udcc2",
+      "priority": 50,
+      "count": 34
+    },
+    "misc": {
+      "label": "Misc",
+      "icon": "\ud83d\udd27",
+      "priority": 99,
+      "count": 5
+    },
+    "operators": {
+      "label": "Operator Tools",
+      "icon": "\u2699\ufe0f",
+      "priority": 3,
+      "count": 2
+    },
+    "researchers": {
+      "label": "Research Tools",
+      "icon": "\ud83d\udd2c",
+      "priority": 4,
+      "count": 1
+    },
+    "system": {
+      "label": "System Tools",
+      "icon": "\ud83d\udda5\ufe0f",
+      "priority": 5,
+      "count": 3
+    }
+  },
+  "tools": [
+    {
+      "id": "ai-tool-generator",
+      "title": "AI Tool Generator",
+      "description": "Turn a plain-language prompt into a tool spec, starter HTML scaffold, and plugin registration payload.",
+      "category": "coders",
+      "path": "/tools/ai-tool-generator/",
+      "entry": "tools/ai-tool-generator/index.html",
+      "tags": [
+        "ai",
+        "generation",
+        "registry",
+        "plugin"
+      ],
+      "audience": [
+        "general"
+      ],
+      "inputs": [
+        "prompt",
+        "category",
+        "outputs"
+      ],
+      "outputs": [
+        "tool_spec",
+        "tool_template",
+        "registry_plugin"
+      ],
+      "relatedTools": [
+        "code-generator",
+        "spec-builder",
+        "tool-router",
+        "workflow-template-gallery"
+      ],
+      "status": "active",
+      "icon": "\ud83d\udcbb"
+    },
+    {
+      "id": "code-generator",
+      "title": "Code Generator",
+      "description": "Builds high-quality Codex execution prompts from technical specs.",
+      "category": "coders",
+      "path": "/tools/code-generator/",
+      "entry": "tools/code-generator/index.html",
+      "tags": [
+        "prompting",
+        "generation",
+        "pipeline"
+      ],
+      "audience": [
+        "developers"
+      ],
+      "inputs": [
+        "spec",
+        "target_language_framework",
+        "style_guide",
+        "test_requirement"
+      ],
+      "outputs": [
+        "codex_execution_prompt"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udcbb",
+      "pipeline": {
+        "position": 3,
+        "next": "code-reviewer",
+        "prev": "spec-builder",
+        "busIn": "agent:spec-builder:output",
+        "busOut": "agent:code-generator:output"
+      }
+    },
+    {
+      "id": "code-reviewer",
+      "title": "Code Reviewer",
+      "description": "Reviews generated code against spec requirements and emits repair instructions.",
+      "category": "coders",
+      "path": "/tools/code-reviewer/",
+      "entry": "tools/code-reviewer/index.html",
+      "tags": [
+        "review",
+        "quality",
+        "repair"
+      ],
+      "audience": [
+        "developers"
+      ],
+      "inputs": [
+        "spec",
+        "generated_code",
+        "review_mode"
+      ],
+      "outputs": [
+        "review_feedback"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udcbb",
+      "pipeline": {
+        "position": 4,
+        "next": "output-evaluator",
+        "prev": "code-generator",
+        "busIn": "agent:spec-builder:output",
+        "busOut": "agent:code-reviewer:feedback"
+      }
+    },
+    {
+      "id": "context-packager",
+      "title": "Context Packager",
+      "description": "Packages project context into a ranked brief for downstream coding agents.",
+      "category": "coders",
+      "path": "/tools/context-packager/",
+      "entry": "tools/context-packager/index.html",
+      "tags": [
+        "context",
+        "handoff",
+        "pipeline"
+      ],
+      "audience": [
+        "developers"
+      ],
+      "inputs": [
+        "project",
+        "stack",
+        "existing",
+        "task",
+        "constraints"
+      ],
+      "outputs": [
+        "context_packet"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udcbb",
+      "pipeline": {
+        "position": 1,
+        "next": "spec-builder",
+        "prev": null,
+        "busIn": null,
+        "busOut": "agent:context-packager:output"
+      }
+    },
+    {
+      "id": "output-evaluator",
+      "title": "Output Evaluator",
+      "description": "Scores final code delivery quality against context, spec, and review signals.",
+      "category": "coders",
+      "path": "/tools/output-evaluator/",
+      "entry": "tools/output-evaluator/index.html",
+      "tags": [
+        "evaluation",
+        "scoring",
+        "delivery"
+      ],
+      "audience": [
+        "developers"
+      ],
+      "inputs": [
+        "context_packet",
+        "spec",
+        "review_feedback",
+        "final_code"
+      ],
+      "outputs": [
+        "delivery_report"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udcbb",
+      "pipeline": {
+        "position": 0,
+        "next": null,
+        "prev": "code-reviewer",
+        "busIn": "agent:code-reviewer:feedback",
+        "busOut": "agent:output-evaluator:result"
+      }
+    },
+    {
+      "id": "repo-improvement-brief",
+      "title": "Repo Improvement Brief",
+      "description": "Transform improvement ideas into implementation-ready briefs for coding, review, and execution handoff.",
+      "category": "coders",
+      "path": "/tools/repo-improvement-brief/",
+      "entry": "tools/repo-improvement-brief/index.html",
+      "tags": [
+        "brief",
+        "planning",
+        "simba-workflows"
+      ],
+      "audience": [
+        "coders",
+        "operators",
+        "founders"
+      ],
+      "inputs": [
+        "idea",
+        "target_repo",
+        "impact"
+      ],
+      "outputs": [
+        "implementation_brief"
+      ],
+      "relatedTools": [
+        "task-splitter",
+        "spec-builder",
+        "context-packager"
+      ],
+      "status": "active",
+      "icon": "\ud83d\udcbb"
+    },
+    {
+      "id": "spec-builder",
+      "title": "Spec Builder",
+      "description": "Builds Codex-ready technical specifications from context packets.",
+      "category": "coders",
+      "path": "/tools/spec-builder/",
+      "entry": "tools/spec-builder/index.html",
+      "tags": [
+        "spec",
+        "requirements",
+        "pipeline"
+      ],
+      "audience": [
+        "developers"
+      ],
+      "inputs": [
+        "context_or_description",
+        "feature_name",
+        "acceptance_criteria",
+        "edge_cases"
+      ],
+      "outputs": [
+        "technical_spec"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udcbb",
+      "pipeline": {
+        "position": 2,
+        "next": "code-generator",
+        "prev": "context-packager",
+        "busIn": "agent:context-packager:output",
+        "busOut": "agent:spec-builder:output"
+      }
+    },
+    {
+      "id": "task-splitter",
+      "title": "Task Splitter",
+      "description": "Breaks a large feature into dependency-aware Codex-sized tasks.",
+      "category": "coders",
+      "path": "/tools/task-splitter/",
+      "entry": "tools/task-splitter/index.html",
+      "tags": [
+        "planning",
+        "task-graph",
+        "pipeline"
+      ],
+      "audience": [
+        "developers"
+      ],
+      "inputs": [
+        "epic_description"
+      ],
+      "outputs": [
+        "task_graph",
+        "task_statuses"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udcbb",
+      "pipeline": {
+        "position": 0,
+        "next": "context-packager",
+        "prev": null,
+        "busIn": null,
+        "busOut": "agent:task-splitter:output"
+      }
+    },
+    {
+      "id": "idea-remixer",
+      "title": "Idea Remixer",
+      "description": "Generate angle, audience, naming, and positioning variants from a single core idea.",
+      "category": "creators",
+      "path": "/tools/idea-remixer/",
+      "entry": "tools/idea-remixer/index.html",
+      "tags": [
+        "ideation",
+        "variants",
+        "simba-workflows"
+      ],
+      "audience": [
+        "creators",
+        "founders",
+        "operators"
+      ],
+      "inputs": [
+        "idea",
+        "goal",
+        "constraints"
+      ],
+      "outputs": [
+        "idea_variants"
+      ],
+      "relatedTools": [
+        "promptalchemy",
+        "spec-builder",
+        "repo-improvement-brief"
+      ],
+      "status": "active",
+      "icon": "\ud83c\udfa8"
+    },
+    {
+      "id": "promptalchemy",
+      "title": "PromptAlchemy",
+      "description": "Generate structured prompts for downstream tools",
+      "category": "creators",
+      "path": "/tools/promptalchemy/",
+      "entry": "tools/promptalchemy/index.html",
+      "tags": [
+        "mesh-ready",
+        "prompting"
+      ],
+      "audience": [
+        "creators",
+        "founders"
+      ],
+      "inputs": [
+        "idea",
+        "context",
+        "goal"
+      ],
+      "outputs": [
+        "structured_prompt"
+      ],
+      "relatedTools": [
+        "script-generator",
+        "spec-builder",
+        "code-generator"
+      ],
+      "status": "active",
+      "icon": "\ud83c\udfa8"
+    },
+    {
+      "id": "script-generator",
+      "title": "Script Generator",
+      "description": "Convert structured prompts into scripts",
+      "category": "creators",
+      "path": "/tools/script-generator/",
+      "entry": "tools/script-generator/index.html",
+      "tags": [
+        "mesh-ready",
+        "content"
+      ],
+      "audience": [
+        "creators",
+        "founders"
+      ],
+      "inputs": [
+        "structured_prompt",
+        "format",
+        "length"
+      ],
+      "outputs": [
+        "script"
+      ],
+      "relatedTools": [
+        "promptalchemy",
+        "spec-builder",
+        "export-studio"
+      ],
+      "status": "active",
+      "icon": "\ud83c\udfa8"
+    },
+    {
+      "id": "typography-scale-calculator",
+      "title": "Typography Scale Calculator",
+      "description": "Generate CSS typography scale tokens from a base size and ratio.",
+      "category": "creators",
+      "path": "/tools/engine/typography-scale-calculator/",
+      "entry": "tools/engine/typography-scale-calculator/index.html",
+      "tags": [
+        "typography",
+        "css",
+        "design",
+        "standalone"
+      ],
+      "audience": [
+        "general"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83c\udfa8"
+    },
+    {
+      "id": "export-studio",
+      "title": "Export Studio",
+      "description": "Export outputs as txt, markdown, or json",
+      "category": "operators",
+      "path": "/tools/export-studio/",
+      "entry": "tools/export-studio/index.html",
+      "tags": [
+        "mesh-ready",
+        "export"
+      ],
+      "audience": [
+        "operators",
+        "researchers"
+      ],
+      "inputs": [
+        "content",
+        "format"
+      ],
+      "outputs": [
+        "export_blob"
+      ],
+      "relatedTools": [
+        "promptalchemy",
+        "script-generator",
+        "code-reviewer",
+        "template-vault"
+      ],
+      "status": "active",
+      "icon": "\u2699\ufe0f"
+    },
+    {
+      "id": "template-vault",
+      "title": "Template Vault",
+      "description": "Save reusable prompts and specs",
+      "category": "operators",
+      "path": "/tools/template-vault/",
+      "entry": "tools/template-vault/index.html",
+      "tags": [
+        "mesh-ready",
+        "templates"
+      ],
+      "audience": [
+        "operators",
+        "creators",
+        "coders"
+      ],
+      "inputs": [
+        "template_name",
+        "template_content"
+      ],
+      "outputs": [
+        "saved_template"
+      ],
+      "relatedTools": [
+        "promptalchemy",
+        "spec-builder",
+        "export-studio"
+      ],
+      "status": "active",
+      "icon": "\u2699\ufe0f"
+    },
+    {
+      "id": "prompt-compare",
+      "title": "Prompt Compare",
+      "description": "Compare multiple prompts for structure, clarity, specificity, and likely downstream utility.",
+      "category": "researchers",
+      "path": "/tools/prompt-compare/",
+      "entry": "tools/prompt-compare/index.html",
+      "tags": [
+        "prompting",
+        "analysis",
+        "simba-workflows"
+      ],
+      "audience": [
+        "researchers",
+        "operators",
+        "coders"
+      ],
+      "inputs": [
+        "prompt_a",
+        "prompt_b",
+        "prompt_c"
+      ],
+      "outputs": [
+        "prompt_comparison"
+      ],
+      "relatedTools": [
+        "promptalchemy",
+        "idea-remixer",
+        "output-evaluator"
+      ],
+      "status": "active",
+      "icon": "\ud83d\udd2c"
+    },
+    {
+      "id": "tool-router",
+      "title": "Tool Router",
+      "description": "Suggest next tool in workflow",
+      "category": "system",
+      "path": "/tools/tool-router/",
+      "entry": "tools/tool-router/index.html",
+      "tags": [
+        "mesh-ready",
+        "pipeline-prep"
+      ],
+      "audience": [
+        "operators",
+        "founders"
+      ],
+      "inputs": [
+        "artifact_type",
+        "goal"
+      ],
+      "outputs": [
+        "next_tool_suggestion"
+      ],
+      "relatedTools": [
+        "promptalchemy",
+        "spec-builder",
+        "code-generator",
+        "code-reviewer"
+      ],
+      "status": "active",
+      "icon": "\ud83d\udda5\ufe0f"
+    },
+    {
+      "id": "tool-search-discovery",
+      "title": "Tool Search Discovery",
+      "description": "Search the tool ecosystem by category, purpose keywords, and related tool IDs.",
+      "category": "system",
+      "path": "/tools/tool-search-discovery/",
+      "entry": "tools/tool-search-discovery/index.html",
+      "tags": [
+        "search",
+        "discovery",
+        "simba-workflows"
+      ],
+      "audience": [
+        "operators",
+        "coders",
+        "researchers",
+        "creators"
+      ],
+      "inputs": [
+        "query",
+        "category"
+      ],
+      "outputs": [
+        "tool_matches"
+      ],
+      "relatedTools": [
+        "workflow-template-gallery",
+        "tool-router",
+        "context-packager"
+      ],
+      "status": "active",
+      "icon": "\ud83d\udda5\ufe0f"
+    },
+    {
+      "id": "workflow-template-gallery",
+      "title": "Workflow Template Gallery",
+      "description": "Browse reusable workflow templates and generate launch-ready sequence briefs.",
+      "category": "system",
+      "path": "/tools/workflow-template-gallery/",
+      "entry": "tools/workflow-template-gallery/index.html",
+      "tags": [
+        "workflow",
+        "templates",
+        "simba-workflows"
+      ],
+      "audience": [
+        "operators",
+        "coders",
+        "researchers"
+      ],
+      "inputs": [
+        "workflow_goal",
+        "team_context"
+      ],
+      "outputs": [
+        "workflow_sequence"
+      ],
+      "relatedTools": [
+        "task-splitter",
+        "context-packager",
+        "tool-search-discovery"
+      ],
+      "status": "active",
+      "icon": "\ud83d\udda5\ufe0f"
+    },
+    {
+      "id": "meeting-cost-calculator",
+      "title": "Meeting Cost Calculator",
+      "description": "Estimate direct meeting cost based on participants, rates, and preparation time.",
+      "category": "business",
+      "path": "/tools/engine/meeting-cost-calculator/",
+      "entry": "tools/engine/meeting-cost-calculator/index.html",
+      "tags": [
+        "business",
+        "calculator",
+        "productivity",
+        "standalone"
+      ],
+      "audience": [
+        "general"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udcbc"
+    },
+    {
+      "id": "thirty-day-promotion-engine",
+      "title": "30-Day Promotion Engine",
+      "description": "Evaluate monthly promotion eligibility from merit signals.",
+      "category": "engine",
+      "path": "/tools/engine/thirty-day-promotion-engine/",
+      "entry": "tools/engine/thirty-day-promotion-engine/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "ai-coach-console",
+      "title": "AI Coach Console",
+      "description": "Provide narrative guidance while staying advisory-only.",
+      "category": "engine",
+      "path": "/tools/engine/ai-coach-console/",
+      "entry": "tools/engine/ai-coach-console/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "balance-dashboard",
+      "title": "Balance Dashboard",
+      "description": "Analyze and visualize whether the Wave 1 farm loop is fair across all player archetypes.",
+      "category": "engine",
+      "path": "/tools/engine/balance-dashboard/",
+      "entry": "tools/engine/balance-dashboard/index.html",
+      "tags": [
+        "orchard-engine",
+        "wave1",
+        "simulation",
+        "balance",
+        "standalone"
+      ],
+      "audience": [
+        "founders",
+        "operators",
+        "researchers"
+      ],
+      "inputs": [
+        "simulation_results"
+      ],
+      "outputs": [
+        "balance_report",
+        "fairness_verdict"
+      ],
+      "relatedTools": [
+        "wave1-simulation-runner",
+        "synthetic-player-generator"
+      ],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "circle-builder",
+      "title": "Circle Builder",
+      "description": "Create collaboration circles for trusted learning and validation.",
+      "category": "engine",
+      "path": "/tools/engine/circle-builder/",
+      "entry": "tools/engine/circle-builder/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "daily-quest-generator",
+      "title": "Daily Quest Generator",
+      "description": "Generate daily orchard quests mapped to growth goals.",
+      "category": "engine",
+      "path": "/tools/engine/daily-quest-generator/",
+      "entry": "tools/engine/daily-quest-generator/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "eco-engine-test",
+      "title": "Eco-Hack Engine Test",
+      "description": "Isolated test environment for unified auth, wallet, and plant engine logic.",
+      "category": "engine",
+      "path": "/tools/eco-engine-test/",
+      "entry": "tools/eco-engine-test/index.html",
+      "tags": [
+        "auth",
+        "supabase",
+        "orchard-engine",
+        "standalone"
+      ],
+      "audience": [
+        "developers",
+        "operators",
+        "researchers"
+      ],
+      "inputs": [
+        "email",
+        "password",
+        "auth_session"
+      ],
+      "outputs": [
+        "wallet_state",
+        "plant_state",
+        "action_log"
+      ],
+      "relatedTools": [
+        "player-signup",
+        "starter-farm-generator"
+      ],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "fair-ranking-engine",
+      "title": "Fair Ranking Engine",
+      "description": "Compute ranking using consistency, quality, originality, peer usefulness, and improvement.",
+      "category": "engine",
+      "path": "/tools/engine/fair-ranking-engine/",
+      "entry": "tools/engine/fair-ranking-engine/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "four-direction-pipeline",
+      "title": "Four Direction Pipeline",
+      "description": "Structure growth planning by player, environment, resources, and targets.",
+      "category": "engine",
+      "path": "/tools/engine/four-direction-pipeline/",
+      "entry": "tools/engine/four-direction-pipeline/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "fruit-sharing",
+      "title": "Fruit Sharing",
+      "description": "Share completed outputs with context and contribution intent.",
+      "category": "engine",
+      "path": "/tools/engine/fruit-sharing/",
+      "entry": "tools/engine/fruit-sharing/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "fruit-yield-engine",
+      "title": "Fruit Yield Engine",
+      "description": "Convert completed tasks and artifacts into fruit yield outputs.",
+      "category": "engine",
+      "path": "/tools/engine/fruit-yield-engine/",
+      "entry": "tools/engine/fruit-yield-engine/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "grid-evolution",
+      "title": "Grid Evolution",
+      "description": "Cellular automata sandbox for experimenting with simple evolution rules.",
+      "category": "engine",
+      "path": "/tools/engine/grid-evolution/",
+      "entry": "tools/engine/grid-evolution/index.html",
+      "tags": [
+        "simulation",
+        "cellular-automata",
+        "engine",
+        "standalone"
+      ],
+      "audience": [
+        "general"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "growth-milestone-engine",
+      "title": "Growth Milestone Engine",
+      "description": "Interconnected farming progression simulator with shared state hydration and cross-tool event bus integration.",
+      "category": "engine",
+      "path": "/tools/engine/growth-milestone-engine/",
+      "entry": "tools/engine/growth-milestone-engine/index.html",
+      "tags": [
+        "orchard-engine",
+        "growth",
+        "milestones",
+        "threejs",
+        "event-bus",
+        "standalone"
+      ],
+      "audience": [
+        "players",
+        "operators",
+        "designers"
+      ],
+      "inputs": [
+        "engine:weather_changed",
+        "engine:market_reward"
+      ],
+      "outputs": [
+        "engine:research_completed",
+        "engine:day_advanced",
+        "engine:crop_burn",
+        "engine:pest_outbreak",
+        "engine:evolution"
+      ],
+      "relatedTools": [
+        "weather-system",
+        "engine-state-manager",
+        "recruiter-dashboard"
+      ],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "growth-path-recommender",
+      "title": "Growth Path Recommender",
+      "description": "Recommend next best growth action from pipeline signals.",
+      "category": "engine",
+      "path": "/tools/engine/growth-path-recommender/",
+      "entry": "tools/engine/growth-path-recommender/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "hire-readiness-scorer",
+      "title": "Hire Readiness Scorer",
+      "description": "Score readiness using sustained growth and trusted output signals.",
+      "category": "engine",
+      "path": "/tools/engine/hire-readiness-scorer/",
+      "entry": "tools/engine/hire-readiness-scorer/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "layer1-swipe-crucible",
+      "title": "Layer 1 \u2014 Swipe Crucible",
+      "description": "Daily swipe-card sessions for Layer 1 players. Drag cards to complete micro-tasks, earn XP, grow roots.",
+      "category": "engine",
+      "path": "/tools/engine/layer1-swipe-crucible/",
+      "entry": "tools/engine/layer1-swipe-crucible/index.html",
+      "tags": [
+        "orchard-engine",
+        "game",
+        "layer1",
+        "swipe",
+        "daily",
+        "standalone"
+      ],
+      "audience": [
+        "general"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "relatedTools": [
+        "growth-milestone-engine",
+        "season-engine",
+        "reward-wallet"
+      ],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "market-dynamics",
+      "title": "Market Dynamics",
+      "description": "Interactive market simulator for supply, demand, and volatility pressures.",
+      "category": "engine",
+      "path": "/tools/engine/market-dynamics/",
+      "entry": "tools/engine/market-dynamics/index.html",
+      "tags": [
+        "simulation",
+        "market",
+        "business",
+        "standalone"
+      ],
+      "audience": [
+        "general"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "meta-health-dashboard",
+      "title": "Meta Health Dashboard",
+      "description": "Monitor fairness, trust health, promotions, and abuse indicators.",
+      "category": "engine",
+      "path": "/tools/engine/meta-health-dashboard/",
+      "entry": "tools/engine/meta-health-dashboard/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "orchard-discovery-search",
+      "title": "Orchard Discovery Search",
+      "description": "Search orchard profiles by growth signals and tags.",
+      "category": "engine",
+      "path": "/tools/engine/orchard-discovery-search/",
+      "entry": "tools/engine/orchard-discovery-search/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "orchard-profile-builder",
+      "title": "Orchard Profile Builder",
+      "description": "Build recruiter-readable orchard profiles with roots, trunk, branches, fruits, and seeds.",
+      "category": "engine",
+      "path": "/tools/engine/orchard-profile-builder/",
+      "entry": "tools/engine/orchard-profile-builder/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "peer-validation-engine",
+      "title": "Peer Validation Engine",
+      "description": "Capture peer validation and usefulness signals.",
+      "category": "engine",
+      "path": "/tools/engine/peer-validation-engine/",
+      "entry": "tools/engine/peer-validation-engine/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "player-signup",
+      "title": "Player Signup",
+      "description": "Create player identity, assign archetype, and attach a starter orchard.",
+      "category": "engine",
+      "path": "/tools/engine/player-signup/",
+      "entry": "tools/engine/player-signup/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "recruiter-dashboard",
+      "title": "Recruiter Dashboard",
+      "description": "Browse orchard candidate summaries in a read-optimized view.",
+      "category": "engine",
+      "path": "/tools/engine/recruiter-dashboard/",
+      "entry": "tools/engine/recruiter-dashboard/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "root-strength-calculator",
+      "title": "Root Strength Calculator",
+      "description": "Calculate fundamentals strength from learning and consistency signals.",
+      "category": "engine",
+      "path": "/tools/engine/root-strength-calculator/",
+      "entry": "tools/engine/root-strength-calculator/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "script-generator-files",
+      "title": "Script Generator Files",
+      "description": "Generate copy-friendly script packs from one structured brief.",
+      "category": "engine",
+      "path": "/tools/engine/script-generator-files/",
+      "entry": "tools/engine/script-generator-files/index.html",
+      "tags": [
+        "standalone",
+        "script",
+        "copy-friendly"
+      ],
+      "audience": [
+        "operators",
+        "creators",
+        "developers"
+      ],
+      "inputs": [
+        "brief",
+        "format",
+        "length",
+        "tone"
+      ],
+      "outputs": [
+        "script_pack"
+      ],
+      "relatedTools": [
+        "script-generator",
+        "promptalchemy",
+        "export-studio"
+      ],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "seed-exchange",
+      "title": "Seed Exchange",
+      "description": "Share reusable knowledge seeds with metadata and value scoring.",
+      "category": "engine",
+      "path": "/tools/engine/seed-exchange/",
+      "entry": "tools/engine/seed-exchange/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "seed-quality-scorer",
+      "title": "Seed Quality Scorer",
+      "description": "Evaluate reusable knowledge seeds by scoring clarity, viability, and growth potential.",
+      "category": "engine",
+      "path": "/tools/engine/seed-quality-scorer/",
+      "entry": "tools/engine/seed-quality-scorer/index.html",
+      "tags": [],
+      "audience": [
+        "general"
+      ],
+      "inputs": [
+        "seed_batch",
+        "weight_profile",
+        "simulation_tick_ms",
+        "growth_focus"
+      ],
+      "outputs": [
+        "seed_score_report",
+        "engine_state_snapshot",
+        "event_log"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "simulation-runner",
+      "title": "Simulation Runner",
+      "description": "Simulate multiple player archetypes over time.",
+      "category": "engine",
+      "path": "/tools/engine/simulation-runner/",
+      "entry": "tools/engine/simulation-runner/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "starter-farm-generator",
+      "title": "Starter Farm Generator",
+      "description": "Initialize farm state, resources, and starter tree slots.",
+      "category": "engine",
+      "path": "/tools/engine/starter-farm-generator/",
+      "entry": "tools/engine/starter-farm-generator/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "synthetic-player-generator",
+      "title": "Synthetic Player Generator",
+      "description": "Generate realistic test players with defined archetypes for Wave 1 simulation.",
+      "category": "engine",
+      "path": "/tools/engine/synthetic-player-generator/",
+      "entry": "tools/engine/synthetic-player-generator/index.html",
+      "tags": [
+        "orchard-engine",
+        "wave1",
+        "simulation",
+        "standalone"
+      ],
+      "audience": [
+        "founders",
+        "operators",
+        "researchers"
+      ],
+      "inputs": [
+        "player_count",
+        "archetype_mix",
+        "seed"
+      ],
+      "outputs": [
+        "synthetic_player_list"
+      ],
+      "relatedTools": [
+        "wave1-simulation-runner",
+        "balance-dashboard"
+      ],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "traffic-router",
+      "title": "Traffic Router",
+      "description": "Road routing puzzle for building a connected path across a city grid.",
+      "category": "engine",
+      "path": "/tools/engine/traffic-router/",
+      "entry": "tools/engine/traffic-router/index.html",
+      "tags": [
+        "simulation",
+        "routing",
+        "puzzle",
+        "standalone"
+      ],
+      "audience": [
+        "general"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "trunk-growth-calculator",
+      "title": "Trunk Growth Calculator",
+      "description": "Measure depth and resilience growth based on deep work and recovery.",
+      "category": "engine",
+      "path": "/tools/engine/trunk-growth-calculator/",
+      "entry": "tools/engine/trunk-growth-calculator/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "trust-score-engine",
+      "title": "Trust Score Engine",
+      "description": "Compute trust from collaboration quality and validated contribution.",
+      "category": "engine",
+      "path": "/tools/engine/trust-score-engine/",
+      "entry": "tools/engine/trust-score-engine/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "wave1-simulation-runner",
+      "title": "Wave 1 Simulation Runner",
+      "description": "Run 30/60/90-day Wave 1 farm loop simulations with archetype-driven synthetic players.",
+      "category": "engine",
+      "path": "/tools/engine/wave1-simulation-runner/",
+      "entry": "tools/engine/wave1-simulation-runner/index.html",
+      "tags": [
+        "orchard-engine",
+        "wave1",
+        "simulation",
+        "standalone"
+      ],
+      "audience": [
+        "founders",
+        "operators",
+        "researchers"
+      ],
+      "inputs": [
+        "player_count",
+        "duration_days",
+        "archetype_mix",
+        "seed"
+      ],
+      "outputs": [
+        "simulation_results",
+        "leaderboard",
+        "fairness_notes",
+        "exploit_indicators"
+      ],
+      "relatedTools": [
+        "synthetic-player-generator",
+        "balance-dashboard",
+        "simulation-runner"
+      ],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "weekly-harvest-engine",
+      "title": "Weekly Harvest Engine",
+      "description": "Score and summarize weekly harvest quality.",
+      "category": "engine",
+      "path": "/tools/engine/weekly-harvest-engine/",
+      "entry": "tools/engine/weekly-harvest-engine/index.html",
+      "tags": [
+        "orchard-engine",
+        "merit-based",
+        "standalone"
+      ],
+      "audience": [
+        "students",
+        "researchers",
+        "founders",
+        "operators",
+        "recruiters"
+      ],
+      "inputs": [
+        "primary_input",
+        "secondary_input",
+        "growth_mode"
+      ],
+      "outputs": [
+        "engine_result"
+      ],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "color-palette",
+      "title": "Color Palette Generator",
+      "description": "",
+      "category": "misc",
+      "path": "/tools/color-palette/",
+      "entry": "tools/color-palette/index.html",
+      "tags": [],
+      "audience": [
+        "general"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "json-formatter",
+      "title": "JSON Formatter",
+      "description": "",
+      "category": "misc",
+      "path": "/tools/json-formatter/",
+      "entry": "tools/json-formatter/index.html",
+      "tags": [],
+      "audience": [
+        "general"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "pomodoro",
+      "title": "Pomodoro Timer",
+      "description": "",
+      "category": "misc",
+      "path": "/tools/pomodoro/",
+      "entry": "tools/pomodoro/index.html",
+      "tags": [],
+      "audience": [
+        "general"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "regex-tester",
+      "title": "RegEx Tester",
+      "description": "",
+      "category": "misc",
+      "path": "/tools/regex-tester/",
+      "entry": "tools/regex-tester/index.html",
+      "tags": [],
+      "audience": [
+        "general"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    },
+    {
+      "id": "revenue-forecaster",
+      "title": "Revenue Forecaster",
+      "description": "",
+      "category": "misc",
+      "path": "/tools/revenue-forecaster/",
+      "entry": "tools/revenue-forecaster/index.html",
+      "tags": [],
+      "audience": [
+        "general"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "relatedTools": [],
+      "status": "active",
+      "icon": "\ud83d\udd27"
+    }
+  ]
+}
