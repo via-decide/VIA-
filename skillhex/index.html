@@ -9,7 +9,10 @@
 
 <!-- Firebase 9 Compat SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<!-- VIA Universal Credit Wallet -->
+<script src="../shared/via-credits.js"></script>
 
 <style>
 /* ═══════════════════════════════════════════════════════ TOKENS */
@@ -2649,5 +2652,7 @@ if (document.readyState === 'loading') {
   init();
 }
 </script>
+<!-- VIA Credits Bridge — must load after game scripts -->
+<script src="./js/via-bridge.js"></script>
 </body>
 </html>

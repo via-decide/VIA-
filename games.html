@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<meta name="theme-color" content="#0B0B1A"/>
+<title>VIA Games — Play, Learn, Earn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+window.VIA_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCQMIvNgKJPZmxVHRC8lKL79k6n0wh0EKo",
+  authDomain: "gen-lang-client-0662689801.firebaseapp.com",
+  projectId: "gen-lang-client-0662689801",
+  storageBucket: "gen-lang-client-0662689801.firebasestorage.app",
+  messagingSenderId: "899475982419",
+  appId: "1:899475982419:web:fc93af4d97e6a578b31ea6"
+};
+</script>
+<script src="./shared/firebase-config.js"></script>
+<script src="./shared/via-credits.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --deep:#0B0B1A;--deep2:#13132A;
+  --saffron:#FF6B00;--gold:#F5C518;
+  --cyan:#00E5FF;--green:#00FF88;--mars:#D64000;
+  --muted:#8B8BAD;--white:#FFFFFF;
+  --border:rgba(255,255,255,.08);
+}
+html,body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* ── NAV ── */
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;position:sticky;top:0;z-index:100;background:rgba(11,11,26,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.04em;background:linear-gradient(135deg,var(--saffron),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none}
+.back-btn{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--border);padding:.4rem .8rem;border-radius:999px;text-decoration:none;transition:color .2s,border-color .2s}
+.back-btn:hover{color:var(--white);border-color:rgba(255,255,255,.2)}
+.wallet-pill{display:flex;align-items:center;gap:.5rem;background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.2);border-radius:999px;padding:.4rem .9rem;font-size:.75rem;font-weight:700;color:var(--gold);font-family:'Share Tech Mono',monospace}
+.wallet-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── HERO ── */
+.hero{text-align:center;padding:4rem 1.5rem 2rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(255,107,0,.12),transparent 70%);pointer-events:none}
+.hero-kicker{font-size:.7rem;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--saffron);margin-bottom:.8rem}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,10vw,6rem);line-height:.95;background:linear-gradient(135deg,var(--white),rgba(255,255,255,.6));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1rem}
+.hero-sub{color:var(--muted);font-size:1rem;max-width:520px;margin:0 auto 2rem;line-height:1.6}
+.credit-notice{display:inline-flex;align-items:center;gap:.6rem;background:rgba(245,197,24,.06);border:1px solid rgba(245,197,24,.15);border-radius:12px;padding:.6rem 1.2rem;font-size:.78rem;color:rgba(255,255,255,.7)}
+.credit-notice strong{color:var(--gold)}
+
+/* ── GAMES GRID ── */
+.games-section{padding:2rem 1.5rem 0;max-width:1200px;margin:0 auto}
+.section-label{font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:1.5rem;display:flex;align-items:center;gap:.8rem}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.games-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-bottom:2rem}
+
+.game-card{border-radius:20px;border:1px solid var(--border);overflow:hidden;transition:transform .25s,border-color .25s;cursor:pointer;position:relative;background:rgba(19,19,42,.6)}
+.game-card:hover{transform:translateY(-4px)}
+.game-card.skillhex{border-color:rgba(0,229,255,.15)}.game-card.skillhex:hover{border-color:rgba(0,229,255,.4)}
+.game-card.mars{border-color:rgba(214,64,0,.15)}.game-card.mars:hover{border-color:rgba(214,64,0,.4)}
+.game-card.orchard{border-color:rgba(0,255,136,.15)}.game-card.orchard:hover{border-color:rgba(0,255,136,.4)}
+
+.game-banner{height:160px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.game-banner.skillhex-bg{background:linear-gradient(135deg,#030508 0%,#060a14 50%,#0c1224 100%)}
+.game-banner.mars-bg{background:linear-gradient(135deg,#060608 0%,#0D0E12 50%,#111318 100%)}
+.game-banner.orchard-bg{background:linear-gradient(135deg,#0a1a0a 0%,#0d1f0d 50%,#102010 100%)}
+
+.game-banner-icon{font-size:4rem;filter:drop-shadow(0 0 20px currentColor);position:relative;z-index:1}
+.game-banner-glow{position:absolute;width:120px;height:120px;border-radius:50%;filter:blur(40px);opacity:.3}
+.skillhex .game-banner-glow{background:var(--cyan)}
+.mars .game-banner-glow{background:var(--mars)}
+.orchard .game-banner-glow{background:var(--green)}
+
+.game-info{padding:1.2rem 1.4rem 1.4rem}
+.game-tag{font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:.5rem}
+.skillhex .game-tag{color:var(--cyan)}
+.mars .game-tag{color:var(--mars)}
+.orchard .game-tag{color:var(--green)}
+.game-name{font-size:1.25rem;font-weight:700;margin-bottom:.4rem}
+.game-desc{font-size:.82rem;color:var(--muted);line-height:1.5;margin-bottom:1rem}
+
+.game-audience{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem}
+.audience-tag{font-size:.6rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:.25rem .6rem;border-radius:999px;border:1px solid var(--border);color:rgba(255,255,255,.5)}
+
+.earn-badge{display:flex;align-items:center;gap:.5rem;padding:.5rem .8rem;border-radius:10px;font-size:.72rem;font-weight:700;margin-bottom:1rem}
+.skillhex .earn-badge{background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.15);color:var(--cyan)}
+.mars .earn-badge{background:rgba(214,64,0,.06);border:1px solid rgba(214,64,0,.15);color:var(--mars)}
+.orchard .earn-badge{background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.15);color:var(--green)}
+
+.play-btn{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:.8rem;border-radius:12px;font-weight:700;font-size:.85rem;text-decoration:none;letter-spacing:.05em;text-transform:uppercase;transition:all .2s}
+.skillhex .play-btn{background:rgba(0,229,255,.12);color:var(--cyan);border:1px solid rgba(0,229,255,.3)}.skillhex .play-btn:hover{background:rgba(0,229,255,.22)}
+.mars .play-btn{background:rgba(214,64,0,.12);color:#ff6b35;border:1px solid rgba(214,64,0,.3)}.mars .play-btn:hover{background:rgba(214,64,0,.22)}
+.orchard .play-btn{background:rgba(0,255,136,.12);color:var(--green);border:1px solid rgba(0,255,136,.3)}.orchard .play-btn:hover{background:rgba(0,255,136,.22)}
+
+/* ── INTERCONNECTION MAP ── */
+.connect-section{padding:2rem 1.5rem;max-width:1200px;margin:0 auto}
+.connect-diagram{background:rgba(19,19,42,.6);border:1px solid var(--border);border-radius:20px;padding:2rem;position:relative;overflow:hidden}
+.connect-diagram::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(245,197,24,.04),transparent 60%);pointer-events:none}
+
+.diagram-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--gold);margin-bottom:.25rem}
+.diagram-sub{font-size:.8rem;color:var(--muted);margin-bottom:2rem}
+
+.flow-grid{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:1rem;align-items:center}
+@media(max-width:700px){.flow-grid{grid-template-columns:1fr;gap:.5rem}.flow-arrow{transform:rotate(90deg)}}
+
+.flow-node{border-radius:16px;padding:1.2rem;border:1px solid var(--border);text-align:center;position:relative}
+.flow-node.s{border-color:rgba(0,229,255,.25);background:rgba(0,229,255,.04)}
+.flow-node.m{border-color:rgba(214,64,0,.25);background:rgba(214,64,0,.04)}
+.flow-node.o{border-color:rgba(0,255,136,.25);background:rgba(0,255,136,.04)}
+.node-icon{font-size:2rem;margin-bottom:.5rem}
+.node-name{font-weight:700;font-size:.9rem;margin-bottom:.3rem}
+.node-earn{font-size:.7rem;color:var(--gold);font-family:'Share Tech Mono',monospace}
+.flow-arrow{font-size:1.5rem;color:var(--gold);opacity:.6;text-align:center}
+
+/* ── CREDIT FLOW DETAILS ── */
+.flow-details{margin-top:2rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem}
+.flow-item{border:1px solid var(--border);border-radius:14px;padding:1rem 1.2rem;position:relative;overflow:hidden}
+.flow-item::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.flow-item.s2m::before{background:linear-gradient(90deg,var(--cyan),var(--mars))}
+.flow-item.m2o::before{background:linear-gradient(90deg,var(--mars),var(--green))}
+.flow-item.o2s::before{background:linear-gradient(90deg,var(--green),var(--cyan))}
+.flow-item.all::before{background:linear-gradient(90deg,var(--cyan),var(--mars),var(--green),var(--cyan))}
+.flow-route{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem}
+.flow-action{font-size:.85rem;font-weight:600;margin-bottom:.3rem}
+.flow-cta{font-size:.75rem;color:var(--gold)}
+
+/* ── STEP BY STEP ── */
+.guide-section{padding:2rem 1.5rem 4rem;max-width:900px;margin:0 auto}
+.guide-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;margin-bottom:1.5rem;color:var(--white)}
+.steps{display:flex;flex-direction:column;gap:1.2rem}
+.step{display:flex;gap:1rem;align-items:flex-start;padding:1.2rem;border:1px solid var(--border);border-radius:14px;background:rgba(19,19,42,.4);transition:border-color .2s}
+.step:hover{border-color:rgba(255,107,0,.25)}
+.step-num{flex-shrink:0;width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--saffron),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;color:#000;font-weight:900}
+.step-content{}
+.step-title{font-weight:700;font-size:.9rem;margin-bottom:.3rem}
+.step-desc{font-size:.8rem;color:var(--muted);line-height:1.6}
+.step-game{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.2rem .5rem;border-radius:6px;display:inline-block;margin-top:.4rem}
+.step-game.s{background:rgba(0,229,255,.1);color:var(--cyan)}
+.step-game.m{background:rgba(214,64,0,.1);color:#ff6b35}
+.step-game.o{background:rgba(0,255,136,.1);color:var(--green)}
+.step-game.all{background:rgba(245,197,24,.1);color:var(--gold)}
+</style>
+</head>
+<body>
+
+<!-- ── TOP NAV ── -->
+<nav class="top-bar">
+  <a href="./" class="logo">VIA</a>
+  <div class="wallet-pill">
+    <div class="wallet-dot"></div>
+    <span id="wallet-bal">— 🪙</span>
+  </div>
+  <a href="./" class="back-btn">← Back to VIA</a>
+</nav>
+
+<!-- ── HERO ── -->
+<header class="hero">
+  <p class="hero-kicker">VIA Games Universe</p>
+  <h1 class="hero-title">Play. Learn.<br>Earn.</h1>
+  <p class="hero-sub">Three games. One shared wallet. Credits you earn in any game work in all of them — and you can transfer them to friends.</p>
+  <div class="credit-notice">
+    🪙 <strong>VIA Credits</strong> are earned across all games and can be transferred to any user
+  </div>
+</header>
+
+<!-- ── GAMES GRID ── -->
+<section class="games-section">
+  <p class="section-label">Choose your game</p>
+  <div class="games-grid">
+
+    <!-- SkillHex -->
+    <div class="game-card skillhex" onclick="location.href='./skillhex/'">
+      <div class="game-banner skillhex-bg">
+        <div class="game-banner-glow"></div>
+        <div class="game-banner-icon">⬡</div>
+      </div>
+      <div class="game-info">
+        <div class="game-tag">Career · Strategy · Decisions</div>
+        <div class="game-name">SkillHex Mission Control</div>
+        <div class="game-desc">Mission-based decision game for students &amp; job seekers. Answer real interview scenarios, complete space missions, build a Hex skill map. The higher your Skill Rating, the more you earn.</div>
+        <div class="game-audience">
+          <span class="audience-tag">Students</span>
+          <span class="audience-tag">Job Seekers</span>
+          <span class="audience-tag">Career Switchers</span>
+        </div>
+        <div class="earn-badge">⬡ 10 tokens = 1 VIA Credit · SR-based bonuses</div>
+        <a href="./skillhex/" class="play-btn" onclick="event.stopPropagation()">Launch SkillHex →</a>
+      </div>
+    </div>
+
+    <!-- Mars Terminal -->
+    <div class="game-card mars" onclick="location.href='./mars/'">
+      <div class="game-banner mars-bg">
+        <div class="game-banner-glow"></div>
+        <div class="game-banner-icon">🔴</div>
+      </div>
+      <div class="game-info">
+        <div class="game-tag">Simulation · Science · Survival</div>
+        <div class="game-name">Mars Terminal Rover</div>
+        <div class="game-desc">ISRO-inspired Mars geological survey simulator. Navigate a rover, scan rock formations, answer real planetary science questions. Complete missions to earn credits and certifications.</div>
+        <div class="game-audience">
+          <span class="audience-tag">Game Lovers</span>
+          <span class="audience-tag">Science Fans</span>
+          <span class="audience-tag">Engineers</span>
+        </div>
+        <div class="earn-badge">🔴 Survival Index % × difficulty = VIA Credits</div>
+        <a href="./mars/" class="play-btn" onclick="event.stopPropagation()">Launch Mars Terminal →</a>
+      </div>
+    </div>
+
+    <!-- Orchard Engine -->
+    <div class="game-card orchard" onclick="location.href='./game/'">
+      <div class="game-banner orchard-bg">
+        <div class="game-banner-glow"></div>
+        <div class="game-banner-icon">🌱</div>
+      </div>
+      <div class="game-info">
+        <div class="game-tag">Farming · Strategy · Multiplayer</div>
+        <div class="game-name">Orchard Engine</div>
+        <div class="game-desc">Grow exotic bio-engineered plants, manage orchards, breed rare hybrids. Earn credits by harvesting — then transfer them to friends or spend on upgrades. The social farming game.</div>
+        <div class="game-audience">
+          <span class="audience-tag">Everyone</span>
+          <span class="audience-tag">Casual Players</span>
+          <span class="audience-tag">Traders</span>
+        </div>
+        <div class="earn-badge">🌱 Harvest rare plants → VIA Credits · Direct transfer</div>
+        <a href="./game/" class="play-btn" onclick="event.stopPropagation()">Launch Orchard →</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── INTERCONNECTION MAP ── -->
+<section class="connect-section">
+  <p class="section-label">How they connect</p>
+  <div class="connect-diagram">
+    <div class="diagram-title">One Wallet. Three Worlds.</div>
+    <p class="diagram-sub">Credits flow freely between all three games. Earn anywhere, spend anywhere, transfer to anyone.</p>
+
+    <div class="flow-grid">
+      <div class="flow-node s">
+        <div class="node-icon">⬡</div>
+        <div class="node-name">SkillHex</div>
+        <div class="node-earn">+1🪙 per 10 tokens<br>+SR bonuses</div>
+      </div>
+      <div class="flow-arrow">⇄</div>
+      <div class="flow-node m">
+        <div class="node-icon">🔴</div>
+        <div class="node-name">Mars Terminal</div>
+        <div class="node-earn">+3🪙 per correct scan<br>+survival index bonus</div>
+      </div>
+      <div class="flow-arrow">⇄</div>
+      <div class="flow-node o">
+        <div class="node-icon">🌱</div>
+        <div class="node-name">Orchard</div>
+        <div class="node-earn">+500🪙 per harvest<br>trade with friends</div>
+      </div>
+    </div>
+
+    <div class="flow-details">
+      <div class="flow-item s2m">
+        <div class="flow-route">SkillHex → Mars Terminal</div>
+        <div class="flow-action">Use SkillHex credits to unlock Advanced Mars missions</div>
+        <div class="flow-cta">→ "50🪙 to unlock Tier 2: Cascade Failure mission"</div>
+      </div>
+      <div class="flow-item m2o">
+        <div class="flow-route">Mars Terminal → Orchard</div>
+        <div class="flow-action">Mars survey credits buy premium Orchard seeds &amp; tools</div>
+        <div class="flow-cta">→ "Use 75🪙 to skip Orchard seed cost + boost rarity"</div>
+      </div>
+      <div class="flow-item o2s">
+        <div class="flow-route">Orchard → SkillHex</div>
+        <div class="flow-action">Harvest earnings fund SkillHex interview hints &amp; boosts</div>
+        <div class="flow-cta">→ "Spend 30🪙 to reveal the correct answer on hard missions"</div>
+      </div>
+      <div class="flow-item all">
+        <div class="flow-route">All Games</div>
+        <div class="flow-action">Transfer credits to any VIA user from any game</div>
+        <div class="flow-cta">→ Send a friend 100🪙 directly from their UID — works in all 3 games</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STEP BY STEP GUIDE ── -->
+<section class="guide-section">
+  <p class="section-label">Step-by-step guide</p>
+  <h2 class="guide-title">How to Play the Full Ecosystem</h2>
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">Sign in once — credits work everywhere</div>
+        <div class="step-desc">Log in with Google on any of the three games. Your VIA Credits wallet is tied to your Google account and synced in real-time across all games via Firebase. You never need to sign in twice.</div>
+        <span class="step-game all">All Games</span>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">Start with SkillHex if you're a student or job seeker</div>
+        <div class="step-desc">Complete interview missions (Oxygen Crisis → Power Allocation → Final Approach). Every 10 tokens you earn converts to 1 VIA Credit automatically. A 3-day streak gives +30 tokens = 3 bonus credits. Build your Skill Rating — higher SR unlocks harder missions that pay more.</div>
+        <span class="step-game s">SkillHex</span>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">Start with Mars Terminal if you love games &amp; science</div>
+        <div class="step-desc">Launch into the ISRO Mars Geological Survey. Move your rover, scan rock formations, answer planetary science MCQs. Each correct answer = +3 VIA Credits. Complete a full mission run and your Survival Index (0-100%) multiplies your credit reward. Completing 3 missions unlocks Tier 2.</div>
+        <span class="step-game m">Mars Terminal</span>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title">Grow your Orchard with credits from the other games</div>
+        <div class="step-desc">Open Orchard Engine. Each plot costs 50🪙 to seed. Use credits earned in SkillHex or Mars to fund your seeds — you don't have to start from zero. Research your plants to evolve them through 5 stages. Harvest a mature plant for 500-2000🪙 depending on rarity.</div>
+        <span class="step-game o">Orchard</span>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <div class="step-title">Transfer credits to friends (the social loop)</div>
+        <div class="step-desc">In Orchard's Market tab, paste any user's UID to send credits. In SkillHex, the leaderboard shows top players — you can gift credits as a challenge. "Send me 50🪙 if you beat my SR score." This turns the games into a social layer on top of VIA's feed.</div>
+        <span class="step-game all">All Games</span>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-content">
+        <div class="step-title">Breed rare hybrids and sell (Orchard endgame)</div>
+        <div class="step-desc">Once you have two Mature (Stage 4) plants, use the Bio-Genetic Lab to cross-pollinate them for 100🪙. Hybrids inherit combined traits and have a 20% chance to upgrade rarity. A Legendary plant harvests for 2000+ credits — enough to fund 40 new plot seeds.</div>
+        <span class="step-game o">Orchard</span>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-content">
+        <div class="step-title">Unlock Mars Tier 2 missions (requires credits)</div>
+        <div class="step-desc">Complete 3 Tier 1 missions (Dust Season, Cascade Failure basics) to advance. Higher tier missions have tougher constraints but pay significantly more credits per run. Advanced missions require 70%+ Survival Index — credits from SkillHex can subsidize retries.</div>
+        <span class="step-game m">Mars Terminal</span>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">8</div>
+      <div class="step-content">
+        <div class="step-title">Watch your game activity appear in the VIA Feed</div>
+        <div class="step-desc">Harvesting a Legendary plant, completing a Mars mission, or hitting a SkillHex milestone posts a card to your VIA social feed. Friends can see it, send reactions, or click "Play Now" to jump into the same game. This is the discovery loop — games grow the VIA network.</div>
+        <span class="step-game all">VIA Feed</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+/* Show live VIA Credits balance in top nav */
+if (window.VIACredits) {
+  window.VIACredits.onBalance(function(bal) {
+    const el = document.getElementById('wallet-bal');
+    if (el) el.textContent = bal + ' 🪙';
+  });
+}
+</script>
+</body>
+</html>

@@ -107,9 +107,15 @@
 /tools/games/skillhex-mission-control/   /tools/games/skillhex-mission-control/index.html   200
 
 # Flagship Games (top-level routes)
+/games                                  /games.html                         200
+/games/                                 /games.html                         200
+/arcade                                 /games.html                         200
 /skillhex                               /skillhex/index.html                200
 /skillhex/                              /skillhex/index.html                200
 /skillhex/*                             /skillhex/:splat                    200
+/mars                                   /mars/index.html                    200
+/mars/                                  /mars/index.html                    200
+/mars/*                                 /mars/:splat                        200
 /game                                   /game/index.html                    200
 /game/                                  /game/index.html                    200
 /game/*                                 /game/:splat                        200

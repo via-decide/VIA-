@@ -110,13 +110,19 @@
     'tool-search-discovery':         '/tools/tool-search-discovery/',
 
     // Games
+    'games':                         '/games.html',
+    'arcade':                        '/games.html',
+    'games-hub':                     '/games.html',
     'hex-wars':                      '/tools/games/hex-wars/',
     'snake-game':                    '/tools/games/snake-game/',
     'snake':                         '/tools/games/snake-game/',
-    'skillhex':                      '/tools/games/skillhex-mission-control/',
-    'skillhex-mission-control':      '/tools/games/skillhex-mission-control/',
-    'orchard':                       'https://orchard.viadecide.com',
-    'orchard-game':                  'https://orchard.viadecide.com',
+    'skillhex':                      '/skillhex/',
+    'skillhex-mission-control':      '/skillhex/',
+    'mars':                          '/mars/',
+    'mars-terminal':                 '/mars/',
+    'mars-rover':                    '/mars/',
+    'orchard':                       '/game/',
+    'orchard-game':                  '/game/',
 
     // Engine tools
     'meeting-cost-calculator':       '/tools/engine/meeting-cost-calculator/',

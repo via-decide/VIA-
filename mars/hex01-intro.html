@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>HEX-01 · Mission Intro</title>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@300;400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg: #000;
+  --rust: #c8440a;
+  --rust-dim: #4a1804;
+  --amber: #ff9922;
+  --cyan: #00c8ff;
+  --white: #e8e0d0;
+  --dim: rgba(232,224,208,0.4);
+  --mono: 'Share Tech Mono', monospace;
+  --display: 'Orbitron', sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0; padding: 0;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #000;
+  cursor: none;
+}
+
+/* ── CUSTOM CURSOR ── */
+.cursor {
+  position: fixed;
+  width: 20px; height: 20px;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s;
+}
+.cursor::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 4px; height: 4px;
+  background: var(--cyan);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.cursor::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(0,200,255,0.5);
+  border-radius: 50%;
+  animation: cursorPulse 2s ease-in-out infinite;
+}
+@keyframes cursorPulse {
+  0%,100% { transform: scale(1); opacity: 0.5; }
+  50%      { transform: scale(1.4); opacity: 0.2; }
+}
+
+/* ── MAIN STAGE ── */
+#stage {
+  position: fixed; inset: 0;
+  background: #000;
+}
+
+/* ── MARS GLOBE CANVAS ── */
+#globe-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+}
+
+/* ── STAR FIELD ── */
+#stars-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+}
+
+/* ── SCAN OVERLAY ── */
+.scan-lines {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 1px,
+    transparent 1px, transparent 3px
+  );
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* ── VIGNETTE ── */
+.vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 50%,
+    transparent 30%, rgba(0,0,0,0.75) 100%);
+  pointer-events: none;
+  z-index: 21;
+}
+
+/* ── HUD FRAME CORNERS ── */
+.hud-corners {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  z-index: 30;
+  opacity: 0;
+  animation: hudFadeIn 1s 2s forwards;
+}
+@keyframes hudFadeIn { to { opacity: 1; } }
+
+.corner {
+  position: absolute;
+  width: 40px; height: 40px;
+}
+.corner::before, .corner::after {
+  content: '';
+  position: absolute;
+  background: var(--cyan);
+  opacity: 0.6;
+}
+.corner.tl { top: 24px; left: 24px; }
+.corner.tr { top: 24px; right: 24px; }
+.corner.bl { bottom: 24px; left: 24px; }
+.corner.br { bottom: 24px; right: 24px; }
+
+.corner.tl::before { top: 0; left: 0; width: 2px; height: 20px; }
+.corner.tl::after  { top: 0; left: 0; height: 2px; width: 20px; }
+.corner.tr::before { top: 0; right: 0; width: 2px; height: 20px; }
+.corner.tr::after  { top: 0; right: 0; height: 2px; width: 20px; }
+.corner.bl::before { bottom: 0; left: 0; width: 2px; height: 20px; }
+.corner.bl::after  { bottom: 0; left: 0; height: 2px; width: 20px; }
+.corner.br::before { bottom: 0; right: 0; width: 2px; height: 20px; }
+.corner.br::after  { bottom: 0; right: 0; height: 2px; width: 20px; }
+
+/* ── TOP HUD BAR ── */
+.hud-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 70px;
+  border-bottom: 1px solid rgba(0,200,255,0.12);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+  z-index: 30;
+  opacity: 0;
+  animation: hudFadeIn 0.8s 2.5s forwards;
+}
+.hud-top-left {
+  font-family: var(--display);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 4px;
+  color: rgba(0,200,255,0.7);
+  text-transform: uppercase;
+}
+.hud-top-center {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: rgba(232,224,208,0.3);
+  text-align: center;
+}
+.hud-top-right {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(0,200,255,0.5);
+  text-align: right;
+}
+.sig-dot {
+  display: inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--cyan);
+  margin-right: 6px;
+  animation: sigBlink 2s ease-in-out infinite;
+}
+@keyframes sigBlink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+/* ── BOTTOM HUD BAR ── */
+.hud-bottom {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 70px;
+  border-top: 1px solid rgba(0,200,255,0.12);
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  z-index: 30;
+  opacity: 0;
+  animation: hudFadeIn 0.8s 2.5s forwards;
+}
+.hud-bottom-item {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 2.5px;
+  color: rgba(232,224,208,0.25);
+  text-transform: uppercase;
+}
+.hud-bottom-item span {
+  color: rgba(0,200,255,0.6);
+  display: block;
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+/* ── CROSSHAIR / TARGETING RETICLE ── */
+.reticle {
+  position: absolute;
+  z-index: 25;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.reticle.visible { opacity: 1; }
+.reticle-ring {
+  border: 1px solid rgba(0,200,255,0.5);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation: reticleExpand 0.6s ease-out forwards;
+}
+@keyframes reticleExpand {
+  from { width: 10px; height: 10px; opacity: 0; }
+  to { width: 60px; height: 60px; opacity: 1; }
+}
+.reticle-tick {
+  position: absolute;
+  background: var(--cyan);
+  opacity: 0.7;
+}
+
+/* ── TELEMETRY READOUTS ── */
+.telemetry-panel {
+  position: absolute;
+  left: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 30;
+  opacity: 0;
+  animation: slideInLeft 0.8s 3s forwards;
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateY(-50%) translateX(-20px); }
+  to   { opacity: 1; transform: translateY(-50%) translateX(0); }
+}
+.telem-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  border-left: 1px solid rgba(0,200,255,0.2);
+  padding-left: 12px;
+}
+.telem-label {
+  font-family: var(--mono);
+  font-size: 7px;
+  letter-spacing: 2.5px;
+  color: rgba(232,224,208,0.3);
+  margin-bottom: 3px;
+}
+.telem-value {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: var(--cyan);
+}
+.telem-value.amber { color: var(--amber); }
+.telem-value.white { color: var(--white); }
+
+/* ── QUADRANT DATA (RIGHT PANEL) ── */
+.quadrant-panel {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 30;
+  opacity: 0;
+  animation: slideInRight 0.8s 3.2s forwards;
+  text-align: right;
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateY(-50%) translateX(20px); }
+  to   { opacity: 1; transform: translateY(-50%) translateX(0); }
+}
+.quad-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  border-right: 1px solid rgba(255,153,34,0.2);
+  padding-right: 12px;
+}
+.quad-label {
+  font-family: var(--mono);
+  font-size: 7px;
+  letter-spacing: 2.5px;
+  color: rgba(232,224,208,0.3);
+  margin-bottom: 3px;
+}
+.quad-value {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: var(--amber);
+}
+
+/* ── CINEMATIC TITLE SEQUENCE ── */
+.title-sequence {
+  position: absolute; inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+  pointer-events: none;
+}
+.title-agency {
+  font-family: var(--display);
+  font-size: clamp(9px, 1.5vw, 12px);
+  font-weight: 300;
+  letter-spacing: clamp(6px, 2vw, 14px);
+  color: rgba(232,224,208,0.4);
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: titleRise 1s 0.5s forwards;
+  margin-bottom: 18px;
+}
+@keyframes titleRise {
+  to { opacity: 1; transform: translateY(0); }
+}
+.title-main {
+  font-family: var(--display);
+  font-size: clamp(28px, 7vw, 72px);
+  font-weight: 900;
+  letter-spacing: clamp(4px, 1.5vw, 12px);
+  color: var(--white);
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: titleRise 1.2s 0.9s forwards;
+  line-height: 1;
+  text-align: center;
+}
+.title-main em {
+  color: var(--rust);
+  font-style: normal;
+}
+.title-sub {
+  font-family: var(--mono);
+  font-size: clamp(8px, 1.2vw, 11px);
+  letter-spacing: clamp(3px, 1vw, 8px);
+  color: rgba(200,68,10,0.8);
+  text-transform: uppercase;
+  opacity: 0;
+  animation: titleRise 1s 1.6s forwards;
+  margin-top: 14px;
+}
+.title-divider {
+  width: 0;
+  height: 1px;
+  background: rgba(200,68,10,0.5);
+  opacity: 0;
+  animation: dividerExpand 1.2s 1.3s forwards;
+  margin: 16px 0 12px;
+}
+@keyframes dividerExpand {
+  to { width: 280px; opacity: 1; }
+}
+
+/* ── MISSION BRIEFING TEXT ── */
+.briefing-block {
+  position: absolute;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 40;
+  pointer-events: none;
+  width: 90%;
+  max-width: 600px;
+}
+.briefing-line {
+  font-family: var(--mono);
+  font-size: clamp(8px, 1.3vw, 10px);
+  letter-spacing: 1.5px;
+  color: rgba(232,224,208,0.35);
+  line-height: 2;
+  opacity: 0;
+}
+.briefing-line.l1 { animation: briefFadeIn 0.6s 4.5s forwards; }
+.briefing-line.l2 { animation: briefFadeIn 0.6s 5.1s forwards; }
+.briefing-line.l3 { animation: briefFadeIn 0.6s 5.7s forwards; }
+@keyframes briefFadeIn { to { opacity: 1; } }
+
+/* ── CTA BUTTON ── */
+.cta-wrap {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  opacity: 0;
+  animation: ctaReveal 0.8s 6.5s forwards;
+}
+@keyframes ctaReveal {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.cta-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: 1px solid rgba(0,200,255,0.6);
+  color: var(--cyan);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 4px;
+  padding: 14px 36px;
+  cursor: pointer;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+.cta-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--cyan);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+  opacity: 0.08;
+}
+.cta-btn:hover::before { transform: scaleX(1); }
+.cta-btn:hover {
+  border-color: var(--cyan);
+  box-shadow: 0 0 30px rgba(0,200,255,0.15);
+}
+.cta-btn:active { background: rgba(0,200,255,0.15); }
+
+.cta-pulse {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--cyan);
+  animation: ctaDotPulse 1.5s ease-in-out infinite;
+}
+@keyframes ctaDotPulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.3; transform: scale(0.6); }
+}
+
+/* ── COORDINATE GRID FADE ── */
+.coord-grid {
+  position: absolute; inset: 0;
+  z-index: 22;
+  pointer-events: none;
+  opacity: 0;
+  animation: gridFadeIn 2s 1.5s forwards;
+}
+@keyframes gridFadeIn { to { opacity: 1; } }
+
+/* ── LOCATION PIN ── */
+.location-pin {
+  position: absolute;
+  z-index: 35;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.location-pin.visible { opacity: 1; }
+.pin-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255,153,34,0.6);
+  border-radius: 50%;
+}
+.pin-ring.r1 { width: 24px; height: 24px; }
+.pin-ring.r2 { width: 44px; height: 44px; opacity: 0.4;
+  animation: pinRingExpand 1.5s ease-out infinite; }
+@keyframes pinRingExpand {
+  0% { width: 24px; height: 24px; opacity: 0.6; }
+  100% { width: 70px; height: 70px; opacity: 0; }
+}
+.pin-dot {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+}
+.pin-label {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(18px, -50%);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--amber);
+  white-space: nowrap;
+}
+
+/* ── DATA STREAM ── */
+.data-stream {
+  position: absolute;
+  right: 70px;
+  bottom: 90px;
+  z-index: 30;
+  text-align: right;
+  opacity: 0;
+  animation: hudFadeIn 0.8s 4s forwards;
+}
+.ds-line {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  color: rgba(0,200,255,0.25);
+  line-height: 2;
+}
+.ds-line.active { color: rgba(0,200,255,0.7); }
+
+/* ── WARP / ZOOM IN FLASH ── */
+.entry-flash {
+  position: absolute; inset: 0;
+  background: #000;
+  z-index: 100;
+  animation: flashOut 0.8s 0.1s forwards;
+}
+@keyframes flashOut { to { opacity: 0; pointer-events: none; } }
+
+/* ── SKIP BUTTON ── */
+.skip-btn {
+  position: absolute;
+  top: 20px; right: 24px;
+  z-index: 200;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(232,224,208,0.25);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.skip-btn:hover { color: rgba(232,224,208,0.6); }
+
+/* ── ORBITAL PATH SVG ── */
+.orbital-svg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  z-index: 23;
+  pointer-events: none;
+  opacity: 0;
+  animation: hudFadeIn 1.5s 2s forwards;
+}
+
+/* ── MISSION ELAPSED TIME ── */
+.met {
+  position: absolute;
+  top: 62px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: rgba(232,224,208,0.2);
+  opacity: 0;
+  animation: hudFadeIn 0.6s 3.5s forwards;
+}
+
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<div id="stage">
+
+  <!-- Entry flash -->
+  <div class="entry-flash"></div>
+
+  <!-- Background layers -->
+  <canvas id="stars-canvas"></canvas>
+  <canvas id="globe-canvas"></canvas>
+
+  <!-- Overlays -->
+  <div class="scan-lines"></div>
+  <div class="vignette"></div>
+
+  <!-- Coordinate grid SVG -->
+  <canvas id="grid-canvas" class="coord-grid" style="position:absolute;inset:0;width:100%;height:100%;z-index:22;pointer-events:none;"></canvas>
+
+  <!-- Orbital path -->
+  <svg class="orbital-svg" id="orbital-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+    <ellipse cx="50" cy="50" rx="34" ry="12"
+      fill="none" stroke="rgba(0,200,255,0.12)" stroke-width="0.3"
+      stroke-dasharray="2 4"/>
+    <circle r="1.2" fill="rgba(0,200,255,0.7)">
+      <animateMotion dur="8s" repeatCount="indefinite">
+        <mpath href="#orb-path"/>
+      </animateMotion>
+    </circle>
+    <path id="orb-path" d="M84,50 A34,12 0 1,1 83.99,49.9" fill="none"/>
+  </svg>
+
+  <!-- HUD frame corners -->
+  <div class="hud-corners">
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+  </div>
+
+  <!-- Top HUD -->
+  <div class="hud-top">
+    <div class="hud-top-left">ISRO · HEX-01 · OPS CENTER</div>
+    <div class="hud-top-center">
+      MARS SURFACE OPERATIONS<br>
+      <span style="font-size:7px;letter-spacing:4px;color:rgba(0,200,255,0.3)">GEOLOGICAL SURVEY MISSION</span>
+    </div>
+    <div class="hud-top-right">
+      <span class="sig-dot"></span>DSN RELAY ACTIVE<br>
+      <span style="font-size:7px;opacity:0.5">SIG: 97.4%</span>
+    </div>
+  </div>
+
+  <!-- Mission elapsed time -->
+  <div class="met" id="met">MET: SOL 127 · 09:41:03</div>
+
+  <!-- Bottom HUD -->
+  <div class="hud-bottom">
+    <div class="hud-bottom-item">Rover Mass<span>899 KG</span></div>
+    <div class="hud-bottom-item">Max Speed<span>4.16 CM/S</span></div>
+    <div class="hud-bottom-item">Solar Power<span>900 WH/SOL</span></div>
+    <div class="hud-bottom-item">APXS Range<span>CONTACT</span></div>
+    <div class="hud-bottom-item">Mission Phase<span>QUADRANT A3</span></div>
+  </div>
+
+  <!-- Left telemetry -->
+  <div class="telemetry-panel">
+    <div class="telem-row">
+      <div class="telem-label">ENERGY RESERVE</div>
+      <div class="telem-value">84.0%</div>
+    </div>
+    <div class="telem-row">
+      <div class="telem-label">SIGNAL LATENCY</div>
+      <div class="telem-value amber">12m 30s</div>
+    </div>
+    <div class="telem-row">
+      <div class="telem-label">ROVER STATE</div>
+      <div class="telem-value white">STANDBY</div>
+    </div>
+    <div class="telem-row">
+      <div class="telem-label">TEMP SURFACE</div>
+      <div class="telem-value amber">−54.2°C</div>
+    </div>
+    <div class="telem-row">
+      <div class="telem-label">SOLAR EFFICIENCY</div>
+      <div class="telem-value">OPTIMAL</div>
+    </div>
+  </div>
+
+  <!-- Right quadrant data -->
+  <div class="quadrant-panel">
+    <div class="quad-row">
+      <div class="quad-label">SURVEY QUADRANT</div>
+      <div class="quad-value">A3</div>
+    </div>
+    <div class="quad-row">
+      <div class="quad-label">TERRAIN TYPE</div>
+      <div class="quad-value">BASALTIC</div>
+    </div>
+    <div class="quad-row">
+      <div class="quad-label">NODES AVAILABLE</div>
+      <div class="quad-value">10</div>
+    </div>
+    <div class="quad-row">
+      <div class="quad-label">VALIDATION</div>
+      <div class="quad-value">0.00%</div>
+    </div>
+    <div class="quad-row">
+      <div class="quad-label">HAZARD INDEX</div>
+      <div class="quad-value">LOW</div>
+    </div>
+  </div>
+
+  <!-- Title sequence -->
+  <div class="title-sequence" id="title-seq">
+    <div class="title-agency">Indian Space Research Organisation</div>
+    <div class="title-main"><em>Mars</em> Rover<br>Cognitive Simulator</div>
+    <div class="title-divider"></div>
+    <div class="title-sub">Mission HEX-01 · Geological Survey · Sol 127</div>
+  </div>
+
+  <!-- Mission briefing -->
+  <div class="briefing-block">
+    <div class="briefing-line l1">OPERATOR: YOU ARE TAKING COMMAND OF ROVER HEX-01</div>
+    <div class="briefing-line l2">OBJECTIVE: GEOLOGICAL SURVEY · QUADRANT A3 · APXS VALIDATION</div>
+    <div class="briefing-line l3">ALL COMMANDS SUBJECT TO 12m 30s SIGNAL LATENCY · MANAGE ENERGY</div>
+  </div>
+
+  <!-- Data stream -->
+  <div class="data-stream" id="data-stream">
+    <div class="ds-line active" id="ds1">INITIALISING NAV SYSTEMS…</div>
+    <div class="ds-line" id="ds2">LOADING TERRAIN MAP…</div>
+    <div class="ds-line" id="ds3">APXS CALIBRATION CHECK…</div>
+    <div class="ds-line" id="ds4">RELAY LINK ESTABLISHED…</div>
+    <div class="ds-line" id="ds5">OPERATOR ACCESS GRANTED</div>
+  </div>
+
+  <!-- Location pin (placed on globe) -->
+  <div class="location-pin" id="location-pin">
+    <div class="pin-dot"></div>
+    <div class="pin-ring r1"></div>
+    <div class="pin-ring r2"></div>
+    <div class="pin-label">HEX-01 · A3</div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-wrap">
+    <button class="cta-btn" onclick="enterSimulator()">
+      <span class="cta-pulse"></span>
+      BEGIN MISSION
+    </button>
+  </div>
+
+  <!-- Skip -->
+  <button class="skip-btn" onclick="enterSimulator()">SKIP INTRO ›</button>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   CURSOR
+═══════════════════════════════════════════════════════════ */
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top  = e.clientY + 'px';
+});
+
+/* ═══════════════════════════════════════════════════════════
+   STAR FIELD
+═══════════════════════════════════════════════════════════ */
+(function initStars() {
+  const canvas = document.getElementById('stars-canvas');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    stars = [];
+    for (let i = 0; i < 280; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.2,
+        a: Math.random(),
+        speed: 0.0003 + Math.random() * 0.0005
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const t = Date.now();
+    stars.forEach(s => {
+      const alpha = s.a * (0.6 + 0.4 * Math.sin(t * s.speed));
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(220,210,200,${alpha})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize);
+  resize(); draw();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   MARS GLOBE
+═══════════════════════════════════════════════════════════ */
+(function initGlobe() {
+  const canvas = document.getElementById('globe-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, cx, cy, R;
+  let rot = 0;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    cx = W / 2; cy = H / 2;
+    R  = Math.min(W, H) * 0.34;
+  }
+
+  // Terrain patch data: [lon, lat, width, height, shade]
+  // lon/lat in degrees, shade is a dark-to-medium rust value
+  const patches = [
+    // dark basins
+    {lo:-30,la:20, w:60,h:28, shade:'rgba(90,28,4,0.55)'},
+    {lo:40, la:-15,w:45,h:22, shade:'rgba(80,24,4,0.5)'},
+    {lo:120,la:10, w:50,h:25, shade:'rgba(85,26,4,0.52)'},
+    {lo:200,la:-5, w:40,h:20, shade:'rgba(78,22,4,0.48)'},
+    {lo:290,la:15, w:55,h:24, shade:'rgba(88,27,4,0.53)'},
+    // lighter highlands
+    {lo:0,  la:-30,w:70,h:30, shade:'rgba(180,70,18,0.35)'},
+    {lo:80, la:25, w:55,h:22, shade:'rgba(170,65,16,0.32)'},
+    {lo:160,la:-20,w:60,h:28, shade:'rgba(175,68,17,0.33)'},
+    {lo:240,la:5,  w:65,h:25, shade:'rgba(165,62,15,0.30)'},
+    // polar cap
+    {lo:0,  la:75, w:360,h:30,shade:'rgba(200,185,175,0.4)'},
+    {lo:0,  la:-75,w:360,h:25,shade:'rgba(190,178,168,0.3)'},
+    // Valles Marineris analog
+    {lo:280,la:0,  w:80,h:8,  shade:'rgba(60,18,4,0.65)'},
+    // Olympus Mons analog
+    {lo:226,la:18, w:18,h:14, shade:'rgba(220,100,30,0.45)'},
+  ];
+
+  // Craters
+  const craters = [
+    {lo:25, la:10, r:4}, {lo:100,la:-20,r:6},{lo:180,la:5, r:5},
+    {lo:260,la:-10,r:4},{lo:320,la:20,r:5}, {lo:50, la:-35,r:3},
+    {lo:140,la:25, r:4},{lo:210,la:-25,r:6},{lo:305,la:0, r:3},
+  ];
+
+  function projectSphere(lon, lat, rotOffset) {
+    const lonR = (lon + rotOffset) * Math.PI / 180;
+    const latR = lat * Math.PI / 180;
+    const x3 = Math.cos(latR) * Math.cos(lonR);
+    const y3 = Math.sin(latR);
+    const z3 = Math.cos(latR) * Math.sin(lonR);
+    return { x: cx + R * z3, y: cy - R * y3, visible: x3 > 0, depth: x3 };
+  }
+
+  function drawGlobe(t) {
+    ctx.clearRect(0, 0, W, H);
+    rot = (t * 0.008) % 360;
+
+    // Ambient space glow behind globe
+    const glow = ctx.createRadialGradient(cx, cy, R * 0.2, cx, cy, R * 1.6);
+    glow.addColorStop(0, 'rgba(160,50,10,0.06)');
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, W, H);
+
+    // Base sphere
+    const baseGrad = ctx.createRadialGradient(cx - R * 0.25, cy - R * 0.2, R * 0.05, cx, cy, R);
+    baseGrad.addColorStop(0, '#7a2a10');
+    baseGrad.addColorStop(0.35, '#5a1c08');
+    baseGrad.addColorStop(0.7, '#3a1006');
+    baseGrad.addColorStop(1, '#1a0804');
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.fillStyle = baseGrad;
+    ctx.fill();
+
+    // Clip to sphere for all terrain
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, R - 0.5, 0, Math.PI * 2);
+    ctx.clip();
+
+    // Draw terrain patches as projected quads
+    patches.forEach(p => {
+      // Sample center visibility
+      const center = projectSphere(p.lo + p.w/2, p.la, rot);
+      if (!center.visible) return;
+      const fade = Math.pow(center.depth, 0.7);
+
+      // Draw as canvas arc segment approximation
+      const pts = [];
+      const steps = 12;
+      for (let i = 0; i <= steps; i++) {
+        const lon = p.lo + (i / steps) * p.w;
+        const lat = p.la + p.h / 2;
+        const pt = projectSphere(lon, lat, rot);
+        if (pt.visible) pts.push(pt);
+      }
+      for (let i = steps; i >= 0; i--) {
+        const lon = p.lo + (i / steps) * p.w;
+        const lat = p.la - p.h / 2;
+        const pt = projectSphere(lon, lat, rot);
+        if (pt.visible) pts.push(pt);
+      }
+      if (pts.length < 4) return;
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      pts.forEach(pt => ctx.lineTo(pt.x, pt.y));
+      ctx.closePath();
+      ctx.globalAlpha = fade;
+      ctx.fillStyle = p.shade;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+
+    // Craters
+    craters.forEach(c => {
+      const pt = projectSphere(c.lo, c.la, rot);
+      if (!pt.visible || pt.depth < 0.1) return;
+      const r = c.r * R / 100 * Math.min(1, pt.depth * 2);
+      const fade = Math.pow(pt.depth, 0.5);
+      ctx.globalAlpha = fade * 0.5;
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(40,12,4,0.8)';
+      ctx.lineWidth = r * 0.3;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    });
+
+    ctx.restore();
+
+    // Atmosphere rim
+    const atm = ctx.createRadialGradient(cx, cy, R * 0.94, cx, cy, R * 1.1);
+    atm.addColorStop(0, 'rgba(200,80,20,0.25)');
+    atm.addColorStop(0.5, 'rgba(160,50,10,0.08)');
+    atm.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.beginPath();
+    ctx.arc(cx, cy, R * 1.08, 0, Math.PI * 2);
+    ctx.fillStyle = atm;
+    ctx.fill();
+
+    // Specular highlight
+    const spec = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.28, 0, cx - R * 0.25, cy - R * 0.25, R * 0.55);
+    spec.addColorStop(0, 'rgba(255,200,160,0.14)');
+    spec.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.fillStyle = spec;
+    ctx.fill();
+
+    // Dark terminator (day/night)
+    const term = ctx.createLinearGradient(cx + R * 0.3, cy, cx + R, cy);
+    term.addColorStop(0, 'rgba(0,0,0,0)');
+    term.addColorStop(1, 'rgba(0,0,0,0.72)');
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.fillStyle = term;
+    ctx.fill();
+
+    // Lat/lon grid lines on globe
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, R - 0.5, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.strokeStyle = 'rgba(0,200,255,0.06)';
+    ctx.lineWidth = 0.5;
+    for (let lat = -60; lat <= 60; lat += 30) {
+      ctx.beginPath();
+      let first = true;
+      for (let lon = 0; lon <= 360; lon += 3) {
+        const pt = projectSphere(lon, lat, rot);
+        if (!pt.visible) { first = true; continue; }
+        first ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
+        first = false;
+      }
+      ctx.stroke();
+    }
+    for (let lon = 0; lon < 360; lon += 30) {
+      ctx.beginPath();
+      let first = true;
+      for (let lat = -90; lat <= 90; lat += 3) {
+        const pt = projectSphere(lon, lat, rot);
+        if (!pt.visible) { first = true; continue; }
+        first ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
+        first = false;
+      }
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // ── LANDING SITE MARKER (Quadrant A3 ~lat 5, lon 295) ──
+    const pinPt = projectSphere(295, 5, rot);
+    if (pinPt.visible && pinPt.depth > 0.3) {
+      const el = document.getElementById('location-pin');
+      el.style.left = pinPt.x + 'px';
+      el.style.top  = pinPt.y + 'px';
+      el.style.transform = `translate(-50%, -50%)`;
+      el.classList.add('visible');
+    } else {
+      document.getElementById('location-pin').classList.remove('visible');
+    }
+
+    requestAnimationFrame(drawGlobe);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(drawGlobe);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   COORDINATE GRID OVERLAY
+═══════════════════════════════════════════════════════════ */
+(function initGrid() {
+  const canvas = document.getElementById('grid-canvas');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const W = canvas.width, H = canvas.height;
+    ctx.strokeStyle = 'rgba(0,200,255,0.04)';
+    ctx.lineWidth = 0.5;
+    // Horizontal
+    for (let y = 0; y < H; y += 44) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+    // Vertical
+    for (let x = 0; x < W; x += 44) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    // Tick marks at intersections (sparse)
+    ctx.fillStyle = 'rgba(0,200,255,0.15)';
+    for (let y = 44; y < H; y += 132) {
+      for (let x = 44; x < W; x += 132) {
+        ctx.fillRect(x - 1, y - 1, 2, 2);
+      }
+    }
+  }
+  window.addEventListener('resize', () => { resize(); draw(); });
+  resize(); draw();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   DATA STREAM SEQUENCER
+═══════════════════════════════════════════════════════════ */
+(function runDataStream() {
+  const lines = ['ds1','ds2','ds3','ds4','ds5'];
+  lines.forEach((id, i) => {
+    setTimeout(() => {
+      document.getElementById(id).classList.add('active');
+    }, 4000 + i * 500);
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   MISSION ELAPSED TIME COUNTER
+═══════════════════════════════════════════════════════════ */
+(function runMET() {
+  let s = 9 * 3600 + 41 * 60 + 3;
+  setInterval(() => {
+    s++;
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    const pad = n => String(n).padStart(2, '0');
+    document.getElementById('met').textContent =
+      `MET: SOL 127 · ${pad(h)}:${pad(m)}:${pad(sec)}`;
+  }, 1000);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   ENTER SIMULATOR
+═════════════════════════════════════════════��═════════════ */
+function enterSimulator() {
+  // Fade out to black then redirect
+  const flash = document.createElement('div');
+  flash.style.cssText = 'position:fixed;inset:0;background:#000;z-index:9999;opacity:0;transition:opacity 0.8s;pointer-events:none;';
+  document.body.appendChild(flash);
+  requestAnimationFrame(() => { flash.style.opacity = '1'; });
+  setTimeout(() => {
+    // In production: window.location.href = 'hex01-simulator.html';
+    // For demo, just reset to intro
+    flash.style.opacity = '0';
+    setTimeout(() => flash.remove(), 800);
+  }, 900);
+  // PRODUCTION: uncomment below
+  // setTimeout(() => { window.location.href = 'hex01-simulator.html'; }, 900);
+}
+</script>
+</body>
+</html>
