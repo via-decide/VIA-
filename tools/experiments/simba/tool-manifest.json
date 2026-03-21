@@ -1,0 +1,16 @@
+{
+  "id": "simba",
+  "name": "Simba",
+  "category": "experiments",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Experimental backend services layer prototype.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [
+    "express",
+    "mongodb"
+  ],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/Simba"
+}

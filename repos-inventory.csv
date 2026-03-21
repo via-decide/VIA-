@@ -1,0 +1,45 @@
+Priority,Name,Category,Language,Commits,Status,Description,GitHub URL,Target Path
+1,decide.engine-tools,core,HTML/JavaScript,1138,active,"Core tool library",https://github.com/via-decide/decide.engine-tools,/tools/core/engine-tools
+2,decide.engine,core,HTML/JavaScript,18,active,"Licensing platform",https://github.com/via-decide/decide.engine,/tools/core/decide-engine
+3,cohort,core,TypeScript/React,27,active,"Video rendering",https://github.com/via-decide/cohort,/tools/core/cohort
+4,RoboOS,games,HTML/JavaScript,12,active,"Robot simulation",https://github.com/via-decide/swipe-OS,/tools/games/robo-os
+5,Swipe OS,games,HTML/JavaScript,8,active,"UX concept",https://github.com/via-decide/swipe-OS,/tools/games/swipe-os
+6,ViaGuide,productivity,HTML/JavaScript,5,active,Onboarding,https://github.com/via-decide/ViaGuide,/tools/productivity/via-guide
+7,PromptAlchemy,productivity,HTML/CSS,3,active,AI playground,https://github.com/via-decide/PromptAlchemy,/tools/productivity/prompt-alchemy
+8,creator-tool,productivity,HTML/JavaScript,6,active,Module builder,https://github.com/via-decide/creator-tool,/tools/productivity/creator-tool
+9,food.decider,productivity,HTML/JavaScript,4,active,Meal decision,https://github.com/via-decide/food.decider,/tools/productivity/food-decider
+10,Student-Research-,education,HTML/JavaScript,6,active,Academic assistant,https://github.com/via-decide/Student-Research-,/tools/education/student-research
+11,Cohort-course-apply-here,education,HTML/JavaScript,2,active,Application portal,https://github.com/via-decide/Cohort-course-apply-here,/tools/education/cohort-apply
+12,alchemist_app,experiments,HTML/JavaScript,2,active,Logic engine,https://github.com/via-decide/alchemist_app,/tools/experiments/alchemist-app
+13,Mars-Terminal-Rover-Simulator,experiments,HTML/JavaScript,3,active,Rover sim,https://github.com/via-decide/Mars-Terminal-Rover-Simulator,/tools/experiments/mars-terminal
+14,Simba,experiments,JavaScript/Node,1,active,Backend prototype,https://github.com/via-decide/Simba,/tools/experiments/simba
+15,game,games,HTML/JavaScript,5,active,Game mechanics,https://github.com/via-decide/game,/tools/games/game
+16,Game-,games,HTML/JavaScript,3,active,Proto mechanics,https://github.com/via-decide/Game-,/tools/games/game-prototype
+17,VIA,core,HTML/JavaScript,10,archived,Legacy shell,https://github.com/via-decide/VIA,/tools/core/via-legacy
+18,GN8R,productivity,HTML/JavaScript,4,active,Prompt gen,https://github.com/via-decide/GN8R,/tools/productivity/gn8r
+19,food.decide-custom,productivity,HTML/JavaScript,2,active,Custom engine,https://github.com/via-decide/food.decide-custom,/tools/productivity/food-decide-custom
+20,decide,productivity,HTML/JavaScript,2,active,Minimal engine,https://github.com/via-decide/decide,/tools/productivity/decide-minimal
+21,custom-request-demo,productivity,HTML,1,active,Form demo,https://github.com/via-decide/custom-request-demo,/tools/productivity/custom-request-demo
+22,viadecide,experiments,HTML/JavaScript,5,archived,Old monolith,https://github.com/via-decide/viadecide,/tools/experiments/viadecide-old
+23,engine,core,JavaScript,3,active,Serverless core,https://github.com/via-decide/engine,/tools/core/engine-minimal
+24,engineos,experiments,JavaScript,2,active,OS abstraction,https://github.com/via-decide/engineos,/tools/experiments/engineos
+25,decide.funnel,productivity,HTML/JavaScript,3,active,Marketing funnel,https://github.com/via-decide/decide.funnel,/tools/productivity/decide-funnel
+26,live,experiments,JavaScript,2,active,Collaboration,https://github.com/via-decide/live,/tools/experiments/live-sync
+27,decide.service,productivity,JavaScript,2,active,SaaS wrapper,https://github.com/via-decide/decide.service,/tools/productivity/decide-service
+28,HivaLand,experiments,HTML/JavaScript,4,active,Metaverse sim,https://github.com/via-decide/HivaLand,/tools/experiments/hivaland
+29,qaz,experiments,HTML,1,active,Internal test,https://github.com/via-decide/qaz,/tools/experiments/qaz-test
+30,decide.engine.v1,experiments,JavaScript,5,archived,Legacy v1,https://github.com/via-decide/decide.engine.v1,/tools/experiments/engine-v1
+31,decide.engine.v2,experiments,JavaScript,4,archived,Legacy v2,https://github.com/via-decide/decide.engine.v2,/tools/experiments/engine-v2
+32,skillhex-mission-control,productivity,HTML/JavaScript,3,active,SkillHex dashboard,https://github.com/via-decide/skillhex-mission-control,/tools/productivity/mission-control
+33,cohert-studio,education,TypeScript/React,3,active,Visual editor,https://github.com/via-decide/cohert-studio,/tools/education/cohort-studio
+34,jalaram-restaurent-rajkot,experiments,HTML/CSS,2,active,Biz demo,https://github.com/via-decide/jalaram-restaurent-rajkot,/tools/experiments/local-biz-demo
+35,HexWars,games,HTML/Canvas,15,active,Hex game,https://github.com/via-decide/hexwars,/tools/games/hexwars
+36,Experiment-36,experiments,HTML,1,active,Var 36,https://github.com/via-decide/experiment-36,/tools/experiments/v36
+37,Experiment-37,experiments,HTML,1,active,Var 37,https://github.com/via-decide/experiment-37,/tools/experiments/v37
+38,Experiment-38,experiments,HTML,1,active,Var 38,https://github.com/via-decide/experiment-38,/tools/experiments/v38
+39,Experiment-39,experiments,HTML,1,active,Var 39,https://github.com/via-decide/experiment-39,/tools/experiments/v39
+40,Experiment-40,experiments,HTML,1,active,Var 40,https://github.com/via-decide/experiment-40,/tools/experiments/v40
+41,Experiment-41,experiments,HTML,1,active,Var 41,https://github.com/via-decide/experiment-41,/tools/experiments/v41
+42,Experiment-42,experiments,HTML,1,active,Var 42,https://github.com/via-decide/experiment-42,/tools/experiments/v42
+43,Experiment-43,experiments,HTML,1,active,Var 43,https://github.com/via-decide/experiment-43,/tools/experiments/v43
+44,Hdhsiwuwnapqub2o1o-qjdusuw,experiments,None,1,delete,random-junk,https://github.com/via-decide/Hdhsiwuwnapqub2o1o-qjdusuw,/trash/random-junk

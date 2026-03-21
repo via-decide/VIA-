@@ -1,0 +1,13 @@
+{
+  "id": "engine-v2",
+  "name": "decide.engine.v2",
+  "category": "experiments",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Legacy v2 engine implementation.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/decide.engine.v2"
+}

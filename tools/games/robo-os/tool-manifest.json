@@ -1,0 +1,13 @@
+{
+  "id": "robo-os",
+  "name": "RoboOS",
+  "category": "games",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Robot operating system simulation game.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/swipe-OS"
+}

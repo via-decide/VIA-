@@ -1,0 +1,13 @@
+{
+  "id": "decide-engine-tools",
+  "name": "decide.engine-tools",
+  "category": "core",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Core browser-native tool library for workflow analysis and optimization.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/decide.engine-tools"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "mars-terminal",
+  "name": "Mars-Terminal-Rover-Simulator",
+  "category": "experiments",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Terminal-based rover control simulation.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/Mars-Terminal-Rover-Simulator"
+}

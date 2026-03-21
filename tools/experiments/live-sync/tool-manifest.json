@@ -1,0 +1,15 @@
+{
+  "id": "live-sync",
+  "name": "live",
+  "category": "experiments",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Live collaboration module for engine tools.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [
+    "socket.io"
+  ],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/live"
+}

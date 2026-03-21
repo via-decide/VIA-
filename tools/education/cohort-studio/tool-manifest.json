@@ -1,0 +1,15 @@
+{
+  "id": "cohort-studio",
+  "name": "cohert-studio",
+  "category": "education",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Visual editor for cohort branching models.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [
+    "react-flow"
+  ],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/cohert-studio"
+}

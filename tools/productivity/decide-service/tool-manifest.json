@@ -1,0 +1,15 @@
+{
+  "id": "decide-service",
+  "name": "decide.service",
+  "category": "productivity",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "SaaS wrapper for decision engine.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [
+    "stripe"
+  ],
+  "notes": "Auto-generated from https://github.com/via-decide/decide.service"
+}

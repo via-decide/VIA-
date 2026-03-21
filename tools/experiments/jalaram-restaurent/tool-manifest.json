@@ -1,0 +1,13 @@
+{
+  "id": "jalaram-restaurent",
+  "name": "jalaram-restaurent-rajkot",
+  "category": "experiments",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Local business decision tool demo.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/jalaram-restaurent-rajkot"
+}

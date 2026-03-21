@@ -1,0 +1,13 @@
+{
+  "id": "game-minus",
+  "name": "Game-",
+  "category": "games",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Alternative game mechanics prototype.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/Game-"
+}

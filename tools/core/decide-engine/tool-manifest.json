@@ -1,0 +1,15 @@
+{
+  "id": "decide-engine",
+  "name": "decide.engine",
+  "category": "core",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Licensing and demo platform for ViaDécide Engine.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [
+    "viadecide-api"
+  ],
+  "notes": "Auto-generated from https://github.com/via-decide/decide.engine"
+}

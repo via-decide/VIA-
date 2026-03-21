@@ -1,0 +1,13 @@
+{
+  "id": "swipe-os",
+  "name": "Swipe OS",
+  "category": "games",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Gesture-based operating system UI/UX concept.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/swipe-OS"
+}

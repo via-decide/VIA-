@@ -1,0 +1,13 @@
+{
+  "id": "via-guide",
+  "name": "ViaGuide",
+  "category": "productivity",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Interactive onboarding and tutorial system.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/ViaGuide"
+}

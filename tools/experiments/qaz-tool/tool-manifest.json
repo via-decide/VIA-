@@ -1,0 +1,13 @@
+{
+  "id": "qaz-tool",
+  "name": "qaz",
+  "category": "experiments",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Internal test case repository.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/qaz"
+}

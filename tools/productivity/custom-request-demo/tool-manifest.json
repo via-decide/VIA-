@@ -1,0 +1,15 @@
+{
+  "id": "custom-request-demo",
+  "name": "custom-request-demo",
+  "category": "productivity",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Demo for handling custom tool requests via forms.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [
+    "emailjs"
+  ],
+  "notes": "Auto-generated from https://github.com/via-decide/custom-request-demo"
+}

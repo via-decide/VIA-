@@ -1,0 +1,13 @@
+{
+  "id": "hexwars",
+  "name": "HexWars",
+  "category": "games",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Hexagonal strategy game using engine logic.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/hexwars"
+}

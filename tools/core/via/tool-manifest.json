@@ -1,0 +1,13 @@
+{
+  "id": "via",
+  "name": "VIA",
+  "category": "core",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Legacy shell for Via platform.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/VIA"
+}

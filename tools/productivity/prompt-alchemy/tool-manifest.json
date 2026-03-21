@@ -1,0 +1,16 @@
+{
+  "id": "prompt-alchemy",
+  "name": "PromptAlchemy",
+  "category": "productivity",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Advanced AI prompt engineering playground.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [
+    "openai",
+    "anthropic"
+  ],
+  "notes": "Auto-generated from https://github.com/via-decide/PromptAlchemy"
+}

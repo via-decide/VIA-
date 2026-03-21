@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViaDécide Phase 2 Migration Checklist</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --border: #334155;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --primary: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 { margin-bottom: 0.5rem; }
+        .subtitle { color: var(--muted); margin-bottom: 2rem; }
+
+        .progress-container {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: var(--bg);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .tool-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .tool-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tool-name { font-weight: 600; font-size: 1.1rem; }
+        
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: var(--muted);
+        }
+
+        .step.done { color: var(--success); }
+        .step input { cursor: pointer; }
+
+        .tag {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <h1>📋 Migration Mission Control</h1>
+    <div class="subtitle">Track the migration of 44 tools into the ViaDécide Monorepo</div>
+
+    <div class="progress-container">
+        <div style="display:flex; justify-content:space-between;">
+            <span>Overall Progress</span>
+            <span id="progress-text">0 / 44 Tools Migrated (0%)</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+    </div>
+
+    <div class="tool-list" id="tool-list">
+        <!-- Tools will be injected here -->
+    </div>
+
+    <script>
+        const tools = [
+            { id: 'engine-tools', name: 'decide.engine-tools', cat: 'core', priority: 'Critical' },
+            { id: 'decide-engine', name: 'decide.engine', cat: 'core', priority: 'Critical' },
+            { id: 'cohort', name: 'cohort', cat: 'core', priority: 'Critical' },
+            { id: 'robo-os', name: 'RoboOS', cat: 'games', priority: 'High' },
+            { id: 'swipe-os', name: 'Swipe OS', cat: 'games', priority: 'High' },
+            { id: 'via-guide', name: 'ViaGuide', cat: 'productivity', priority: 'High' }
+        ];
+
+        // Fill remaining for demonstration
+        for(let i=7; i<=44; i++) {
+            tools.push({ id: `tool-${i}`, name: `Tool-${i}`, cat: i < 20 ? 'productivity' : 'experiments', priority: 'Normal' });
+        }
+
+        const steps = [
+            'Copy Source',
+            'Create Manifest',
+            'Update Imports',
+            'Test Locally',
+            'Register'
+        ];
+
+        function render() {
+            const list = document.getElementById('tool-list');
+            list.innerHTML = tools.map(tool => `
+                <div class="tool-item">
+                    <div class="tool-header">
+                        <div>
+                            <span class="tool-name">${tool.name}</span>
+                            <span class="tag">${tool.cat}</span>
+                            <span class="tag" style="border-color:${tool.priority === 'Critical' ? '#ef4444' : '#3b82f6'}">${tool.priority}</span>
+                        </div>
+                        <div style="font-size:0.8rem; color:var(--muted)">Est: 2h</div>
+                    </div>
+                    <div class="steps">
+                        ${steps.map((s, i) => `
+                            <label class="step">
+                                <input type="checkbox" onchange="updateProgress()"> ${s}
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateProgress() {
+            const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+            const totalSteps = allCheckboxes.length;
+            const checkedSteps = Array.from(allCheckboxes).filter(c => c.checked).length;
+            
+            // A tool is "migrated" if all 5 steps are checked
+            const toolItems = document.querySelectorAll('.tool-item');
+            let toolsDone = 0;
+            toolItems.forEach(item => {
+                const checks = item.querySelectorAll('input:checked');
+                if (checks.length === 5) toolsDone++;
+            });
+
+            const percent = Math.round((toolsDone / 44) * 100);
+            document.getElementById('progress-fill').style.width = percent + '%';
+            document.getElementById('progress-text').innerText = `${toolsDone} / 44 Tools Migrated (${percent}%)`;
+        }
+
+        render();
+    </script>
+</body>
+</html>

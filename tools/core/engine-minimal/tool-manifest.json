@@ -1,0 +1,13 @@
+{
+  "id": "engine-minimal",
+  "name": "engine",
+  "category": "core",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Barebones engine for serverless environments.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/engine"
+}

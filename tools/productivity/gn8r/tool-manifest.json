@@ -1,0 +1,15 @@
+{
+  "id": "gn8r",
+  "name": "GN8R",
+  "category": "productivity",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Prompt generator for image models.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [
+    "midjourney"
+  ],
+  "notes": "Auto-generated from https://github.com/via-decide/GN8R"
+}

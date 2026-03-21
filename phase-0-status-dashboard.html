@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViaDécide Phase 0 Status Dashboard</title>
+    <style>
+        :root {
+            --bg: #020617;
+            --card: #0f172a;
+            --border: #1e293b;
+            --text: #f1f5f9;
+            --primary: #3b82f6;
+            --success: #22c55e;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .milestones {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .milestone {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            position: relative;
+        }
+
+        .milestone.done::after {
+            content: '✓';
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            color: var(--success);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .milestone-title { font-weight: 600; margin-bottom: 0.5rem; color: var(--primary); }
+        .milestone-desc { font-size: 0.85rem; color: #94a3b8; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 1.2rem;
+            padding: 2rem;
+        }
+
+        .panel-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; }
+
+        .team-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+        .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--border); text-align: center; line-height:32px; font-size:0.8rem; }
+        .bar { flex-grow: 1; height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+        .fill { height: 100%; background: var(--primary); }
+
+        .next-steps { list-style: none; padding: 0; }
+        .next-steps li { margin-bottom: 1rem; display: flex; align-items: flex-start; gap: 1rem; }
+        .step-num { min-width: 24px; height: 24px; background: var(--primary); color: white; border-radius: 50%; text-align: center; line-height: 24px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>📊 Phase 0: Status Dashboard</h1>
+            <p style="color:#94a3b8">ViaDécide Repository Consolidation Strategy</p>
+        </div>
+        <div style="text-align: right;">
+            <div style="font-size:1.2rem; font-weight:bold; color:var(--success)">85% COMPLETE</div>
+            <div style="font-size:0.8rem; color:#94a3b8">Updated: 2026-03-20 15:45</div>
+        </div>
+    </div>
+
+    <div class="milestones">
+        <div class="milestone done">
+            <div class="milestone-title">Monorepo Planning</div>
+            <div class="milestone-desc">Blueprint defined, categories assigned, and folder structure mapped for 44 repos.</div>
+        </div>
+        <div class="milestone done">
+            <div class="milestone-title">Inventory Generation</div>
+            <div class="milestone-desc">Automated scanning completed. 44/44 repos catalogued with metadata.</div>
+        </div>
+        <div class="milestone">
+            <div class="milestone-title">Scaffolding Tools</div>
+            <div class="milestone-desc">Automation scripts and config templates generated for monorepo initialization.</div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="panel">
+            <div class="panel-title">Repository Breakdown</div>
+            <canvas id="categoryChart" width="400" height="200"></canvas>
+            <div style="margin-top: 1.5rem; font-size: 0.85rem; color: #94a3b8;">
+                Core: 4 | Games: 10 | Productivity: 15 | Education: 5 | Experiments: 10
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-title">Next Actions</div>
+            <ul class="next-steps">
+                <li>
+                    <div class="step-num">1</div>
+                    <div>
+                        <strong>Review Artifacts</strong><br>
+                        <span style="font-size:0.8rem; color:#94a3b8">Validate inventory-dashboard.html and checklist.html</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-num">2</div>
+                    <div>
+                        <strong>Execute Setup Script</strong><br>
+                        <span style="font-size:0.8rem; color:#94a3b8">Run setup-monorepo.sh to initialize local structure.</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-num">3</div>
+                    <div>
+                        <strong>Telegram Bot Dispatch</strong><br>
+                        <span style="font-size:0.8rem; color:#94a3b8">Inform bot: "Phase 0 ready" to handle Git operations.</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="margin-top: 3rem; text-align: center; color: #475569; font-size: 0.8rem;">
+        &copy; 2026 ViaDécide Architecture Group. All systems normal.
+    </div>
+</body>
+</html>

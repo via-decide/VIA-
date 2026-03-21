@@ -1,0 +1,13 @@
+{
+  "id": "alchemist-app",
+  "name": "alchemist_app",
+  "category": "experiments",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Experimental logic-to-UI transformation engine.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/alchemist_app"
+}

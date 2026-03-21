@@ -1,0 +1,16 @@
+{
+  "id": "cohort",
+  "name": "cohort",
+  "category": "core",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Remotion-based video rendering system for complex documentaries.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [
+    "remotion",
+    "react"
+  ],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/cohort"
+}

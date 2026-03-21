@@ -1,0 +1,30 @@
+{
+  "id": "example-tool-id",
+  "name": "Example Tool Name",
+  "slug": "example-tool-slug",
+  "category": "productivity",
+  "path": "/tools/productivity/example-tool",
+  "entry": "index.html",
+  "description": "Short description of the tool's purpose and functionality.",
+  "version": "1.0.0",
+  "featured": false,
+  "status": "pending-migration",
+  "icon": "🔧",
+  "tags": ["category", "tag1", "tag2"],
+  "dependencies": [],
+  "externalApis": [],
+  "migration": {
+    "sourceRepo": "https://github.com/via-decide/example-repo",
+    "owner": "dev-name",
+    "estimatedHours": 2,
+    "actualHours": 0,
+    "steps": {
+      "copySource": false,
+      "createManifest": false,
+      "updateImports": false,
+      "testLocally": false,
+      "register": false
+    }
+  },
+  "notes": "Any special instructions or blockers found during migration."
+}

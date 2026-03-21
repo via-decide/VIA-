@@ -1,0 +1,15 @@
+{
+  "id": "hivaland",
+  "name": "HivaLand",
+  "category": "experiments",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Metaverse experimentation for decision spaces.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [
+    "three.js"
+  ],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/HivaLand"
+}

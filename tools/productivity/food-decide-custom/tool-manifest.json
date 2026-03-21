@@ -1,0 +1,13 @@
+{
+  "id": "food-decide-custom",
+  "name": "food.decide-custom",
+  "category": "productivity",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Customizable food decision engine for enterprise.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/food.decide-custom"
+}

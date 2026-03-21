@@ -1,0 +1,15 @@
+{
+  "id": "cohort-apply",
+  "name": "Cohort-course-apply-here",
+  "category": "education",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Application portal for cohort-based learning.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [
+    "stripe"
+  ],
+  "notes": "Auto-generated from https://github.com/via-decide/Cohort-course-apply-here"
+}

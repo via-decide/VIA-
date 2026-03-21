@@ -1,0 +1,15 @@
+{
+  "id": "decide-funnel",
+  "name": "decide.funnel",
+  "category": "productivity",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Marketing funnel generator using engine logic.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [
+    "hubspot"
+  ],
+  "notes": "Auto-generated from https://github.com/via-decide/decide.funnel"
+}

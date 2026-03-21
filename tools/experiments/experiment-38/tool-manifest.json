@@ -1,0 +1,13 @@
+{
+  "id": "experiment-38",
+  "name": "Experiment-38",
+  "category": "experiments",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Variation 38 of decision tool.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/experiment-38"
+}

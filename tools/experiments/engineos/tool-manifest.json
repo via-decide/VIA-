@@ -1,0 +1,13 @@
+{
+  "id": "engineos",
+  "name": "engineos",
+  "category": "experiments",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "OS abstraction for engine instances.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/engineos"
+}

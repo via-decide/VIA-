@@ -1,0 +1,27 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-03-20T12:00:00Z",
+  "totalTools": 44,
+  "tools": [
+    {
+      "id": "decide-engine-tools",
+      "name": "Engine Tools Analyzer",
+      "category": "core",
+      "path": "/tools/core/engine-tools",
+      "entry": "index.html",
+      "description": "Analyze and configure engine workflows",
+      "version": "1.0.0",
+      "featured": true,
+      "icon": "⚙️",
+      "tags": ["core", "analysis"],
+      "status": "active"
+    }
+  ],
+  "categories": {
+    "core": { "label": "Core Tools", "icon": "⚙️" },
+    "games": { "label": "Games", "icon": "🎮" },
+    "productivity": { "label": "Productivity", "icon": "📊" },
+    "education": { "label": "Learning", "icon": "📚" },
+    "experiments": { "label": "Experiments", "icon": "🔬" }
+  }
+}

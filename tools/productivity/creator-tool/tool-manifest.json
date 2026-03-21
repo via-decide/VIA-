@@ -1,0 +1,13 @@
+{
+  "id": "creator-tool",
+  "name": "creator-tool",
+  "category": "productivity",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Builder interface for creating new ViaDécide modules.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/creator-tool"
+}

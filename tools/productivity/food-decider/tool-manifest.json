@@ -1,0 +1,15 @@
+{
+  "id": "food-decider",
+  "name": "food.decider",
+  "category": "productivity",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Decision tool for meal and restaurant selection.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [
+    "google-maps"
+  ],
+  "notes": "Auto-generated from https://github.com/via-decide/food.decider"
+}

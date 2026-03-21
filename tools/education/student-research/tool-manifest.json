@@ -1,0 +1,15 @@
+{
+  "id": "student-research",
+  "name": "Student-Research-",
+  "category": "education",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Academic research and citation assistant.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [
+    "semantic-scholar"
+  ],
+  "notes": "Auto-generated from https://github.com/via-decide/Student-Research-"
+}

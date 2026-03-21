@@ -1,0 +1,32 @@
+{
+  "monorepo": "viadecide",
+  "structure": {
+    "shell": {
+      "description": "Unified platform shell and routing",
+      "files": ["index.html", "router.js", "nav-registry.json", "styles.css"]
+    },
+    "tools": {
+      "description": "Consolidated application modules",
+      "subdirectories": {
+        "core": "Mission-critical engine tools",
+        "games": "Interactive games and simulations",
+        "productivity": "Workflow and decision-making tools",
+        "education": "Learning and research modules",
+        "experiments": "Prototypes and legacy variants"
+      }
+    },
+    "services": {
+      "description": "Shared platform services",
+      "files": ["config.js", "state-bridge.js", "tool-loader.js"]
+    },
+    "shared": {
+      "description": "Common assets and libraries",
+      "subdirectories": ["assets", "lib"]
+    }
+  },
+  "configTemplates": [
+    "package.json",
+    "vercel.json",
+    ".github/workflows/deploy.yml"
+  ]
+}

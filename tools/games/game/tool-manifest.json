@@ -1,0 +1,13 @@
+{
+  "id": "game",
+  "name": "game",
+  "category": "games",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "description": "Core mechanics for modular games.",
+  "status": "pending-migration",
+  "migrationDate": null,
+  "dependencies": [],
+  "externalApis": [],
+  "notes": "Auto-generated from https://github.com/via-decide/game"
+}
