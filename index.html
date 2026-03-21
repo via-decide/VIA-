@@ -2787,36 +2787,44 @@ window.addEventListener('load',startApp,{once:true});
 })();
 
 // ════════════════════════════════════════════════════════════════
-// VISIBLE TOOLS GRID — renders tools from nav-registry.json
+// VISIBLE TOOLS GRID — SELF-CONTAINED, NO DEPENDENCIES
+// Fetches nav-registry.json directly. Works even if every other
+// script on this page has errors.
 // ════════════════════════════════════════════════════════════════
 let _toolsBuilt = false;
 let _toolsActiveCat = null;
+let _toolsData = null;
 
-function buildToolsGrid() {
-  if (!window.VIARegistry || !VIARegistry.isLoaded()) {
-    // Registry not loaded yet — try again in 500ms
-    setTimeout(buildToolsGrid, 500);
-    return;
-  }
+async function buildToolsGrid() {
   const grid = document.getElementById('tools-grid');
   const empty = document.getElementById('tools-empty');
   const catsEl = document.getElementById('tools-cats');
   const searchInput = document.getElementById('tools-search');
   if (!grid) return;
 
-  const allTools = VIARegistry.allTools();
-  const cats = VIARegistry.allCategories();
+  // Load registry directly if not cached
+  if (!_toolsData) {
+    try {
+      grid.innerHTML = '<div style="text-align:center;padding:20px;color:#6e6e82;font-size:12px">Loading tools…</div>';
+      const res = await fetch('./nav-registry.json');
+      if (!res.ok) throw new Error('Registry ' + res.status);
+      _toolsData = await res.json();
+    } catch (e) {
+      grid.innerHTML = '<div style="text-align:center;padding:20px;color:#ff5040;font-size:12px">Failed to load tools: ' + e.message + '</div>';
+      return;
+    }
+  }
+
+  const allTools = _toolsData.tools || [];
+  const cats = _toolsData.categories || {};
 
   // Build category pills (once)
   if (!_toolsBuilt) {
-    // Category bar
     let catHtml = '<button class="tg-cat active" data-cat="all" onclick="filterToolsCat(\'all\')">All ' + allTools.length + '</button>';
     Object.entries(cats).sort((a, b) => (a[1].priority || 99) - (b[1].priority || 99)).forEach(([id, c]) => {
-      catHtml += '<button class="tg-cat" data-cat="' + id + '" onclick="filterToolsCat(\'' + id + '\')">' + (c.icon || '📂') + ' ' + (c.label || id) + ' ' + c.count + '</button>';
+      catHtml += '<button class="tg-cat" data-cat="' + id + '" onclick="filterToolsCat(\'' + id + '\')">' + (c.icon || '📂') + ' ' + (c.label || id) + ' ' + (c.count || '') + '</button>';
     });
     catsEl.innerHTML = catHtml;
-
-    // Search handler
     searchInput.addEventListener('input', () => renderToolsList());
     _toolsBuilt = true;
   }
@@ -2833,9 +2841,20 @@ function filterToolsCat(cat) {
 function renderToolsList() {
   const grid = document.getElementById('tools-grid');
   const empty = document.getElementById('tools-empty');
-  const query = (document.getElementById('tools-search')?.value || '').trim();
+  if (!grid || !_toolsData) return;
 
-  let tools = query ? VIARegistry.search(query) : VIARegistry.allTools();
+  const query = (document.getElementById('tools-search')?.value || '').trim().toLowerCase();
+  let tools = _toolsData.tools || [];
+
+  // Filter by search
+  if (query) {
+    tools = tools.filter(t => {
+      const hay = [t.id, t.title, t.description, t.category, ...(t.tags || [])].join(' ').toLowerCase();
+      return hay.includes(query);
+    });
+  }
+
+  // Filter by category
   if (_toolsActiveCat) tools = tools.filter(t => t.category === _toolsActiveCat);
 
   if (!tools.length) {
@@ -2850,18 +2869,18 @@ function renderToolsList() {
   grid.innerHTML = tools.map(t => {
     const href = t.path || '/tools/' + t.id + '/';
     const cc = catColors[t.category] || '#6e6e82';
-    return '<a href="' + href + '" style="display:flex;gap:12px;align-items:center;padding:12px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;text-decoration:none;color:#fff;transition:all .2s" onmouseenter="this.style.borderColor=\'rgba(255,140,0,.3)\'" onmouseleave="this.style.borderColor=\'rgba(255,255,255,.06)\'">'
+    return '<a href="' + _esc(href) + '" target="_blank" rel="noopener" style="display:flex;gap:12px;align-items:center;padding:12px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;text-decoration:none;color:#fff;transition:border-color .2s" onmouseenter="this.style.borderColor=\'rgba(255,140,0,.3)\'" onmouseleave="this.style.borderColor=\'rgba(255,255,255,.06)\'">'
       + '<div style="font-size:22px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border-radius:8px;flex-shrink:0">' + (t.icon || '🔧') + '</div>'
       + '<div style="flex:1;min-width:0">'
-      + '<div style="font-size:13px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(t.title || t.id) + '</div>'
-      + '<div style="font-size:11px;color:#6e6e82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc((t.description || '').slice(0, 60)) + '</div>'
+      + '<div style="font-size:13px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + _esc(t.title || t.id) + '</div>'
+      + '<div style="font-size:11px;color:#6e6e82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + _esc((t.description || '').slice(0, 60)) + '</div>'
       + '</div>'
-      + '<div style="font-size:9px;padding:3px 8px;border:1px solid ' + cc + '33;color:' + cc + ';border-radius:6px;white-space:nowrap;flex-shrink:0">' + esc(t.category) + '</div>'
+      + '<div style="font-size:9px;padding:3px 8px;border:1px solid ' + cc + '33;color:' + cc + ';border-radius:6px;white-space:nowrap;flex-shrink:0">' + _esc(t.category) + '</div>'
       + '</a>';
   }).join('');
 }
 
-function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function _esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 </script>
 
 <!-- Tool grid category pill styles -->
