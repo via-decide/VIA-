@@ -1,25 +1,16 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "",
-  "installCommand": "",
+  "buildCommand": null,
   "outputDirectory": ".",
-  "cleanUrls": false,
-  "trailingSlash": false,
-  "rewrites": [
-    { "source": "/games", "destination": "/games.html" },
-    { "source": "/arcade", "destination": "/games.html" },
-    { "source": "/mars", "destination": "/mars/index.html" },
-    { "source": "/mars/:path*", "destination": "/mars/:path*" },
-    { "source": "/skillhex", "destination": "/skillhex/index.html" },
-    { "source": "/skillhex/:path*", "destination": "/skillhex/:path*" },
-    { "source": "/tools", "destination": "/tool-explorer.html" },
-    { "source": "/explore", "destination": "/tool-explorer.html" },
-    { "source": "/creator-story", "destination": "/creator-story.html" },
-    { "source": "/creator-onboarding", "destination": "/creator-onboarding.html" },
-    { "source": "/agent", "destination": "/agent.html" },
-    { "source": "/profile", "destination": "/profile.html" },
-    { "source": "/discover", "destination": "/discover.html" },
-    { "source": "/about", "destination": "/about.html" }
+  "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/creator",
+      "destination": "/creator-story.html"
+    },
+    {
+      "source": "/onboarding",
+      "destination": "/creator-onboarding.html"
+    }
   ]
 }
