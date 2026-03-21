@@ -18,7 +18,7 @@ const VIARegistry = (function () {
   let _index = null; // search index
   let _loading = null;
 
-  const REGISTRY_PATH = '/nav-registry.json';
+  const REGISTRY_PATH = './nav-registry.json';
 
   // ── Load & Cache ──────────────────────────────────────────
   async function init(path) {
