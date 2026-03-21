@@ -15,6 +15,10 @@
   --color-mineral-gold: #FFCA28;
   --color-burn-red: #E53935;
   --color-toxic-green: #76FF03;
+
+  --color-card-bg: #1c1d21;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #8E9299;
 }
 
 :root {
