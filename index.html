@@ -2772,7 +2772,7 @@ window.addEventListener('load',startApp,{once:true});
 // Bridge: load nav-registry and patch router SUBPAGES dynamically
 (async function wireRegistry() {
   try {
-    await VIARegistry.init('/nav-registry.json');
+    await VIARegistry.init('./nav-registry.json');
     const map = VIARegistry.buildSubpagesMap();
     if (window.VIARouter && window.VIARouter.SUBPAGES) {
       Object.assign(window.VIARouter.SUBPAGES, map);
