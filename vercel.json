@@ -7,8 +7,11 @@
       "use": "@vercel/node"
     },
     {
-      "src": "shell/index.html",
-      "use": "@vercel/static"
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     },
     {
       "src": "tools/**/*.html",
@@ -25,23 +28,8 @@
       "dest": "/api/$1"
     },
     {
-      "src": "/tool/([a-z0-9\\-]+)",
-      "dest": "/shell/index.html",
-      "status": 200
-    },
-    {
-      "src": "/(core|games|productivity|education|experiments)",
-      "dest": "/shell/index.html",
-      "status": 200
-    },
-    {
-      "src": "/search",
-      "dest": "/shell/index.html",
-      "status": 200
-    },
-    {
       "src": "/(.*)",
-      "dest": "/shell/index.html",
+      "dest": "/index.html",
       "status": 200
     }
   ],
