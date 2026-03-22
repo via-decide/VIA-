@@ -1,21 +1,9 @@
-Branch: simba/migrate-the-second-batch-of-productivity-tools-a
-Title: Migrate the second batch of productivity tools and interactive games....
+Branch: simba/backend-integration-for-orchade-module-1-set-up-
+Title: Backend Integration for Orchade Module. 1. Set up a reverse-proxy rou...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Populate the monorepo with high-engagement gaming and utility content.
-Branch: simba/implement-a-unified-analytics-service-for-the-en
-Title: Implement a unified analytics service for the entire platform. 1. Cre...
-
-## Summary
-- Repo orchestration task for via-decide/VIA
-- Goal: Gain deep insights into tool popularity and performance across the monorepo.
-Branch: simba/create-a-shared-css-library-to-standardize-the-l
-Title: Create a shared CSS library to standardize the look and feel of all t...
-
-## Summary
-- Repo orchestration task for via-decide/VIA
-- Goal: Create a seamless, premium "single application" feel across 44+ different tools.
+- Goal: Backend Integration for Orchade Module. 1. Set up a reverse-proxy route from 'viadecide.com/orchade' to the Orchade hub. 2. Implement the '/api/sync/orchade' endpoint that persists MBB (Mind, Body, Breath) telemetry from the user session into the main Cohort database.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
