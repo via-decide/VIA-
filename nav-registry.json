@@ -1903,7 +1903,7 @@
       "title": "Data Orchard",
       "description": "Genetic cultivation strategy game. Grow rare plants, research traits, trade credits.",
       "category": "games",
-      "path": "https://via-decide.github.io/Game-/",
+      "path": "/game/",
       "entry": "index.html",
       "icon": "\ud83c\udf33",
       "tags": [
