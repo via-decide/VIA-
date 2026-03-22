@@ -57,6 +57,10 @@ npm run build
 
 Vite is configured with an `esnext` build target so the app can use top-level `await` for Firebase configuration loading.
 
+## Sovereign Integration Blueprint
+
+A preservation-first Mars + Orchade integration package now lives in `docs/sovereign-platform-integration/` with a standalone dashboard shell, reverse-proxy example, encrypted SSO bridge sample, and Cohort telemetry schema update.
+
 ## Environment Variables
 
 The app supports the following Firebase environment variables when `firebase-applet-config.json` is unavailable:

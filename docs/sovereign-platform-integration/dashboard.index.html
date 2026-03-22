@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#07111f" />
+  <title>VIA Sovereign Platform Dashboard</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #040814;
+      --bg-elevated: rgba(10, 21, 38, 0.84);
+      --panel: rgba(9, 19, 34, 0.92);
+      --panel-border: rgba(126, 194, 255, 0.16);
+      --text: #edf6ff;
+      --text-dim: #8ca4bf;
+      --cyan: #5edfff;
+      --cyan-strong: #12b5ff;
+      --orange: #ff8d3a;
+      --orange-strong: #ff5c1a;
+      --teal: #2de7c9;
+      --green: #6effb0;
+      --danger: #ff6a7b;
+      --shadow: 0 30px 120px rgba(0, 0, 0, 0.35);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --fast: 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top left, rgba(18, 181, 255, 0.12), transparent 28%),
+        radial-gradient(circle at top right, rgba(255, 92, 26, 0.11), transparent 24%),
+        linear-gradient(180deg, #030712 0%, #07111f 54%, #050b15 100%);
+      color: var(--text);
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      padding: 32px;
+    }
+
+    .shell {
+      width: min(1440px, 100%);
+      min-height: calc(100vh - 64px);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 32px;
+      background: linear-gradient(180deg, rgba(6, 14, 25, 0.96), rgba(7, 13, 24, 0.92));
+      box-shadow: var(--shadow);
+      isolation: isolate;
+    }
+
+    .shell::before,
+    .shell::after {
+      content: "";
+      position: absolute;
+      inset: auto;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      filter: blur(84px);
+      opacity: 0.32;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .shell::before {
+      top: -120px;
+      right: -100px;
+      background: rgba(18, 181, 255, 0.28);
+    }
+
+    .shell::after {
+      bottom: -140px;
+      left: -80px;
+      background: rgba(255, 92, 26, 0.22);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 24px 28px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(24px);
+      background: rgba(4, 9, 18, 0.56);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .wordmark {
+      display: grid;
+      gap: 8px;
+    }
+
+    .eyebrow {
+      margin: 0;
+      font-size: 11px;
+      line-height: 1;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      opacity: 0.78;
+    }
+
+    .title {
+      margin: 0;
+      font-size: clamp(1.6rem, 2vw, 2.35rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--text-dim);
+      max-width: 720px;
+      font-size: 0.98rem;
+    }
+
+    .identity {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 250px;
+      justify-content: flex-end;
+      padding: 12px 14px;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .identity img {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px solid rgba(94, 223, 255, 0.32);
+      object-fit: cover;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .identity-name {
+      font-weight: 700;
+      font-size: 0.98rem;
+    }
+
+    .identity-meta {
+      color: var(--text-dim);
+      font-size: 0.82rem;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr);
+      gap: 28px;
+      padding: 28px;
+      min-height: calc(100vh - 140px);
+    }
+
+    .panel {
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--panel);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    .left-rail {
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .status-card,
+    .module-list {
+      padding: 20px;
+    }
+
+    .section-label {
+      margin: 0 0 14px;
+      color: var(--text-dim);
+      font-size: 12px;
+      line-height: 1;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .status-chip {
+      padding: 14px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .status-chip strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.95rem;
+    }
+
+    .status-chip span {
+      color: var(--text-dim);
+      font-size: 0.76rem;
+    }
+
+    .module-button {
+      width: 100%;
+      text-align: left;
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+      margin-bottom: 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.03);
+      color: inherit;
+      cursor: pointer;
+      transition: transform var(--fast), border-color var(--fast), background var(--fast), box-shadow var(--fast);
+    }
+
+    .module-button:hover,
+    .module-button:focus-visible,
+    .module-button.active {
+      transform: translateY(-2px);
+      outline: none;
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(94, 223, 255, 0.24);
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.24);
+    }
+
+    .module-button[data-module="mars"].active {
+      border-color: rgba(255, 141, 58, 0.34);
+      box-shadow: 0 16px 34px rgba(255, 92, 26, 0.18);
+    }
+
+    .module-button[data-module="orchade"].active {
+      border-color: rgba(45, 231, 201, 0.32);
+      box-shadow: 0 16px 34px rgba(45, 231, 201, 0.14);
+    }
+
+    .module-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .module-title {
+      margin: 0;
+      font-size: 1.08rem;
+      letter-spacing: -0.02em;
+    }
+
+    .module-kicker {
+      margin: 0 0 6px;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+    }
+
+    .module-copy {
+      margin: 0;
+      color: var(--text-dim);
+      line-height: 1.55;
+      font-size: 0.9rem;
+    }
+
+    .badge {
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .badge.mars {
+      color: #ffd0bc;
+      background: rgba(255, 92, 26, 0.14);
+      border: 1px solid rgba(255, 141, 58, 0.22);
+    }
+
+    .badge.orchade {
+      color: #d7fff6;
+      background: rgba(45, 231, 201, 0.14);
+      border: 1px solid rgba(45, 231, 201, 0.22);
+    }
+
+    .viewport {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .viewport-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 22px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .viewport-title {
+      margin: 0;
+      font-size: 1.08rem;
+      font-weight: 700;
+    }
+
+    .viewport-copy {
+      margin: 6px 0 0;
+      color: var(--text-dim);
+      font-size: 0.88rem;
+    }
+
+    .viewport-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .action-btn {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: background var(--fast), border-color var(--fast), transform var(--fast);
+      font: inherit;
+    }
+
+    .action-btn:hover,
+    .action-btn:focus-visible {
+      transform: translateY(-1px);
+      outline: none;
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .action-btn.primary {
+      background: linear-gradient(135deg, rgba(18, 181, 255, 0.18), rgba(94, 223, 255, 0.08));
+      border-color: rgba(94, 223, 255, 0.28);
+    }
+
+    .viewport-body {
+      position: relative;
+      min-height: 0;
+      background:
+        linear-gradient(180deg, rgba(4, 10, 18, 0.4), rgba(4, 10, 18, 0.88)),
+        radial-gradient(circle at top left, rgba(18, 181, 255, 0.06), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(45, 231, 201, 0.08), transparent 30%);
+    }
+
+    .empty-state,
+    .loading-state,
+    .error-state {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 32px;
+    }
+
+    .empty-card,
+    .loading-card,
+    .error-card {
+      width: min(640px, 100%);
+      padding: 28px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .empty-card h2,
+    .loading-card h2,
+    .error-card h2 {
+      margin: 0 0 12px;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .empty-card p,
+    .loading-card p,
+    .error-card p {
+      margin: 0;
+      color: var(--text-dim);
+      line-height: 1.65;
+      font-size: 0.98rem;
+    }
+
+    .grid-spec {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .grid-spec div {
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .grid-spec strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    .grid-spec span {
+      color: var(--text-dim);
+      font-size: 0.8rem;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: none;
+      background: #02060d;
+    }
+
+    iframe.visible {
+      display: block;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 1080px) {
+      body { padding: 12px; }
+      .shell { min-height: calc(100vh - 24px); }
+      .topbar,
+      .content { padding: 18px; }
+      .content { grid-template-columns: 1fr; }
+      .identity { justify-content: flex-start; }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .identity {
+        min-width: 0;
+      }
+
+      .status-grid,
+      .grid-spec {
+        grid-template-columns: 1fr;
+      }
+
+      .viewport-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .viewport-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell" aria-label="VIA Sovereign dashboard shell">
+    <header class="topbar">
+      <div class="wordmark">
+        <p class="eyebrow">Authenticated Sovereign Front Door</p>
+        <h1 class="title">VIA Global Dashboard</h1>
+        <p class="subtitle">Low-latency launcher for the Mars relativistic simulator and the Orchade social hub, with single-session trust propagated from the active VIA identity.</p>
+      </div>
+      <section class="identity" aria-label="Authenticated Google identity">
+        <img id="user-avatar" alt="Authenticated user avatar" src="https://www.gravatar.com/avatar/?d=mp&s=96" />
+        <div>
+          <div id="user-name" class="identity-name">Loading secure session…</div>
+          <div id="user-meta" class="identity-meta">Awaiting Google-backed VIA identity</div>
+        </div>
+      </section>
+    </header>
+
+    <section class="content">
+      <aside class="left-rail">
+        <div class="panel status-card">
+          <p class="section-label">Sovereign Operations</p>
+          <div class="status-grid">
+            <article class="status-chip">
+              <span>SSO envelope</span>
+              <strong>JWE / 5 min</strong>
+            </article>
+            <article class="status-chip">
+              <span>Transport posture</span>
+              <strong>TLS 1.3</strong>
+            </article>
+            <article class="status-chip">
+              <span>Microservices</span>
+              <strong>2 isolated lanes</strong>
+            </article>
+            <article class="status-chip">
+              <span>Telemetry path</span>
+              <strong>/api/telemetry/sync</strong>
+            </article>
+          </div>
+        </div>
+
+        <div class="panel module-list">
+          <p class="section-label">Module Selection</p>
+          <button class="module-button" data-module="mars" type="button">
+            <span class="module-header">
+              <span>
+                <span class="module-kicker">Simulation Core</span>
+                <h2 class="module-title">MARS SIMULATOR</h2>
+              </span>
+              <span class="badge mars">0.1c ready</span>
+            </span>
+            <p class="module-copy">Load the relativistic navigation environment inside an isolated viewport with a fresh VIA-issued session envelope.</p>
+          </button>
+          <button class="module-button" data-module="orchade" type="button">
+            <span class="module-header">
+              <span>
+                <span class="module-kicker">Social Core</span>
+                <h2 class="module-title">ORCHADE SOCIAL HUB</h2>
+              </span>
+              <span class="badge orchade">MBB bridge</span>
+            </span>
+            <p class="module-copy">Open the sovereign lobby for consensus, MBB growth mechanics, and telemetry sync into the VIA Cohort timeline.</p>
+          </button>
+        </div>
+      </aside>
+
+      <section class="panel viewport" aria-live="polite">
+        <header class="viewport-header">
+          <div>
+            <h2 id="viewport-title" class="viewport-title">Select a sovereign module</h2>
+            <p id="viewport-copy" class="viewport-copy">The chosen module is loaded only after a short-lived encrypted session token is minted from the active VIA session.</p>
+          </div>
+          <div class="viewport-actions">
+            <button id="reload-module" class="action-btn" type="button">Reload viewport</button>
+            <button id="back-home" class="action-btn primary" type="button">Return to launcher</button>
+          </div>
+        </header>
+
+        <div class="viewport-body">
+          <section id="empty-state" class="empty-state">
+            <div class="empty-card">
+              <h2>Launch without breaking the existing VIA login flow.</h2>
+              <p>The dashboard stays inside the authenticated VIA shell and issues an encrypted, short-lived session token only when the user selects Mars or Orchade. The target module receives that token through the iframe URL, validates it server-side, and then boots its own isolated runtime.</p>
+              <div class="grid-spec">
+                <div>
+                  <strong>&lt; 10ms shell</strong>
+                  <span>Single paint, no framework dependency, no blocking fonts or remote scripts.</span>
+                </div>
+                <div>
+                  <strong>Viewport isolation</strong>
+                  <span>Each module runs in its own iframe with sandbox-compatible origin separation.</span>
+                </div>
+                <div>
+                  <strong>Telemetry control</strong>
+                  <span>Only Orchade writes MBB payloads back into VIA through explicit API contracts.</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="loading-state" class="loading-state" hidden>
+            <div class="loading-card">
+              <h2>Minting sovereign session envelope…</h2>
+              <p>VIA is verifying the current Google-authenticated session and generating a short-lived JWE for the selected module.</p>
+            </div>
+          </section>
+
+          <section id="error-state" class="error-state" hidden>
+            <div class="error-card">
+              <h2>Module launch blocked</h2>
+              <p id="error-copy">Unable to reach the VIA session-token endpoint.</p>
+            </div>
+          </section>
+
+          <iframe id="module-frame" title="Sovereign module viewport" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var modules = {
+        mars: {
+          title: 'MARS SIMULATOR',
+          description: 'Relativistic navigation, environmental generation, and high-speed mission state inside the Mars microservice.',
+          route: '/mars/'
+        },
+        orchade: {
+          title: 'ORCHADE SOCIAL HUB',
+          description: 'Social consensus, MBB growth mechanics, and Casio bridge sync inside the Orchade microservice.',
+          route: '/orchade/'
+        }
+      };
+
+      var currentModule = null;
+      var currentToken = null;
+
+      var userAvatar = document.getElementById('user-avatar');
+      var userName = document.getElementById('user-name');
+      var userMeta = document.getElementById('user-meta');
+      var viewportTitle = document.getElementById('viewport-title');
+      var viewportCopy = document.getElementById('viewport-copy');
+      var emptyState = document.getElementById('empty-state');
+      var loadingState = document.getElementById('loading-state');
+      var errorState = document.getElementById('error-state');
+      var errorCopy = document.getElementById('error-copy');
+      var moduleFrame = document.getElementById('module-frame');
+      var moduleButtons = Array.prototype.slice.call(document.querySelectorAll('.module-button'));
+      var backHome = document.getElementById('back-home');
+      var reloadModule = document.getElementById('reload-module');
+
+      function getBootstrapIdentity() {
+        if (typeof window.__VIA_SESSION__ === 'undefined' || !window.__VIA_SESSION__) {
+          return null;
+        }
+        return window.__VIA_SESSION__;
+      }
+
+      function renderIdentity(identity) {
+        var fallbackName = 'Authenticated VIA Operator';
+        var fallbackMeta = 'Awaiting Google profile hydration';
+        userName.textContent = identity && identity.name ? identity.name : fallbackName;
+        userMeta.textContent = identity && identity.email ? identity.email : fallbackMeta;
+        if (identity && identity.picture) {
+          userAvatar.src = identity.picture;
+        }
+      }
+
+      function setModuleButtonState(moduleName) {
+        moduleButtons.forEach(function (button) {
+          button.classList.toggle('active', button.getAttribute('data-module') === moduleName);
+        });
+      }
+
+      function showState(nextState) {
+        emptyState.hidden = nextState !== 'empty';
+        loadingState.hidden = nextState !== 'loading';
+        errorState.hidden = nextState !== 'error';
+        if (nextState === 'empty') {
+          moduleFrame.classList.remove('visible');
+          moduleFrame.removeAttribute('src');
+        }
+      }
+
+      async function requestSessionToken(moduleName) {
+        var response = await fetch('/api/auth/session-token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({ target: moduleName })
+        });
+
+        if (!response.ok) {
+          throw new Error('session-token endpoint returned HTTP ' + response.status);
+        }
+
+        return response.json();
+      }
+
+      async function launchModule(moduleName) {
+        if (!modules[moduleName]) {
+          return;
+        }
+
+        currentModule = moduleName;
+        viewportTitle.textContent = 'Authorizing ' + modules[moduleName].title;
+        viewportCopy.textContent = 'Generating a sovereign session envelope for the selected module.';
+        setModuleButtonState(moduleName);
+        showState('loading');
+
+        try {
+          var payload = await requestSessionToken(moduleName);
+          currentToken = payload.token;
+          viewportTitle.textContent = modules[moduleName].title;
+          viewportCopy.textContent = modules[moduleName].description;
+          errorCopy.textContent = '';
+
+          var launchUrl = new URL(modules[moduleName].route, window.location.origin);
+          launchUrl.searchParams.set('sso', payload.token);
+          launchUrl.searchParams.set('via_uid', payload.user.uid);
+          launchUrl.searchParams.set('via_name', payload.user.name || '');
+
+          moduleFrame.src = launchUrl.toString();
+          moduleFrame.classList.add('visible');
+          emptyState.hidden = true;
+          loadingState.hidden = true;
+          errorState.hidden = true;
+        } catch (error) {
+          currentToken = null;
+          moduleFrame.classList.remove('visible');
+          viewportTitle.textContent = 'Launch failed';
+          viewportCopy.textContent = 'The module remains isolated until VIA can verify the parent session.';
+          errorCopy.textContent = error && error.message ? error.message : 'Unknown launch failure';
+          showState('error');
+        }
+      }
+
+      function resetViewport() {
+        currentModule = null;
+        currentToken = null;
+        viewportTitle.textContent = 'Select a sovereign module';
+        viewportCopy.textContent = 'The chosen module is loaded only after a short-lived encrypted session token is minted from the active VIA session.';
+        setModuleButtonState(null);
+        showState('empty');
+      }
+
+      moduleButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          launchModule(button.getAttribute('data-module'));
+        });
+      });
+
+      backHome.addEventListener('click', resetViewport);
+      reloadModule.addEventListener('click', function () {
+        if (!currentModule) {
+          resetViewport();
+          return;
+        }
+        launchModule(currentModule);
+      });
+
+      renderIdentity(getBootstrapIdentity());
+    })();
+  </script>
+</body>
+</html>
