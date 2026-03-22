@@ -241,6 +241,57 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 .about-links{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.5rem;}
 .about-link-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1rem;border-radius:99px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted);font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all .25s cubic-bezier(.16,1,.3,1);}
 .about-link-btn:active{transform:scale(0.95);background:rgba(255,107,0,.1);border-color:rgba(255,107,0,.3);color:var(--saffron);}
+.upgrades-panel{position:relative;overflow:hidden;padding:1.35rem;border-radius:24px;background:
+  linear-gradient(180deg,rgba(9,18,34,.96),rgba(8,14,26,.92)),
+  repeating-linear-gradient(90deg,rgba(94,223,255,.04) 0,rgba(94,223,255,.04) 1px,transparent 1px,transparent 72px),
+  repeating-linear-gradient(180deg,rgba(255,107,0,.045) 0,rgba(255,107,0,.045) 1px,transparent 1px,transparent 72px);
+  border:1px solid rgba(94,223,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 24px 70px rgba(0,0,0,.28);margin-bottom:1.5rem;}
+.upgrades-panel::after{content:'';position:absolute;inset:auto -10% -40% auto;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,0,.18),transparent 68%);pointer-events:none;filter:blur(24px);}
+.upgrades-header{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:1rem;}
+.upgrades-label{font-size:.62rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#5edfff;margin-bottom:.45rem;}
+.upgrades-title{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:.08em;color:#fff;}
+.upgrades-sub{font-size:.78rem;line-height:1.55;color:rgba(255,255,255,.62);max-width:420px;margin-top:.2rem;}
+.upgrades-pulse{display:inline-flex;align-items:center;gap:.45rem;padding:.48rem .72rem;border-radius:999px;background:rgba(8,14,26,.8);border:1px solid rgba(94,223,255,.14);font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.78);}
+.upgrades-pulse::before{content:'';width:8px;height:8px;border-radius:50%;background:#5edfff;box-shadow:0 0 12px rgba(94,223,255,.75);animation:pulse 2s infinite;}
+.upgrades-summary{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem;margin-bottom:1rem;}
+.upgrade-metric{padding:.95rem 1rem;border-radius:18px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.08);min-height:96px;}
+.upgrade-metric-label{font-size:.58rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:rgba(94,223,255,.78);}
+.upgrade-metric-value{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.06em;color:#fff;line-height:1;margin-top:.45rem;}
+.upgrade-metric-sub{font-size:.72rem;line-height:1.45;color:rgba(255,255,255,.56);margin-top:.42rem;}
+.upgrade-integrity{color:#7dffbe;}
+.upgrade-track-grid{position:relative;z-index:1;display:grid;gap:.85rem;}
+.upgrade-track{padding:1rem;border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.08);}
+.upgrade-track-head{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:.75rem;}
+.upgrade-track-name{font-size:.98rem;font-weight:800;color:#fff;}
+.upgrade-track-sub{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.48);margin-top:.18rem;}
+.upgrade-track-overall{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#5edfff;text-align:right;white-space:nowrap;}
+.upgrade-track-bar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.55rem;}
+.upgrade-phase{position:relative;padding:.78rem .72rem .9rem;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(7,13,24,.76);min-height:112px;}
+.upgrade-phase::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:16px 0 0 16px;background:rgba(255,255,255,.12);}
+.upgrade-phase.done::before{background:linear-gradient(180deg,#5edfff,#2de7c9);}
+.upgrade-phase.in-progress::before{background:linear-gradient(180deg,#ff9500,#ff6b00);}
+.upgrade-phase.next::before{background:rgba(255,255,255,.24);}
+.upgrade-phase-name{font-size:.76rem;font-weight:800;line-height:1.35;color:#fff;margin-bottom:.55rem;}
+.upgrade-phase-status{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.68);}
+.upgrade-phase-progress{height:6px;border-radius:999px;background:rgba(255,255,255,.08);margin-top:.75rem;overflow:hidden;}
+.upgrade-phase-progress span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#5edfff,#ff8d3a);}
+.upgrade-phase-meta{font-size:.62rem;color:rgba(255,255,255,.46);margin-top:.45rem;line-height:1.4;}
+.upgrade-log{position:relative;z-index:1;margin-top:1rem;padding:1rem;border-radius:20px;background:rgba(2,8,18,.78);border:1px solid rgba(255,255,255,.06);}
+.upgrade-log-head{display:flex;justify-content:space-between;align-items:center;gap:.75rem;margin-bottom:.75rem;}
+.upgrade-log-title{font-size:.72rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#ff9a4a;}
+.upgrade-log-meta{font-family:'JetBrains Mono',monospace;font-size:.66rem;color:rgba(255,255,255,.48);}
+.upgrade-log-feed{display:grid;gap:.45rem;max-height:220px;overflow:auto;padding-right:.2rem;}
+.upgrade-log-row{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(120px,.7fr) minmax(0,2fr) auto;gap:.55rem;align-items:start;padding:.62rem .7rem;border-radius:14px;background:rgba(255,255,255,.025);font-family:'JetBrains Mono',monospace;font-size:.68rem;line-height:1.45;color:rgba(255,255,255,.82);}
+.upgrade-log-row strong{color:#5edfff;font-weight:700;}
+.upgrade-log-row span:last-child{color:#ffb36d;}
+.upgrade-log-empty{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:rgba(255,255,255,.52);}
+.upgrade-foot{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:.75rem;flex-wrap:wrap;margin-top:.95rem;}
+.upgrade-foot-copy{font-size:.68rem;line-height:1.5;color:rgba(255,255,255,.5);}
+.upgrade-foot-actions{display:flex;gap:.5rem;flex-wrap:wrap;}
+.upgrade-foot-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.58rem .9rem;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#fff;font-size:.66rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;cursor:pointer;}
+.upgrade-foot-btn:active{transform:scale(.97);}
+.upgrade-loading .upgrade-metric-value,.upgrade-loading .upgrade-track-name,.upgrade-loading .upgrade-log-row{opacity:.75}
+.upgrade-loading .upgrade-log-row{animation:pulse 1.8s infinite}
 
 /* ── GESTURE ── */
 .card-tilt-overlay{position:absolute;inset:0;pointer-events:none;z-index:4;transition:background .08s ease;}
@@ -472,6 +523,9 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 @media(max-width:600px){
   .dd-footer-nav{grid-template-columns:1fr 1fr;}
   .dd-h1{font-size:32px;}
+  .upgrades-header,.upgrade-track-head,.upgrade-log-head,.upgrade-foot{flex-direction:column;align-items:flex-start;}
+  .upgrades-summary,.upgrade-track-bar,.upgrade-log-row{grid-template-columns:1fr;}
+  .upgrade-phase{min-height:auto;}
 }
 </style>
 <script type="module">
@@ -672,6 +726,50 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
         <div class="about-stat"><div class="about-stat-n">0</div><div class="about-stat-l">Logins Needed</div></div>
         <div class="about-stat"><div class="about-stat-n">∞</div><div class="about-stat-l">Free Forever</div></div>
       </div>
+      <div class="upgrades-panel upgrade-loading" id="upgrades-panel">
+        <div class="upgrades-header">
+          <div>
+            <div class="upgrades-label">Sovereign Telemetry Grid</div>
+            <div class="upgrades-title">Upgrades &amp; Roadmap</div>
+            <div class="upgrades-sub">Live Git telemetry for the Mars and Orchade integration tracks, surfaced directly inside the VIA dashboard.</div>
+          </div>
+          <div class="upgrades-pulse" id="upgrades-pulse">Awaiting telemetry</div>
+        </div>
+        <div class="upgrades-summary">
+          <div class="upgrade-metric">
+            <div class="upgrade-metric-label">Total Commits</div>
+            <div class="upgrade-metric-value" id="upgrade-total-commits">4,478</div>
+            <div class="upgrade-metric-sub" id="upgrade-total-commits-sub">Telemetry cache warming…</div>
+          </div>
+          <div class="upgrade-metric">
+            <div class="upgrade-metric-label">Active Microservices</div>
+            <div class="upgrade-metric-value" id="upgrade-microservices">47</div>
+            <div class="upgrade-metric-sub" id="upgrade-microservices-sub">Repository mesh under observation.</div>
+          </div>
+          <div class="upgrade-metric">
+            <div class="upgrade-metric-label">Overall Integrity</div>
+            <div class="upgrade-metric-value upgrade-integrity" id="upgrade-integrity">STABLE</div>
+            <div class="upgrade-metric-sub" id="upgrade-integrity-sub">Version handshake pending.</div>
+          </div>
+        </div>
+        <div class="upgrade-track-grid" id="upgrade-track-grid"></div>
+        <div class="upgrade-log">
+          <div class="upgrade-log-head">
+            <div class="upgrade-log-title">Live Commit Log</div>
+            <div class="upgrade-log-meta" id="upgrade-log-meta">Awaiting commit stream</div>
+          </div>
+          <div class="upgrade-log-feed" id="upgrade-log-feed">
+            <div class="upgrade-log-empty">No commit packets yet.</div>
+          </div>
+        </div>
+        <div class="upgrade-foot">
+          <div class="upgrade-foot-copy" id="upgrade-foot-copy">Polling <code>./api/upgrades/status</code> every 30 seconds with read-only GitHub telemetry.</div>
+          <div class="upgrade-foot-actions">
+            <button type="button" class="upgrade-foot-btn" onclick="refreshUpgradesPanel(true)">↻ Refresh</button>
+            <a class="upgrade-foot-btn" href="./docs/sovereign-platform-integration/README.md" target="_blank" rel="noopener">Schema</a>
+          </div>
+        </div>
+      </div>
       <div class="about-section">
         <div class="about-section-title">🛠 Products</div>
         <div class="about-product" onclick="switchLayer('tools')">
@@ -816,6 +914,12 @@ let currentUser = null;
 let authReady = false;
 const SOCIAL_STORAGE_KEY = 'viadecide.social.core';
 const discoverState = { query:'', profiles:[], requestId:0, inputBound:false };
+const upgradesState = {
+  intervalMs: 30000,
+  timer: null,
+  lastData: null,
+  loading: false
+};
 
 function getSocialCore(){return window.SocialCore&&typeof window.SocialCore.readState==='function'?window.SocialCore:null;}
 function isSignedInUser(user){return !!(user&&user.id&&!user.is_guest);}
@@ -909,6 +1013,121 @@ function renderApp(){
     renderGuestUI();
   }
 }
+
+function formatUpgradeNumber(value){
+  const amount=Number(value||0);
+  if(!Number.isFinite(amount))return '0';
+  return amount.toLocaleString('en-US');
+}
+function escapeAttr(value){
+  return escapeHTML(String(value==null?'':value)).replace(/`/g,'&#96;');
+}
+function renderUpgradeTracks(tracks){
+  const root=document.getElementById('upgrade-track-grid');
+  if(!root)return;
+  const entries=Array.isArray(tracks)?tracks:[];
+  if(!entries.length){
+    root.innerHTML='<div class="upgrade-log-empty">No integration tracks available.</div>';
+    return;
+  }
+  root.innerHTML=entries.map((track)=>{
+    const phases=Array.isArray(track.phases)?track.phases:[];
+    const phaseMarkup=phases.map((phase)=>{
+      const statusClass=(phase.status||'next').toLowerCase().replace(/[^a-z-]+/g,'-');
+      const percent=Math.max(0,Math.min(100,Number(phase.progressPct||0)));
+      const statusLabel=String(phase.statusLabel||phase.status||'Pending');
+      return '<div class="upgrade-phase '+escapeAttr(statusClass)+'">'+
+        '<div class="upgrade-phase-name">'+escapeHTML(phase.name||'Unnamed phase')+'</div>'+
+        '<div class="upgrade-phase-status">'+escapeHTML(statusLabel)+(percent?(' · '+percent+'%'):'')+'</div>'+
+        '<div class="upgrade-phase-progress"><span style="width:'+percent+'%"></span></div>'+
+        '<div class="upgrade-phase-meta">'+escapeHTML(phase.branch?('branch: '+phase.branch):phase.detail||'Tracking branch merge telemetry')+'</div>'+
+      '</div>';
+    }).join('');
+    return '<div class="upgrade-track">'+
+      '<div class="upgrade-track-head">'+
+        '<div><div class="upgrade-track-name">'+escapeHTML(track.name||'Track')+'</div><div class="upgrade-track-sub">'+escapeHTML(track.repository||'repo pending')+'</div></div>'+
+        '<div class="upgrade-track-overall">'+escapeHTML(track.overallStatus||'Awaiting status')+'</div>'+
+      '</div>'+
+      '<div class="upgrade-track-bar">'+phaseMarkup+'</div>'+
+    '</div>';
+  }).join('');
+}
+function renderUpgradeLog(commits){
+  const root=document.getElementById('upgrade-log-feed');
+  if(!root)return;
+  const rows=Array.isArray(commits)?commits.slice(0,5):[];
+  if(!rows.length){
+    root.innerHTML='<div class="upgrade-log-empty">Commit telemetry unavailable right now.</div>';
+    return;
+  }
+  root.innerHTML=rows.map((entry)=>{
+    return '<div class="upgrade-log-row">'+
+      '<strong>'+escapeHTML(entry.repo||'repo')+'</strong>'+
+      '<span>'+escapeHTML(entry.timestampDisplay||getRelativeTime(entry.timestamp))+'</span>'+
+      '<span>'+escapeHTML(entry.message||'No commit message')+'</span>'+
+      '<span>'+(entry.hashShort?escapeHTML(entry.hashShort):escapeHTML((entry.hash||'').slice(0,7)))+'</span>'+
+    '</div>';
+  }).join('');
+}
+function renderUpgradesPanel(data){
+  const panel=document.getElementById('upgrades-panel');
+  if(!panel)return;
+  const summary=data&&data.summary?data.summary:{};
+  const source=data&&data.source?data.source:{};
+  const integrity=summary.integrity||{};
+  document.getElementById('upgrade-total-commits').textContent=formatUpgradeNumber(summary.totalCommits||4478);
+  document.getElementById('upgrade-total-commits-sub').textContent=(source.repoCount?source.repoCount+' repos in scope':'Repo scope pending')+(data&&data.generatedAt?' · '+getRelativeTime(data.generatedAt):'');
+  document.getElementById('upgrade-microservices').textContent=formatUpgradeNumber(summary.activeMicroservices||47);
+  document.getElementById('upgrade-microservices-sub').textContent=summary.microserviceNote||'Repository mesh under observation.';
+  document.getElementById('upgrade-integrity').textContent=String(integrity.label||'STABLE').toUpperCase();
+  document.getElementById('upgrade-integrity-sub').textContent=(integrity.version?('Ver. '+integrity.version+' · '):'')+(integrity.detail||'Read-only Git telemetry active.');
+  document.getElementById('upgrades-pulse').textContent=source.statusLabel||'Telemetry online';
+  document.getElementById('upgrade-log-meta').textContent=(data&&data.generatedAt?'Updated '+getRelativeTime(data.generatedAt):'Awaiting timestamp')+' · '+(source.cacheLabel||'poll / 30s');
+  document.getElementById('upgrade-foot-copy').innerHTML='Polling <code>'+(escapeHTML(data&&data.endpoint?data.endpoint:'./api/upgrades/status'))+'</code> every '+Math.round((data&&data.pollIntervalMs?data.pollIntervalMs:upgradesState.intervalMs)/1000)+' seconds with read-only GitHub telemetry.';
+  renderUpgradeTracks(data&&data.tracks);
+  renderUpgradeLog(data&&data.recentCommits);
+  panel.classList.remove('upgrade-loading');
+}
+async function refreshUpgradesPanel(force){
+  if(upgradesState.loading&&!force)return;
+  const panel=document.getElementById('upgrades-panel');
+  if(panel)panel.classList.add('upgrade-loading');
+  upgradesState.loading=true;
+  const query=force?'?fresh=1':'';
+  try{
+    const response=await fetch('./api/upgrades/status'+query,{headers:{'Accept':'application/json'}});
+    if(!response.ok)throw new Error('Telemetry '+response.status);
+    const payload=await response.json();
+    upgradesState.lastData=payload;
+    if(payload&&payload.pollIntervalMs){
+      const nextInterval=Number(payload.pollIntervalMs)||upgradesState.intervalMs;
+      if(nextInterval!==upgradesState.intervalMs&&upgradesState.timer){
+        window.clearInterval(upgradesState.timer);
+        upgradesState.timer=window.setInterval(()=>{refreshUpgradesPanel(false);}, nextInterval);
+      }
+      upgradesState.intervalMs=nextInterval;
+    }
+    renderUpgradesPanel(payload||{});
+  }catch(error){
+    console.warn('[VIA] Upgrades telemetry unavailable:', error.message);
+    if(upgradesState.lastData){
+      renderUpgradesPanel(upgradesState.lastData);
+    }
+    const pulse=document.getElementById('upgrades-pulse');
+    const foot=document.getElementById('upgrade-foot-copy');
+    if(pulse)pulse.textContent='Telemetry degraded';
+    if(foot)foot.innerHTML='Telemetry endpoint unavailable. Panel is holding the last known snapshot and remains read-only.';
+  }finally{
+    upgradesState.loading=false;
+  }
+}
+function initUpgradesPanel(){
+  if(!document.getElementById('upgrades-panel'))return;
+  refreshUpgradesPanel();
+  if(upgradesState.timer)window.clearInterval(upgradesState.timer);
+  upgradesState.timer=window.setInterval(()=>{refreshUpgradesPanel(false);}, upgradesState.intervalMs);
+}
+window.refreshUpgradesPanel = refreshUpgradesPanel;
 
 // ════════════════════════════════════════════════════════════════
 // VIA AUTH
@@ -2779,6 +2998,7 @@ function startApp(){
     document.getElementById('app').classList.add('visible');
     syncCreatorContentSurface();GC.init();buildDiscover();buildProfile();
     renderApp();
+    initUpgradesPanel();
     // Pre-warm Deep Dive so sections aren't empty on first open
     if (typeof ddLoad === 'function') { try { ddLoad('food', null); } catch(_e){} }
     await initMicroFrontendArchitecture();

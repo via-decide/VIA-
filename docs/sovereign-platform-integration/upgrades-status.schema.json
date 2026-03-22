@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://api.viadecide.com/upgrades/status.schema.json",
+  "title": "VIA Upgrades Status",
+  "type": "object",
+  "required": [
+    "generatedAt",
+    "endpoint",
+    "pollIntervalMs",
+    "summary",
+    "tracks",
+    "recentCommits",
+    "source"
+  ],
+  "properties": {
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "endpoint": {
+      "type": "string"
+    },
+    "pollIntervalMs": {
+      "type": "integer",
+      "minimum": 1000
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "totalCommits",
+        "activeMicroservices",
+        "microserviceNote",
+        "integrity"
+      ],
+      "properties": {
+        "totalCommits": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "activeMicroservices": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "microserviceNote": {
+          "type": "string"
+        },
+        "integrity": {
+          "type": "object",
+          "required": [
+            "label",
+            "version",
+            "detail"
+          ],
+          "properties": {
+            "label": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "detail": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "tracks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "repository",
+          "overallStatus",
+          "phases"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "repository": { "type": "string" },
+          "overallStatus": { "type": "string" },
+          "phases": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "name",
+                "branch",
+                "status",
+                "statusLabel",
+                "progressPct",
+                "detail"
+              ],
+              "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" },
+                "branch": { "type": "string" },
+                "status": {
+                  "type": "string",
+                  "enum": ["done", "in-progress", "next"]
+                },
+                "statusLabel": { "type": "string" },
+                "progressPct": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "detail": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "recentCommits": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "repo",
+          "timestamp",
+          "timestampDisplay",
+          "message",
+          "hash",
+          "hashShort"
+        ],
+        "properties": {
+          "repo": { "type": "string" },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "timestampDisplay": { "type": "string" },
+          "message": { "type": "string" },
+          "hash": { "type": "string" },
+          "hashShort": { "type": "string" },
+          "url": {
+            "type": ["string", "null"],
+            "format": "uri-reference"
+          }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "provider",
+        "repoCount",
+        "cached",
+        "cacheTtlMs",
+        "degraded",
+        "statusLabel",
+        "cacheLabel"
+      ],
+      "properties": {
+        "provider": { "type": "string" },
+        "repoCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cached": { "type": "boolean" },
+        "cacheTtlMs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "degraded": { "type": "boolean" },
+        "statusLabel": { "type": "string" },
+        "cacheLabel": { "type": "string" }
+      }
+    }
+  }
+}

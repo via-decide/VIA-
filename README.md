@@ -61,6 +61,8 @@ Vite is configured with an `esnext` build target so the app can use top-level `a
 
 A preservation-first Mars + Orchade integration package now lives in `docs/sovereign-platform-integration/` with a standalone dashboard shell, reverse-proxy example, encrypted SSO bridge sample, and Cohort telemetry schema update.
 
+The main `index.html` dashboard now also includes an Upgrades & Roadmap telemetry panel backed by `GET /api/upgrades/status`, surfacing commit counts, integration-track progress, and the latest cross-repository commit activity for Mars and Orchade.
+
 ## Environment Variables
 
 The app supports the following Firebase environment variables when `firebase-applet-config.json` is unavailable:
