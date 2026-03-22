@@ -2,6 +2,11 @@
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
   "branch": "simba/implement-secure-admin-authentication-1-create-t",
+  "branch": "simba/build-the-sovereign-telemetry-websocket-wssapivi",
+  "branch": "simba/backend-integration-for-orchade-module-1-set-up-",
+  "branch": "simba/backend-integration-for-mars-module-1-set-up-a-r",
+  "branch": "simba/integrate-mars-exploration-module-into-the-via-c",
+  "branch": "simba/integrate-orchade-social-hub-module-as-the-via-g",
   "files_to_create": [
     "codex-task.md",
     "antigravity-repair-task.md",
