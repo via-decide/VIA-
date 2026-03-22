@@ -1,6 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
+Build the Sovereign Telemetry Websocket (wss://api.viadecide.com/ops/stream). 1. Orchestrate a data aggregator service that collects metrics every 1 second from all 47 micro-services. 2. Aggregate 'Mars' metrics (active pilots, physics latency) and 'Orchade' metrics (consensus events, MBB rate, Casio status). 3. Stream this unified JSON packet over the secure websocket.
+
+CONSTRAINTS
+Minimize data overhead. Do not impact user-facing performance in the games.
 Backend Integration for Orchade Module. 1. Set up a reverse-proxy route from 'viadecide.com/orchade' to the Orchade hub. 2. Implement the '/api/sync/orchade' endpoint that persists MBB (Mind, Body, Breath) telemetry from the user session into the main Cohort database.
 
 CONSTRAINTS

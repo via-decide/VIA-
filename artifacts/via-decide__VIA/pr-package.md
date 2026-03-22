@@ -1,3 +1,9 @@
+Branch: simba/build-the-sovereign-telemetry-websocket-wssapivi
+Title: Build the Sovereign Telemetry Websocket (wss://api.viadecide.com/ops/...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Build the Sovereign Telemetry Websocket (wss://api.viadecide.com/ops/stream). 1. Orchestrate a data aggregator service that collects metrics every 1 second from all 47 micro-services. 2. Aggregate 'Mars' metrics (active pilots, physics latency) and 'Orchade' metrics (consensus events, MBB rate, Casio status). 3. Stream this unified JSON packet over the secure websocket.
 Branch: simba/backend-integration-for-orchade-module-1-set-up-
 Title: Backend Integration for Orchade Module. 1. Set up a reverse-proxy rou...
 
