@@ -74,6 +74,8 @@ export type Game = {
   isFlagship: boolean;
   playerCount?: string;
   difficulty?: 'Easy' | 'Medium' | 'Hard';
+  moduleTarget?: 'mars';
+  requiresSession?: boolean;
 };
 
 export type AppState = {

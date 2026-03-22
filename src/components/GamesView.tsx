@@ -2,8 +2,23 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Gamepad2, X, ExternalLink, Zap, Star, Users, Trophy } from 'lucide-react';
 import { Game } from '../types';
+import MarsMissionPanel from './MarsMissionPanel';
 
 const FLAGSHIP_GAMES: Game[] = [
+  {
+    id: 'mars',
+    title: 'Mars Relativistic Navigator',
+    description: 'Launch Module #48 from the authenticated VIA shell with 0.1c navigation sync, sovereign session minting, and seeded planetary mesh streaming.',
+    icon: '🪐',
+    url: './mars/index.html',
+    category: 'Exploration',
+    tags: ['Module #48', '0.1c', 'Mesh Streaming'],
+    isFlagship: true,
+    playerCount: 'Auth Only',
+    difficulty: 'Hard',
+    moduleTarget: 'mars',
+    requiresSession: true,
+  },
   {
     id: 'skillhex',
     title: 'SkillHex',
@@ -58,6 +73,9 @@ interface GameOverlayProps {
 }
 
 const GameOverlay: React.FC<GameOverlayProps> = ({ game, onClose }) => (
+  game.requiresSession && game.moduleTarget === 'mars' ? (
+    <MarsMissionPanel game={game} onClose={onClose} />
+  ) : (
   <motion.div
     key="overlay"
     initial={{ opacity: 0 }}
@@ -84,6 +102,7 @@ const GameOverlay: React.FC<GameOverlayProps> = ({ game, onClose }) => (
       allow="fullscreen"
     />
   </motion.div>
+  )
 );
 
 interface FlagshipCardProps {

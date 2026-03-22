@@ -1617,11 +1617,18 @@ function updateThermal(){
    SIM ENGINE
 ════════════════════════════════════════════════════════════ */
 function startSim(){
-  S.runId=mkRunId();S.startTs=nowISO();S.endedTs=null;S.log=[];
-  logEvent('RUN_START',{runId:S.runId});
-  startAmbientLoop();startSolarCycle();startNodeProximityTimer();startConstraintLoop();
-  updateUI();updateValidationPips();updateConstraintUI();
+  GS.runId = mkRunId();
+  GS.startTs = nowISO();
+  GS.endedTs = null;
+  GS.log = [];
+  logEvent('RUN_START',{runId:GS.runId});
+  startConstraintLoop();
+  startAmbient();
+  updateAllUI();
+  updateValidationPips();
   toast('HEX-01 ONLINE — MISSION ACTIVE');
+}
+
 function updateDust(){
   GS.dust += GS.stormActive ? 0.008 : 0.001;
   GS.dust = Math.min(0.9, GS.dust);
@@ -2614,12 +2621,132 @@ function mkRunId(){ return `HEX01-${Date.now().toString(36).toUpperCase()}-${Mat
 function logEvent(type,data={}){ GS.log.push({t:nowISO(),type,...data}); if(GS.log.length>200) GS.log.splice(0,50); }
 
 /* ═══════════════════════════════════════════════════
+   VIA MODULE #48 BRIDGE
+═══════════════════════════════════════════════════ */
+function getViaLaunchParams(){
+  const params = new URLSearchParams(window.location.search);
+  return {
+    sso: params.get('sso') || '',
+    viaUid: params.get('via_uid') || '',
+    viaName: params.get('via_name') || '',
+    quadrant: params.get('via_quadrant') || 'A3-07',
+    seed: params.get('via_seed') || '',
+  };
+}
+
+function applyViaEnvironmentDecor(mesh){
+  const rocks = document.getElementById('rocks');
+  if(!rocks || !mesh || !Array.isArray(mesh.heights)) return;
+  rocks.innerHTML = '';
+  mesh.heights.slice(0, 8).forEach((height, index)=>{
+    const rock = document.createElement('div');
+    const width = 28 + index * 7;
+    const left = 6 + index * 11;
+    const rockHeight = 10 + Math.max(8, Math.round(Math.abs(height) * 2.3));
+    rock.className = 'rock';
+    rock.style.width = width+'px';
+    rock.style.height = rockHeight+'px';
+    rock.style.left = left+'%';
+    rock.style.bottom = '0';
+    rocks.appendChild(rock);
+  });
+}
+
+function applyViaNavigationEnvelope(envelope){
+  if(!envelope || !envelope.coordinateSystem || !envelope.physics) return;
+  GS.viaCoordinateFrame = envelope.coordinateSystem;
+  GS.relativisticNav = envelope.physics;
+  GS.coordinatePosition = {
+    x: envelope.coordinateSystem.originMeters.x + envelope.coordinateSystem.localOffsetMeters.x,
+    y: envelope.coordinateSystem.originMeters.y + envelope.coordinateSystem.localOffsetMeters.y,
+    z: envelope.coordinateSystem.originMeters.z + envelope.coordinateSystem.localOffsetMeters.z,
+  };
+  GS.latencyMs = Math.min(GS.latencyMs, envelope.physics.recommendedLatencyMs || GS.latencyMs);
+  const coolEl = document.getElementById('c-cool');
+  if(coolEl) coolEl.textContent = envelope.physics.velocityFractionC.toFixed(1)+'c READY';
+}
+
+function applyViaEnvironmentEnvelope(envelope){
+  if(!envelope) return;
+  GS.viaEnvironment = envelope;
+  if(Array.isArray(envelope.terrainCatalog) && envelope.terrainCatalog.length){
+    TERRAINS.splice(0, TERRAINS.length, ...envelope.terrainCatalog);
+    updateTerrainOverlay(TERRAINS[0]);
+  }
+  applyViaEnvironmentDecor(envelope.mesh);
+}
+
+function syncViaCoordinates(dir){
+  if(!GS.coordinatePosition || !GS.viaCoordinateFrame) return;
+  const step = GS.viaCoordinateFrame.commandStepMeters || 120;
+  const vectors = {
+    N:{x:0,z:step}, S:{x:0,z:-step}, E:{x:step,z:0}, W:{x:-step,z:0},
+    NE:{x:step,z:step}, NW:{x:-step,z:step}, SE:{x:step,z:-step}, SW:{x:-step,z:-step},
+  };
+  const vector = vectors[dir];
+  if(!vector) return;
+  GS.coordinatePosition.x += vector.x;
+  GS.coordinatePosition.z += vector.z;
+  const quad = document.getElementById('t-quad');
+  if(quad){
+    quad.textContent = `${GS.viaEnvironment?.quadrant || 'A3-07'} · X${Math.round(GS.coordinatePosition.x)} Z${Math.round(GS.coordinatePosition.z)}`;
+  }
+}
+
+const _viaOriginalMove = move;
+move = function(dir){
+  syncViaCoordinates(dir);
+  return _viaOriginalMove(dir);
+};
+
+async function syncViaMarsBridge(){
+  const launch = getViaLaunchParams();
+  if(!launch.sso) return;
+
+  try {
+    const [navigationResponse, environmentResponse] = await Promise.all([
+      fetch(`../api/mars/navigation`, {
+        headers: {
+          Accept: 'application/json',
+          'x-via-sso': launch.sso,
+        },
+      }),
+      fetch(`../api/mars/environment?quadrant=${encodeURIComponent(launch.quadrant)}&detail=20&seed=${encodeURIComponent(launch.seed || `via-core-${launch.quadrant}`)}`, {
+        headers: {
+          Accept: 'application/json',
+          'x-via-sso': launch.sso,
+        },
+      }),
+    ]);
+
+    if(!navigationResponse.ok || !environmentResponse.ok){
+      throw new Error('via_module_sync_failed');
+    }
+
+    const navigationEnvelope = await navigationResponse.json();
+    const environmentEnvelope = await environmentResponse.json();
+
+    applyViaNavigationEnvelope(navigationEnvelope);
+    applyViaEnvironmentEnvelope(environmentEnvelope);
+
+    if(launch.viaName){
+      toast(`VIA LINKED — ${launch.viaName.toUpperCase()} @ ${navigationEnvelope.physics.velocityFractionC.toFixed(1)}c`);
+    } else {
+      toast(`VIA LINKED — ${navigationEnvelope.physics.velocityFractionC.toFixed(1)}c NAV READY`);
+    }
+  } catch(error){
+    console.warn('VIA Mars bridge sync failed.', error);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
    BOOT
 ═══════════════════════════════════════════════════ */
 updateAllUI();
 buildMissions();
 updateSkillTree();
 buildCerts();
+syncViaMarsBridge();
 </script>
 
 </body>
