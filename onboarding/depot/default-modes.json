@@ -1,0 +1,16 @@
+[
+  {
+    "id": "mars_simulator",
+    "label": "MARS SIMULATOR",
+    "summary": "Mission rehearsal, telemetry overlays, and launch-grade systems thinking.",
+    "description": "Prioritize simulation-first access paths, structured mission context, and engineering-grade state visibility.",
+    "module": "mars"
+  },
+  {
+    "id": "orchade_social_hub",
+    "label": "ORCHADE SOCIAL HUB",
+    "summary": "Consensus, social surfaces, and longitudinal cohort coordination.",
+    "description": "Bias the dashboard toward social presence, cohort consensus, and longitudinal operator coordination.",
+    "module": "orchade"
+  }
+]

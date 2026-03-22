@@ -8,6 +8,7 @@ VIA is a production-focused social platform for Bharat-centric communities. It c
 - **Deep Dives**: Explore longer-form stories, explainers, and curated insights.
 - **Discover**: Find people, communities, and conversations across the platform.
 - **Authentication**: Sign in with Google or phone-based authentication using Firebase Auth.
+- **Sovereign protocol onboarding**: First-run Google sessions now pause behind a depot-driven protocol modal that persists orchestration profile, preferred launch mode, and operational preferences before the dashboard fully unlocks.
 - **Realtime data**: Keep profiles, posts, and community activity synced with Firestore.
 
 ## Tech Stack
@@ -62,6 +63,16 @@ Vite is configured with an `esnext` build target so the app can use top-level `a
 A preservation-first Mars + Orchade integration package now lives in `docs/sovereign-platform-integration/` with a standalone dashboard shell, reverse-proxy example, encrypted SSO bridge sample, and Cohort telemetry schema update.
 
 The main `index.html` dashboard now also includes an Upgrades & Roadmap telemetry panel backed by `GET /api/upgrades/status`, surfacing commit counts, integration-track progress, and the latest cross-repository commit activity for Mars and Orchade.
+
+## Onboarding Depot
+
+The sovereign welcome/configuration protocol is defined in `onboarding/depot/`:
+
+- `orchestration-profiles.json` contains the role cards shown in step 1.
+- `default-modes.json` contains the Mars and Orchade launch defaults shown in step 2.
+- `operational-preferences.md` is parsed into the step 3 binary controls.
+- `protocol.schema.json` documents the normalized JSON shape persisted into Firestore and the `cohort_protocols` collection.
+- `api/onboarding/protocol-schema.js` exposes the same normalized schema through a server-side depot parser for authenticated shells that prefer backend hydration.
 
 ## Environment Variables
 

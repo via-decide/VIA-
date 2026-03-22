@@ -20,6 +20,12 @@ export type UserProfile = {
   following: number;
   posts: number;
   createdAt: any;
+  protocol_init_complete?: boolean;
+  orchestration_profile?: string;
+  default_start_mode?: string;
+  operational_preferences?: Record<string, string>;
+  cohort_schema_version?: string;
+  cohort_protocol_updated_at?: string;
 };
 
 export type PostAuthor = {

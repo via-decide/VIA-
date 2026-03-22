@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://via-decide.com/schemas/onboarding/protocol.schema.json",
+  "title": "VIA Sovereign Protocol Configuration",
+  "description": "Normalized protocol schema generated from onboarding depot files and persisted against a validated Google identity.",
+  "type": "object",
+  "required": [
+    "version",
+    "headline",
+    "steps",
+    "defaults",
+    "selectionPayload"
+  ],
+  "properties": {
+    "version": {
+      "type": "string"
+    },
+    "headline": {
+      "type": "string"
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "kind", "options"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "kind": { "type": "string", "enum": ["card-select", "mode-select", "preference-group"] },
+          "options": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["id", "label"],
+              "properties": {
+                "id": { "type": "string" },
+                "label": { "type": "string" },
+                "summary": { "type": "string" },
+                "description": { "type": "string" },
+                "tags": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "required": ["orchestration_profile", "default_start_mode", "operational_preferences"],
+      "properties": {
+        "orchestration_profile": { "type": "string" },
+        "default_start_mode": { "type": "string" },
+        "operational_preferences": {
+          "type": "object",
+          "additionalProperties": {
+            "type": ["string", "boolean"]
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "selectionPayload": {
+      "type": "object",
+      "required": [
+        "google_uid",
+        "google_identity",
+        "protocol_init_complete",
+        "orchestration_profile",
+        "default_start_mode",
+        "operational_preferences"
+      ],
+      "properties": {
+        "google_uid": { "type": "string" },
+        "google_identity": {
+          "type": "object",
+          "required": ["display_name"],
+          "properties": {
+            "display_name": { "type": "string" },
+            "email": { "type": ["string", "null"] }
+          },
+          "additionalProperties": true
+        },
+        "protocol_init_complete": { "type": "boolean", "const": true },
+        "orchestration_profile": { "type": "string" },
+        "default_start_mode": { "type": "string" },
+        "operational_preferences": {
+          "type": "object",
+          "additionalProperties": {
+            "type": ["string", "boolean"]
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

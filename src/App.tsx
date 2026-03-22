@@ -52,9 +52,7 @@ import {
   where,
   getDocs,
   addDoc,
-  serverTimestamp,
   increment,
-  writeBatch,
   getDoc,
   getDocFromServer,
   deleteDoc,
@@ -74,9 +72,11 @@ import Navigation from './components/Navigation';
 import ProfileView from './components/ProfileView';
 import DiscoverView from './components/DiscoverView';
 import GamesView from './components/GamesView';
-import OnboardingFlow from './components/OnboardingFlow';
+import SovereignProtocolModal from './components/SovereignProtocolModal';
 import CreatePostModal from './components/CreatePostModal';
 import CommentsModal from './components/CommentsModal';
+import { persistProtocolConfiguration, type PendingProtocolContext } from './services/cohortProtocolService';
+import type { ProtocolSchema, SovereignProtocolSelection } from './services/onboardingProtocolService';
 
 // ─── Sub-view types ─────────────────────────────────────────────────────────
 type SubView =
@@ -368,7 +368,7 @@ const App: React.FC = () => {
   const [onboardingInitialName, setOnboardingInitialName] = useState('');
   const [onboardingInitialUsername, setOnboardingInitialUsername] = useState('');
   const [authError, setAuthError] = useState('');
-  const pendingNewUserRef = useRef<{ uid: string; email: string | null; phoneNumber: string | null } | null>(null);
+  const pendingProtocolRef = useRef<PendingProtocolContext | null>(null);
   const [posts, setPosts] = useState<Post[]>(INITIAL_POSTS);
   const [dives, setDives] = useState<DeepDive[]>(INITIAL_DEEP_DIVES);
   const [activePostIndex, setActivePostIndex] = useState(0);
@@ -479,10 +479,14 @@ const App: React.FC = () => {
             setOnboardingInitialName(suggestedName);
             setOnboardingInitialUsername(suggestedUsername);
             // Store in React ref (not window) — safe across re-renders
-            pendingNewUserRef.current = { uid: firebaseUser.uid, email: firebaseUser.email, phoneNumber: firebaseUser.phoneNumber };
+            pendingProtocolRef.current = {
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              phoneNumber: firebaseUser.phoneNumber,
+              isNewUser: true,
+            };
             setShowOnboarding(true);
           } else {
-            setShowOnboarding(false);
             const storedProfile = userSnap.data() as UserProfile;
             const syncedProfile = { ...storedProfile, id: storedProfile.uid };
             profileSystemRef.current.updateProfile({
@@ -495,6 +499,22 @@ const App: React.FC = () => {
               phoneNumber: syncedProfile.phoneNumber
             });
             setProfile(syncedProfile);
+            if (!storedProfile.protocol_init_complete) {
+              addLog('Protocol initialization incomplete — locking dashboard until sovereign config is saved.');
+              setOnboardingInitialName(storedProfile.displayName || firebaseUser.displayName || 'Sovereign');
+              setOnboardingInitialUsername(storedProfile.username || onboardingInitialUsername);
+              pendingProtocolRef.current = {
+                uid: firebaseUser.uid,
+                email: firebaseUser.email,
+                phoneNumber: firebaseUser.phoneNumber,
+                isNewUser: false,
+                existingProfile: syncedProfile,
+              };
+              setShowOnboarding(true);
+            } else {
+              pendingProtocolRef.current = null;
+              setShowOnboarding(false);
+            }
           }
 
           // Real-time profile updates (like Game- uses onSnapshot)
@@ -520,7 +540,7 @@ const App: React.FC = () => {
         } else {
           // No user — clear all auth state
           setShowOnboarding(false);
-          pendingNewUserRef.current = null;
+          pendingProtocolRef.current = null;
           const localProfile = profileSystemRef.current.getProfile();
           setProfile(localProfile ? ({
             uid: localProfile.id,
@@ -793,36 +813,33 @@ const App: React.FC = () => {
     }
   };
 
-  const handleOnboardingComplete = async (onboardingData: { displayName: string; username: string; avatarEmoji: string; bio: string; city: string }) => {
-    const pending = pendingNewUserRef.current;
+  const handleOnboardingComplete = async ({ schema, selection }: { schema: ProtocolSchema; selection: SovereignProtocolSelection }) => {
+    const pending = pendingProtocolRef.current;
     if (!pending) {
-      addLog('Error: No pending user found for onboarding.');
+      addLog('Error: No pending user found for protocol initialization.');
       setShowOnboarding(false);
       return;
     }
 
-    const userRef = doc(db, 'users', pending.uid);
-    const newProfile: UserProfile & { role: string } = {
-      uid: pending.uid,
-      username: onboardingData.username || onboardingInitialUsername,
-      displayName: onboardingData.displayName || 'Bharat Explorer',
-      city: onboardingData.city || 'India',
-      avatarEmoji: onboardingData.avatarEmoji || '🇮🇳',
-      bio: onboardingData.bio || "Digital explorer navigating Bharat's social landscape. 🇮🇳",
-      credits: 1000,
-      xp: 0,
-      level: 1,
-      followers: 0,
-      following: 0,
-      posts: 0,
-      createdAt: new Date().toISOString(),
-      role: 'user',
-      ...(pending.email != null ? { email: pending.email } : {}),
-      ...(pending.phoneNumber != null ? { phoneNumber: pending.phoneNumber } : {}),
-    };
-
     try {
-      await setDoc(userRef, newProfile);
+      const resolvedDisplayName = onboardingInitialName || user?.displayName || pending.existingProfile?.displayName || 'Sovereign Operator';
+      const newProfile = await persistProtocolConfiguration({
+        context: pending,
+        googleIdentity: {
+          displayName: resolvedDisplayName,
+          email: pending.email,
+          photoURL: user?.photoURL,
+        },
+        schema,
+        selection,
+        initialProfile: {
+          username: pending.existingProfile?.username || onboardingInitialUsername || `sovereign_${pending.uid.slice(0, 6)}`,
+          displayName: resolvedDisplayName,
+          city: pending.existingProfile?.city || 'Sovereign Grid',
+          avatarEmoji: pending.existingProfile?.avatarEmoji || '🜂',
+          bio: pending.existingProfile?.bio || 'Sovereign operator configured through VIA protocol initialization.',
+        },
+      });
       const syncedProfile = { ...newProfile, id: newProfile.uid };
       profileSystemRef.current.updateProfile({
         id: syncedProfile.uid,
@@ -835,12 +852,12 @@ const App: React.FC = () => {
       });
       setProfile(syncedProfile);
       setShowOnboarding(false);
-      pendingNewUserRef.current = null;
-      addLog('Onboarding complete — welcome to VIA!');
+      pendingProtocolRef.current = null;
+      addLog(`Protocol initialization complete — ${selection.defaultStartMode} staged for ${selection.orchestrationProfile}.`);
     } catch (err: any) {
-      console.error('Onboarding save error:', err);
-      addLog(`Failed to save profile: ${err?.message || 'Unknown error'}. Please try again.`);
-      throw err; // Re-throw so OnboardingFlow can show error state
+      console.error('Protocol save error:', err);
+      addLog(`Failed to save sovereign protocol: ${err?.message || 'Unknown error'}. Please try again.`);
+      throw err; // Re-throw so the sovereign protocol modal can surface the failure state
     }
   };
 
@@ -1018,12 +1035,11 @@ const App: React.FC = () => {
     <ErrorBoundary>
       <div className="min-h-screen bg-via-dark text-white font-sans selection:bg-via-accent selection:text-white">
 
-        {/* Onboarding overlay for new users */}
+        {/* Sovereign protocol overlay for users who have not completed initialization */}
         <AnimatePresence>
           {showOnboarding && (
-            <OnboardingFlow
-              initialDisplayName={onboardingInitialName}
-              initialUsername={onboardingInitialUsername}
+            <SovereignProtocolModal
+              googleUserName={onboardingInitialName || user?.displayName || profile?.displayName || 'OPERATOR'}
               onComplete={handleOnboardingComplete}
             />
           )}

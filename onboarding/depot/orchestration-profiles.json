@@ -1,0 +1,20 @@
+[
+  {
+    "id": "platform_architect",
+    "label": "PLATFORM ARCHITECT",
+    "icon": "rocket",
+    "summary": "Simulation, High-Velocity, RISC-V Specs",
+    "description": "Tune VIA for launch systems, mission rehearsal, and performance-heavy technical operators.",
+    "tags": ["Simulation", "High-Velocity", "RISC-V Specs"],
+    "accent": "cyan"
+  },
+  {
+    "id": "human_computer_integrator",
+    "label": "HUMAN-COMPUTER INTEGRATOR",
+    "icon": "glowing-hand",
+    "summary": "Social, MBB Logic, Haptic Interfaces",
+    "description": "Bias onboarding toward social coordination, embodied telemetry, and haptic-aware operating loops.",
+    "tags": ["Social", "MBB Logic", "Haptic Interfaces"],
+    "accent": "cyan"
+  }
+]
