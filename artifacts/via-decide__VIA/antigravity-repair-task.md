@@ -5,6 +5,7 @@ Validate and repair only the files touched by the previous implementation.
 
 TASK
 Integrate 'Mars' exploration module into the VIA Core. 1. Synchronize the Mars physics engine with the VIA global coordinate system. 2. Implement the 'Relativistic Navigation' logic: Ensure that the 0.1c (10% light speed) simulation parameters from the Mars repo are accessible via the main VIA API. 3. Map the Mars 'Environment Generator' to the VIA rendering pipeline to allow instant planetary mesh generation.
+Integrate 'Orchade' social-hub module as the VIA Global Lobby. 1. Bridge the 'Orchade' UI components with the VIA frontend framework. 2. Implement the 'Social Consensus' layer: Ensure that player actions in the Orchade garden are recorded in the VIA 'Cohort' database. 3. Link the 'MBB' (Mind, Body, Breath) logic from VIA to the Orchade growth-mechanics, allowing user breathing patterns to influence the environment in real-time.
 
 RULES
 1. Audit touched files first and identify regressions.

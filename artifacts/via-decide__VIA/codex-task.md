@@ -5,6 +5,10 @@ Integrate 'Mars' exploration module into the VIA Core. 1. Synchronize the Mars p
 
 CONSTRAINTS
 Do not break the existing Google OAuth login logic in the main repo. The Mars integration must use the VIA-standard micro-service architecture (Module #48).
+Integrate 'Orchade' social-hub module as the VIA Global Lobby. 1. Bridge the 'Orchade' UI components with the VIA frontend framework. 2. Implement the 'Social Consensus' layer: Ensure that player actions in the Orchade garden are recorded in the VIA 'Cohort' database. 3. Link the 'MBB' (Mind, Body, Breath) logic from VIA to the Orchade growth-mechanics, allowing user breathing patterns to influence the environment in real-time.
+
+CONSTRAINTS
+Maintain a strict 1Hz refresh rate for the Casio GBD-200 UI bridge within Orchade. Ensure the Google ID profile data persists between the main VIA engine and the Orchade lobby.
 
 PROCESS (MANDATORY)
 1. Read README.md and AGENTS.md before editing.
