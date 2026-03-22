@@ -4,10 +4,7 @@ TARGET
 Validate and repair only the files touched by the previous implementation.
 
 TASK
-Migrate the second batch of productivity tools and interactive games. 1. Port food.decider and creator-tool to tools/productivity/. 2. Port HexWars and RoboOS to tools/games/. 3. Update nav-registry.json with the new tool paths and icons.
-Implement a unified analytics service for the entire platform. 1. Create services/analytics.js to track tool usage and performance. 2. Implement an event-forwarding layer in the Shell to collect data from tool iframes. 3. Connect the service to a central database/dashboard.
-Create a shared CSS library to standardize the look and feel of all tools. 1. Build shared/styles/via-theme.css with a core set of CSS variables (colors, spacing, fonts). 2. Implement a theme-switching listener in the Shell that propagates to all tool iframes. 3. Update Batch 1 & 2 tools to use the standardized via-theme.
-
+Build the Sovereign Telemetry Websocket (wss://api.viadecide.com/ops/stream). 1. Orchestrate a data aggregator service that collects metrics every 1 second from all 47 micro-services. 2. Aggregate 'Mars' metrics (active pilots, physics latency) and 'Orchade' metrics (consensus events, MBB rate, Casio status). 3. Stream this unified JSON packet over the secure websocket.
 
 RULES
 1. Audit touched files first and identify regressions.
@@ -27,4 +24,4 @@ REPO CONTEXT
 - AGENTS snippet:
 # AGENTS — via-decide/VIA Rules for ALL coding agents (Codex, Claude, automated PRs) working in this repository. --- ## 1. Preservation Policy 1. Never delete tool folders under `tools/`. 2. Never remove working code — upgrades are additive only. 3. Never replace a functioning file with a placeh
 - package.json snippet:
-{ "name": "via-static-site", "private": true, "version": "0.0.0", "scripts": { "dev": "python3 -m http.server 3000", "build": "node -e \"console.log('Static site: no build step required.')\"", "preview": "python3 -m http.server 4173", "clean": "rm -rf dist", "lint": "tsc
+{ "name": "viadecide", "version": "1.0.0", "description": "ViaD\u00e9cide: Unified decision-making platform", "private": true, "scripts": { "start": "echo 'static site \u2014 no build required'", "setup": "bash setup-monorepo.sh", "init": "node init-monorepo.js", "validate"
