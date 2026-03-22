@@ -1,18 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
-Migrate the second batch of productivity tools and interactive games. 1. Port food.decider and creator-tool to tools/productivity/. 2. Port HexWars and RoboOS to tools/games/. 3. Update nav-registry.json with the new tool paths and icons.
+Integrate 'Mars' exploration module into the VIA Core. 1. Synchronize the Mars physics engine with the VIA global coordinate system. 2. Implement the 'Relativistic Navigation' logic: Ensure that the 0.1c (10% light speed) simulation parameters from the Mars repo are accessible via the main VIA API. 3. Map the Mars 'Environment Generator' to the VIA rendering pipeline to allow instant planetary mesh generation.
 
 CONSTRAINTS
-Ensure all Canvas-based games handle iframe resizing correctly without resolution loss.
-Implement a unified analytics service for the entire platform. 1. Create services/analytics.js to track tool usage and performance. 2. Implement an event-forwarding layer in the Shell to collect data from tool iframes. 3. Connect the service to a central database/dashboard.
-
-CONSTRAINTS
-Must be GDRP compliant. Use non-blocking event collection to avoid performance impact.
-Create a shared CSS library to standardize the look and feel of all tools. 1. Build shared/styles/via-theme.css with a core set of CSS variables (colors, spacing, fonts). 2. Implement a theme-switching listener in the Shell that propagates to all tool iframes. 3. Update Batch 1 & 2 tools to use the standardized via-theme.
-
-CONSTRAINTS
-Use Vanilla CSS custom properties only. Ensure accessibility (WCAG AA) compliance.
+Do not break the existing Google OAuth login logic in the main repo. The Mars integration must use the VIA-standard micro-service architecture (Module #48).
 
 PROCESS (MANDATORY)
 1. Read README.md and AGENTS.md before editing.
