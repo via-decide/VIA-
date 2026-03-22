@@ -1,6 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
+Backend Integration for Mars Module. 1. Set up a reverse-proxy (Nginx/Envoy) route from 'viadecide.com/mars' to the internal IP of the Mars micro-service. 2. Implement the '/api/verify/mars' endpoint that confirms the active Google ID session before granting access to the relativistic physics parameters.
+
+CONSTRAINTS
+Must use the existing VIA authentication middleware. Maintain < 5ms latency on session validation.
 Integrate 'Mars' exploration module into the VIA Core. 1. Synchronize the Mars physics engine with the VIA global coordinate system. 2. Implement the 'Relativistic Navigation' logic: Ensure that the 0.1c (10% light speed) simulation parameters from the Mars repo are accessible via the main VIA API. 3. Map the Mars 'Environment Generator' to the VIA rendering pipeline to allow instant planetary mesh generation.
 
 CONSTRAINTS
