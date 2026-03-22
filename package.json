@@ -1,23 +1,20 @@
 {
   "name": "viadecide",
   "version": "1.0.0",
-  "description": "ViaDécide: Unified decision-making platform",
+  "description": "ViaD\u00e9cide: Unified decision-making platform",
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
+    "start": "echo 'static site \u2014 no build required'",
     "setup": "bash setup-monorepo.sh",
     "init": "node init-monorepo.js",
     "validate": "node scripts/validate-registry.js",
-    "test": "echo 'Phase 0 complete'",
-    "deploy": "vercel --prod"
+    "test": "echo 'ok'"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/via-decide/viadecide.git"
   },
-  "author": "ViaDécide Team",
+  "author": "ViaD\u00e9cide Team",
   "license": "MIT",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",
@@ -26,14 +23,9 @@
     "date-fns": "^4.1.0",
     "dotenv": "^17.3.1",
     "openai": "^6.32.0",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.1",
     "uuid": "^13.0.0",
     "zustand": "^5.0.12"
   },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^6.0.1",
-    "vite": "^8.0.1"
-  }
+  "devDependencies": {}
 }

@@ -1,42 +1,82 @@
 {
-  "version": 2,
-  "name": "viadecide",
-  "builds": [
+  "framework": null,
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "cleanUrls": false,
+  "trailingSlash": false,
+  "rewrites": [
     {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
+      "source": "/feed",
+      "destination": "/index.html"
     },
     {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
+      "source": "/tools",
+      "destination": "/index.html"
     },
     {
-      "src": "tools/**/*.html",
-      "use": "@vercel/static"
+      "source": "/discover",
+      "destination": "/index.html"
     },
     {
-      "src": "services/*.js",
-      "use": "@vercel/static"
+      "source": "/about",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/profile",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/agent",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/auth",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/games",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/explore",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/deepdives",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/deepdives/:path*",
+      "destination": "/index.html"
     }
   ],
-  "routes": [
+  "redirects": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "source": "/creator",
+      "destination": "/creator-onboarding.html"
     },
     {
-      "src": "/(.*)",
-      "dest": "/index.html",
-      "status": 200
+      "source": "/onboarding",
+      "destination": "/creator-onboarding.html"
+    },
+    {
+      "source": "/tool-explorer",
+      "destination": "/tool-explorer.html"
     }
   ],
-  "env": {
-    "API_BASE_URL": "https://api.viadecide.com",
-    "ANTHROPIC_API_KEY": "@anthropic_api_key",
-    "GEMINI_API_KEY": "@gemini_api_key",
-    "OPENAI_API_KEY": "@openai_api_key"
-  }
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
+      ]
+    }
+  ]
 }

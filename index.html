@@ -2309,19 +2309,43 @@ document.querySelectorAll('.layer-tab').forEach(tab=>tab.addEventListener('click
   if(window.VIANav){event.preventDefault();window.VIANav.openPage(tab.dataset.layer);}
 }));
 
-(function handleLegacyStandaloneRoutes(){
-  const legacyStandaloneRoutes={
-    '/creator-onboarding':'creator_onboarding',
-    '/creator-story':'creator_story',
-    '/profile':'profile',
-    '/agent':'agent',
-    '/discover':'discover',
-    '/about':'about'
+// ── URL-BASED LAYER ROUTING ─────────────────────────────────────────
+// When Vercel rewrites /tools → /index.html, open the right layer
+(function handleURLRouting(){
+  const pathMap = {
+    '/tools':     'tools',
+    '/discover':  'discover',
+    '/about':     'about',
+    '/profile':   'profile',
+    '/agent':     'agent',
+    '/feed':      'feed',
+    '/games':     'tools',
+    '/explore':   'tools',
+    '/auth':      'profile',
+    '/deepdives': 'deepdives'
   };
-  const normalizedPath=window.location.pathname.replace(/\/$/, '');
-  const target=legacyStandaloneRoutes[normalizedPath];
-  if(target&&window.VIANav){
-    window.location.replace(window.VIANavigation.buildUrl(target));
+  const path = window.location.pathname.replace(/\/+$/, '').toLowerCase();
+  // Strip /VIA prefix for GitHub Pages
+  const cleanPath = path.replace(/^\/via/i, '') || '/';
+  const target = pathMap[cleanPath];
+  if (target) {
+    // Wait for DOM + switchLayer to be ready
+    const trySwitch = () => {
+      if (typeof switchLayer === 'function') {
+        switchLayer(target);
+        // If games, auto-filter
+        if (cleanPath === '/games' && typeof filterToolsCat === 'function') {
+          setTimeout(() => filterToolsCat('games'), 600);
+        }
+      } else {
+        setTimeout(trySwitch, 200);
+      }
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', trySwitch);
+    } else {
+      setTimeout(trySwitch, 100);
+    }
   }
 })();
 
