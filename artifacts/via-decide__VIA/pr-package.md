@@ -1,21 +1,9 @@
-Branch: simba/migrate-the-second-batch-of-productivity-tools-a
-Title: Migrate the second batch of productivity tools and interactive games....
+Branch: simba/backend-integration-for-mars-module-1-set-up-a-r
+Title: Backend Integration for Mars Module. 1. Set up a reverse-proxy (Nginx...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Populate the monorepo with high-engagement gaming and utility content.
-Branch: simba/implement-a-unified-analytics-service-for-the-en
-Title: Implement a unified analytics service for the entire platform. 1. Cre...
-
-## Summary
-- Repo orchestration task for via-decide/VIA
-- Goal: Gain deep insights into tool popularity and performance across the monorepo.
-Branch: simba/create-a-shared-css-library-to-standardize-the-l
-Title: Create a shared CSS library to standardize the look and feel of all t...
-
-## Summary
-- Repo orchestration task for via-decide/VIA
-- Goal: Create a seamless, premium "single application" feel across 44+ different tools.
+- Goal: Backend Integration for Mars Module. 1. Set up a reverse-proxy (Nginx/Envoy) route from 'viadecide.com/mars' to the internal IP of the Mars micro-service. 2. Implement the '/api/verify/mars' endpoint that confirms the active Google ID session before granting access to the relativistic physics parameters.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
