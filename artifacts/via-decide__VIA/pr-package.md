@@ -1,21 +1,9 @@
-Branch: simba/migrate-the-second-batch-of-productivity-tools-a
-Title: Migrate the second batch of productivity tools and interactive games....
+Branch: simba/implement-secure-admin-authentication-1-create-t
+Title: Implement Secure Admin Authentication. 1. Create the '/api/auth/verif...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Populate the monorepo with high-engagement gaming and utility content.
-Branch: simba/implement-a-unified-analytics-service-for-the-en
-Title: Implement a unified analytics service for the entire platform. 1. Cre...
-
-## Summary
-- Repo orchestration task for via-decide/VIA
-- Goal: Gain deep insights into tool popularity and performance across the monorepo.
-Branch: simba/create-a-shared-css-library-to-standardize-the-l
-Title: Create a shared CSS library to standardize the look and feel of all t...
-
-## Summary
-- Repo orchestration task for via-decide/VIA
-- Goal: Create a seamless, premium "single application" feel across 44+ different tools.
+- Goal: Implement Secure Admin Authentication. 1. Create the '/api/auth/verify-admin' endpoint. 2. Modify the VIA authentication middleware to check for a 'role: sovereign' flag on the user profile linked to your specific Google ID. 3. Generate a long-lived 'Ops-Token' to secure the websocket data stream.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
