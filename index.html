@@ -549,7 +549,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 <!-- ── APP ── -->
 <div id="app">
   <div class="status-bar">
-    <div class="status-logo" onclick="window.VIANav.openPage('feed')">VIA</div>
+    <div class="status-logo" onclick="switchLayer('feed')">VIA</div>
     <div class="status-actions">
       <div class="status-xp"><div class="xp-dot"></div><span id="xp-counter">0 XP</span></div>
       <button class="status-auth-btn" id="status-auth-btn" onclick="VIA.openAuth()">Sign In</button>
@@ -872,19 +872,19 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
   </div>
 
   <nav class="bottom-nav">
-    <button class="nav-item active" data-nav="feed" onclick="window.VIANav.openPage('feed')">
+    <button class="nav-item active" data-nav="feed" onclick="switchLayer('feed')">
       <div class="nav-icon">🏠</div><div class="nav-label">Feed</div>
     </button>
-    <button class="nav-item" data-nav="discover" onclick="window.VIANav.openPage('discover')">
+    <button class="nav-item" data-nav="discover" onclick="switchLayer('discover')">
       <div class="nav-icon">🔍</div><div class="nav-label">Explore</div>
     </button>
     <button class="nav-item" data-nav="tools" onclick="switchLayer('tools')" style="position:relative">
       <div class="nav-icon">⚡</div><div class="nav-label" style="color:#ff8c00;font-weight:800">Tools</div>
     </button>
-    <button class="nav-item" data-nav="about" onclick="window.VIANav.openPage('about')">
+    <button class="nav-item" data-nav="about" onclick="switchLayer('about')">
       <div class="nav-icon">ℹ️</div><div class="nav-label">About</div>
     </button>
-    <button class="nav-item" data-nav="profile" onclick="window.VIANav.openPage('profile')">
+    <button class="nav-item" data-nav="profile" onclick="switchLayer('profile')">
       <div class="nav-icon">👤</div><div class="nav-label">Profile</div>
     </button>
   </nav>
@@ -2523,9 +2523,8 @@ function switchLayer(layer, storyKey) {
   if (layer==='tools')    buildToolsGrid();
 }
 
-document.querySelectorAll('.layer-tab').forEach(tab=>tab.addEventListener('click',(event)=>{
-  if(tab.dataset.layer==='feed'){switchLayer('feed');return;}
-  if(window.VIANav){event.preventDefault();window.VIANav.openPage(tab.dataset.layer);}
+document.querySelectorAll('.layer-tab').forEach(tab=>tab.addEventListener('click',()=>{
+  switchLayer(tab.dataset.layer || 'feed');
 }));
 
 // ── URL-BASED LAYER ROUTING ─────────────────────────────────────────
