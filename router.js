@@ -36,6 +36,7 @@
     founder: './founder/index.html',
     'interview-prep': './interview-prep/index.html',
     'student-research': './student-research/index.html',
+    directory: './pages/directory/index.html',
     'prompt-alchemy': './prompt-alchemy/index.html',
     skillhex: './skillhex/index.html',
     mars: './mars/index.html',
