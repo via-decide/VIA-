@@ -13,7 +13,8 @@
     studyos: './StudyOS.html',
     app_generator: './app-generator.html',
     finance_dashboard_msme: './finance-dashboard-msme.html',
-    alchemist: './alchemist.html'
+    alchemist: './alchemist.html',
+    directory: './pages/directory/index.html'
   };
   var LEGACY_PATHS = {
     '/creator-onboarding': ROUTES.creator_onboarding,
@@ -37,7 +38,9 @@
     '/finance-dashboard-msme': ROUTES.finance_dashboard_msme,
     '/finance-dashboard-msme/': ROUTES.finance_dashboard_msme,
     '/alchemist': ROUTES.alchemist,
-    '/alchemist/': ROUTES.alchemist
+    '/alchemist/': ROUTES.alchemist,
+    '/directory': ROUTES.directory,
+    '/directory/': ROUTES.directory
   };
 
   function normalizePath(path) {
@@ -116,6 +119,14 @@
 
   function bindNavigation(root) {
     var scope = root || document;
+    scope.querySelectorAll('.via-nav').forEach(function (nav) {
+      if (nav.querySelector('[data-page=\"directory\"]')) return;
+      var link = document.createElement('a');
+      link.href = resolvePage('directory');
+      link.setAttribute('data-page', 'directory');
+      link.textContent = 'Directory';
+      nav.appendChild(link);
+    });
     scope.querySelectorAll('[data-open-page]').forEach(function (node) {
       node.addEventListener('click', function (event) {
         event.preventDefault();
