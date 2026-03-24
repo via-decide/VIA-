@@ -2699,6 +2699,7 @@ function switchLayer(layer, storyKey) {
   if (layer==='discover') buildDiscover();
   if (layer==='profile')  buildProfile();
   if (layer==='tools')    buildToolsGrid();
+  if (layer==='store')    { if (typeof initStore === 'function') initStore(); }
 }
 
 document.querySelectorAll('.layer-tab').forEach(tab=>tab.addEventListener('click',()=>{
