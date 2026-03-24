@@ -3019,16 +3019,19 @@ window.addEventListener('load',startApp,{once:true});
 <script src="./router.js"></script>
 <script>
 // VIANav shim — bridges legacy VIANav.openPage() calls to VIARouter.navigate()
-window.VIANav = window.VIANav || {
-  openPage: function(route) {
-    if (window.VIARouter && typeof window.VIARouter.navigate === 'function') {
-      window.VIARouter.navigate(route);
-      return;
-    }
-    const map = window.Router && window.Router.toolPathStaticMap;
-    const target = (map && map[route]) ? ('./' + map[route].replace(/^\.\//, '')) : ('./' + route + '.html');
-    window.location.assign(target);
+window.VIANav = window.VIANav || {};
+window.VIANav.openPage = window.VIANav.openPage || function(route) {
+  const routeKey = String(route || 'feed').trim();
+  if (window.VIARouter && typeof window.VIARouter.navigate === 'function') {
+    window.VIARouter.navigate(routeKey);
+    return;
   }
+  const map = window.Router && window.Router.toolPathStaticMap;
+  const mapped = map && map[routeKey];
+  const target = mapped
+    ? ('./' + String(mapped).replace(/^\.\//, ''))
+    : ('./' + routeKey.replace(/^\.\//, '').replace(/\.html$/i, '') + '.html');
+  window.location.assign(target);
 };
 
 // Bridge: load nav-registry and patch router SUBPAGES dynamically
