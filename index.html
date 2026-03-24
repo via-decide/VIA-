@@ -3042,6 +3042,16 @@ window.VIANav.openPage = window.VIANav.openPage || function(route) {
     ? ('./' + String(mapped).replace(/^\.\//, ''))
     : ('./' + (canonicalRoute || 'feed').replace(/^\.\//, '').replace(/\.html$/i, '') + '.html');
   window.location.assign(target);
+window.VIANav = window.VIANav || {
+  openPage: function(route) {
+    if (window.VIARouter && typeof window.VIARouter.navigate === 'function') {
+      window.VIARouter.navigate(route);
+      return;
+    }
+    const map = window.Router && window.Router.toolPathStaticMap;
+    const target = (map && map[route]) ? ('./' + map[route].replace(/^\.\//, '')) : ('./' + route + '.html');
+    window.location.assign(target);
+  }
 };
 
 // Bridge: load nav-registry and patch router SUBPAGES dynamically
