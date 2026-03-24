@@ -607,13 +607,22 @@ html, body {
 <!-- ── BOOT ── -->
 <div id="boot">
   <div class="boot-logo">VIA</div>
-  <div class="boot-tagline">Bharat का अपना Feed</div>
-  <div class="boot-line">> INITIALIZING VIA CORE...</div>
-  <div class="boot-line">> LOADING BHARAT CONTENT MESH...</div>
-  <div class="boot-line">> CALIBRATING SWIPE ENGINE v2.4...</div>
-  <div class="boot-line">> WELCOME TO VIA ✦</div>
   <div class="boot-bar"><div class="boot-bar-fill"></div></div>
 </div>
+
+<script>
+  // Anti-Scraping & Protection v1.0 (2026)
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || (e.ctrlKey && e.keyCode === 85)) {
+      e.preventDefault();
+      return false;
+    }
+  });
+  // Disable text selection globally to prevent easy content scraping
+  document.body.style.userSelect = 'none';
+  document.body.style.webkitUserSelect = 'none';
+</script>
 
 <!-- ── APP ── -->
 <div id="app">
