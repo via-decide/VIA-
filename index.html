@@ -181,6 +181,27 @@ html, body {
 }
 .nav-create:active { transform: scale(0.9) rotate(5deg); }
 
+/* ── STORE BLUEPRINT ── */
+.store-node {
+  background: var(--deep-glass); border: 1.5px solid #2d333b;
+  border-radius: 12px; overflow: hidden; transition: all 0.2s ease;
+}
+.store-node:active { transform: scale(0.98); border-color: var(--saffron); }
+.store-node-head {
+  padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border);
+}
+.store-node-stripe { width: 3px; height: 32px; border-radius: 2px; flex-shrink: 0; }
+.store-node-icon { font-size: 1.2rem; }
+.store-node-label { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; flex: 1; }
+.store-node-body { padding: 14px; }
+.store-node-img { 
+  width: 100%; height: 160px; background-size: cover; background-position: center;
+  border-radius: 8px; margin-bottom: 12px; border: 1px solid var(--border);
+}
+.store-node-type { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+.store-node-body p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+
 /* ── SWIPE DECK ── */
 #deck { position: absolute; inset: 0; overflow: hidden; }
 .card { position: absolute; inset: 0; border-radius: 0; overflow: hidden; cursor: grab; will-change: transform; touch-action: none; }
@@ -622,6 +643,39 @@ html, body {
   // Disable text selection globally to prevent easy content scraping
   document.body.style.userSelect = 'none';
   document.body.style.webkitUserSelect = 'none';
+
+  // Store Initialization
+  function initStore() {
+    const storeGrid = document.getElementById('store-blueprint-grid');
+    const products = [
+      { title: "Hardcore NFC Keychain", type: "Digital Utility", icon: "🔑", color: "#ff671f", desc: "Hidden digital vault inside a dual-color 3D print.", image: "https://via-decide.github.io/decide.engine/printbydd-store/1000217293.jpg" },
+      { title: "3D Two-Tone Plate", type: "Custom Hardware", icon: "🏷️", color: "#4a9eff", desc: "Pick character color + boundary-height color. Engineered finish.", image: "https://via-decide.github.io/decide.engine/printbydd-store/numberplate-preview.png" },
+      { title: "Memory Anchors", type: "Emotional Tech", icon: "🧠", color: "#a855f7", desc: "Personalized objects as everyday memory triggers.", image: "https://via-decide.github.io/decide.engine/printbydd-store/1000217292.png" }
+    ];
+    
+    if (storeGrid) {
+      storeGrid.innerHTML = products.map(p => `
+        <div class="store-node" onclick="openProduct('${p.title}')">
+          <div class="store-node-head">
+            <div class="store-node-stripe" style="background:${p.color}44; border:1px solid ${p.color}77;"></div>
+            <span class="store-node-icon">${p.icon}</span>
+            <span class="store-node-label">${p.title}</span>
+          </div>
+          <div class="store-node-body">
+            <div class="store-node-img" style="background-image:url('${p.image}')"></div>
+            <div class="store-node-type" style="color:${p.color}">${p.type}</div>
+            <p>${p.desc}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+  
+  window.openProduct = (title) => {
+    alert("Opening Technical Specs for: " + title + "\\n(Order flow coming soon to 2026 Edition)");
+  };
+  
+  document.addEventListener('DOMContentLoaded', initStore);
 </script>
 
 <!-- ── APP ── -->
@@ -637,6 +691,7 @@ html, body {
   <div class="layer-tabs" id="layer-tabs">
     <button class="layer-tab active" data-layer="feed">Feed</button>
     <button class="layer-tab" data-layer="explore">Explore</button>
+    <button class="layer-tab" data-layer="store">Store</button>
     <button class="layer-tab" data-layer="tools">Tools</button>
     <button class="layer-tab" data-layer="about">About</button>
     <button class="layer-tab" data-layer="profile">Profile</button>
@@ -681,6 +736,26 @@ html, body {
           <h2 class="bento-title">VIA Agent</h2>
           <p class="bento-sub">Your personal AI companion. Command to pull posts, generate content, or explore specialized tools.</p>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORE LAYER -->
+  <div id="layer-store" style="display:none;position:absolute;inset:0; background:var(--deep); background-image:radial-gradient(circle,#21262d 1px,transparent 1px); background-size:24px 24px;">
+    <div class="store-container" style="padding: 8rem 1.5rem 6.5rem; height:100%; overflow-y:auto; scrollbar-width:none;">
+      <div class="store-hero" style="margin-bottom: 2.5rem; text-align:center;">
+        <h1 style="font-family:'Syne', sans-serif; font-weight:800; font-size:2.2rem; line-height:1.1; margin-bottom:0.5rem;">PRINT LAB 2026</h1>
+        <p style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.15em;">Physical concepts, built in 3D</p>
+      </div>
+      
+      <div class="store-blueprint-grid" id="store-blueprint-grid" style="display:flex; flex-direction:column; gap:1.2rem;">
+        <!-- Hydrated by JS -->
+      </div>
+      
+      <div style="margin-top:3rem; padding:1.5rem; background:var(--deep-glass); border:1px solid var(--border); border-radius:16px;">
+        <h3 style="font-family:'Syne', sans-serif; font-size:1rem; margin-bottom:0.5rem;">Custom Order Node</h3>
+        <p style="font-size:0.75rem; color:var(--text-muted); line-height:1.5;">Have a specialized technical concept? Our 3D engineering team can prototype it. Available for industrial and personal concepts.</p>
+        <button class="agent-chip" style="margin-top:1rem; width:100%; justify-content:center; display:flex;" onclick="agentCommand('/write Request Quote for 3D Print:')">REQUISITION QUOTE</button>
       </div>
     </div>
   </div>
@@ -2594,6 +2669,7 @@ function switchLayer(layer, storyKey) {
   const deck = document.getElementById('deck');
   const layerEls = {
     explore: 'layer-explore',
+    store: 'layer-store',
     deepdives: 'layer-deepdives',
     about: 'layer-about',
     profile: 'layer-profile',
