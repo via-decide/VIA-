@@ -170,6 +170,13 @@
 /tools/engine/orchard-profile-builder     /tools/engine/orchard-profile-builder/index.html      200
 /tools/engine/orchard-profile-builder/    /tools/engine/orchard-profile-builder/index.html      200
 
+# ── Kutch Business Directory ───────────────────────────────────
+/Business-Directory                     /pages/directory/index.html         200
+/Business-Directory/                    /pages/directory/index.html         200
+/Business-Directory/player              /pages/directory/player.html        200
+/Business-Directory/player/             /pages/directory/player.html        200
+/Business-Directory/videos/*            /pages/directory/videos/:splat      200
+
 # â”€â”€ SPA fallback â€” MUST be last â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # All unmatched routes serve index.html (client-side hash routing takes over)
 /*                                  /index.html                         200
