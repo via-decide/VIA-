@@ -2571,6 +2571,7 @@ document.querySelectorAll('.layer-tab').forEach(tab=>tab.addEventListener('click
 // ── TOOL VIEWER ──────────────────────────────────────────────────────
 let _tvPrevLayer = 'discover';
 let _tvCurrentPath = '';
+let _tvLoadRAF = 0;
 
 function openToolViewer(path, title) {
   if (!path) return;
@@ -2578,7 +2579,14 @@ function openToolViewer(path, title) {
   _tvCurrentPath = path;
   const frame = document.getElementById('tv-frame');
   const titleEl = document.getElementById('tv-title');
-  if (frame) frame.src = path;
+  if (frame) {
+    frame.src = 'about:blank';
+    if (_tvLoadRAF) cancelAnimationFrame(_tvLoadRAF);
+    _tvLoadRAF = requestAnimationFrame(() => {
+      frame.src = path;
+      _tvLoadRAF = 0;
+    });
+  }
   if (titleEl) titleEl.textContent = title || 'Tool';
   addXP(10);
   switchLayer('tool-viewer');
@@ -2588,6 +2596,10 @@ function openToolViewer(path, title) {
 
 function closeToolViewer() {
   const frame = document.getElementById('tv-frame');
+  if (_tvLoadRAF) {
+    cancelAnimationFrame(_tvLoadRAF);
+    _tvLoadRAF = 0;
+  }
   if (frame) frame.src = '';
   switchLayer(_tvPrevLayer || 'discover');
 }
@@ -3014,6 +3026,22 @@ window.addEventListener('load',startApp,{once:true});
 <script src="./router.js"></script>
 <script>
 // VIANav shim — bridges legacy VIANav.openPage() calls to VIARouter.navigate()
+window.VIANav = window.VIANav || {};
+window.VIANav.openPage = window.VIANav.openPage || function(route) {
+  const routeKey = String(route || 'feed').trim();
+  const canonicalRoute = (window.Router && typeof window.Router.canonicalRoute === 'function')
+    ? window.Router.canonicalRoute(routeKey)
+    : routeKey.toLowerCase();
+  if (window.VIARouter && typeof window.VIARouter.navigate === 'function') {
+    window.VIARouter.navigate(canonicalRoute || 'feed');
+    return;
+  }
+  const map = window.Router && window.Router.toolPathStaticMap;
+  const mapped = map && (map[canonicalRoute] || map[routeKey]);
+  const target = mapped
+    ? ('./' + String(mapped).replace(/^\.\//, ''))
+    : ('./' + (canonicalRoute || 'feed').replace(/^\.\//, '').replace(/\.html$/i, '') + '.html');
+  window.location.assign(target);
 window.VIANav = window.VIANav || {
   openPage: function(route) {
     if (window.VIARouter && typeof window.VIARouter.navigate === 'function') {
