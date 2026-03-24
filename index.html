@@ -3027,6 +3027,29 @@ window.addEventListener('load',startApp,{once:true});
 <script>
 // VIANav shim — bridges legacy VIANav.openPage() calls to VIARouter.navigate()
 window.VIANav = window.VIANav || {};
+if (typeof window.VIANav.openPage !== 'function') {
+  window.VIANav.openPage = function(route) {
+    const routeKey = String(route || 'feed').trim();
+    const canonicalRoute = (window.Router && typeof window.Router.canonicalRoute === 'function')
+      ? window.Router.canonicalRoute(routeKey)
+      : routeKey.toLowerCase();
+    const layerRoutes = { feed: true, discover: true, tools: true, about: true, profile: true, deepdives: true };
+    if (layerRoutes[canonicalRoute] && typeof switchLayer === 'function') {
+      switchLayer(canonicalRoute);
+      return;
+    }
+    if (window.VIARouter && typeof window.VIARouter.navigate === 'function') {
+      window.VIARouter.navigate(canonicalRoute || 'feed');
+      return;
+    }
+    const map = window.Router && window.Router.toolPathStaticMap;
+    const mapped = map && (map[canonicalRoute] || map[routeKey]);
+    const target = mapped
+      ? ('./' + String(mapped).replace(/^\.\//, ''))
+      : ('./' + (canonicalRoute || 'feed').replace(/^\.\//, '').replace(/\.html$/i, '') + '.html');
+    window.location.assign(target);
+  };
+}
 window.VIANav.openPage = window.VIANav.openPage || function(route) {
   const routeKey = String(route || 'feed').trim();
   const canonicalRoute = (window.Router && typeof window.Router.canonicalRoute === 'function')
