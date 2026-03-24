@@ -2578,7 +2578,12 @@ function openToolViewer(path, title) {
   _tvCurrentPath = path;
   const frame = document.getElementById('tv-frame');
   const titleEl = document.getElementById('tv-title');
-  if (frame) frame.src = path;
+  if (frame) {
+    frame.src = 'about:blank';
+    requestAnimationFrame(() => {
+      frame.src = path;
+    });
+  }
   if (titleEl) titleEl.textContent = title || 'Tool';
   addXP(10);
   switchLayer('tool-viewer');
@@ -3013,6 +3018,19 @@ window.addEventListener('load',startApp,{once:true});
 <script src="./shared/registry-loader.js"></script>
 <script src="./router.js"></script>
 <script>
+// VIANav shim — bridges legacy VIANav.openPage() calls to VIARouter.navigate()
+window.VIANav = window.VIANav || {
+  openPage: function(route) {
+    if (window.VIARouter && typeof window.VIARouter.navigate === 'function') {
+      window.VIARouter.navigate(route);
+      return;
+    }
+    const map = window.Router && window.Router.toolPathStaticMap;
+    const target = (map && map[route]) ? ('./' + map[route].replace(/^\.\//, '')) : ('./' + route + '.html');
+    window.location.assign(target);
+  }
+};
+
 // Bridge: load nav-registry and patch router SUBPAGES dynamically
 (async function wireRegistry() {
   try {
