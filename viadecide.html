@@ -3354,9 +3354,16 @@ function closeSheet(){
 // BOOT
 // ════════════════════════════════════════════════════════════════
 let appStarted=false;
-function startApp(){
+async function startApp(){
   if(appStarted)return;appStarted=true;
   
+  // IMMEDIATELY show app shell to prevent bounce
+  console.log('[VIA] Starting engine...');
+  const boot = document.getElementById('boot');
+  const app = document.getElementById('app');
+  if (boot) boot.classList.add('exit');
+  if (app) app.classList.add('visible');
+
   // Bug 1: Feed Load Guard (4s timeout)
   const feedTimeout = setTimeout(() => {
     const isStuck = !CARDS || CARDS.length === 0 || 
@@ -3381,28 +3388,37 @@ function startApp(){
     }
   }, 4000);
 
-  setTimeout(async()=>{
-    // Non-blocking UI init: show app frame immediately
-    document.getElementById('boot').classList.add('exit');
-    document.getElementById('app').classList.add('visible');
-    
-    // Auth init (potentially slow)
-    try{ 
-      // Add a race to prevent hanging the whole app trace
+  // Secondary/Heavier init in parallel
+  setTimeout(async () => {
+    try {
+      // Auth init with race to prevent hanging
       await Promise.race([
         VIA.init(),
-        new Promise(resolve => setTimeout(resolve, 5000))
+        new Promise(resolve => setTimeout(resolve, 3000))
       ]);
-    }catch(error){console.error('Auth init failed:', error);currentUser=null;authReady=true;renderApp();}
+    } catch (error) {
+      console.error('Auth init failed:', error);
+      currentUser = null;
+      authReady = true;
+      renderApp();
+    }
     
-    clearTimeout(feedTimeout);
-    syncCreatorContentSurface();GC.init();buildDiscover();buildProfile();
+    // Clear the fallback timeout safely
+    if (typeof feedTimeout !== 'undefined') clearTimeout(feedTimeout);
+    
+    // Final UI hydration
+    syncCreatorContentSurface();
+    if (window.GC) GC.init();
+    if (typeof buildDiscover === 'function') buildDiscover();
+    if (typeof buildProfile === 'function') buildProfile();
     renderApp();
-    initUpgradesPanel();
+    if (typeof initUpgradesPanel === 'function') initUpgradesPanel();
     if (typeof ddLoad === 'function') { try { ddLoad('food', null); } catch(_e){} }
-    await initMicroFrontendArchitecture();
-    await initFederatedRuntime();
-  },2600);
+    
+    // Advanced micro-services (non-blocking)
+    if (typeof initMicroFrontendArchitecture === 'function') initMicroFrontendArchitecture();
+    if (typeof initFederatedRuntime === 'function') initFederatedRuntime();
+  }, 10);
 }
 document.addEventListener('DOMContentLoaded',startApp,{once:true});
 window.addEventListener('load',startApp,{once:true});
