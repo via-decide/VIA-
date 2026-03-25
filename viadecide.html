@@ -1430,16 +1430,14 @@ const VIA = {
       ? window.DatabaseService.getLocalUserProfile()
       : null;
     if(profile?.id!==authUser.id){profile=null;}
-    if(_sb&&typeof _sb.from==='function'){
-      try{
-        const { data, error } = await _sb.from('via_users').select('*').eq('id', authUser.id).single();
-        if(error){
-          console.error('Profile sync error:', error);
-        }else if(data){
-          profile=data;
+    if (window.viaFirebase && window.viaFirebase.db && authUser) {
+      try {
+        const doc = await window.viaFirebase.db.collection('users').doc(authUser.id || authUser.uid).get();
+        if (doc.exists) {
+          profile = doc.data();
         }
-      }catch(err){
-        console.error('Profile restore failed:', err);
+      } catch(err) {
+        console.error('Profile restore failed (FB):', err);
       }
     }
     profile=profile&&profile.id===authUser.id?profile:{
@@ -3066,21 +3064,28 @@ async function fetchDiscoverProfiles(queryText){
     ? (query ? social.searchProfiles(query,12) : social.listProfiles(8))
     : [];
   let remoteProfiles=[];
-  if(_sb&&typeof _sb.from==='function'){
-    try{
-      let request=_sb.from('via_users').select('*').limit(query?12:6);
-      if(query){
-        const safeQuery=query.replace(/,/g,' ').replace(/\s+/g,' ').trim();
-        request=request.or(`username.ilike.%${safeQuery}%,display_name.ilike.%${safeQuery}%,city.ilike.%${safeQuery}%`);
-      }else{
-        request=request.order('xp',{ascending:false});
+  if (window.viaFirebase && window.viaFirebase.db) {
+    try {
+      let limitCount = query ? 12 : 6;
+      let usersRef = window.viaFirebase.db.collection('users');
+      let snapshot;
+      if (query) {
+        // Simple client-side filtering since Firestore doesn't do ilike on multiple fields directly
+        snapshot = await usersRef.limit(50).get();
+        let q = query.toLowerCase();
+        remoteProfiles = snapshot.docs.map(d => d.data()).filter(p => 
+          (p.username && p.username.toLowerCase().includes(q)) || 
+          (p.display_name && p.display_name.toLowerCase().includes(q)) ||
+          (p.city && p.city.toLowerCase().includes(q))
+        ).slice(0, limitCount);
+      } else {
+        snapshot = await usersRef.orderBy('xp', 'desc').limit(limitCount).get();
+        remoteProfiles = snapshot.docs.map(d => d.data());
       }
-      if(isSignedInUser(currentUser)) request=request.neq('id', currentUser.id);
-      const { data, error } = await request;
-      if(!error&&Array.isArray(data)) remoteProfiles=data;
-    }catch(error){
-      console.error('Discover search failed:', error);
-    }
+      if (isSignedInUser(currentUser)) {
+        remoteProfiles = remoteProfiles.filter(p => p.id !== currentUser.id);
+      }
+    } catch(err) { console.error('Discover error (FB):', err); }
   }
   const merged=[];
   const seen=new Set();

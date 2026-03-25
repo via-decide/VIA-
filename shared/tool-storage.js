@@ -129,20 +129,21 @@
     if (!userId && localProfile) return localProfile;
     if (localProfile && localProfile.id === userId) return localProfile;
 
-    const client = getClient();
-    const config = getConfig();
-    if (!client || !userId) return localProfile;
-
-    try {
-      const { data, error } = await client.from(config.profileTable).select('*').eq('id', userId).single();
-      if (error || !data) return localProfile;
-      const normalized = normalizeProfile(data);
-      if (normalized && normalized.id === userId) saveLocalUser(normalized);
-      return normalized;
-    } catch (_error) {
-      return localProfile;
+    if (global.viaFirebase && global.viaFirebase.db && userId) {
+      try {
+        const doc = await global.viaFirebase.db.collection('users').doc(userId).get();
+        if (doc.exists) {
+          const normalized = normalizeProfile(doc.data());
+          if (normalized && normalized.id === userId) saveLocalUser(normalized);
+          return normalized;
+        }
+      } catch (_error) {
+        // Fallback below
+      }
     }
+    return localProfile;
   }
+
 
   function saveLocalUser(profile) {
     const normalized = normalizeProfile(profile);
@@ -185,43 +186,40 @@
     if (remoteDisabled) return { ok: false, reason: 'remote-disabled' };
     if (flushPromise) return flushPromise;
 
-    const client = getClient();
-    const config = getConfig();
     const pending = listPendingActivity();
-    if (!client || !config.isConfigured) return { ok: false, reason: 'not-configured' };
     if (!pending.length) return { ok: true, inserted: 0 };
+    if (!global.viaFirebase || !global.viaFirebase.db) return { ok: false, reason: 'not-configured' };
 
     flushPromise = (async () => {
-      const rows = pending.map((record) => ({
-        id: record.id,
-        event_type: record.type,
-        source: record.source,
-        page_path: record.path,
-        payload: record.payload,
-        created_at: record.created_at
-      }));
-
       try {
-        const { error } = await client.from(config.activityTable).insert(rows);
-        if (error) {
-          const message = String(error.message || '').toLowerCase();
-          if (message.includes('relation') || message.includes(config.activityTable.toLowerCase()) || message.includes('does not exist')) {
-            remoteDisabled = true;
-          }
-          return { ok: false, error: error.message || 'flush failed' };
-        }
+        const batch = global.viaFirebase.db.batch();
+        const activityRef = global.viaFirebase.db.collection('activity_logs');
+        
+        pending.forEach(record => {
+          const docRef = activityRef.doc(record.id);
+          batch.set(docRef, {
+            id: record.id,
+            event_type: record.type,
+            source: record.source,
+            page_path: record.path,
+            payload: record.payload,
+            created_at: record.created_at || new Date().toISOString()
+          });
+        });
 
+        await batch.commit();
         writeJson(BACKEND_PENDING_KEY, []);
-        return { ok: true, inserted: rows.length };
+        return { ok: true, inserted: pending.length };
       } catch (error) {
+        console.warn('Firebase activity log failed:', error);
         return { ok: false, error: error.message || 'flush failed' };
       } finally {
         flushPromise = null;
       }
     })();
-
     return flushPromise;
   }
+
 
   function queueActivity(type, payload, options = {}) {
     const record = appendActivity(createActivityRecord(type, payload, options), options);
