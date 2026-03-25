@@ -1110,14 +1110,14 @@ html, body {
 <div id="sheet" class="sheet"><div class="sheet-handle"></div><div id="sheet-body"></div></div>
 
 <script src="./onboarding/onboarding.js"></script>
-<script src="./js/viadecide-agent.js"></script>
+<!-- Agent loaded at end of body -->
 <script>
 // ════════════════════════════════════════════════════════════════
-// SUPABASE + HELPERS
+// SUPABASE + HELPERS (REDUNDANT BUT MAINTAINED FOR COMPAT)
 // ════════════════════════════════════════════════════════════════
 const _sbConfig = window.DatabaseService && typeof window.DatabaseService.getConfig === 'function'
   ? window.DatabaseService.getConfig()
-  : { url: window.ECO_SUPABASE_CONFIG?.url || 'https://klzrddvocsutdeiwvrhs.supabase.co', anonKey: window.ECO_SUPABASE_CONFIG?.anonKey || window.ECO_SUPABASE_ANON_KEY || '', isConfigured: !!(window.ECO_SUPABASE_CONFIG?.anonKey || window.ECO_SUPABASE_ANON_KEY) };
+  : { url: 'https://disabled-via-config.supabase.co', anonKey: '', isConfigured: false };
 const SUPABASE_URL = _sbConfig.url;
 const SUPABASE_ANON_KEY = _sbConfig.anonKey;
 const SUPABASE_CONFIGURED = Boolean(_sbConfig.isConfigured);
@@ -2736,10 +2736,37 @@ const GC = {
 
   init(){
     const deck=document.getElementById('deck');
+    // Touch
     deck.addEventListener('touchstart',e=>{if(isAnimating||activeLayer!=='feed')return;const t=e.touches[0];this.begin(t.clientX,t.clientY);},{passive:true});
     deck.addEventListener('touchmove',e=>{if(!this.active)return;e.preventDefault();const t=e.touches[0];this.track(t.clientX,t.clientY);},{passive:false});
     deck.addEventListener('touchend',()=>this.commit(),{passive:true});
     deck.addEventListener('touchcancel',()=>this.reset(),{passive:true});
+
+    // Mouse (for desktop scrolling/swiping)
+    deck.addEventListener('mousedown',e=>{
+      if(isAnimating||activeLayer!=='feed')return;
+      this.begin(e.clientX,e.clientY);
+      const move=(em)=>{if(this.active)this.track(em.clientX,em.clientY);};
+      const up=()=>{this.commit();window.removeEventListener('mousemove',move);window.removeEventListener('mouseup',up);};
+      window.addEventListener('mousemove',move);
+      window.addEventListener('mouseup',up);
+    });
+
+    // Mouse Wheel (standard scrolling fix)
+    deck.addEventListener('wheel',e=>{
+      if(isAnimating||activeLayer!=='feed')return;
+      if(Math.abs(e.deltaY) < 15) return;
+      if(e.deltaY < 0) this.onSwipe('up');
+      else this.onSwipe('down');
+    },{passive:true});
+  },
+
+  onSwipe(dir){
+    const card=getTopCard(); if(!card)return;
+    if(dir==='up') this._up(card);
+    else if(dir==='down') this._down(card);
+    else if(dir==='right') this._right(card);
+    else if(dir==='left') this._left(card);
   },
 
   begin(x,y){
