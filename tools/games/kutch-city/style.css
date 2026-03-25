@@ -1,0 +1,81 @@
+/* style.css — GTA Aesthetic / Urban Discovery Engine */
+:root {
+  --neon-saffron: #FF8F00;
+  --neon-blue: #00D1FF;
+  --hud-bg: rgba(0, 0, 0, 0.7);
+  --hud-border: rgba(255, 255, 255, 0.15);
+  --accent-pink: #FF00FF;
+}
+
+body, html {
+  margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000;
+  font-family: 'Syne', sans-serif;
+}
+
+#game-container { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+/* CANVAS LAYERS */
+#game-canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+
+/* HUD COMPONENTS */
+#hud {
+  position: absolute; inset: 0; pointer-events: none; padding: 20px;
+  display: flex; flex-direction: column; justify-content: space-between; z-index: 100;
+}
+
+#hud-overlay { position: absolute; inset: 0; pointer-events: none; background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2P//PwMTAwMDEwMDEwMAMAYDAv7639EAAAAASUVORK5CYII='); opacity: 0.1; }
+
+.top-left, .top-right { pointer-events: auto; }
+
+#location-name {
+  font-size: 24px; font-weight: 800; color: #fff; text-shadow: 2px 2px #000; letter-spacing: 0.1em;
+  padding: 10px 14px; background: var(--hud-bg); display: inline-block; border-left: 5px solid var(--neon-saffron);
+}
+
+#stats { margin-top: 10px; display: flex; gap: 15px; }
+
+.stat-item {
+  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em;
+  padding: 6px 12px; background: var(--hud-bg); color: #fff; border: 1px solid var(--hud-border);
+}
+
+.stat-item span.label { color: var(--neon-saffron); margin-right: 6px; }
+
+#balance { font-size: 32px; font-weight: 900; color: #00FF41; text-shadow: 2px 2px #000; letter-spacing: -0.05em; }
+
+/* MINIMAP */
+#minimap-container {
+  width: 180px; height: 180px; background: rgba(0, 0, 0, 0.85);
+  border: 4px solid #fff; border-radius: 5px; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  overflow: hidden; pointer-events: auto; transform: rotate(-10deg);
+}
+
+#minimap-canvas { width: 100%; height: 100%; image-rendering: pixelated; }
+
+/* INTERACT PROMPT */
+#interact-prompt {
+  position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%);
+  background: var(--hud-bg); padding: 10px 20px; border: 1px solid var(--neon-blue);
+  color: #fff; text-align: center; border-radius: 8px; transition: opacity 0.2s;
+}
+
+#interact-prompt.hidden { opacity: 0; }
+
+#interact-prompt .key {
+  display: inline-block; padding: 4px 8px; margin-right: 5px;
+  background: var(--neon-blue); color: #000; font-weight: 800; border-radius: 4px;
+}
+
+/* LOADING OVERLAY */
+#loading {
+  position: absolute; inset: 0; background: #000; z-index: 1000;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity 1s; opacity: 0; pointer-events: none;
+}
+#loading.active { opacity: 1; pointer-events: auto; }
+
+.gta-btn {
+  background: var(--hud-bg); color: #fff; border: 1px solid #fff; padding: 10px 20px;
+  font-size: 14px; font-weight: 800; cursor: pointer; pointer-events: auto; border-radius: 4px;
+}
+.gta-btn:hover { background: #fff; color: #000; }

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <title>Kutch City: Urban Explorer — GTA v1.0</title>
+  <link rel="stylesheet" href="../../../shared/shared.css">
+  <link rel="stylesheet" href="./style.css">
+  <script src="../../../shared/social-core.js"></script>
+  <script src="../../../shared/tool-bus.js"></script>
+  <script src="../../../shared/tool-storage.js"></script>
+  <script src="../../../js/via-transition.js"></script>
+  <script src="../../../js/via-navigation.js"></script>
+</head>
+<body class="via-dark">
+  <div id="game-container">
+    <canvas id="game-canvas"></canvas>
+    
+    <!-- GTA STYLE HUD -->
+    <div id="hud">
+      <div class="top-left">
+        <div id="location-name">BHUJ DISTRICT COURT ARCADE</div>
+        <div id="stats">
+          <div class="stat-item"><span class="label">DIR</span> <span id="poi-count">131</span></div>
+          <div class="stat-item"><span class="label">EXP</span> <span id="exp">0</span></div>
+        </div>
+      </div>
+      
+      <div class="top-right">
+        <div id="clock">03:15 PM</div>
+        <div id="balance">💰 50,000</div>
+      </div>
+
+      <div class="bottom-left">
+        <div id="minimap-container">
+          <canvas id="minimap-canvas"></canvas>
+        </div>
+      </div>
+
+      <div class="bottom-right">
+        <button data-go-back="feed" class="gta-btn">← FEED</button>
+      </div>
+
+      <!-- INTERACT POPUP -->
+      <div id="interact-prompt" class="hidden">
+        <span class="key">[E]</span> ENTER <span id="target-name">BUSINESS</span>
+      </div>
+    </div>
+    
+    <!-- LOADING OVERLAY -->
+    <div id="loading" class="active">
+      <div class="v-logo">VIA</div>
+      <div class="status">GENERATING KUTCH WORLD...</div>
+    </div>
+  </div>
+
+  <script src="./map-engine.js" type="module"></script>
+</body>
+</html>

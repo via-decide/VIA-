@@ -1,0 +1,12 @@
+{
+  "name": "Kutch City: Urban Explorer",
+  "category": "games",
+  "description": "GTA-style 2D open world discovery engine for the Kutch Digital Map businesses.",
+  "version": "1.0.0",
+  "author": "Antigravity",
+  "icon": "🌆",
+  "tags": ["gta", "exploration", "map", "kutch", "discovery"],
+  "links": {
+    "directory": "../../../pages/directory/index.html"
+  }
+}
