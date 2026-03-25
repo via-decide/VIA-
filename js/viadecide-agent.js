@@ -10,21 +10,41 @@
         '/post': 'You are a social media content creator for VIA, a Bharat-first social platform. Write a short, punchy social media post (3–6 lines + hashtags) about the topic. Style: conversational, energetic, India-rooted. Use 1 emoji opener. End with #BharatBuilds #VIA. Return ONLY text.',
         '/linkedin': 'You are a LinkedIn strategist for Indian founders. Write a professional post (150-250 words) with: hook → 3 numbered insights → closing question. Tone: confident, professional. Return ONLY text.',
         '/youtube': 'Generate: TITLE (under 70 chars), DESCRIPTION (100 words), TIMESTAMPS (5 entries), and TAGS. Return ONLY this block.',
-        '/task': 'You are the VIA Agent. Execute the task concisely. If content request: generate it. If research: provide structured summary. Return ONLY the result.'
+        '/task': 'You are the GN8R-powered VIA Agent. If the user asks to create a file, website, or script, generate the FULL code in a markdown block. If they ask to analyze or research, provide a clear structured breakdown. Style: Direct, technical, Bharat-centric. Return ONLY the content.'
+    };
+
+    // ── Parser Utilities (Ported from GN8R Bot) ──────────────────────────
+    const Parser = {
+        sanitize(text) {
+            if (typeof text !== 'string') return '';
+            return text.replace(/\u200B/g, '').replace(/\u200C/g, '').replace(/\u200D/g, '').replace(/\uFEFF/g, '');
+        },
+        detectType(desc) {
+            const d = desc.toLowerCase();
+            if (/landing.?page|html.?page|frontend|ui.?template/.test(d)) return 'html';
+            if (/python|\.py|script.*(data|parse|csv)/.test(d)) return 'py';
+            if (/javascript|node\.?js|\.js|tool.*js/.test(d)) return 'js';
+            if (/markdown|readme|\.md|doc|resume|report/.test(d)) return 'md';
+            if (/css|stylesheet/.test(d)) return 'css';
+            return 'md';
+        },
+        slugify(desc, type) {
+            const slug = desc.toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-').slice(0, 30).replace(/-+$/, '');
+            return `${slug || 'via-task'}.${type}`;
+        }
     };
 
     const Agent = {
         isOpen: false,
-        _draft: null,
+        _history: [],
         
         init() {
             this.render();
-            // Try to recover agent state from Firestore if user is signed in
             this.bindEvents();
         },
 
         render() {
-            // Remove existing console if any
             const existing = document.getElementById('agent-console');
             if (existing) existing.remove();
 
@@ -49,12 +69,12 @@
                                 <button onclick="closeAgent(); VIA.openAuth()" class="via-agent-btn" style="width:100%; padding:1rem; background:var(--saffron); border:none; color:#fff; border-radius:12px; font-weight:800; cursor:pointer;">SIGN IN TO ACCESS</button>
                             </div>
                         ` : `
-                            <div id="agent-chat" style="height:300px; overflow-y:auto; margin-top:1.5rem; padding-right:10px; display:flex; flex-direction:column; gap:12px; scrollbar-width:none;">
-                                <div class="agent-msg bot">Connected to VIA Orchestration Mesh. I am your sovereign agent. Use <strong>/post</strong>, <strong>/task</strong>, or <strong>/help</strong> to begin.</div>
+                            <div id="agent-chat" style="height:320px; overflow-y:auto; margin-top:1.5rem; padding-right:10px; display:flex; flex-direction:column; gap:12px; scrollbar-width:none;">
+                                <div class="agent-msg bot">Connected to VIA Orchestration Mesh. I am your sovereign agent. Use <strong>/post</strong>, <strong>/task</strong>, or just <strong>ask anything</strong> to begin.</div>
                             </div>
 
                             <div class="agent-input-wrap" style="position:relative; margin-top:1.5rem;">
-                                <input type="text" id="agent-input" class="agent-input" placeholder="Enter /command or ask anything..." autocomplete="off">
+                                <input type="text" id="agent-input" class="agent-input" placeholder="Type a task or command..." autocomplete="off">
                                 <div style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--saffron); font-size:0.8rem; font-weight:800; opacity:0.6;">↵</div>
                             </div>
                             
@@ -74,6 +94,7 @@
                     .agent-msg.error { background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.2); color: #ff8080; align-self: center; }
                     .agent-chip { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 99px; padding: 6px 14px; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
                     .agent-chip:hover { border-color: var(--saffron); transform: translateY(-2px); }
+                    .agent-code-block { background: #000; border: 1px solid #333; padding: 10px; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 0.75rem; color: #0f0; margin: 8px 0; overflow-x: auto; }
                 </style>
             `;
             document.body.insertAdjacentHTML('beforeend', html);
@@ -91,7 +112,7 @@
         },
 
         open() {
-            this.render(); // Re-render to check guest status
+            this.render();
             this.bindEvents();
             document.getElementById('agent-console').classList.add('open');
             this.isOpen = true;
@@ -117,44 +138,83 @@
             if (!chat) return;
             const msg = document.createElement('div');
             msg.className = `agent-msg ${role}`;
-            msg.innerHTML = text.replace(/\n/g, '<br>');
+            
+            // Detect code blocks
+            if (text.includes('```')) {
+                const parts = text.split('```');
+                let html = '';
+                for (let i = 0; i < parts.length; i++) {
+                    if (i % 2 === 1) {
+                        html += `<div class="agent-code-block">${Parser.sanitize(parts[i])}</div>`;
+                    } else {
+                        html += parts[i].replace(/\n/g, '<br>');
+                    }
+                }
+                msg.innerHTML = html;
+            } else {
+                msg.innerHTML = text.replace(/\n/g, '<br>');
+            }
+            
             chat.appendChild(msg);
             chat.scrollTop = chat.scrollHeight;
         },
 
         async handleInput(val) {
-            const cmd = val.trim();
-            if (!cmd) return;
-            this.addMessage(cmd, 'user');
+            const raw = val.trim();
+            if (!raw) return;
+            const input = Parser.sanitize(raw);
+            this.addMessage(input, 'user');
             
-            if (cmd.startsWith('/')) {
-                await this.execute(cmd);
+            let cmd;
+            let topic;
+
+            if (input.startsWith('/')) {
+                const parts = input.split(' ');
+                cmd = parts[0].toLowerCase();
+                topic = parts.slice(1).join(' ');
             } else {
-                // Default to a task/chat if no slash
-                await this.execute('/task ' + cmd);
+                // Natural Language Intent Discovery (Bot-inspired heuristics)
+                const low = input.toLowerCase();
+                
+                // 1. Check for Repo Task keywords if no explicit repo: tag
+                const repoKeywords = ['commit', 'pull request', 'pr', 'branch', 'merge', 'repository', 'repo:'];
+                const hasRepoIntent = repoKeywords.some(k => low.includes(k));
+                
+                if (low.includes('write') && low.includes('linkedin')) cmd = '/linkedin';
+                else if (low.includes('write') && (low.includes('post') || low.includes('tweet'))) cmd = '/post';
+                else if (low.includes('video') || low.includes('youtube') || low.includes('title')) cmd = '/youtube';
+                else if (low.includes('help') || low.includes('commands')) cmd = '/help';
+                else if (low.includes('session') || low.includes('id')) cmd = '/id';
+                else {
+                    cmd = '/task';
+                    if (hasRepoIntent && !low.includes('repo:')) {
+                        this.addMessage("<em>Note: To run a GitHub task, use the format 'repo: owner/repo'. Proceeding with standalone synthesis...</em>");
+                    }
+                }
+                
+                topic = input;
+                this.addMessage(`<em>Routing as ${cmd} packet...</em>`);
             }
+
+            await this.execute(cmd, topic);
         },
 
-        async execute(cmd) {
-            const parts = cmd.split(' ');
-            const base = parts[0].toLowerCase();
-            const args = parts.slice(1).join(' ');
-
+        async execute(base, args) {
             const apiKey = window.GEMINI_API_KEY || localStorage.getItem('via_gemini_key');
 
             switch(base) {
                 case '/help':
-                    this.addMessage("<strong>Command Engine 1.0</strong><br>/post [topic] — Viral content<br>/linkedin [topic] — Prof. insights<br>/youtube [topic] — Video brief<br>/task [goal] — Freeform agent execution<br>/id — Show current session hash");
+                    this.addMessage("<strong>GN8R Command Layer 2.0</strong><br>/task [goal] — Generate code or files<br>/post [topic] — Viral social post<br>/linkedin [topic] — Professional post<br>/youtube [topic] — Video strategy<br>/help — Show this menu");
                     break;
                 case '/id':
-                    this.addMessage(`User: ${window.currentUser?.id.slice(0,8)}...<br>State: Synchronized<br>Mesh: Bharat-Core-01`);
+                    this.addMessage(`State: Synchronized<br>Mesh: Bharat-Core-01<br>Latency: 42ms`);
                     break;
                 case '/post':
                 case '/linkedin':
                 case '/youtube':
                 case '/task':
                     if (!args) {
-                        this.addMessage(`Please provide a topic. Usage: ${base} [topic]`, 'error');
+                        this.addMessage(`Please provide a description. Usage: ${base} [topic]`, 'error');
                         return;
                     }
                     this.addMessage(`<em>Agent is synthesizing ${base} packet...</em>`);
@@ -162,13 +222,12 @@
                     break;
                 default:
                     this.addMessage(`Unknown protocol: ${base}. Defaulting to task synthesis...`);
-                    await this.runGemini('/task', cmd, apiKey);
+                    await this.runGemini('/task', base + ' ' + args, apiKey);
             }
         },
 
         async runGemini(command, topic, apiKey) {
             if (!apiKey) {
-                console.warn('[Agent] No GEMINI_API_KEY found. Using orchestration fallbacks.');
                 const fallback = this.getFallback(command, topic);
                 setTimeout(() => {
                     this.addMessage(fallback);
@@ -185,7 +244,7 @@
                     body: JSON.stringify({
                         system_instruction: { parts: [{ text: prompt }] },
                         contents: [{ role: 'user', parts: [{ text: topic }] }],
-                        generationConfig: { temperature: 0.8, maxOutputTokens: 600 }
+                        generationConfig: { temperature: 0.8, maxOutputTokens: 1024 }
                     })
                 });
 
@@ -194,8 +253,16 @@
                 const output = data.candidates?.[0]?.content?.parts?.[0]?.text || "Synthesis failed.";
                 this.addMessage(output);
                 this.logRun(command, topic, output);
+
+                // Add filename suggestion for tasks
+                if (command === '/task') {
+                    const type = Parser.detectType(topic);
+                    const filename = Parser.slugify(topic, type);
+                    this.addMessage(`💡 Suggested filename: <strong>${filename}</strong>`);
+                }
+
             } catch (err) {
-                this.addMessage(`Network error in agent layer. Falling back to local templates.`, 'error');
+                this.addMessage(`Network error in agent layer. ${err.message}`, 'error');
                 const fallback = this.getFallback(command, topic);
                 this.addMessage(fallback);
             }
@@ -203,32 +270,33 @@
 
         getFallback(cmd, topic) {
             const t = topic.trim() || 'this topic';
-            if (cmd === '/post') return `🔥 ${t} is changing the game in India right now! \n\nBharat builds are finally scaling at global speed. Who else is watching this space? \n\n#BharatBuilds #VIA #India`;
-            if (cmd === '/linkedin') return `I've been reflecting on ${t} and its impact on the Bharat ecosystem. \n\nKey takeaway: Consistency and local context beat pure capital every time. \n\nAre you building for the next billion? Let\'s discuss.`;
-            return `[Agent Response: ${t}]\nProcessed locally. Configure GEMINI_API_KEY for sovereign synthesis.`;
+            if (cmd === '/post') return `🔥 ${t} is changing the game in India right now! \n\n#BharatBuilds #VIA #India`;
+            if (cmd === '/linkedin') return `Reflecting on ${t} and its impact for Indian founders. \n\nConsistency beats shortcuts. \n\n#Growth #BharatBuilds`;
+            return `[Synthesis Fallback]\nConfiguring GEMINI_API_KEY required for real-time code generation. Outputting placeholder for ${t}.`;
         },
 
         async logRun(command, topic, output) {
-            const user = window.currentUser;
+            const user = window.currentUser || (window.VIA && window.VIA.user);
             if (!user || user.is_guest || !window.viaFirebase || !window.viaFirebase.db) return;
             try {
                 await window.viaFirebase.db.collection('agent_runs').add({
-                    uid: user.id,
+                    uid: user.id || user.uid,
                     command,
                     topic,
-                    output,
+                    output: output.slice(0, 500),
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
             } catch (e) {
-                console.warn('[Agent] Failed to log run:', e.message);
+                console.warn('[Agent] Log failed:', e.message);
             }
         }
     };
 
     global.openAgent = () => Agent.open();
     global.closeAgent = () => Agent.close();
-    global.AgentManager = Agent; // Export for internal tool use
+    global.AgentManager = Agent;
 
     document.addEventListener('DOMContentLoaded', () => Agent.init());
 
 })(window);
+
