@@ -1,0 +1,300 @@
+    }
+
+    .tg-cat:hover {
+      border-color: rgba(255, 255, 255, .2);
+      color: #fff
+    }
+
+    #tools-cats::-webkit-scrollbar {
+      display: none
+    }
+  </style>
+  <script src="./js/viadecide-agent.js"></script>
+    // ── ONBOARDING ANIMATIONS ──
+    (function() {
+      const scroll = document.getElementById('onb-scroll');
+      const glow = document.getElementById('onb-glow');
+      const dots = document.querySelectorAll('.onb-nav-dot');
+      const frames = document.querySelectorAll('.onb-frame');
+      const zoomCard = document.getElementById('onb-zoom-card');
+      
+      if (!scroll) return;
+
+      scroll.addEventListener('scroll', () => {
+        const pct = scroll.scrollTop / (scroll.scrollHeight - window.innerHeight);
+        glow.style.transform = `translate(${Math.sin(pct*5)*20}vw, ${pct*100}vh)`;
+        
+        // Dots
+        const index = Math.round(scroll.scrollTop / window.innerHeight);
+        dots.forEach((d, i) => d.classList.toggle('active', i === index));
+        
+        // Zoom Frame 2
+        const f2 = document.getElementById('onb-2');
+        const f2Rect = f2.getBoundingClientRect();
+        if (f2Rect.top < window.innerHeight && f2Rect.bottom > 0) {
+          const progress = (window.innerHeight - f2Rect.top) / window.innerHeight;
+          const scale = 1 + (Math.min(0.8, progress * 1.5));
+          zoomCard.style.transform = `scale(${scale})`;
+          f2.classList.add('visible');
+        }
+        
+        // Frame visibility
+        frames.forEach(f => {
+          if (Math.abs(f.getBoundingClientRect().top) < 100) f.classList.add('visible');
+        });
+      });
+      // Initial trigger
+      frames[0].classList.add('visible');
+    })();
+  </script>
+</body>
+
+</html>
+  <div class="proj-item reveal-el" style="transition-delay:0.1s">
+    <div class="proj-num">02</div>
+    <div class="proj-icon">📐</div>
+    <div class="proj-info">
+      <div class="proj-name">Apply the Framework</div>
+      <div class="proj-desc">ViaDecide applies logical structures—like cost-benefit algorithms and risk matrices—to your specific scenario.</div>
+    </div>
+  </div>
+
+  <div class="proj-item reveal-el" style="transition-delay:0.2s">
+    <div class="proj-num">03</div>
+    <div class="proj-icon">⚡</div>
+    <div class="proj-info">
+      <div class="proj-name">Actionable Output</div>
+      <div class="proj-desc">Receive a clear, weighted, and visually mapped decision. No ambiguity. Just the best path forward.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ AUDIENCE ══ -->
+<section id="audience">
+  <div class="sec-label reveal-el">Who Uses ViaDecide</div>
+  <div class="aud-grid">
+    <div class="aud-card reveal-el"><div class="aud-icon">💼</div><div><div class="aud-title">Founders & Teams</div><div class="aud-desc">For high-stakes product, hiring, and strategy decisions.</div></div></div>
+    <div class="aud-card reveal-el" style="transition-delay:0.1s"><div class="aud-icon">💻</div><div><div class="aud-title">Engineers & Builders</div><div class="aud-desc">Tech stack choices and architecture frameworks.</div></div></div>
+    <div class="aud-card reveal-el" style="transition-delay:0.2s"><div class="aud-icon">🎓</div><div><div class="aud-title">Researchers</div><div class="aud-desc">Structuring complex data into logical conclusions.</div></div></div>
+    <div class="aud-card reveal-el" style="transition-delay:0.3s"><div class="aud-icon">🌍</div><div><div class="aud-title">Overthinkers</div><div class="aud-desc">Break the loop. Get a definitive answer and move on.</div></div></div>
+  </div>
+</section>
+
+<!-- ══ FOUNDER / CTA / INSTAGRAM ══ -->
+<section id="cta">
+  
+  <div class="sec-label reveal-el">The Architect</div>
+  <div class="quote reveal-el">
+    <div class="quote-text">"I built ViaDecide because I realized clarity doesn't come from better prompts. It comes from better structure. This engine is built on math, code, and logic."</div>
+    <div class="quote-attr">— Dharm Daxini, Founder</div>
+  </div>
+
+  <div class="sec-label reveal-el">Join the Community</div>
+  
+  <!-- DEDICATED INSTAGRAM AD CONTACT CARD -->
+  <div class="ig-card reveal-el">
+    <div class="ig-handle">@dharamdaxini</div>
+    <div class="ig-desc">Follow the build journey, get decision-making frameworks, and DM me for early access & support.</div>
+    <a href="https://www.instagram.com/dharamdaxini" target="_blank" class="link-btn secondary" style="background: rgba(0,0,0,0.5); justify-content: center;">
+      <div class="btn-left"><span class="btn-emoji">📸</span><span class="btn-label">Connect on Instagram</span></div>
+    </a>
+  </div>
+
+  <div class="links-stack">
+    <a href="https://www.viadecide.com/" target="_blank" class="link-btn primary reveal-el">
+      <div class="btn-left"><span class="btn-emoji">🚀</span><span class="btn-label">Launch ViaDecide Platform</span></div>
+      <span class="btn-arrow" style="color:rgba(10,8,0,0.5)">→</span>
+    </a>
+    <a href="https://github.com/via-decide" target="_blank" class="link-btn secondary reveal-el" style="transition-delay:0.08s">
+      <div class="btn-left"><span class="btn-emoji">⚙️</span><span class="btn-label">Explore Open Source (GitHub)</span></div>
+      <span class="btn-arrow">→</span>
+    </a>
+    <a href="https://youtube.com/@decide.engine?si=wF9MtYQS8OC-t6gS" target="_blank" class="link-btn secondary reveal-el" style="transition-delay:0.16s">
+      <div class="btn-left"><span class="btn-emoji">▶️</span><span class="btn-label">YouTube — @decide.engine</span></div>
+      <span class="btn-arrow">→</span>
+    </a>
+    <a href="https://open.spotify.com/show/2okZ1WXMWXLrSwFzClUPPp" target="_blank" class="link-btn secondary reveal-el" style="transition-delay:0.24s">
+      <div class="btn-left"><span class="btn-emoji">🎙️</span><span class="btn-label">Listen to the Podcast</span></div>
+      <span class="btn-arrow">→</span>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-name">VIADECIDE</div>
+  <div class="footer-sub">Structured AI · Decision Engineering · Built in India 🇮🇳</div>
+</div>
+
+</div><!-- end .page -->
+
+<!-- THREE.JS + SCROLL LOGIC -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ══════════════════════════════════════
+// THREE.JS PARTICLE FIELD
+// ══════════════════════════════════════
+const canvas = document.getElementById('bg-canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.z = 5;
+
+// Particles
+const COUNT = window.innerWidth < 600 ? 600 : 1200;
+const positions = new Float32Array(COUNT * 3);
+const colors = new Float32Array(COUNT * 3);
+const gold = new THREE.Color('#c8a84b');
+const goldLight = new THREE.Color('#e8c96a');
+const dim = new THREE.Color('#2a2620');
+
+for (let i = 0; i < COUNT; i++) {
+  positions[i * 3]     = (Math.random() - 0.5) * 20;
+  positions[i * 3 + 1] = (Math.random() - 0.5) * 30;
+  positions[i * 3 + 2] = (Math.random() - 0.5) * 10 - 3;
+  const c = Math.random() < 0.15 ? goldLight : Math.random() < 0.4 ? gold : dim;
+  colors[i * 3]     = c.r;
+  colors[i * 3 + 1] = c.g;
+  colors[i * 3 + 2] = c.b;
+}
+
+const geo = new THREE.BufferGeometry();
+geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+const mat = new THREE.PointsMaterial({
+  size: 0.04,
+  vertexColors: true,
+  transparent: true,
+  opacity: 0.7,
+  sizeAttenuation: true,
+});
+
+const particles = new THREE.Points(geo, mat);
+scene.add(particles);
+
+// Grid lines
+const lineMat = new THREE.LineBasicMaterial({ color: 0x1a1508, transparent: true, opacity: 0.4 });
+for (let i = -10; i <= 10; i += 2) {
+  const hGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-12, i, -5), new THREE.Vector3(12, i, -5)]);
+  const vGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(i * 1.2, -15, -5), new THREE.Vector3(i * 1.2, 15, -5)]);
+  scene.add(new THREE.Line(hGeo, lineMat));
+  scene.add(new THREE.Line(vGeo, lineMat));
+}
+
+let scrollY = 0;
+let targetScrollY = 0;
+let mouseX = 0, mouseY = 0;
+
+window.addEventListener('scroll', () => { targetScrollY = window.scrollY; });
+window.addEventListener('mousemove', e => {
+  mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+  mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+});
+window.addEventListener('touchmove', e => {
+  if (e.touches[0]) {
+    mouseX = (e.touches[0].clientX / window.innerWidth - 0.5) * 2;
+  }
+}, { passive: true });
+
+let frame = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  frame++;
+
+  scrollY += (targetScrollY - scrollY) * 0.06;
+
+  // Scroll: particles drift up
+  particles.position.y = scrollY * 0.003;
+  particles.rotation.y = frame * 0.0003 + mouseX * 0.05;
+  particles.rotation.x = mouseY * 0.03;
+
+  // Camera subtle tilt
+  camera.position.x += (mouseX * 0.3 - camera.position.x) * 0.04;
+  camera.position.y += (-mouseY * 0.2 - camera.position.y) * 0.04;
+  camera.lookAt(scene.position);
+
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// ══════════════════════════════════════
+// SCROLL REVEAL — IntersectionObserver
+// ══════════════════════════════════════
+const revealEls = document.querySelectorAll('.reveal-el');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+revealEls.forEach(el => io.observe(el));
+
+// ══════════════════════════════════════
+// PARALLAX ON SCROLL
+// ══════════════════════════════════════
+const heroName = document.querySelector('.hero-name');
+window.addEventListener('scroll', () => {
+  const sy = window.scrollY;
+  if (heroName) {
+    heroName.style.transform = `translateY(${sy * 0.25}px) rotateX(${sy * 0.01}deg)`;
+    heroName.style.opacity = 1 - sy / 400;
+  }
+}, { passive: true });
+
+// ══════════════════════════════════════
+// 3D TILT ON CARDS (touch + mouse)
+// ══════════════════════════════════════
+function addTilt(selector) {
+  document.querySelectorAll(selector).forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = (e.clientX - cx) / rect.width;
+      const dy = (e.clientY - cy) / rect.height;
+      card.style.transform = `rotateY(${dx * 8}deg) rotateX(${-dy * 5}deg) translateZ(8px)`;
+      card.style.transition = 'transform 0.1s ease';
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+      card.style.transition = 'transform 0.4s ease';
+    });
+  });
+}
+addTilt('.stat-card');
+addTilt('.ig-card');
+addTilt('.tech-card');
+
+// ══════════════════════════════════════
+// HERO ENTRY ANIMATION
+// ══════════════════════════════════════
+const heroEls = document.querySelectorAll('.hero-tag, .hero-name, .hero-sub, .live-pill, .hero-cta-wrapper');
+heroEls.forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(30px)';
+  el.style.transition = `opacity 0.8s ease ${i * 0.15}s, transform 0.8s ease ${i * 0.15}s`;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+  }));
+});
+</script>
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+  <meta name="description" content="VIA — Bharat's social platform. Swipe, discover, create. Powered by ViaDecide." />
+  <meta name="theme-color" content="#0B0B1A" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="VIA" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>VIA · Bharat's Feed</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Devanagari:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Serif+Display:ital@0;1&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="./onboarding/onboarding.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+    window.ECO_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtsenJkZHZvY3N1dGRlaXd2cmhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NzAzNDAsImV4cCI6MjA4OTM0NjM0MH0.4oLh-_y0MkgdO6F98Y4D8FTwy4pOTAjc1eeERkjkQJk";
+  </script>
+  <script src="./shared/eco-supabase-config.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script>
+    window.VIA_FIREBASE_CONFIG = {
+      apiKey: "AIzaSyCQMIvNgKJPZmxVHRC8lKL79k6n0wh0EKo",
+      authDomain: "gen-lang-client-0662689801.firebaseapp.com",
+      projectId: "gen-lang-client-0662689801",
+      storageBucket: "gen-lang-client-0662689801.firebasestorage.app",
+      messagingSenderId: "899475982419",
+      appId: "1:899475982419:web:fc93af4d97e6a578b31ea6"
+    };
+  </script>
+  <script src="./shared/firebase-config.js"></script>
+  <script src="./shared/tool-storage.js"></script>
+  <script src="./shared/social-core.js"></script>
+  <script src="./js/via-micro-content.js"></script>
+  <script src="./js/via-transition.js"></script>
+  <script src="./js/via-navigation.js"></script>
+  <style>
+    /* ── RESET ── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --saffron: #FF671F;
+      --saffron-glow: rgba(255, 103, 31, 0.4);
+      --deep: #05050A;
+      --deep-glass: rgba(10, 10, 20, 0.85);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-bright: rgba(255, 255, 255, 0.15);
+      --accent-blue: #00D1FF;
+      --accent-purple: #7000FF;
+      --text-main: #FFFFFF;
+      --text-muted: rgba(255, 255, 255, 0.6);
+      --glass-blur: 24px;
+    }
+
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      background: var(--deep);
+      color: var(--text-main);
+      font-family: 'DM Sans', sans-serif;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── 2026 APP SHELL ── */
+    #app {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      background: radial-gradient(circle at 50% -20%, var(--saffron-glow), transparent 70%);
+    }
+
+    #app.visible {
+      opacity: 1;
+    }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 1.6rem;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: linear-gradient(to bottom, rgba(5, 5, 10, 0.8), transparent);
+    }
+
+    .status-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.8rem;
+      letter-spacing: -0.02em;
+      color: #fff;
+      text-shadow: 0 0 20px var(--saffron-glow);
+      cursor: pointer;
+    }
+
+    /* ── FUTURISTIC TABS ── */
+    .layer-tabs {
+      position: absolute;
+      top: 4.5rem;
+      left: 1.6rem;
+      right: 1.6rem;
+      display: flex;
+      gap: 0.5rem;
+      z-index: 90;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 0.2rem;
+    }
+
+    .layer-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .layer-tab {
+      white-space: nowrap;
+      padding: 0.6rem 1.2rem;
+      border-radius: 99px;
+      background: var(--deep-glass);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      cursor: pointer;
+    }
+
+    .layer-tab.active {
+      background: var(--saffron);
+      color: #fff;
+      border-color: var(--saffron);
+      box-shadow: 0 8px 24px var(--saffron-glow);
+    }
+
+    /* ── EXPLORE BENTO ── */
+    .explore-container {
+      position: absolute;
+      inset: 0;
+      padding: 8rem 1.5rem 6.5rem;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+
+    .bento-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto auto;
+      gap: 1rem;
+    }
+
+    .bento-item {
+      background: var(--deep-glass);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+      min-height: 140px;
+      cursor: pointer;
+    }
+
+    .bento-item:hover {
+      border-color: rgba(255, 103, 31, 0.4);
+      box-shadow: 0 0 30px rgba(255, 103, 31, 0.15);
+      transform: translateY(-4px);
+    }
+
+    .bento-item:active {
+      transform: scale(0.96);
+    }
+
+    .bento-item.large {
+      grid-column: span 2;
+      min-height: 200px;
+      background: linear-gradient(135deg, rgba(255, 103, 31, 0.1), transparent);
+    }
+
+    .bento-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .bento-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      line-height: 1.1;
+      margin-bottom: 0.4rem;
+    }
+
+    .bento-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* ── AGENT CONSOLE ── */
+    .agent-console {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(12px);
+    }
+
+    .agent-console.open {
+      display: flex;
+    }
+
+    .agent-card {
+      width: min(90%, 500px);
+      background: #11111A;
+      border: 1px solid var(--border-bright);
+      border-radius: 28px;
+      padding: 2rem;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+    }
+
+    .agent-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1rem;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      margin-top: 1rem;
+      outline: none;
+    }
+
+    .agent-input:focus {
+      border-color: var(--saffron);
+    }
+
+    /* ── BOTTOM NAV 2.0 ── */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 1rem 1.5rem 2.2rem;
+      background: var(--deep-glass);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border-top: 1px solid var(--border);
+      z-index: 100;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+      flex: 1;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .nav-item.active {
+      color: var(--saffron);
+    }
+
+    .nav-icon {
