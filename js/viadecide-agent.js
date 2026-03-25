@@ -123,16 +123,33 @@
         },
 
         async handleInput(val) {
-            const cmd = val.trim();
-            if (!cmd) return;
-            this.addMessage(cmd, 'user');
+            const input = val.trim();
+            if (!input) return;
+            this.addMessage(input, 'user');
             
-            if (cmd.startsWith('/')) {
-                await this.execute(cmd);
+            let cmd;
+            let topic;
+
+            if (input.startsWith('/')) {
+                const parts = input.split(' ');
+                cmd = parts[0].toLowerCase();
+                topic = parts.slice(1).join(' ');
             } else {
-                // Default to a task/chat if no slash
-                await this.execute('/task ' + cmd);
+                // Natural Language Intent Discovery
+                const low = input.toLowerCase();
+                if (low.includes('write') && low.includes('linkedin')) cmd = '/linkedin';
+                else if (low.includes('write') && (low.includes('post') || low.includes('tweet'))) cmd = '/post';
+                else if (low.includes('video') || low.includes('youtube') || low.includes('title')) cmd = '/youtube';
+                else if (low.includes('help') || low.includes('commands')) cmd = '/help';
+                else if (low.includes('session') || low.includes('id')) cmd = '/id';
+                else cmd = '/task'; // Sovereign synthesis by default
+                
+                topic = input;
+                // Add a small hint for the user
+                this.addMessage(`<em>Interpreting as ${cmd} protocol...</em>`);
             }
+
+            await this.execute(cmd + ' ' + topic);
         },
 
         async execute(cmd) {
