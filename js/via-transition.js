@@ -93,6 +93,12 @@
 
   global.addEventListener('load', function () {
     if (!document.body) return;
+    
+    // Clear any existing safety timeout
+    if (global._viaLoadSafety) {
+      global.clearTimeout(global._viaLoadSafety);
+    }
+
     document.body.style.opacity = '0';
     document.body.style.transition = 'opacity 0.3s ease';
 
@@ -100,4 +106,15 @@
       document.body.style.opacity = '1';
     });
   });
+
+  // Safety fallback: if load event takes too long, force show
+  if (canTransition()) {
+    global._viaLoadSafety = global.setTimeout(function() {
+      if (document.body && document.body.style.opacity === '0') {
+        document.body.style.transition = 'opacity 0.4s ease';
+        document.body.style.opacity = '1';
+        console.warn('[VIA] Navigation transition safety fallback triggered');
+      }
+    }, 3000);
+  }
 })(window);

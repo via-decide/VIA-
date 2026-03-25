@@ -1,20 +1,36 @@
 (function (global) {
   'use strict';
 
+  function getRootPrefix() {
+    var path = global.location.pathname.replace(/^\/|\/$/g, '');
+    // Remove filename if present to get directory depth
+    if (/\.html$/.test(path)) {
+      var parts = path.split('/');
+      parts.pop();
+      path = parts.join('/');
+    }
+    if (!path) return './';
+    var depth = path.split('/').filter(function(p){ return p.length > 0; }).length;
+    var res = '';
+    for (var i = 0; i < depth; i++) res += '../';
+    return res || './';
+  }
+
+  var P = getRootPrefix();
   var ROUTES = {
-    feed: './index.html',
-    creator_onboarding: './creator-onboarding.html',
-    creator_story: './creator-story.html',
-    profile: './profile.html',
-    agent: './agent.html',
-    discover: './discover.html',
-    about: './about.html',
-    decision_brief: './decision-brief.html',
-    studyos: './StudyOS.html',
-    app_generator: './app-generator.html',
-    finance_dashboard_msme: './finance-dashboard-msme.html',
-    alchemist: './alchemist.html',
-    directory: './pages/directory/index.html'
+    feed: P + 'index.html',
+    creator_onboarding: P + 'creator-onboarding.html',
+    creator_story: P + 'creator-story.html',
+    profile: P + 'profile.html',
+    agent: P + 'agent.html',
+    discover: P + 'discover.html',
+    about: P + 'about.html',
+    decision_brief: P + 'decision-brief.html',
+    studyos: P + 'StudyOS.html',
+    app_generator: P + 'app-generator.html',
+    finance_dashboard_msme: P + 'finance-dashboard-msme.html',
+    alchemist: P + 'alchemist.html',
+    directory: P + 'pages/directory/index.html'
   };
   var LEGACY_PATHS = {
     '/creator-onboarding': ROUTES.creator_onboarding,

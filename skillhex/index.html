@@ -13,6 +13,9 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <!-- VIA Universal Credit Wallet -->
 <script src="../shared/via-credits.js"></script>
+<script src="../shared/social-core.js"></script>
+<script src="../js/via-transition.js"></script>
+<script src="../js/via-navigation.js"></script>
 
 <style>
 /* ═══════════════════════════════════════════════════════ TOKENS */
@@ -571,6 +574,7 @@ footer {
 
 <!-- ═══════════════════ HEADER ═══════════════════════════════════ -->
 <header>
+  <button data-go-back="feed" style="background:transparent; border:1px solid var(--border); color:var(--txt-dim); padding:6px 12px; border-radius:4px; font-family:var(--fmono); font-size:10px; cursor:pointer; margin-right:8px; text-transform:uppercase; letter-spacing:0.1em;" onmouseenter="this.style.borderColor='var(--cyan)';this.style.color='var(--cyan)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--txt-dim)'">← BACK</button>
   <a class="logo" href="#">
     <div class="logo-gem"><span>SHX</span></div>
     <div>
@@ -1986,10 +1990,10 @@ function confirmSector(idx) {
       showToast('Interview round: ' + (INTERVIEW_ROUNDS[roundId]?.label || roundId), 'info');
       updateKadaHUD('INTV', roundId);
     }
-    const round = INTERVIEW_ROUNDS[INTERVIEW.activeScene || 'V10'];
-    const cats = round?.cats || INTERVIEW_ROUNDS.V10.cats;
     const scene = INTERVIEW_WHEEL_SCENES[idx] || INTERVIEW.activeScene || 'V10';
     const round = INTERVIEW_ROUNDS[scene] || INTERVIEW_ROUNDS.V10;
+    const cats = round?.cats || INTERVIEW_ROUNDS.V10.cats;
+    
     if (isPulled) {
       skipInterviewQuestion('interview-modal-body');
       showToast('Interview: skipped to next question', 'info');
@@ -1997,7 +2001,7 @@ function confirmSector(idx) {
       INTERVIEW.activeScene = scene;
       const title = document.getElementById('interview-modal-title');
       if (title) title.textContent = `${scene} · ${round.label}`;
-      mountInterview('interview-modal-body', round.cats, { deepDive: !!round.deepDive, compact:false });
+      mountInterview('interview-modal-body', cats, { deepDive: !!round.deepDive, compact:false });
       showToast('Interview round: ' + scene, 'info');
     }
     updateKadaHUD(scene, isPulled ? 'SKIP QUESTION' : round.label);
