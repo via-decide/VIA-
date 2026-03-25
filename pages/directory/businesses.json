@@ -1,0 +1,11 @@
+[
+  { "name": "Salon 2 The Family Salon", "cat": "salon", "loc": "Golden Arcade, Gandhidham", "phone": "8460513709", "type": "Salons & Boutiques" },
+  { "name": "De Mayra Collections", "cat": "salon", "loc": "Sector 10, Gandhidham", "phone": "8401155916", "type": "Salons & Boutiques" },
+  { "name": "Skywings Job Placement", "cat": "finance", "loc": "Sector-7, Gandhidham", "phone": "support@skywingsadvisors.com", "type": "Placement Agencies" },
+  { "name": "Nilesh Buch & Associates", "cat": "finance", "loc": "Golden Arcade, Gandhidham", "phone": "nileshbuch@yahoo.com.sg", "type": "Local CAs" },
+  { "name": "Shree Ganesh Photos", "cat": "creative", "loc": "Bharat Nagar, Gandhidham", "phone": "8460382852", "type": "Wedding Photographers" },
+  { "name": "N R Infotech", "cat": "it", "loc": "Sector 1, Gandhidham", "phone": "Offline", "type": "IT Services" },
+  { "name": "Aaradhana Hospitality", "cat": "accommodation", "loc": "Adipur, Gandhidham", "phone": "GIDC Road", "type": "Accommodations" },
+  { "name": "The Shiv Regency", "cat": "creative", "loc": "Ward 12/B, Gandhidham", "phone": "theshivregency@shivhotels.com", "type": "Event Venues" },
+  { "name": "Vinod Electrical Solutions", "cat": "it", "loc": "Adipur, Gandhidham", "phone": "9725367411", "type": "Service Trades" }
+]

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>VIA — Bharat's Sovereign Social Feed</title>
+    <meta name="description" content="India's first swipe-native content platform. Zero data harvesting. Free forever.">
+    
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- AMBIENT ELEMENTS -->
+    <div class="grain"></div>
+    <div class="ambient-glow" id="main-glow"></div>
+    <div class="particle-container" id="particle-canvas"></div>
+
+    <!-- MAIN SCROLL CONTAINER -->
+    <div id="scroll-wrapper">
+        
+        <!-- FRAME 1: HERO -->
+        <section class="frame" id="frame-1">
+            <div class="skyline"></div>
+            <div class="phone-container floating">
+                <div class="phone-frame">
+                    <div class="phone-screen hero-card">
+                        <span class="card-hindi">Bharat का अपना Feed.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-text">
+                <h1 class="syne-bold">Swipe. Learn. Decide.</h1>
+                <p class="dm-sans-light">India's first swipe-native content platform.<br>Zero data harvesting. Free forever.</p>
+            </div>
+            <div class="scroll-indicator">↓ SCROLL TO EXPLORE</div>
+        </section>
+
+        <!-- FRAME 2: ZOOM -->
+        <section class="frame" id="frame-2">
+            <div class="phone-zoom-container">
+                <div class="story-card" id="zoom-card">
+                    <div class="card-accent"></div>
+                    <div class="card-header">
+                        <span class="card-icon">🚀</span>
+                        <h2 class="card-title syne-bold">India's Space Economy</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-section">
+                            <span class="section-label dm-mono">THE CONTEXT</span>
+                            <p class="section-text dm-sans">The global space market is $447B. India's share is currently 2%, but ISRO's new privatization policy is set to unlock $50B in value by 2030.</p>
+                        </div>
+                        <div class="card-section">
+                            <span class="section-label dm-mono">THE INSIGHT</span>
+                            <p class="section-text dm-sans">Small satellite launches are the new "SaaS" of defense. Bharat starts with a massive cost advantage: 1/10th the price of SpaceX for microsats.</p>
+                        </div>
+                        <div class="card-section">
+                            <span class="section-label dm-mono">HOW IT WORKS</span>
+                            <p class="section-text dm-sans">Decoupling manufacturing from ISRO's R&D allows startups like Skyroot to scale mass production of 3D-printed rocket engines.</p>
+                        </div>
+                    </div>
+                    <div class="card-swipe-hint dm-mono">↓ SWIPE UP TO EXPLORE</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FRAME 3: ROW OF 3 -->
+        <section class="frame" id="frame-3">
+            <div class="comparison-grid">
+                <!-- Phone 1 -->
+                <div class="mini-phone">
+                    <div class="phone-screen amber-glow">
+                        <span class="mini-icon">🏏</span>
+                        <h3 class="syne-bold">IPL Economy</h3>
+                    </div>
+                </div>
+                <!-- Phone 2 -->
+                <div class="mini-phone">
+                    <div class="phone-screen orange-tag">
+                        <span class="mini-icon">🤖</span>
+                        <h3 class="syne-bold">IndiaAI</h3>
+                    </div>
+                </div>
+                <!-- Phone 3 -->
+                <div class="mini-phone">
+                    <div class="phone-screen city-lights">
+                        <span class="mini-icon">💳</span>
+                        <h3 class="syne-bold">UPI Global</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="caption-text syne-bold">66+ Stories. Real Bharat. Real Insights.</div>
+        </section>
+
+        <!-- FRAME 4: STATS -->
+        <section class="frame" id="frame-4">
+            <div class="topo-map"></div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value syne-bold">66</div>
+                    <div class="stat-label dm-mono">LIVE TOOLS</div>
+                    <div class="stat-glow"></div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value syne-bold">0</div>
+                    <div class="stat-label dm-mono">LOGINS NEEDED</div>
+                    <div class="stat-glow"></div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value syne-bold">∞</div>
+                    <div class="stat-label dm-mono">FREE FOREVER</div>
+                    <div class="stat-glow"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FRAME 5: CTA -->
+        <section class="frame" id="frame-5">
+            <div class="cta-container">
+                <a href="https://viadecide.com" target="_blank" rel="noopener noreferrer" class="cta-button syne-bold">Enter VIA →</a>
+                <div class="cta-meta dm-mono">viadecide.com · Built in Bharat · Open Source</div>
+                 <div class="pulse-ring"></div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-tab active">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label dm-sans">Feed</div>
+        </a>
+        <a href="#explore" class="nav-tab">
+            <div class="nav-icon">🧭</div>
+            <div class="nav-label dm-sans">Explore</div>
+        </a>
+        <a href="#agent" class="nav-tab">
+            <div class="nav-icon">🤖</div>
+            <div class="nav-label dm-sans">Agent</div>
+        </a>
+        <a href="#tools" class="nav-tab">
+            <div class="nav-icon">⚡</div>
+            <div class="nav-label dm-sans">Tools</div>
+        </a>
+        <a href="#profile" class="nav-tab">
+            <div class="nav-icon">👤</div>
+            <div class="nav-label dm-sans">Profile</div>
+        </a>
+    </nav>
+
+    <!-- FOOTER -->
+    <footer class="legal-footer dm-mono">
+        ©️ 2026 ViaDecide · Built in Bharat · viadecide.com
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

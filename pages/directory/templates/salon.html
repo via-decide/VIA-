@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Premium Boutique Template — Kutch Digital Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --font-main: 'Playfair Display', serif; --font-sans: 'Outfit', sans-serif; --brand: #e91e8c; --bg: #0f0a0d; --surface: #1f141a; --surface2: #2e1e27; --border: #3d2834; --text: #fdfafa; --muted: #d4c4cc; --radius: 16px; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-sans); line-height: 1.6; }
+  h1, h2, h3 { font-family: var(--font-main); font-weight: 400; }
+  
+  .topbar { position: sticky; top: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
+  .topbar-name { font-size: 15px; font-weight: 600; font-family: var(--font-main); }
+  .get-btn { font-size: 11px; padding: 6px 16px; background: var(--brand); color: #fff; border: none; font-weight: 600; cursor: pointer; border-radius: 20px; transition: 0.2s; }
+  .get-btn:hover { filter: brightness(1.2); transform: scale(1.05); }
+
+  .hero { text-align: center; padding: 120px 24px 100px; background: linear-gradient(to bottom, var(--surface) 0%, var(--bg) 100%); position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -50%; right: 50%; transform: translateX(50%); width: 800px; height: 800px; background: radial-gradient(circle, var(--brand)15 0%, transparent 60%); pointer-events: none; }
+  .hero h1 { font-size: clamp(40px, 8vw, 72px); color: var(--brand); font-style: italic; margin-bottom: 16px; line-height: 1.1; }
+  .hero-tagline { font-size: 14px; text-transform: uppercase; letter-spacing: 4px; color: var(--muted); }
+
+  .section { padding: 60px 24px; max-width: 1000px; margin: 0 auto; }
+  .section-title { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin-bottom: 32px; text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+  
+  .info-card { background: var(--surface); border: 1px solid var(--border); padding: 40px; border-radius: var(--radius); text-align: center; }
+  .info-row { padding: 16px 0; border-bottom: 1px solid var(--border); font-size: 18px; }
+  .info-row:last-child { border-bottom: none; }
+
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; padding: 0 24px; }
+  .gallery-item { aspect-ratio: 1; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); background: var(--surface2); display: flex; align-items: center; justify-content: center; color: var(--muted); position: relative; }
+  .gallery-item::after { content: 'PORTFOLIO SHOT'; font-size: 10px; letter-spacing: 2px; opacity: 0.3; }
+
+  .custom-tag { position: absolute; top: 12px; left: 12px; background: var(--brand); color: #fff; font-size: 9px; padding: 4px 8px; border-radius: 4px; font-weight: 700; }
+
+  .footer { padding: 60px; text-align: center; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-name">THE BOUTIQUE TEMPLATE</div>
+  <button class="get-btn">USE THIS DESIGN</button>
+</div>
+
+<div class="hero">
+  <div class="hero-tagline">Elegant · Timeless · Premium</div>
+  <h1>Luxury Boutique &<br>Salon Experience</h1>
+</div>
+
+<div class="section">
+  <div class="section-title">Design Highlights</div>
+  <div class="info-card">
+    <div class="info-row">✨ Custom Brand Colors & Typography</div>
+    <div class="info-row">🎨 Image-First Portfolio Layout</div>
+    <div class="info-row">📱 Fully Optimized for Mobile</div>
+    <div class="info-row">💬 WhatsApp / Booking Integration</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Visual Showcase</div>
+</div>
+
+<div class="gallery">
+  <div class="gallery-item"><span class="custom-tag">DYNAMIC GALLERY</span></div>
+  <div class="gallery-item"></div>
+  <div class="gallery-item"></div>
+</div>
+
+<footer class="footer">
+  This is a template showcase. Every element is customizable by Kutch Digital Map.
+</footer>
+
+</body>
+</html>

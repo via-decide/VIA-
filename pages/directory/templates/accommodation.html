@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Comfort Stay Template — Kutch Digital Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&display=swap" rel="stylesheet">
+<style>
+  :root { --brand: #009688; --bg: #fdfafa; --surface: #ffffff; --border: #e0e0e0; --text: #333; --muted: #666; --radius: 12px; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; line-height: 1.6; }
+  
+  .hero { padding: 80px 24px; background: var(--brand); color: #fff; border-radius: 0 0 40px 40px; text-align: center; }
+  .hero h1 { font-size: clamp(32px, 6vw, 56px); font-weight: 800; margin-bottom: 12px; }
+  .hero p { opacity: 0.9; font-size: 18px; }
+
+  .section { padding: 40px 24px; max-width: 1200px; margin: 0 auto; }
+  .section-title { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 24px; font-weight: 600; }
+  
+  .amenities { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-bottom: 40px; }
+  .item { background: #fff; padding: 20px; border-radius: var(--radius); text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+  .item-icon { font-size: 24px; margin-bottom: 8px; display: block; }
+  
+  .room-card { background: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.08); display: flex; flex-direction: column; }
+  .room-img { height: 200px; background: #eee; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 12px; font-weight: 600; text-transform: uppercase; }
+  .room-info { padding: 24px; }
+  .room-info h3 { margin-bottom: 8px; }
+  
+  .get-btn { background: var(--brand); color: #fff; border: none; padding: 16px 32px; border-radius: 30px; font-weight: 700; cursor: pointer; transition: 0.2s; box-shadow: 0 10px 20px rgba(0,150,136,0.3); }
+  .get-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,150,136,0.4); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>A Home Away<br>From Home.</h1>
+  <p>Safe, comfortable, and affordable student & executive housing.</p>
+</div>
+
+<div class="section">
+  <div class="section-title">Verified Amenities</div>
+  <div class="amenities">
+    <div class="item"><span class="item-icon">📡</span>Wi-Fi</div>
+    <div class="item"><span class="item-icon">❄️</span>AC</div>
+    <div class="item"><span class="item-icon">🥘</span>Meals</div>
+    <div class="item"><span class="item-icon">🧹</span>Clean</div>
+  </div>
+
+  <div class="section-title">Available Accommodations</div>
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+    <div class="room-card">
+      <div class="room-img">2-Sharing Premium Room</div>
+      <div class="room-info">
+        <h3>Shared Executive Suite</h3>
+        <p style="color:var(--muted); font-size: 14px;">Spacious rooms with attached baths and dedicated study spaces.</p>
+      </div>
+    </div>
+    <div class="room-card">
+      <div class="room-img">Single Occupancy Studio</div>
+      <div class="room-info">
+        <h3>Private Studio</h3>
+        <p style="color:var(--muted); font-size: 14px;">Complete privacy with individual lounge and pantry area.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center; padding: 60px 24px;">
+  <button class="get-btn">GET THIS LAYOUT FOR YOUR PG</button>
+</div>
+
+<footer style="padding: 40px; text-align: center; color: var(--muted); font-size: 12px;">
+  Customizable design for hostels and PG owners in Kutch.
+</footer>
+
+</body>
+</html>
