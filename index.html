@@ -301,8 +301,9 @@ html, body {
 .pgrid-title{font-size:.95rem;font-weight:700;color:#fff;line-height:1.25;}
 .pgrid-views{font-size:.7rem;color:rgba(255,255,255,.6);margin-top:.3rem;}
 .profile-social-meta{width:100%;margin:-.15rem 0 1.2rem;text-align:center;font-size:.7rem;color:rgba(255,255,255,.55);letter-spacing:.06em;text-transform:uppercase;}
-.signout-btn{margin-top:1rem;width:100%;padding:1rem;border-radius:16px;background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);color:#ff6b6b;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .25s cubic-bezier(.16,1,.3,1);}
-.signout-btn.guest{background:rgba(255,107,0,.08);border-color:rgba(255,107,0,.25);color:var(--saffron);}
+.signout-btn{margin-top:1rem;width:100%;padding:1.2rem;border-radius:18px;background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);color:#ff6b6b;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .25s cubic-bezier(.16,1,.3,1);box-shadow:0 4px 20px rgba(0,0,0,0.1);}
+.signout-btn:active{transform:scale(0.98);}
+.signout-btn.guest{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 8px 24px rgba(255,103,31,0.25);}
 .signout-btn:active{transform:scale(.97)}
 
 /* ── ABOUT ── */
@@ -976,9 +977,9 @@ html, body {
       <div class="about-section">
         <div class="about-section-title">🔗 Links</div>
         <div class="about-links">
-          <a class="about-link-btn" href="https://github.com/via-decide" target="_blank" rel="noopener">⭐ GitHub</a>
-          <a class="about-link-btn" href="https://t.me/GN8RBot" target="_blank" rel="noopener">✈ Telegram</a>
-          <a class="about-link-btn" href="https://via-decide.github.io/decide.engine-tools/" target="_blank" rel="noopener">⚙️ Tools</a>
+          <a class="about-link-btn" href="https://github.com/via-decide" target="_blank" rel="noopener noreferrer">⭐ GitHub</a>
+          <a class="about-link-btn" href="https://t.me/GN8RBot" target="_blank" rel="noopener noreferrer">✈ Telegram</a>
+          <a class="about-link-btn" href="https://via-decide.github.io/decide.engine-tools/" target="_blank" rel="noopener noreferrer">⚙️ Tools</a>
         </div>
       </div>
     </div>
@@ -1054,10 +1055,49 @@ html, body {
     <button class="nav-item" data-nav="tools" onclick="switchLayer('tools')">
       <div class="nav-icon">⚡</div><div class="nav-label">Tools</div>
     </button>
-    <button class="nav-item" data-nav="profile" onclick="switchLayer('profile')">
-      <div class="nav-icon">👤</div><div class="nav-label">Profile</div>
+    <button class="nav-item" data-nav="more" onclick="openMore()">
+      <div class="nav-icon">···</div><div class="nav-label">More</div>
     </button>
   </nav>
+</div>
+
+<!-- MORE DRAWER -->
+<div id="more-overlay" class="more-overlay" onclick="closeMore()">
+  <div class="more-drawer" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="more-grid">
+      <div class="more-item" onclick="switchLayer('store');closeMore()">
+        <div class="more-icon">🏪</div>
+        <div class="more-label">Store</div>
+        <div class="more-sub">Blueprint shop</div>
+      </div>
+      <div class="more-item" onclick="switchLayer('about');closeMore()">
+        <div class="more-icon">ℹ️</div>
+        <div class="more-label">About</div>
+        <div class="more-sub">Mission control</div>
+      </div>
+      <div class="more-item" onclick="switchLayer('profile');closeMore()">
+        <div class="more-icon">👤</div>
+        <div class="more-label">Profile</div>
+        <div class="more-sub">Your progress</div>
+      </div>
+      <div class="more-item" onclick="window.open('https://github.com/via-decide','_blank','noopener');closeMore()">
+        <div class="more-icon">⭐</div>
+        <div class="more-label">GitHub</div>
+        <div class="more-sub">Open Source</div>
+      </div>
+      <div class="more-item" onclick="window.open('https://t.me/GN8RBot','_blank','noopener');closeMore()">
+        <div class="more-icon">✈️</div>
+        <div class="more-label">Telegram</div>
+        <div class="more-sub">AI Bot</div>
+      </div>
+      <div class="more-item" onclick="window.open('https://via-decide.github.io/decide.engine-tools/','_blank','noopener');closeMore()">
+        <div class="more-icon">⚙️</div>
+        <div class="more-label">Tools</div>
+        <div class="more-sub">Full engine</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- SHEET -->
@@ -1258,17 +1298,29 @@ function renderUpgradesPanel(data){
   renderUpgradeLog(data&&data.recentCommits);
   panel.classList.remove('upgrade-loading');
 }
+let _upgradesFailCount = 0;
 async function refreshUpgradesPanel(force){
   if(upgradesState.loading&&!force)return;
   const panel=document.getElementById('upgrades-panel');
   if(panel)panel.classList.add('upgrade-loading');
   upgradesState.loading=true;
+  
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+  
   const query=force?'?fresh=1':'';
   try{
-    const response=await fetch('./api/upgrades/status'+query,{headers:{'Accept':'application/json'}});
-    if(!response.ok)throw new Error('Telemetry '+response.status);
+    const response = await fetch('./api/upgrades/status' + query, { 
+      headers: { 'Accept': 'application/json' },
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    
+    if(!response.ok) throw new Error('Telemetry '+response.status);
     const payload=await response.json();
     upgradesState.lastData=payload;
+    _upgradesFailCount = 0; // Reset on success
+
     if(payload&&payload.pollIntervalMs){
       const nextInterval=Number(payload.pollIntervalMs)||upgradesState.intervalMs;
       if(nextInterval!==upgradesState.intervalMs&&upgradesState.timer){
@@ -1280,13 +1332,25 @@ async function refreshUpgradesPanel(force){
     renderUpgradesPanel(payload||{});
   }catch(error){
     console.warn('[VIA] Upgrades telemetry unavailable:', error.message);
-    if(upgradesState.lastData){
-      renderUpgradesPanel(upgradesState.lastData);
+    _upgradesFailCount++;
+    
+    // Stop polling if 3 consecutive failures
+    if (_upgradesFailCount >= 3 && upgradesState.timer) {
+      window.clearInterval(upgradesState.timer);
+      upgradesState.timer = null;
     }
+
+    const fallbackData = upgradesState.lastData || {
+      summary: { totalCommits: 4478, activeMicroservices: 47, integrity: { label: 'STABLE', detail: 'Telemetry offline. Snapshot restored.' } },
+      source: { statusLabel: 'Telemetry Degraded', cacheLabel: 'static-fallback' },
+      generatedAt: new Date().toISOString()
+    };
+    renderUpgradesPanel(fallbackData);
+    
     const pulse=document.getElementById('upgrades-pulse');
     const foot=document.getElementById('upgrade-foot-copy');
-    if(pulse)pulse.textContent='Telemetry degraded';
-    if(foot)foot.innerHTML='Telemetry endpoint unavailable. Panel is holding the last known snapshot and remains read-only.';
+    if(pulse) pulse.textContent='Telemetry degraded';
+    if(foot) foot.innerHTML='Telemetry endpoint timed out or unavailable. Showing static fallback values.';
   }finally{
     upgradesState.loading=false;
   }
@@ -2700,6 +2764,20 @@ function switchLayer(layer, storyKey) {
   if (layer==='profile')  buildProfile();
   if (layer==='tools')    buildToolsGrid();
   if (layer==='store')    { if (typeof initStore === 'function') initStore(); }
+  
+  // Bug 8: Remove top tabs on Feed (keep branding only)
+  const topTabs = document.querySelector('.layer-tabs');
+  if (topTabs) topTabs.style.display = layer === 'feed' ? 'none' : 'flex';
+}
+
+function openMore() {
+  const overlay = document.getElementById('more-overlay');
+  if (overlay) overlay.classList.add('open');
+  addXP(2);
+}
+function closeMore() {
+  const overlay = document.getElementById('more-overlay');
+  if (overlay) overlay.classList.remove('open');
 }
 
 document.querySelectorAll('.layer-tab').forEach(tab=>tab.addEventListener('click',()=>{
@@ -3182,14 +3260,37 @@ function closeSheet(){
 let appStarted=false;
 function startApp(){
   if(appStarted)return;appStarted=true;
+  
+  // Bug 1: Feed Load Guard (4s timeout)
+  const feedTimeout = setTimeout(() => {
+    if (CARDS.length === 0 || (CARDS[0] && CARDS[0].title === 'Loading...')) {
+      console.warn('[VIA] Feed load timeout. Showing fallback.');
+      CARDS = [{
+        id: 'fallback',
+        cat: 'bharat',
+        catLabel: '🇮🇳 Bharat',
+        bg: 'var(--deep)',
+        emoji: '📱',
+        title: "Bharat's Feed",
+        microSummary: "Stories loading — swipe to refresh.",
+        author: 'VIA System',
+        authorEmoji: '⚙️',
+        location: 'Cloud',
+        time: 'Now',
+        likes: '∞'
+      }].concat(DEFAULT_CARDS);
+      buildDeck();
+    }
+  }, 4000);
+
   setTimeout(async()=>{
     try{await VIA.init();}catch(error){console.error('Auth init failed:', error);currentUser=null;authReady=true;renderApp();}
+    clearTimeout(feedTimeout);
     document.getElementById('boot').classList.add('exit');
     document.getElementById('app').classList.add('visible');
     syncCreatorContentSurface();GC.init();buildDiscover();buildProfile();
     renderApp();
     initUpgradesPanel();
-    // Pre-warm Deep Dive so sections aren't empty on first open
     if (typeof ddLoad === 'function') { try { ddLoad('food', null); } catch(_e){} }
     await initMicroFrontendArchitecture();
     await initFederatedRuntime();
@@ -3203,54 +3304,25 @@ window.addEventListener('load',startApp,{once:true});
 <script src="./shared/registry-loader.js"></script>
 <script src="./router.js"></script>
 <script>
-// VIANav shim — bridges legacy VIANav.openPage() calls to VIARouter.navigate()
-window.VIANav = window.VIANav || {};
-if (typeof window.VIANav.openPage !== 'function') {
-  window.VIANav.openPage = function(route) {
-    const routeKey = String(route || 'feed').trim();
-    const canonicalRoute = (window.Router && typeof window.Router.canonicalRoute === 'function')
-      ? window.Router.canonicalRoute(routeKey)
-      : routeKey.toLowerCase();
-    const layerRoutes = { feed: true, discover: true, tools: true, about: true, profile: true, deepdives: true };
-    if (layerRoutes[canonicalRoute] && typeof switchLayer === 'function') {
-      switchLayer(canonicalRoute);
-      return;
-    }
-    if (window.VIARouter && typeof window.VIARouter.navigate === 'function') {
-      window.VIARouter.navigate(canonicalRoute || 'feed');
-      return;
-    }
-    const map = window.Router && window.Router.toolPathStaticMap;
-    const mapped = map && (map[canonicalRoute] || map[routeKey]);
-    const target = mapped
-      ? ('./' + String(mapped).replace(/^\.\//, ''))
-      : ('./' + (canonicalRoute || 'feed').replace(/^\.\//, '').replace(/\.html$/i, '') + '.html');
-    window.location.assign(target);
-  };
-}
-window.VIANav.openPage = window.VIANav.openPage || function(route) {
-  const routeKey = String(route || 'feed').trim();
-  const canonicalRoute = (window.Router && typeof window.Router.canonicalRoute === 'function')
-    ? window.Router.canonicalRoute(routeKey)
-    : routeKey.toLowerCase();
-  if (window.VIARouter && typeof window.VIARouter.navigate === 'function') {
-    window.VIARouter.navigate(canonicalRoute || 'feed');
-    return;
-  }
-  const map = window.Router && window.Router.toolPathStaticMap;
-  const mapped = map && (map[canonicalRoute] || map[routeKey]);
-  const target = mapped
-    ? ('./' + String(mapped).replace(/^\.\//, ''))
-    : ('./' + (canonicalRoute || 'feed').replace(/^\.\//, '').replace(/\.html$/i, '') + '.html');
-  window.location.assign(target);
+// VIANav shim — bridges legacy VIANav.openPage() calls to layer switcher or router
 window.VIANav = window.VIANav || {
   openPage: function(route) {
-    if (window.VIARouter && typeof window.VIARouter.navigate === 'function') {
-      window.VIARouter.navigate(route);
+    const r = String(route || 'feed').trim().toLowerCase();
+    const layerRoutes = { feed:1, discover:1, tools:1, about:1, profile:1, deepdives:1, store:1, explore:1 };
+    
+    if (layerRoutes[r] && typeof switchLayer === 'function') {
+      if (r === 'explore') switchLayer('explore');
+      else switchLayer(r);
       return;
     }
+    
+    if (window.VIARouter && typeof window.VIARouter.navigate === 'function') {
+      window.VIARouter.navigate(r);
+      return;
+    }
+    
     const map = window.Router && window.Router.toolPathStaticMap;
-    const target = (map && map[route]) ? ('./' + map[route].replace(/^\.\//, '')) : ('./' + route + '.html');
+    const target = (map && map[r]) ? ('./' + map[r].replace(/^\.\//, '')) : ('./' + r + '.html');
     window.location.assign(target);
   }
 };
@@ -3296,7 +3368,10 @@ async function buildToolsGrid() {
       if (!res.ok) throw new Error('Registry ' + res.status);
       _toolsData = await res.json();
     } catch (e) {
-      grid.innerHTML = '<div style="text-align:center;padding:20px;color:#ff5040;font-size:12px">Failed to load tools: ' + e.message + '</div>';
+      grid.innerHTML = '<div style="text-align:center;padding:20px;color:#ff5040;font-size:12px;display:flex;flex-direction:column;gap:12px;align-items:center;">'
+        + '<span>Offline: Registry unavailable</span>'
+        + '<a href="https://via-decide.github.io/decide.engine-tools/" target="_blank" rel="noopener" style="padding:8px 16px;background:rgba(255,140,0,.1);border:1px solid rgba(255,140,0,.2);border-radius:8px;color:#ff8c00;text-decoration:none;font-weight:700;">Open Direct Link →</a>'
+        + '</div>';
       return;
     }
   }

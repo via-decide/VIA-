@@ -10,6 +10,7 @@
         },
 
         render() {
+            const guest = !window.VIA || !window.VIA.user || window.VIA.user.is_guest;
             const html = `
                 <div id="agent-console" class="agent-console">
                     <div class="agent-card">
@@ -21,20 +22,29 @@
                             <button onclick="closeAgent()" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">×</button>
                         </div>
                         
-                        <div id="agent-chat" style="height:250px; overflow-y:auto; margin-top:1.5rem; padding-right:10px; display:flex; flex-direction:column; gap:12px; scrollbar-width:none;">
-                            <div class="agent-msg bot">Hello. I am the VIA Agent. I can help you find tools, browse directories, or generate content for your feed. What shall we do today?</div>
-                        </div>
+                        ${guest ? `
+                            <div style="text-align:center; padding:3rem 1rem;">
+                                <div style="font-size:3rem; margin-bottom:1rem; filter: grayscale(1) opacity(0.5);">🤖</div>
+                                <h3 style="font-family:'Syne', sans-serif; font-weight:700; color:#fff; margin-bottom:0.5rem;">VIA Agent</h3>
+                                <p style="font-size:0.9rem; color:rgba(255,255,255,0.6); margin-bottom:2rem;">Your AI command layer. Sign in to activate.</p>
+                                <button onclick="closeAgent(); VIA.openAuth()" class="via-agent-btn" style="width:100%; padding:1rem;">Sign In</button>
+                            </div>
+                        ` : `
+                            <div id="agent-chat" style="height:250px; overflow-y:auto; margin-top:1.5rem; padding-right:10px; display:flex; flex-direction:column; gap:12px; scrollbar-width:none;">
+                                <div class="agent-msg bot">Hello. I am the VIA Agent. I can help you find tools, browse directories, or generate content for your feed. What shall we do today?</div>
+                            </div>
 
-                        <div class="agent-input-wrap" style="position:relative; margin-top:1.5rem;">
-                            <input type="text" id="agent-input" class="agent-input" placeholder="Type a command (e.g. /pull news, /kutch, /write)..." autocomplete="off">
-                            <div style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--saffron); font-size:0.8rem; font-weight:800; opacity:0.6;">↵</div>
-                        </div>
-                        
-                        <div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-                            <button class="agent-chip" onclick="agentCommand('/kutch')">📍 Kutch Map</button>
-                            <button class="agent-chip" onclick="agentCommand('/pull')">🔄 Sync Feed</button>
-                            <button class="agent-chip" onclick="agentCommand('/write')">✍️ Write Post</button>
-                        </div>
+                            <div class="agent-input-wrap" style="position:relative; margin-top:1.5rem;">
+                                <input type="text" id="agent-input" class="agent-input" placeholder="Type a command (e.g. /pull news, /kutch, /write)..." autocomplete="off">
+                                <div style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--saffron); font-size:0.8rem; font-weight:800; opacity:0.6;">↵</div>
+                            </div>
+                            
+                            <div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+                                <button class="agent-chip" onclick="agentCommand('/kutch')">📍 Kutch Map</button>
+                                <button class="agent-chip" onclick="agentCommand('/pull')">🔄 Sync Feed</button>
+                                <button class="agent-chip" onclick="agentCommand('/write')">✍️ Write Post</button>
+                            </div>
+                        `}
                     </div>
                 </div>
                 <style>
