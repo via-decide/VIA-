@@ -1213,29 +1213,14 @@ function renderGuestUI(){
   const pp=document.getElementById('profile-posts');if(pp)pp.textContent='0';
   updateProfileSocialMeta(guestProfile);
 }
-function updateGlobalSession(user){
-  if(typeof window==='undefined')return;
-  if(!user||user.is_guest||!user.id){
-    window.__VIA_SESSION__=null;
-    return;
-  }
-  window.__VIA_SESSION__={
-    uid:user.id,
-    name:user.display_name||user.name||'VIA User',
-    email:user.email||'',
-    avatar:user.avatar_url||user.avatar||''
-  };
-}
 function renderApp(){
   if(!authReady)return;
   logAuthSnapshot();
   if(currentUser){
     syncCurrentUserSocialState();
     renderUserUI(currentUser);
-    updateGlobalSession(currentUser);
   }else{
     renderGuestUI();
-    updateGlobalSession(null);
   }
 }
 
@@ -1708,23 +1693,6 @@ function hydrateFeedCardsWithMicroContent(cards) {
 }
 
 let CARDS = DEFAULT_CARDS.slice();
-const STORIES_FALLBACK_DATA = DEFAULT_CARDS.slice();
-
-async function loadStoriesFeed(){
-  try{
-    const response=await fetch('./api/stories', { headers:{ 'Accept':'application/json' } });
-    if(!response.ok) throw new Error('stories '+response.status);
-    const payload=await response.json();
-    const list=Array.isArray(payload)?payload:(Array.isArray(payload?.stories)?payload.stories:[]);
-    if(!list.length) throw new Error('stories_empty');
-    CARDS=list;
-    return true;
-  }catch(error){
-    console.warn('[VIA] Stories fetch failed:', error.message);
-    CARDS=STORIES_FALLBACK_DATA.slice();
-    return false;
-  }
-}
 
 const DISCOVER_ITEMS = [
   // ── Featured ──────────────────────────────────────────────────
@@ -2824,11 +2792,10 @@ document.querySelectorAll('.layer-tab').forEach(tab=>tab.addEventListener('click
     '/discover':  'discover',
     '/about':     'about',
     '/profile':   'profile',
-    '/store':     'store',
     '/agent':     'agent',
     '/feed':      'feed',
     '/games':     'tools',
-    '/explore':   'explore',
+    '/explore':   'tools',
     '/auth':      'profile',
     '/deepdives': 'deepdives'
   };
@@ -3318,8 +3285,6 @@ function startApp(){
 
   setTimeout(async()=>{
     try{await VIA.init();}catch(error){console.error('Auth init failed:', error);currentUser=null;authReady=true;renderApp();}
-    await loadStoriesFeed();
-    syncCreatorContentSurface({ keepIndex:false });
     clearTimeout(feedTimeout);
     document.getElementById('boot').classList.add('exit');
     document.getElementById('app').classList.add('visible');
@@ -3397,29 +3362,11 @@ async function buildToolsGrid() {
 
   // Load registry directly if not cached
   if (!_toolsData) {
-    const registryCandidates = [
-      './nav-registry.json',
-      '../nav-registry.json',
-      '../../nav-registry.json'
-    ];
     try {
       grid.innerHTML = '<div style="text-align:center;padding:20px;color:#6e6e82;font-size:12px">Loading tools…</div>';
-      let loadedRegistry = null;
-      let lastError = null;
-      for (const candidate of registryCandidates) {
-        try {
-          const res = await fetch(candidate, { cache: 'no-store' });
-          console.log('[VIA] Tools registry response:', candidate, res.status);
-          if (!res.ok) continue;
-          loadedRegistry = await res.json();
-          if (loadedRegistry) break;
-        } catch (error) {
-          lastError = error;
-          console.warn('[VIA] Registry candidate failed:', candidate, error.message);
-        }
-      }
-      if (!loadedRegistry) throw (lastError || new Error('Registry unavailable'));
-      _toolsData = loadedRegistry;
+      const res = await fetch('./nav-registry.json');
+      if (!res.ok) throw new Error('Registry ' + res.status);
+      _toolsData = await res.json();
     } catch (e) {
       grid.innerHTML = '<div style="text-align:center;padding:20px;color:#ff5040;font-size:12px;display:flex;flex-direction:column;gap:12px;align-items:center;">'
         + '<span>Offline: Registry unavailable</span>'
@@ -3458,13 +3405,7 @@ function renderToolsList() {
   if (!grid || !_toolsData) return;
 
   const query = (document.getElementById('tools-search')?.value || '').trim().toLowerCase();
-  let tools = Array.isArray(_toolsData.tools) ? _toolsData.tools : [];
-  if (!tools.length && _toolsData.registry && Array.isArray(_toolsData.registry.tools)) {
-    tools = _toolsData.registry.tools;
-  }
-  if (!tools.length && Array.isArray(_toolsData.items)) {
-    tools = _toolsData.items;
-  }
+  let tools = _toolsData.tools || [];
 
   // Filter by search
   if (query) {
