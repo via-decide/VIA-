@@ -5,6 +5,10 @@ Fix the submodule data-sync blockade (CORS & Session passing). 1. In the main in
 
 CONSTRAINTS
 Must use defense-grade token handling. Never expose the raw Google OAuth keys in the frontend URL parameters.
+Fix the '404 on Refresh' bug by implementing a Sovereign Reverse Proxy routing rule. 1. Create or update the nginx.conf (or vercel.json/netlify.toml depending on host). 2. Implement the Catch-All SPA fallback: All requests to /mars/* or /orchade/* must resolve back to the main index.html WITHOUT changing the URL in the browser. 3. Map the proxy routes explicitly so the main server knows exactly where the cloned submodule assets live.
+
+CONSTRAINTS
+Do not disrupt the /api/auth Google Login routes.
 
 PROCESS (MANDATORY)
 1. Read README.md and AGENTS.md before editing.
