@@ -726,6 +726,10 @@ section {
 
 </div><!-- end .page -->
 
+<!-- SECURITY + AGENT PROTOCOLS -->
+<script src="./shared/security-harden.js"></script>
+<script src="./js/viadecide-agent.js"></script>
+
 <!-- THREE.JS + SCROLL LOGIC -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -799,9 +803,22 @@ window.addEventListener('touchmove', e => {
 }, { passive: true });
 
 let frame = 0;
-function animate() {
+let lastRenderTime = 0;
+const FPS_CAP = 60;
+const MS_PER_FRAME = 1000 / FPS_CAP;
+
+function animate(time) {
   requestAnimationFrame(animate);
+  
+  // Performance: Throttle to FPS_CAP
+  if (time - lastRenderTime < MS_PER_FRAME) return;
+  lastRenderTime = time;
+  
   frame++;
+  const isMoving = Math.abs(targetScrollY - scrollY) > 0.1;
+  
+  // Only update if moving or every N frames to save battery
+  if (!isMoving && frame % 2 !== 0) return;
 
   scrollY += (targetScrollY - scrollY) * 0.06;
 
@@ -817,7 +834,7 @@ function animate() {
 
   renderer.render(scene, camera);
 }
-animate();
+requestAnimationFrame(animate);
 
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
