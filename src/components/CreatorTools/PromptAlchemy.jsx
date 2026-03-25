@@ -1,556 +1,216 @@
 /**
- * PROMPT ALCHEMY — First Creator Tool for ViaDedide
- * Multi-model support (Claude, Gemini, ChatGPT)
- * Works standalone or as part of Creator Suite
+ * PROMPT ALCHEMY — Premium Creator Tool for ViaDedide
+ * Unified with VIA Agent Service & Gemini API
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const PromptAlchemy = ({ platform = 'instagram', onGenerate }) => {
+const PromptAlchemy = ({ platform = 'instagram' }) => {
+  const navigate = useNavigate();
   const [input, setInput] = useState('');
   const [tone, setTone] = useState('balanced');
-  const [modelProvider, setModelProvider] = useState('claude');
+  const [activeModel, setActiveModel] = useState('gemini'); // Default to Gemini in VIA
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
-  const [copiedIndex, setCopiedIndex] = useState(null);
+  const [copied, setCopied] = useState(false);
 
-  // MOCK ANALYTICS (Day 3 Feature)
-  const sendAnalytics = (data) => {
-    console.log('[Analytics Event sent]:', data);
-    // In production, this would go to Mixpanel/PostHog
+  // Platform Map
+  const platformData = {
+    instagram: { icon: '📸', color: '#E1306C', label: 'Instagram', detail: 'Engagement & Visual Focus' },
+    linkedin: { icon: '💼', color: '#0077B5', label: 'LinkedIn', detail: 'Professional Authority' },
+    youtube: { icon: '🎥', color: '#FF0000', label: 'YouTube', detail: 'High Conversation titles' },
+    x: { icon: '🐦', color: '#1DA1F2', label: 'X / Twitter', detail: 'Viral Hooks & Threads' }
   };
 
+  const current = platformData[platform] || platformData.instagram;
 
   const toneOptions = {
     instagram: [
       { value: 'casual', label: 'Casual & Fun' },
-      { value: 'professional', label: 'Professional' },
-      { value: 'viral', label: 'Viral-Focused' },
-      { value: 'educational', label: 'Educational' },
+      { value: 'viral', label: 'Viral Hook' },
+      { value: 'educational', label: 'Value-First' }
     ],
     linkedin: [
       { value: 'professional', label: 'Executive' },
       { value: 'thought-leader', label: 'Thought Leader' },
-      { value: 'storyteller', label: 'Story-Driven' },
-      { value: 'data-driven', label: 'Data-Focused' },
+      { value: 'storyteller', label: 'Story-Driven' }
     ],
     youtube: [
-      { value: 'engaging', label: 'Engaging' },
-      { value: 'educational', label: 'Educational' },
-      { value: 'entertaining', label: 'Entertaining' },
-      { value: 'urgent', label: 'Urgent' },
+      { value: 'engaging', label: 'High Click-Rate' },
+      { value: 'educational', label: 'How-To Logic' }
     ],
     x: [
-      { value: 'witty', label: 'Witty & Quick' },
-      { value: 'thought-provoking', label: 'Thought-Provoking' },
-      { value: 'viral', label: 'Viral-Focused' },
-      { value: 'data-driven', label: 'Data-Backed' },
+      { value: 'witty', label: 'Witty & Sharp' },
+      { value: 'viral', label: 'Viral Thread' }
     ],
   };
 
-  const modelOptions = [
-    { value: 'claude', label: 'Claude (Fastest)', icon: '🤖' },
-    { value: 'gemini', label: 'Gemini 2.0', icon: '✨' },
-    { value: 'openai', label: 'ChatGPT-4', icon: '⚡' },
-  ];
-
-  const contentTypes = {
-    instagram: 'caption',
-    linkedin: 'article',
-    youtube: 'title',
-    x: 'thread',
-  };
-
-  const handleGenerate = useCallback(async () => {
-    if (!input.trim()) {
-      setError('Please paste or type your content first');
-      return;
-    }
-
+  const handleGenerate = async () => {
+    if (!input.trim()) return;
+    
     setLoading(true);
     setError(null);
-    setResult(null);
+
+    // Prompt Engineering for VIA
+    const prompt = `Platform: ${platform.toUpperCase()}\nTone: ${tone}\nTopic/Context: ${input}\n\nPlease generate a high-engagement post version and 2 variants. Make it India-centric and professional. Use emojis sparingly but effectively. Format as JSON: { "primary": "...", "variants": ["...", "..."], "metrics": { "engagement": 85, "readability": 90 } }`;
 
     try {
-      const response = await fetch('/api/generate', {
+      // Direct Gemini Call (Syncing with AgentService pattern)
+      const apiKey = localStorage.getItem('via_gemini_key') || '';
+      if (!apiKey) throw new Error('Gemini API Key missing. Please set in Profile.');
+
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          platform,
-          contentType: contentTypes[platform],
-          content: input,
-          tone,
-          modelProvider,
-        }),
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { response_mime_type: "application/json" }
+        })
       });
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.statusText}`);
-      }
+      if (!response.ok) throw new Error('AI Engine failed to respond.');
 
       const data = await response.json();
-      setResult(data);
+      const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      const parsed = JSON.parse(rawText);
       
-      // Callback for parent component
-      if (onGenerate) {
-        onGenerate({
-          platform,
-          modelProvider,
-          contentType: contentTypes[platform],
-          characterCount: data.metadata.characterCount,
+      setResult(parsed);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || 'Alchemy process failed. Check your API key.');
+      
+      // Fallback result for demo if key is missing
+      if (err.message.includes('missing')) {
+        setResult({
+          primary: `🚀 Designing the future of Bharat! Just optimized my creator flow for ${platform}. Always be building. #VIA #BuildInPublic`,
+          variants: [
+            "Structure beats raw prompts every time. Using VIA to architect my next pivot.",
+            "If you're still using basic AI for content, you're falling behind the synthesis curve."
+          ],
+          metrics: { engagement: 74, readability: 88 }
         });
       }
-
-      // Day 3 built-in analytics push
-      sendAnalytics({
-        event: 'content_generated',
-        platform,
-        model: modelProvider,
-        contentLength: data.metadata.characterCount,
-        engagementScore: data.metadata.engagementScore,
-        timestamp: Date.now()
-      });
-    } catch (err) {
-      setError(err.message || 'Failed to generate content. Please try again.');
-      console.error('Generation error:', err);
     } finally {
       setLoading(false);
     }
-  }, [input, tone, modelProvider, platform, onGenerate]);
-
-  const handleCopy = (text, index) => {
-    navigator.clipboard.writeText(text);
-    setCopiedIndex(index);
-    setTimeout(() => setCopiedIndex(null), 2000);
   };
 
-  const currentToneOptions = toneOptions[platform] || toneOptions.instagram;
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
-    <div style={styles.container}>
-      {/* Header */}
-      <div style={styles.header}>
-        <h1 style={styles.title}>✨ Prompt Alchemy</h1>
-        <p style={styles.subtitle}>
-          Optimize your content for {platform}. Works with Claude, Gemini, ChatGPT.
-        </p>
-      </div>
-
-      {/* Input Section */}
-      <div style={styles.section}>
-        <label style={styles.label}>Your Content</label>
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder={`Paste your ${contentTypes[platform]} draft here...`}
-          style={styles.textarea}
-        />
-        <span style={styles.characterCount}>
-          {input.length} characters
-        </span>
-      </div>
-
-      {/* Controls */}
-      <div style={styles.controlsGrid}>
-        {/* Tone Selector */}
-        <div style={styles.controlGroup}>
-          <label style={styles.label}>Tone</label>
-          <select
-            value={tone}
-            onChange={(e) => setTone(e.target.value)}
-            style={styles.select}
+    <div className="min-h-screen bg-via-dark text-white font-sans p-4 md:p-8 animate-in fade-in duration-700">
+      <div className="max-w-3xl mx-auto">
+        
+        {/* Header */}
+        <header className="flex items-center justify-between mb-8">
+          <button 
+            onClick={() => navigate('/creator')}
+            className="text-white/40 hover:text-white transition-colors flex items-center gap-2 text-sm font-bold tracking-tighter"
           >
-            {currentToneOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
+            ← BEYOND THE SUITE
+          </button>
+          <div className="px-3 py-1 rounded-full bg-via-gold/10 border border-via-gold/20 text-via-gold text-[10px] font-bold uppercase tracking-widest">
+            Prompt Alchemy v1.2
+          </div>
+        </header>
 
-        {/* Model Selector */}
-        <div style={styles.controlGroup}>
-          <label style={styles.label}>AI Model</label>
-          <select
-            value={modelProvider}
-            onChange={(e) => setModelProvider(e.target.value)}
-            style={styles.select}
-          >
-            {modelOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.icon} {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {/* Error Display */}
-      {error && (
-        <div style={styles.error}>
-          <span style={styles.errorIcon}>⚠️</span>
-          {error}
-        </div>
-      )}
-
-      {/* Generate Button */}
-      <button
-        onClick={handleGenerate}
-        disabled={loading || !input.trim()}
-        style={{
-          ...styles.button,
-          opacity: loading || !input.trim() ? 0.5 : 1,
-          cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',
-        }}
-      >
-        {loading ? (
-          <>
-            <span style={styles.spinner}>⟳</span> Optimizing...
-          </>
-        ) : (
-          '→ Optimize & Generate'
-        )}
-      </button>
-
-      {/* Results */}
-      {result && (
-        <div style={styles.resultsSection}>
-          <h2 style={styles.resultsTitle}>Generated Content</h2>
-
-          {/* Primary Output */}
-          <div style={styles.outputCard}>
-            <div style={styles.outputHeader}>
-              <span style={styles.outputLabel}>Primary Version</span>
-              <span style={styles.badge}>
-                {result.metadata.characterCount} chars
-              </span>
+        <section className="glass-panel rounded-3xl p-8 mb-8 border-via-accent/20">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" style={{ background: `${current.color}22`, border: `1px solid ${current.color}44` }}>
+              {current.icon}
             </div>
-            <p style={styles.outputText}>{result.generated}</p>
-            <div style={styles.outputFooter}>
-              {result.metadata.hashtags.length > 0 && (
-                <div style={styles.hashtags}>
-                  {result.metadata.hashtags.map((tag) => (
-                    <span key={tag} style={styles.hashtag}>
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-              <button
-                onClick={() => handleCopy(result.generated, 'primary')}
-                style={{
-                  ...styles.copyButton,
-                  background:
-                    copiedIndex === 'primary' ? '#10b981' : 'transparent',
-                }}
-              >
-                {copiedIndex === 'primary' ? '✓ Copied' : 'Copy'}
-              </button>
+            <div>
+              <h1 className="text-2xl font-syne font-extrabold">{current.label} Optimizer</h1>
+              <p className="text-white/40 text-xs">{current.detail}</p>
             </div>
           </div>
 
-          {/* Variants */}
-          {result.variants && result.variants.length > 0 && (
-            <div style={styles.variantsSection}>
-              <h3 style={styles.variantsTitle}>Alternative Versions</h3>
-              {result.variants.map((variant, index) => (
-                <div key={index} style={styles.variantCard}>
-                  <div style={styles.variantLabel}>Variant {index + 1}</div>
-                  <p style={styles.variantText}>{variant}</p>
-                  <button
-                    onClick={() => handleCopy(variant, `variant-${index}`)}
-                    style={{
-                      ...styles.copyButton,
-                      background:
-                        copiedIndex === `variant-${index}`
-                          ? '#10b981'
-                          : 'transparent',
-                    }}
-                  >
-                    {copiedIndex === `variant-${index}` ? '✓ Copied' : 'Copy'}
-                  </button>
+          <div className="space-y-6">
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-widest text-white/50 mb-3 ml-1">Input Concept / Hook</label>
+              <textarea 
+                className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-sm focus:border-via-accent transition-colors min-h-[120px] outline-none"
+                placeholder="Paste your raw idea or a draft that needs 'alchemy'..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-white/50 mb-3 ml-1">Tone Profile</label>
+                <select 
+                  className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm focus:border-via-accent transition-colors outline-none appearance-none"
+                  value={tone}
+                  onChange={(e) => setTone(e.target.value)}
+                >
+                  {(toneOptions[platform] || toneOptions.instagram).map(o => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-end">
+                <button 
+                  onClick={handleGenerate}
+                  disabled={loading || !input.trim()}
+                  className="w-full h-[46px] bg-via-accent hover:bg-via-accent/80 disabled:opacity-30 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-via-accent/20"
+                >
+                  {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : '✨ ALCHEMIZE'}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {error && <div className="mt-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-bold text-center uppercase tracking-widest">{error}</div>}
+        </section>
+
+        {/* Results */}
+        {result && (
+          <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500 pb-20">
+            <article className="glass-panel rounded-2xl p-6 border-via-gold/20 shadow-xl shadow-via-gold/5">
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-via-gold">Primary Output</span>
+                <button onClick={() => copyToClipboard(result.primary)} className="text-[10px] font-bold uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity">
+                  {copied ? '✓ COPIED' : 'COPY CONTEXT'}
+                </button>
+              </div>
+              <p className="text-white/90 leading-relaxed text-sm">{result.primary}</p>
+              
+              <div className="mt-6 pt-6 border-t border-white/5 grid grid-cols-2 gap-8">
+                <div>
+                  <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-1">Engagement Est.</div>
+                  <div className="text-xl font-syne font-bold text-via-accent">{result.metrics.engagement}%</div>
+                </div>
+                <div>
+                  <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-1">Readability</div>
+                  <div className="text-xl font-syne font-bold text-via-gold">{result.metrics.readability}</div>
+                </div>
+              </div>
+            </article>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {result.variants.map((v, i) => (
+                <div key={i} className="glass-panel rounded-2xl p-5 hover:bg-white/5 transition-colors cursor-pointer group" onClick={() => copyToClipboard(v)}>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">Variant {i+1}</span>
+                    <span className="text-[9px] opacity-0 group-hover:opacity-100 transition-opacity text-via-gold">CLICK TO COPY</span>
+                  </div>
+                  <p className="text-white/70 text-xs line-clamp-3">{v}</p>
                 </div>
               ))}
             </div>
-          )}
-
-          {/* Metadata */}
-          <div style={styles.metadataSection}>
-            <div style={styles.metadataItem}>
-              <span style={styles.metadataLabel}>Model Used</span>
-              <span style={styles.metadataValue}>
-                {modelOptions.find((m) => m.value === modelProvider)?.label}
-              </span>
-            </div>
-            <div style={styles.metadataItem}>
-              <span style={styles.metadataLabel}>Engagement Score</span>
-              <span style={styles.metadataValue}>
-                {result.metadata.engagementScore}/100
-              </span>
-            </div>
-            <div style={styles.metadataItem}>
-              <span style={styles.metadataLabel}>Status</span>
-              <span style={styles.metadataValue}>Ready to post</span>
-            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Info Box */}
-      <div style={styles.infoBox}>
-        💡 Generated content optimized for {platform}. Safe to edit. Use any version above.
       </div>
     </div>
   );
-};
-
-// ============================================================================
-// STYLES
-// ============================================================================
-
-const styles = {
-  container: {
-    maxWidth: '800px',
-    margin: '0 auto',
-    padding: '2rem',
-    fontFamily:
-      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-    color: '#1f2937',
-    background: '#ffffff',
-  },
-  header: {
-    marginBottom: '2.5rem',
-    textAlign: 'center',
-  },
-  title: {
-    fontSize: '28px',
-    fontWeight: 600,
-    margin: '0 0 0.5rem 0',
-  },
-  subtitle: {
-    fontSize: '14px',
-    color: '#6b7280',
-    margin: 0,
-  },
-  section: {
-    marginBottom: '2rem',
-  },
-  label: {
-    display: 'block',
-    fontSize: '13px',
-    fontWeight: 500,
-    marginBottom: '0.5rem',
-    color: '#374151',
-  },
-  textarea: {
-    width: '100%',
-    padding: '12px',
-    fontSize: '14px',
-    lineHeight: '1.6',
-    border: '1px solid #e5e7eb',
-    borderRadius: '8px',
-    fontFamily: 'inherit',
-    resize: 'vertical',
-    minHeight: '120px',
-    boxSizing: 'border-box',
-  },
-  characterCount: {
-    display: 'block',
-    fontSize: '12px',
-    color: '#9ca3af',
-    marginTop: '0.5rem',
-  },
-  controlsGrid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '1rem',
-    marginBottom: '1.5rem',
-  },
-  controlGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  select: {
-    padding: '10px 12px',
-    fontSize: '14px',
-    border: '1px solid #e5e7eb',
-    borderRadius: '8px',
-    fontFamily: 'inherit',
-    cursor: 'pointer',
-    background: '#ffffff',
-  },
-  error: {
-    padding: '12px',
-    marginBottom: '1.5rem',
-    background: '#fee2e2',
-    border: '1px solid #fecaca',
-    borderRadius: '8px',
-    fontSize: '13px',
-    color: '#991b1b',
-    display: 'flex',
-    gap: '8px',
-    alignItems: 'center',
-  },
-  errorIcon: {
-    fontSize: '16px',
-  },
-  button: {
-    width: '100%',
-    padding: '12px',
-    fontSize: '15px',
-    fontWeight: 500,
-    background: '#1f2937',
-    color: '#ffffff',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    marginBottom: '2rem',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '8px',
-  },
-  spinner: {
-    display: 'inline-block',
-    animation: 'spin 1s linear infinite',
-  },
-  resultsSection: {
-    marginBottom: '2rem',
-    padding: '1.5rem',
-    background: '#f9fafb',
-    borderRadius: '12px',
-    border: '1px solid #e5e7eb',
-  },
-  resultsTitle: {
-    fontSize: '18px',
-    fontWeight: 600,
-    margin: '0 0 1rem 0',
-  },
-  outputCard: {
-    background: '#ffffff',
-    padding: '1.25rem',
-    borderRadius: '8px',
-    border: '1px solid #e5e7eb',
-    marginBottom: '1rem',
-  },
-  outputHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '1rem',
-  },
-  outputLabel: {
-    fontSize: '13px',
-    fontWeight: 600,
-    color: '#374151',
-  },
-  badge: {
-    fontSize: '12px',
-    background: '#dbeafe',
-    color: '#1e40af',
-    padding: '4px 8px',
-    borderRadius: '4px',
-  },
-  outputText: {
-    fontSize: '14px',
-    lineHeight: '1.7',
-    color: '#1f2937',
-    margin: '0 0 1rem 0',
-    whiteSpace: 'pre-wrap',
-    wordBreak: 'break-word',
-  },
-  outputFooter: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    gap: '1rem',
-    flexWrap: 'wrap',
-  },
-  hashtags: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '6px',
-    flex: 1,
-  },
-  hashtag: {
-    fontSize: '12px',
-    color: '#0891b2',
-    background: '#ecf0f1',
-    padding: '4px 8px',
-    borderRadius: '4px',
-  },
-  copyButton: {
-    padding: '6px 12px',
-    fontSize: '12px',
-    fontWeight: 500,
-    border: '1px solid #d1d5db',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-    whiteSpace: 'nowrap',
-  },
-  variantsSection: {
-    marginTop: '1.5rem',
-  },
-  variantsTitle: {
-    fontSize: '14px',
-    fontWeight: 600,
-    margin: '0 0 1rem 0',
-    color: '#374151',
-  },
-  variantCard: {
-    background: '#ffffff',
-    padding: '1rem',
-    borderRadius: '8px',
-    border: '1px solid #e5e7eb',
-    marginBottom: '0.75rem',
-  },
-  variantLabel: {
-    fontSize: '12px',
-    fontWeight: 600,
-    color: '#6b7280',
-    marginBottom: '0.5rem',
-  },
-  variantText: {
-    fontSize: '13px',
-    lineHeight: '1.6',
-    color: '#1f2937',
-    margin: '0 0 0.75rem 0',
-  },
-  metadataSection: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '1rem',
-    marginTop: '1.5rem',
-    paddingTop: '1.5rem',
-    borderTop: '1px solid #e5e7eb',
-  },
-  metadataItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '4px',
-  },
-  metadataLabel: {
-    fontSize: '12px',
-    color: '#6b7280',
-    fontWeight: 500,
-  },
-  metadataValue: {
-    fontSize: '14px',
-    fontWeight: 600,
-    color: '#1f2937',
-  },
-  infoBox: {
-    padding: '12px',
-    background: '#dbeafe',
-    border: '1px solid #bfdbfe',
-    borderRadius: '8px',
-    fontSize: '12px',
-    color: '#1e40af',
-  },
 };
 
 export default PromptAlchemy;
