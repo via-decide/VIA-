@@ -7,7 +7,8 @@
   'use strict';
 
   const SUBPAGES = {
-    feed: './index.html',
+    feed: './viadecide.html',
+    viadecide: './viadecide.html',
     discover: './discover.html',
     about: './about.html',
     profile: './profile.html',

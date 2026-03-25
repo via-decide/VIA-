@@ -1,898 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>ViaDecide — AI Decision Architecture</title>
-<!-- Meta Tags for Instagram/Facebook Ads -->
-<meta name="description" content="AI can generate anything. But clarity comes from structure. ViaDecide is the decision-architecture platform for individuals and teams." />
-<meta property="og:title" content="ViaDecide — Precision in Decision Making" />
-<meta property="og:description" content="Stop prompting chatbots. Start structuring your decisions. Try the ViaDecide engine today." />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://www.viadecide.com/" />
-<!-- Add your actual preview image URL below for ads -->
-<meta property="og:image" content="https://www.viadecide.com/preview.jpg" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ViaDecide | Decision Intelligence Platform</title>
+  <meta name="description" content="ViaDecide helps founders, teams, and researchers make high-stakes decisions with structured frameworks." />
+  <style>
+    :root {
+      --bg: #080b12;
+      --card: #101827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --brand: #60a5fa;
+      --brand-strong: #3b82f6;
+      --border: rgba(148, 163, 184, 0.25);
+    }
 
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
-<style>
-:root {
-  --black: #060606;
-  --gold: #c8a84b;
-  --gold-light: #e8c96a;
-  --gold-dim: rgba(200,168,75,0.15);
-  --off-white: #f0ede6;
-  --muted: #5a5652;
-  --card: #0d0d0d;
-  --border: rgba(200,168,75,0.16);
-  --green: #3dca6a;
-}
+    * { box-sizing: border-box; }
 
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;overflow-x:hidden}
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 20% 0%, #111c32 0%, var(--bg) 40%), var(--bg);
+      min-height: 100vh;
+    }
 
-body {
-  background: var(--black);
-  color: var(--off-white);
-  font-family: 'DM Mono', monospace;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 64px 24px;
+    }
 
-/* ── CANVAS BG ── */
-#bg-canvas {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 0;
-  pointer-events: none;
-}
+    .badge {
+      display: inline-block;
+      border: 1px solid var(--border);
+      background: rgba(96, 165, 250, 0.1);
+      color: #bfdbfe;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
 
-/* ── SCROLL CONTAINER ── */
-.page { position: relative; z-index: 1; }
+    h1 {
+      margin: 18px 0 16px;
+      line-height: 1.1;
+      font-size: clamp(2.2rem, 4.5vw, 4rem);
+      max-width: 840px;
+    }
 
-/* ── SECTION BASE ── */
-section {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 80px 24px;
-  max-width: 520px;
-  margin: 0 auto;
-  position: relative;
-}
+    .sub {
+      color: var(--muted);
+      max-width: 700px;
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
 
-/* ══════════════════════════════
-   HERO SECTION
-══════════════════════════════ */
-#hero {
-  min-height: 100vh;
-  justify-content: center;
-  align-items: flex-start;
-  text-align: left;
-  padding-top: 100px;
-}
+    .cta-row {
+      margin-top: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
 
-.hero-tag {
-  font-size: 9px;
-  letter-spacing: 0.35em;
-  text-transform: uppercase;
-  color: var(--gold);
-  opacity: 0.8;
-  margin-bottom: 28px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.hero-tag::before {
-  content: '';
-  display: inline-block;
-  width: 24px; height: 1px;
-  background: var(--gold);
-  opacity: 0.5;
-}
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      padding: 14px 20px;
+      text-decoration: none;
+      font-weight: 600;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
 
-.hero-name {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: clamp(52px, 14vw, 80px);
-  line-height: 0.92;
-  letter-spacing: -0.04em;
-  margin-bottom: 24px;
-  transform-style: preserve-3d;
-}
-.hero-name .line1 { display: block; color: var(--off-white); }
-.hero-name .line2 {
-  display: block;
-  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 60%, #8a5e1a 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+    .btn-primary {
+      background: linear-gradient(135deg, var(--brand), var(--brand-strong));
+      color: #0b1220;
+    }
 
-.hero-sub {
-  font-family: 'Instrument Serif', serif;
-  font-size: 20px;
-  line-height: 1.6;
-  color: var(--muted);
-  margin-bottom: 40px;
-  max-width: 380px;
-}
-.hero-sub em { color: var(--off-white); font-style: italic; }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
 
-/* HERO CTA */
-.hero-cta-wrapper {
-  margin-bottom: 48px;
-  width: 100%;
-  max-width: 300px;
-}
+    .btn-secondary {
+      border-color: var(--border);
+      color: var(--text);
+      background: rgba(148, 163, 184, 0.1);
+    }
 
-/* LIVE PILL */
-.live-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(61,202,106,0.07);
-  border: 1px solid rgba(61,202,106,0.25);
-  border-radius: 100px;
-  padding: 8px 16px;
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  color: var(--green);
-  text-transform: uppercase;
-  margin-bottom: 24px;
-}
-.live-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 8px var(--green);
-  animation: livepulse 2s infinite;
-}
-@keyframes livepulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+    .grid {
+      margin-top: 48px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
 
-/* SCROLL HINT */
-.scroll-hint {
-  position: absolute;
-  bottom: 36px;
-  left: 24px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 9px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
-  animation: bounce 2.5s ease infinite;
-}
-.scroll-hint::after {
-  content: '';
-  display: block;
-  width: 1px;
-  height: 40px;
-  background: linear-gradient(to bottom, var(--gold), transparent);
-  animation: drip 2.5s ease infinite;
-}
-@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
-@keyframes drip { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
+    .card {
+      background: rgba(16, 24, 39, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+    }
 
-/* ══════════════════════════════
-   STATS STRIP
-══════════════════════════════ */
-.stats-strip {
-  display: grid;
-  grid-template-columns: repeat(2,1fr);
-  gap: 10px;
-  margin-bottom: 0;
-  padding: 60px 24px 0;
-  max-width: 520px;
-  margin: 0 auto;
-}
-.stat-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px 18px;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.3s ease, border-color 0.3s ease;
-}
-.stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, var(--gold), transparent);
-}
-.stat-card.reveal { animation: cardIn 0.6s ease both; }
-@keyframes cardIn {
-  from { opacity:0; transform: translateY(30px) rotateX(8deg); }
-  to   { opacity:1; transform: translateY(0) rotateX(0deg); }
-}
-.stat-num {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: clamp(22px, 6vw, 30px);
-  color: var(--gold-light);
-  line-height: 1;
-  margin-bottom: 4px;
-}
-.stat-lbl {
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
 
-/* ══════════════════════════════
-   SECTIONS — SHARED
-══════════════════════════════ */
-.sec-label {
-  font-size: 9px;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: var(--gold);
-  opacity: 0.7;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.sec-label::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-.reveal-el {
-  opacity: 0;
-  transform: translateY(40px) rotateX(6deg);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-  transform-origin: center top;
-}
-.reveal-el.visible {
-  opacity: 1;
-  transform: translateY(0) rotateX(0deg);
-}
-
-/* ══════════════════════════════
-   ABOUT / VALUE PROP SECTION
-══════════════════════════════ */
-#about { padding-top: 40px; }
-
-.about-body {
-  font-family: 'Instrument Serif', serif;
-  font-size: 20px;
-  line-height: 1.6;
-  color: #b0ab9e;
-  margin-bottom: 28px;
-}
-.about-body strong { color: var(--off-white); font-weight: normal; }
-
-/* PILLS */
-.pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-bottom: 0;
-}
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: rgba(200,168,75,0.06);
-  border: 1px solid rgba(200,168,75,0.2);
-  border-radius: 100px;
-  padding: 5px 12px;
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  color: #9a9488;
-  transition: border-color 0.2s, color 0.2s;
-}
-.pill:hover { border-color: var(--gold); color: var(--gold-light); }
-.pill-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); }
-
-/* ══════════════════════════════
-   FEATURES SECTION
-══════════════════════════════ */
-#features { padding-top: 20px; }
-
-.proj-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 24px 0;
-  border-bottom: 1px solid rgba(200,168,75,0.07);
-  text-decoration: none;
-  transition: transform 0.2s ease;
-}
-.proj-item:last-child { border-bottom: none; }
-
-.proj-num {
-  font-family: 'Syne', sans-serif;
-  font-weight: 700;
-  font-size: 11px;
-  color: rgba(200,168,75,0.35);
-  letter-spacing: 0.1em;
-  width: 24px;
-  flex-shrink: 0;
-  padding-top: 2px;
-}
-.proj-icon {
-  width: 44px; height: 44px;
-  border-radius: 10px;
-  background: rgba(200,168,75,0.07);
-  border: 1px solid rgba(200,168,75,0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  flex-shrink: 0;
-  transition: background 0.2s, border-color 0.2s;
-}
-.proj-item:hover .proj-icon { background: rgba(200,168,75,0.14); border-color: rgba(200,168,75,0.35); }
-
-.proj-info { flex: 1; }
-.proj-name {
-  font-family: 'Syne', sans-serif;
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--off-white);
-  margin-bottom: 6px;
-}
-.proj-desc { font-size: 13px; font-family: 'Instrument Serif', serif; line-height: 1.5; color: #8e8a82; }
-
-
-/* ══════════════════════════════
-   AUDIENCE
-══════════════════════════════ */
-#audience { padding-top: 20px; }
-
-.aud-grid { display: grid; gap: 9px; }
-.aud-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px 18px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  transition: border-color 0.2s, transform 0.2s;
-}
-.aud-card:hover { border-color: rgba(200,168,75,0.3); transform: translateX(4px); }
-.aud-icon { font-size: 24px; flex-shrink: 0; }
-.aud-title {
-  font-family: 'Syne', sans-serif;
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--off-white);
-  margin-bottom: 3px;
-}
-.aud-desc { font-size: 10px; color: var(--muted); line-height: 1.4; }
-
-/* ══════════════════════════════
-   FOUNDER & CTA SECTION
-══════════════════════════════ */
-#cta { padding-top: 20px; padding-bottom: 100px; }
-
-.quote {
-  border-left: 2px solid var(--gold);
-  padding: 16px 20px;
-  margin-bottom: 36px;
-  background: rgba(200,168,75,0.03);
-  border-radius: 0 12px 12px 0;
-}
-.quote-text {
-  font-family: 'Instrument Serif', serif;
-  font-style: italic;
-  font-size: 17px;
-  line-height: 1.65;
-  color: #8a8680;
-}
-.quote-attr {
-  font-size: 9px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(200,168,75,0.55);
-  margin-top: 10px;
-}
-
-.links-stack { display: flex; flex-direction: column; gap: 10px; }
-
-.link-btn {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  text-decoration: none;
-  border-radius: 10px;
-  padding: 18px 20px;
-  font-family: 'Syne', sans-serif;
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  transition: transform 0.15s ease, opacity 0.15s, box-shadow 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-  position: relative;
-  overflow: hidden;
-}
-.link-btn:active { transform: scale(0.97); opacity: 0.9; }
-
-.link-btn.primary {
-  background: linear-gradient(135deg, var(--gold) 0%, #b8922e 100%);
-  color: #080600;
-  box-shadow: 0 4px 20px rgba(200,168,75,0.2);
-}
-.link-btn.primary:hover {
-  box-shadow: 0 6px 25px rgba(200,168,75,0.4);
-}
-.link-btn.primary .btn-label { color: #0a0800; font-weight: 800;}
-.link-btn.primary .btn-arrow { color: rgba(10,8,0,0.6); }
-
-.link-btn.secondary {
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--off-white);
-}
-.link-btn.secondary:hover { border-color: rgba(200,168,75,0.4); }
-
-.btn-left { display: flex; align-items: center; gap: 12px; }
-.btn-emoji { font-size: 18px; }
-.btn-label { font-size: 12px; }
-.btn-arrow { font-size: 16px; opacity: 0.5; }
-
-/* INSTAGRAM SPECIFIC CARD */
-.ig-card {
-  background: linear-gradient(145deg, #1a130a, #0a0805);
-  border: 1px solid rgba(200,168,75,0.3);
-  border-radius: 12px;
-  padding: 24px;
-  text-align: center;
-  margin-bottom: 24px;
-  position: relative;
-  overflow: hidden;
-}
-.ig-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-}
-.ig-handle {
-  font-family: 'Syne', sans-serif;
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--off-white);
-  margin-bottom: 8px;
-}
-.ig-desc {
-  font-size: 11px;
-  color: var(--muted);
-  margin-bottom: 16px;
-  line-height: 1.5;
-}
-
-/* FOOTER */
-.footer {
-  text-align: center;
-  padding: 40px 24px 60px;
-  position: relative;
-  z-index: 1;
-}
-.footer-name {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: 12px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 8px;
-}
-.footer-sub {
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-/* ══════════════════════════════
-   TICKER
-══════════════════════════════ */
-.ticker-section {
-  overflow: hidden;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  padding: 11px 0;
-  position: relative;
-  z-index: 1;
-  margin: 40px 0;
-}
-.ticker-track {
-  display: flex;
-  white-space: nowrap;
-  animation: ticker 22s linear infinite;
-}
-.t-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 20px;
-  font-size: 9px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.t-item::after { content: '◆'; color: var(--gold); font-size: 5px; }
-@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-
-/* ══════════════════════════════
-   3D SCROLL PERSPECTIVE WRAPPER
-══════════════════════════════ */
-.perspective-wrap {
-  perspective: 1200px;
-  perspective-origin: 50% 0%;
-}
-
-/* PARALLAX LAYERS */
-.parallax { will-change: transform; }
-
-/* GLOW ORBS */
-.orb {
-  position: fixed;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-  filter: blur(80px);
-  opacity: 0.12;
-}
-.orb1 {
-  width: 300px; height: 300px;
-  background: var(--gold);
-  top: 10%; left: -100px;
-  animation: orb1move 15s ease-in-out infinite;
-}
-.orb2 {
-  width: 200px; height: 200px;
-  background: #c8a84b;
-  bottom: 20%; right: -60px;
-  animation: orb2move 12s ease-in-out infinite;
-}
-@keyframes orb1move { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,60px)} }
-@keyframes orb2move { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,-50px)} }
-
-</style>
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+  </style>
 </head>
 <body>
+  <main class="container">
+    <span class="badge">Dark Theme SaaS Landing</span>
+    <h1>From AI outputs to decision outcomes.</h1>
+    <p class="sub">
+      ViaDecide turns complex choices into visual, weighted, and actionable decision flows for founders,
+      operators, and researchers.
+    </p>
 
-<!-- AMBIENT ORBS -->
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-
-<!-- THREE.JS PARTICLE CANVAS -->
-<canvas id="bg-canvas"></canvas>
-
-<div class="page">
-
-<!-- ══ HERO ══ -->
-<section id="hero">
-  <div class="hero-tag">The Decision Engine</div>
-
-  <h1 class="hero-name parallax" data-speed="0.15">
-    <span class="line1">Via</span>
-    <span class="line2">Decide</span>
-  </h1>
-
-  <div class="live-pill">
-    <span class="live-dot"></span>
-    System Online · Free Access
-  </div>
-
-  <p class="hero-sub">
-    AI can generate text. But <em>clarity comes from structure.</em> Stop prompting chatbots and start architecting your decisions.
-  </p>
-
-  <div class="hero-cta-wrapper">
-    <a href="#cta" class="link-btn primary">
-      <div class="btn-left"><span class="btn-emoji">⚡</span><span class="btn-label">Access Platform</span></div>
-      <span class="btn-arrow">→</span>
-    </a>
-  </div>
-
-  <div class="scroll-hint">Discover How</div>
-</section>
-
-<!-- ══ STATS ══ -->
-<div class="stats-strip">
-  <div class="stat-card reveal-el"><div class="stat-num">Visual</div><div class="stat-lbl">Decision Mapping</div></div>
-  <div class="stat-card reveal-el" style="transition-delay:0.1s"><div class="stat-num">Logic</div><div class="stat-lbl">Powered by Math</div></div>
-  <div class="stat-card reveal-el" style="transition-delay:0.2s"><div class="stat-num">Fast</div><div class="stat-lbl">Actionable Outputs</div></div>
-  <div class="stat-card reveal-el" style="transition-delay:0.3s"><div class="stat-num">AI</div><div class="stat-lbl">Structured Thinking</div></div>
-</div>
-
-<!-- TICKER -->
-<div class="ticker-section">
-  <div class="ticker-track">
-    <span class="t-item">Clarity</span><span class="t-item">Structure</span><span class="t-item">Frameworks</span><span class="t-item">Actionable Output</span><span class="t-item">Decision Engine</span><span class="t-item">No More Overthinking</span><span class="t-item">Logic Models</span>
-    <span class="t-item">Clarity</span><span class="t-item">Structure</span><span class="t-item">Frameworks</span><span class="t-item">Actionable Output</span><span class="t-item">Decision Engine</span><span class="t-item">No More Overthinking</span><span class="t-item">Logic Models</span>
-  </div>
-</div>
-
-<!-- ══ VALUE PROPOSITION ══ -->
-<section id="about">
-  <div class="sec-label reveal-el">The Problem</div>
-  <p class="about-body reveal-el">
-    Standard AI acts like an encyclopedia. You ask a question, it gives you a wall of text. But when you are making a hard choice, <strong>you don't need more information—you need a framework.</strong><br><br>
-    ViaDecide transforms abstract thoughts into <strong>mathematically structured, visual decision paths.</strong>
-  </p>
-  <div class="pills reveal-el">
-    <div class="pill"><span class="pill-dot"></span>Eliminate Overthinking</div>
-    <div class="pill"><span class="pill-dot"></span>Visual Workflows</div>
-    <div class="pill"><span class="pill-dot"></span>Weighted Outcomes</div>
-    <div class="pill"><span class="pill-dot"></span>Strategic Planning</div>
-  </div>
-</section>
-
-<!-- ══ FEATURES ══ -->
-<section id="features">
-  <div class="sec-label reveal-el">How It Works</div>
-
-  <div class="proj-item reveal-el">
-    <div class="proj-num">01</div>
-    <div class="proj-icon">🧠</div>
-    <div class="proj-info">
-      <div class="proj-name">Input the Chaos</div>
-      <div class="proj-desc">Dump your thoughts, variables, and constraints into the engine. Let the AI parse the noise.</div>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="./viadecide.html">Access Platform</a>
+      <a class="btn btn-secondary" href="./viadecide.html">Launch ViaDecide Platform</a>
     </div>
-  </div>
 
-  <div class="proj-item reveal-el" style="transition-delay:0.1s">
-    <div class="proj-num">02</div>
-    <div class="proj-icon">📐</div>
-    <div class="proj-info">
-      <div class="proj-name">Apply the Framework</div>
-      <div class="proj-desc">ViaDecide applies logical structures—like cost-benefit algorithms and risk matrices—to your specific scenario.</div>
-    </div>
-  </div>
-
-  <div class="proj-item reveal-el" style="transition-delay:0.2s">
-    <div class="proj-num">03</div>
-    <div class="proj-icon">⚡</div>
-    <div class="proj-info">
-      <div class="proj-name">Actionable Output</div>
-      <div class="proj-desc">Receive a clear, weighted, and visually mapped decision. No ambiguity. Just the best path forward.</div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ AUDIENCE ══ -->
-<section id="audience">
-  <div class="sec-label reveal-el">Who Uses ViaDecide</div>
-  <div class="aud-grid">
-    <div class="aud-card reveal-el"><div class="aud-icon">💼</div><div><div class="aud-title">Founders & Teams</div><div class="aud-desc">For high-stakes product, hiring, and strategy decisions.</div></div></div>
-    <div class="aud-card reveal-el" style="transition-delay:0.1s"><div class="aud-icon">💻</div><div><div class="aud-title">Engineers & Builders</div><div class="aud-desc">Tech stack choices and architecture frameworks.</div></div></div>
-    <div class="aud-card reveal-el" style="transition-delay:0.2s"><div class="aud-icon">🎓</div><div><div class="aud-title">Researchers</div><div class="aud-desc">Structuring complex data into logical conclusions.</div></div></div>
-    <div class="aud-card reveal-el" style="transition-delay:0.3s"><div class="aud-icon">🌍</div><div><div class="aud-title">Overthinkers</div><div class="aud-desc">Break the loop. Get a definitive answer and move on.</div></div></div>
-  </div>
-</section>
-
-<!-- ══ FOUNDER / CTA / INSTAGRAM ══ -->
-<section id="cta">
-  
-  <div class="sec-label reveal-el">The Architect</div>
-  <div class="quote reveal-el">
-    <div class="quote-text">"I built ViaDecide because I realized clarity doesn't come from better prompts. It comes from better structure. This engine is built on math, code, and logic."</div>
-    <div class="quote-attr">— Dharm Daxini, Founder</div>
-  </div>
-
-  <div class="sec-label reveal-el">Join the Community</div>
-  
-  <!-- DEDICATED INSTAGRAM AD CONTACT CARD -->
-  <div class="ig-card reveal-el">
-    <div class="ig-handle">@dharamdaxini</div>
-    <div class="ig-desc">Follow the build journey, get decision-making frameworks, and DM me for early access & support.</div>
-    <a href="https://www.instagram.com/dharamdaxini" target="_blank" class="link-btn secondary" style="background: rgba(0,0,0,0.5); justify-content: center;">
-      <div class="btn-left"><span class="btn-emoji">📸</span><span class="btn-label">Connect on Instagram</span></div>
-    </a>
-  </div>
-
-  <div class="links-stack">
-    <a href="https://www.viadecide.com/" target="_blank" class="link-btn primary reveal-el">
-      <div class="btn-left"><span class="btn-emoji">🚀</span><span class="btn-label">Launch ViaDecide Platform</span></div>
-      <span class="btn-arrow" style="color:rgba(10,8,0,0.5)">→</span>
-    </a>
-    <a href="https://github.com/via-decide" target="_blank" class="link-btn secondary reveal-el" style="transition-delay:0.08s">
-      <div class="btn-left"><span class="btn-emoji">⚙️</span><span class="btn-label">Explore Open Source (GitHub)</span></div>
-      <span class="btn-arrow">→</span>
-    </a>
-    <a href="https://youtube.com/@decide.engine?si=wF9MtYQS8OC-t6gS" target="_blank" class="link-btn secondary reveal-el" style="transition-delay:0.16s">
-      <div class="btn-left"><span class="btn-emoji">▶️</span><span class="btn-label">YouTube — @decide.engine</span></div>
-      <span class="btn-arrow">→</span>
-    </a>
-    <a href="https://open.spotify.com/show/2okZ1WXMWXLrSwFzClUPPp" target="_blank" class="link-btn secondary reveal-el" style="transition-delay:0.24s">
-      <div class="btn-left"><span class="btn-emoji">🎙️</span><span class="btn-label">Listen to the Podcast</span></div>
-      <span class="btn-arrow">→</span>
-    </a>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<div class="footer">
-  <div class="footer-name">VIADECIDE</div>
-  <div class="footer-sub">Structured AI · Decision Engineering · Built in India 🇮🇳</div>
-</div>
-
-</div><!-- end .page -->
-
-<!-- THREE.JS + SCROLL LOGIC -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
-// ══════════════════════════════════════
-// THREE.JS PARTICLE FIELD
-// ══════════════════════════════════════
-const canvas = document.getElementById('bg-canvas');
-const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-renderer.setSize(window.innerWidth, window.innerHeight);
-
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
-camera.position.z = 5;
-
-// Particles
-const COUNT = window.innerWidth < 600 ? 600 : 1200;
-const positions = new Float32Array(COUNT * 3);
-const colors = new Float32Array(COUNT * 3);
-const gold = new THREE.Color('#c8a84b');
-const goldLight = new THREE.Color('#e8c96a');
-const dim = new THREE.Color('#2a2620');
-
-for (let i = 0; i < COUNT; i++) {
-  positions[i * 3]     = (Math.random() - 0.5) * 20;
-  positions[i * 3 + 1] = (Math.random() - 0.5) * 30;
-  positions[i * 3 + 2] = (Math.random() - 0.5) * 10 - 3;
-  const c = Math.random() < 0.15 ? goldLight : Math.random() < 0.4 ? gold : dim;
-  colors[i * 3]     = c.r;
-  colors[i * 3 + 1] = c.g;
-  colors[i * 3 + 2] = c.b;
-}
-
-const geo = new THREE.BufferGeometry();
-geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-const mat = new THREE.PointsMaterial({
-  size: 0.04,
-  vertexColors: true,
-  transparent: true,
-  opacity: 0.7,
-  sizeAttenuation: true,
-});
-
-const particles = new THREE.Points(geo, mat);
-scene.add(particles);
-
-// Grid lines
-const lineMat = new THREE.LineBasicMaterial({ color: 0x1a1508, transparent: true, opacity: 0.4 });
-for (let i = -10; i <= 10; i += 2) {
-  const hGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-12, i, -5), new THREE.Vector3(12, i, -5)]);
-  const vGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(i * 1.2, -15, -5), new THREE.Vector3(i * 1.2, 15, -5)]);
-  scene.add(new THREE.Line(hGeo, lineMat));
-  scene.add(new THREE.Line(vGeo, lineMat));
-}
-
-let scrollY = 0;
-let targetScrollY = 0;
-let mouseX = 0, mouseY = 0;
-
-window.addEventListener('scroll', () => { targetScrollY = window.scrollY; });
-window.addEventListener('mousemove', e => {
-  mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-  mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-});
-window.addEventListener('touchmove', e => {
-  if (e.touches[0]) {
-    mouseX = (e.touches[0].clientX / window.innerWidth - 0.5) * 2;
-  }
-}, { passive: true });
-
-let frame = 0;
-function animate() {
-  requestAnimationFrame(animate);
-  frame++;
-
-  scrollY += (targetScrollY - scrollY) * 0.06;
-
-  // Scroll: particles drift up
-  particles.position.y = scrollY * 0.003;
-  particles.rotation.y = frame * 0.0003 + mouseX * 0.05;
-  particles.rotation.x = mouseY * 0.03;
-
-  // Camera subtle tilt
-  camera.position.x += (mouseX * 0.3 - camera.position.x) * 0.04;
-  camera.position.y += (-mouseY * 0.2 - camera.position.y) * 0.04;
-  camera.lookAt(scene.position);
-
-  renderer.render(scene, camera);
-}
-animate();
-
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
-
-// ══════════════════════════════════════
-// SCROLL REVEAL — IntersectionObserver
-// ══════════════════════════════════════
-const revealEls = document.querySelectorAll('.reveal-el');
-const io = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      io.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-
-revealEls.forEach(el => io.observe(el));
-
-// ══════════════════════════════════════
-// PARALLAX ON SCROLL
-// ══════════════════════════════════════
-const heroName = document.querySelector('.hero-name');
-window.addEventListener('scroll', () => {
-  const sy = window.scrollY;
-  if (heroName) {
-    heroName.style.transform = `translateY(${sy * 0.25}px) rotateX(${sy * 0.01}deg)`;
-    heroName.style.opacity = 1 - sy / 400;
-  }
-}, { passive: true });
-
-// ══════════════════════════════════════
-// 3D TILT ON CARDS (touch + mouse)
-// ══════════════════════════════════════
-function addTilt(selector) {
-  document.querySelectorAll(selector).forEach(card => {
-    card.addEventListener('mousemove', e => {
-      const rect = card.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dx = (e.clientX - cx) / rect.width;
-      const dy = (e.clientY - cy) / rect.height;
-      card.style.transform = `rotateY(${dx * 8}deg) rotateX(${-dy * 5}deg) translateZ(8px)`;
-      card.style.transition = 'transform 0.1s ease';
-    });
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = '';
-      card.style.transition = 'transform 0.4s ease';
-    });
-  });
-}
-addTilt('.stat-card');
-addTilt('.ig-card');
-addTilt('.tech-card');
-
-// ══════════════════════════════════════
-// HERO ENTRY ANIMATION
-// ══════════════════════════════════════
-const heroEls = document.querySelectorAll('.hero-tag, .hero-name, .hero-sub, .live-pill, .hero-cta-wrapper');
-heroEls.forEach((el, i) => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(30px)';
-  el.style.transition = `opacity 0.8s ease ${i * 0.15}s, transform 0.8s ease ${i * 0.15}s`;
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    el.style.opacity = '1';
-    el.style.transform = 'translateY(0)';
-  }));
-});
-</script>
+    <section class="grid" aria-label="Platform highlights">
+      <article class="card">
+        <h3>Decision Architecture</h3>
+        <p>Convert fuzzy thinking into structured frameworks in minutes.</p>
+      </article>
+      <article class="card">
+        <h3>Scenario Simulation</h3>
+        <p>Model alternatives side-by-side before committing resources.</p>
+      </article>
+      <article class="card">
+        <h3>Team Alignment</h3>
+        <p>Share rationale and weighted tradeoffs across stakeholders.</p>
+      </article>
+    </section>
+  </main>
 </body>
 </html>
-
-
-
-

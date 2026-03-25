@@ -7,47 +7,55 @@
   "rewrites": [
     {
       "source": "/feed",
-      "destination": "/index.html"
+      "destination": "/viadecide.html"
+    },
+    {
+      "source": "/viadecide",
+      "destination": "/viadecide.html"
+    },
+    {
+      "source": "/viadecide/:path*",
+      "destination": "/viadecide.html"
     },
     {
       "source": "/tools",
-      "destination": "/index.html"
+      "destination": "/viadecide.html"
     },
     {
       "source": "/discover",
-      "destination": "/index.html"
+      "destination": "/viadecide.html"
     },
     {
       "source": "/about",
-      "destination": "/index.html"
+      "destination": "/viadecide.html"
     },
     {
       "source": "/profile",
-      "destination": "/index.html"
+      "destination": "/viadecide.html"
     },
     {
       "source": "/agent",
-      "destination": "/index.html"
+      "destination": "/viadecide.html"
     },
     {
       "source": "/auth",
-      "destination": "/index.html"
+      "destination": "/viadecide.html"
     },
     {
       "source": "/games",
-      "destination": "/index.html"
+      "destination": "/viadecide.html"
     },
     {
       "source": "/explore",
-      "destination": "/index.html"
+      "destination": "/viadecide.html"
     },
     {
       "source": "/deepdives",
-      "destination": "/index.html"
+      "destination": "/viadecide.html"
     },
     {
       "source": "/deepdives/:path*",
-      "destination": "/index.html"
+      "destination": "/viadecide.html"
     }
   ],
   "redirects": [
