@@ -50,6 +50,10 @@
       "destination": "/viadecide.html"
     },
     {
+      "source": "/store",
+      "destination": "/viadecide.html"
+    },
+    {
       "source": "/deepdives",
       "destination": "/viadecide.html"
     },
