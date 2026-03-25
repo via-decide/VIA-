@@ -13,7 +13,13 @@ export default async function handler(req, res) {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     return res.status(200).json(payload);
   } catch (error) {
-    return res.status(500).json({
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    return res.status(200).json({
+      status: 'unavailable',
+      totalCommits: 0,
+      commits: [],
+      integrity: 'UNKNOWN',
       error: 'unable_to_build_upgrades_status',
       detail: error.message
     });
