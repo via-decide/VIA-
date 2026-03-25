@@ -1,6 +1,7 @@
 {
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
+  "branch": "simba/fix-the-submodule-data-sync-blockade-cors-sessio",
   "branch": "simba/fix-the-404-on-refresh-bug-by-implementing-a-sov",
   "files_to_create": [
     "codex-task.md",

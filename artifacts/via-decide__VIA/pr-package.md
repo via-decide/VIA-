@@ -1,3 +1,9 @@
+Branch: simba/fix-the-submodule-data-sync-blockade-cors-sessio
+Title: Fix the submodule data-sync blockade (CORS & Session passing). 1. In ...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Allow Orchade to read the user's Google ID securely without requiring a second login prompt inside the submodule.
 Branch: simba/fix-the-404-on-refresh-bug-by-implementing-a-sov
 Title: Fix the '404 on Refresh' bug by implementing a Sovereign Reverse Prox...
 
