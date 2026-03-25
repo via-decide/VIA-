@@ -18,7 +18,7 @@
 
   var P = getRootPrefix();
   var ROUTES = {
-    feed: P + 'index.html',
+    feed: P + 'viadecide.html',
     creator_onboarding: P + 'creator-onboarding.html',
     creator_story: P + 'creator-story.html',
     profile: P + 'profile.html',

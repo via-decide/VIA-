@@ -179,8 +179,15 @@
 
 # â”€â”€ SPA fallback â€” MUST be last â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # All unmatched routes serve index.html (client-side hash routing takes over)
-/platform                           /platform.html                      200
-/*                                  /index.html                         200
+/feed                               /viadecide.html                     200
+/explore                            /viadecide.html                     200
+/tools                              /viadecide.html                     200
+/store                              /viadecide.html                     200
+/about                              /viadecide.html                     200
+/profile                            /viadecide.html                     200
+/platform                           /viadecide.html                     200
+/*                                  /viadecide.html                     200
+
 
 
 # -- Articles (from decide.engine) -----------------------------------------
