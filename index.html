@@ -186,6 +186,12 @@
       cursor: pointer;
     }
 
+    .bento-item:hover {
+      border-color: rgba(255, 103, 31, 0.4);
+      box-shadow: 0 0 30px rgba(255, 103, 31, 0.15);
+      transform: translateY(-4px);
+    }
+
     .bento-item:active {
       transform: scale(0.96);
     }
@@ -336,6 +342,12 @@
       transition: all 0.2s ease;
     }
 
+    .store-node:hover {
+      border-color: rgba(255, 103, 31, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
     .store-node:active {
       transform: scale(0.98);
       border-color: var(--saffron);
@@ -466,6 +478,7 @@
       color: var(--text-muted);
       display: -webkit-box;
       -webkit-line-clamp: 3;
+      line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
@@ -2732,6 +2745,32 @@
         min-height: auto;
       }
     }
+    /* ── 2026 CINEMATIC ONBOARDING ── */
+    :root { --onb-bg:#0d0d0d; --onb-acc:#ff671f; --onb-acc-glow:rgba(255,103,31,0.15); --onb-txt:#fff; }
+    html.onboarding-active, html.onboarding-active body { overflow: hidden !important; height: 100vh !important; }
+    #onboarding-index { position: fixed; inset: 0; z-index: 999999; background: var(--onb-bg); color: var(--onb-txt); display: none; overflow: hidden; font-family: 'DM Sans', sans-serif; }
+    html.onboarding-active #onboarding-index { display: block; }
+    html.onboarding-active #app { display: none !important; }
+    #onb-scroll { height: 100vh; overflow-y: auto; scroll-snap-type: y mandatory; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+    #onb-scroll::-webkit-scrollbar { display: none; }
+    .onb-frame { height: 100vh; scroll-snap-align: start; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 24px; text-align: center; overflow: hidden; }
+    .onb-grain { position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); opacity: 0.03; pointer-events: none; z-index: 99; }
+    .onb-glow { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, var(--onb-acc) 0%, transparent 70%); opacity: 0.1; filter: blur(100px); pointer-events: none; z-index: 0; transition: transform 0.8s ease-out; }
+    .onb-hero-h1 { font-family: 'Syne', sans-serif; font-size: 42px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.02em; }
+    .onb-hero-p { font-size: 16px; color: rgba(255,255,255,0.6); line-height: 1.5; max-width: 320px; }
+    .onb-phone { width: 220px; height: 440px; background: #000; border: 8px solid #1a1a1a; border-radius: 40px; margin-bottom: 30px; position: relative; box-shadow: 0 40px 80px rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; animation: onb-float 4s ease-in-out infinite; }
+    @keyframes onb-float { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-15px) rotate(1deg); } }
+    .onb-card { background: #1a1a1a; width: min(320px, 100%); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); padding: 24px; text-align: left; transform: translateY(30px); opacity: 0; transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .visible .onb-card { transform: translateY(0); opacity: 1; }
+    .onb-cta { background: var(--onb-acc); color: #000; padding: 16px 48px; border-radius: 4px; text-decoration: none; font-size: 18px; font-weight: 800; font-family: 'Syne', sans-serif; cursor: pointer; border: none; margin-top: 20px; transition: transform 0.2s; }
+    .onb-cta:active { transform: scale(0.95); }
+    .onb-stats { display: grid; gap: 20px; text-align: center; }
+    .onb-stat-val { font-size: 48px; font-family: 'Syne', sans-serif; font-weight: 800; color: var(--onb-acc); line-height: 1; }
+    .onb-stat-lab { font-size: 11px; font-family: 'DM Mono', monospace; letter-spacing: 2px; opacity: 0.6; }
+    .onb-nav { position: absolute; bottom: 0; width: 100%; height: 60px; background: rgba(10,10,20,0.8); backdrop-filter: blur(12px); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); }
+    .onb-nav-dot { width: 6px; height: 6px; background: rgba(255,255,255,0.2); border-radius: 50%; transition: all 0.3s; }
+    .onb-nav-dot.active { background: var(--onb-acc); transform: scale(1.5); }
+
   </style>
   <script type="module">
     import { inject } from 'https://cdn.jsdelivr.net/npm/@vercel/analytics@1/+esm';
@@ -3302,9 +3341,65 @@ section {
 </style>
 </head>
 
-<body>
+<body class="loading">
+  <!-- ── 2026 ONBOARDING LAYER ── -->
+  <div id="onboarding-index">
+    <div class="onb-grain"></div>
+    <div class="onb-glow" id="onb-glow"></div>
+    <div id="onb-scroll">
+      <section class="onb-frame" id="onb-1">
+        <div class="onb-phone">
+            <div style="font-family:'Syne';font-weight:800;font-size:22px;text-align:center;padding:20px">Bharat का <br>अपना Feed.</div>
+        </div>
+        <h1 class="onb-hero-h1">Swipe. Learn. Decide.</h1>
+        <p class="onb-hero-p">India's first swipe-native content platform. Zero data harvesting. Free forever.</p>
+        <div style="position:absolute;bottom:40px;font-family:'DM Mono';font-size:10px;letter-spacing:2px;opacity:0.4">SCROLL TO EXPLORE ↓</div>
+      </section>
 
-  <!-- ── BOOT ── -->
+      <section class="onb-frame" id="onb-2">
+        <div class="onb-card" id="onb-zoom-card">
+          <div style="width:3px;height:100%;background:var(--onb-acc);position:absolute;left:0;top:0;border-radius:12px 0 0 12px"></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+            <span style="font-size:20px">📽️</span>
+            <span style="font-family:'Syne';font-weight:700;font-size:18px">Alchemist Series</span>
+          </div>
+          <p style="font-size:13px;line-height:1.6;color:rgba(255,255,255,0.7);margin-bottom:15px">Watch 'Alchemist' — a 10-episode interactive documentary series about building VIA. Real decisions, real repos, real Bharat.</p>
+          <div style="font-family:'DM Mono';font-size:9px;color:var(--onb-acc);letter-spacing:2px">WATCH ON YOUTUBE</div>
+        </div>
+      </section>
+
+      <section class="onb-frame" id="onb-3">
+        <div class="onb-stats">
+          <div class="onb-stat-item">
+            <div class="onb-stat-val">68</div>
+            <div class="onb-stat-lab">LIVE TOOLS</div>
+          </div>
+          <div class="onb-stat-item">
+            <div class="onb-stat-val">0</div>
+            <div class="onb-stat-lab">LOGINS NEEDED</div>
+          </div>
+          <div class="onb-stat-item">
+            <div class="onb-stat-val">∞</div>
+            <div class="onb-stat-lab">FREE FOREVER</div>
+          </div>
+        </div>
+        <h2 style="font-family:'Syne';margin-top:40px;font-size:24px">Built for Bharat.</h2>
+      </section>
+
+      <section class="onb-frame" id="onb-4">
+        <div style="margin-bottom:40px;opacity:0.6;font-family:'DM Mono';font-size:11px;letter-spacing:3px">READY TO START?</div>
+        <h1 class="onb-hero-h1" style="font-size:48px">VIA 2026</h1>
+        <button class="onb-cta" onclick="finishOnboarding()">ENTER VIA →</button>
+        <div style="margin-top:24px;font-family:'DM Mono';font-size:10px;opacity:0.4">viadecide.com · Open Source · Made in Bharat</div>
+      </section>
+    </div>
+    <div class="onb-nav">
+      <div class="onb-nav-dot active"></div>
+      <div class="onb-nav-dot"></div>
+      <div class="onb-nav-dot"></div>
+      <div class="onb-nav-dot"></div>
+    </div>
+  </div>
   <div id="boot">
     <div class="boot-logo">VIA</div>
     <div class="boot-bar">
@@ -3966,6 +4061,19 @@ section {
   <script src="./onboarding/onboarding.js"></script>
   <script src="./js/viadecide-agent.js"></script>
   <script>
+    /* ── ONBOARDING MANAGER ── */
+    (function() {
+      const VISIT_LIMIT = 3;
+      const STORAGE_KEY = 'via_visit_count_v2026';
+      let count = parseInt(localStorage.getItem(STORAGE_KEY) || '0');
+      if (count < VISIT_LIMIT) {
+        document.documentElement.classList.add('onboarding-active');
+        localStorage.setItem(STORAGE_KEY, count + 1);
+      }
+      window.finishOnboarding = function() {
+        document.documentElement.classList.remove('onboarding-active');
+      };
+    })();
     // ════════════════════════════════════════════════════════════════
     // SUPABASE + HELPERS
     // ════════════════════════════════════════════════════════════════
@@ -4606,14 +4714,14 @@ section {
       // ── AI Tools ──────────────────────────────────────────────────
       { isHeader: true, label: '🛠 AI Tools' },
       { emoji: '📦', cat: 'Context', name: 'Context Packager', desc: 'Bundle text, code, and links into a single AI payload.', toolPath: '/tools/context-packager/' },
-      { emoji: '⚗️', cat: 'AI', name: 'Prompt Alchemy', desc: 'Refine raw ideas into structured, high-yield system prompts.', toolPath: '/prompt-alchemy/' },
+      { emoji: '⚗️', cat: 'AI', name: 'Prompt Alchemy', desc: 'Refine raw ideas into structured, high-yield system prompts. Saves drafts locally.', toolPath: './prompt-alchemy/' },
       { emoji: '⚙️', cat: 'Dev', name: 'Spec Builder', desc: 'Generate production-ready feature specs and architecture docs.', toolPath: '/tools/spec-builder/' },
       { emoji: '🧪', cat: 'Dev', name: 'Code Reviewer', desc: 'AI-powered code review and quality analysis.', toolPath: '/tools/code-reviewer/' },
       // ── Career & Learning ─────────────────────────────────────────
       { isHeader: true, label: '📖 Career & Research' },
-      { emoji: '🎯', cat: 'Career', name: 'Interview Prep', desc: 'Run simulated high-pressure technical and behavioral interviews.', toolPath: '/interview-prep/' },
-      { emoji: '🔬', cat: 'Research', name: 'Student Research', desc: 'Deep academic and market research toolkit.', toolPath: '/student-research/' },
-      { emoji: '🏢', cat: 'Founder', name: 'Founder Dashboard', desc: 'Launch, track, and grow your startup ventures.', toolPath: '/founder/' },
+      { emoji: '🎯', cat: 'Career', name: 'Interview Prep', desc: 'Run simulated high-pressure technical and behavioral interviews. Retro terminal UI.', toolPath: './interview-prep/' },
+      { emoji: '🔬', cat: 'Research', name: 'Student Research', desc: 'Deep academic and market research toolkit. Multi-source wiki engine.', toolPath: './student-research/' },
+      { emoji: '🏢', cat: 'Founder', name: 'Founder Dashboard', desc: 'Launch, track, and grow your startup ventures. Weekly decision reviews.', toolPath: './founder/' },
       // ── Creator ───────────────────────────────────────────────────
       { isHeader: true, label: '🎬 Creator' },
       { emoji: '🎬', cat: 'Creator', name: 'Creator Setup', desc: 'Start your VIA creator journey and set up your publishing path.', toolPath: './creator-onboarding.html' },
@@ -4630,11 +4738,11 @@ section {
       { emoji: '📝', cat: 'Brief', name: 'Decision Brief', desc: 'Generate a structured decision brief from any question or problem.', toolPath: '/articles/brief.html' },
       // ── Interactive Tools (from decide.engine) ────────────────────
       { isHeader: true, label: '🎯 Mini Games & Quizzes' },
-      { emoji: '🔥', cat: 'Quiz', name: 'Wings of Fire Quiz', desc: 'Multiplayer quiz — APJ Abdul Kalam\'s Wings of Fire. Compete live.', toolPath: '/articles/wings-of-fire-quiz.html' },
-      { emoji: '🚀', cat: 'Game', name: 'Mars Survival Lab', desc: 'Constraint-based decision game — survive Mars with limited resources.', toolPath: '/articles/mars-rover-simulator-game.html' },
-      { emoji: '⚔️', cat: 'Game', name: 'HexWars Arena', desc: 'Turn-based strategy — conquer hexes, build skills, defeat rivals.', toolPath: '/articles/HexWars.html' },
-      { emoji: '🧪', cat: 'Quiz', name: 'Alchemist Quiz', desc: 'Knowledge alchemy — transform raw facts into mastered concepts.', toolPath: '/articles/alchemist.html' },
-      { emoji: '📲', cat: 'Tool', name: 'SwipeOS', desc: 'Swipe through decisions — the decision engine in card form.', toolPath: '/articles/SwipeOS.html' },
+      { emoji: '🔥', cat: 'Quiz', name: 'Wings of Fire Quiz', desc: 'Multiplayer quiz — APJ Abdul Kalam\'s Wings of Fire. Compete live.', toolPath: './tools/games/wings-of-fire-quiz/' },
+      { emoji: '🚀', cat: 'Game', name: 'Mars Survival Lab', desc: 'Constraint-based decision game — survive Mars with limited resources.', toolPath: './mars/' },
+      { emoji: '⚔️', cat: 'Game', name: 'HexWars Arena', desc: 'Turn-based strategy — conquer hexes, build skills, defeat rivals.', toolPath: './tools/games/hex-wars/' },
+      { emoji: '🧪', cat: 'Quiz', name: 'Alchemist Quiz', desc: 'Knowledge alchemy — transform raw facts into mastered concepts.', toolPath: './alchemist.html' },
+      { emoji: '📲', cat: 'Tool', name: 'SwipeOS', desc: 'Swipe through decisions — the decision engine in card form.', toolPath: './tools/games/swipe-os/' },
     ];
 
     const PROFILE_ITEMS = [
@@ -6151,8 +6259,8 @@ section {
           '</div>';
       } else if (type === 'create') {
         html = '<div class="sheet-title">Create on VIA</div><div class="sheet-sub">Publish a short post to the community feed. Your post will appear above the curated trend cards.</div><div class="sheet-actions">' +
-          '<div class="sheet-btn" onclick="window.open(\'https://t.me/GN8RBot\',\'_blank\');closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">📹</div><div class="sheet-btn-text"><div class="sheet-btn-title">Video</div><div class="sheet-btn-sub">Open GN8R Bot for video-first creation</div></div><div class="sheet-btn-arrow">›</div></div>' +
-          '<div class="sheet-btn" style="align-items:flex-start;cursor:default"><div class="sheet-btn-icon" style="background:rgba(108,99,255,.15)">✍️</div><div class="sheet-btn-text" style="width:100%"><div class="sheet-btn-title">Write on VIA</div><div class="sheet-btn-sub">Short note, idea, or update for your followers.</div><div class="via-agent-row" style="margin-top:.85rem;display:block"><textarea id="composer-body" placeholder="What are you building, learning, or thinking about today?" style="width:100%;min-height:120px"></textarea></div><div id="composer-status" class="sheet-btn-sub" style="margin-top:.6rem">Community posts persist locally via SocialCore and sync to Supabase when available.</div><div class="via-agent-row" style="margin-top:.8rem"><button type="button" class="via-agent-btn" onclick="publishComposerPost()">Publish</button><button type="button" class="via-agent-btn alt" onclick="closeSheet()">Cancel</button></div></div></div>' +
+          '<div class="sheet-btn" onclick="window.open(\'https://t.me/GN8RBot\',\'_blank\');closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,107,0,.15)">📹</div><div class="sheet-btn-text"><div class="sheet-btn-title">Video Story</div><div class="sheet-btn-sub">Open GN8R Bot for video-first creation</div></div><div class="sheet-btn-arrow">›</div></div>' +
+          '<div class="sheet-btn" style="align-items:flex-start;cursor:default"><div class="sheet-btn-icon" style="background:rgba(108,99,255,.15)">✍️</div><div class="sheet-btn-text" style="width:100%"><div class="sheet-btn-title">Write on VIA</div><div class="sheet-btn-sub">Short note, idea, or update for your followers.</div><div class="via-agent-row" style="margin-top:.85rem;display:block"><textarea id="composer-body" placeholder="What are you building, learning, or thinking about today?" style="width:100%;min-height:120px"></textarea></div><div id="composer-status" class="sheet-btn-sub" style="margin-top:.6rem">Your post will be published to the community feed and synced to your profile.</div><div class="via-agent-row" style="margin-top:.8rem"><button type="button" class="via-agent-btn" onclick="publishComposerPost()">Publish</button><button type="button" class="via-agent-btn alt" onclick="closeSheet()">Cancel</button></div></div></div>' +
           '</div>';
       } else if (type === 'discover-detail' && extra.item) {
         const { item } = extra; const safe = (item.toolPath || '').replace(/'/g, "\\'");
@@ -6167,7 +6275,31 @@ section {
         const card = CARDS[extra.cardIndex];
         html = '<div class="sheet-title">Share this story</div><div class="sheet-sub">Copy the headline or open the deep dive to continue reading.</div><div class="sheet-actions"><div class="sheet-btn" onclick="copyFeedHeadline(' + extra.cardIndex + ')"><div class="sheet-btn-icon" style="background:rgba(245,197,24,.15)">⧉</div><div class="sheet-btn-text"><div class="sheet-btn-title">Copy headline</div><div class="sheet-btn-sub">' + escapeHTML(stripTags(card.title || 'VIA story')) + '</div></div><div class="sheet-btn-arrow">›</div></div></div>';
       } else if (type === 'comment') {
-        html = '<div class="sheet-title">Comments are next</div><div class="sheet-sub">The feed now persists posts and reactions. Comment threads can be added safely in the next pass.</div><div class="sheet-actions"><div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Close</div></div><div class="sheet-btn-arrow">›</div></div></div>';
+        html = `<div class="sheet-title">Conversations</div><div class="sheet-sub">Join the discussion on this story.</div>
+        <div class="sheet-body-scroller" style="max-height:400px; overflow-y:auto; margin: 1rem 0; display:flex; flex-direction:column; gap:1.2rem;">
+          <div style="display:flex; gap:12px;">
+            <div style="width:36px; height:36px; border-radius:50%; background:rgba(255,103,31,0.1); display:flex; align-items:center; justify-content:center; flex-shrink:0;">🇮🇳</div>
+            <div>
+              <div style="font-size:0.8rem; font-weight:700; margin-bottom:2px;">Vikram Shah <span style="font-weight:400; color:var(--text-muted); font-size:0.7rem;">· 2h ago</span></div>
+              <div style="font-size:0.9rem; color:var(--text-muted); line-height:1.4;">This is exactly what Bharat needs right now. Decision infrastructure is the missing link.</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:12px;">
+            <div style="width:36px; height:36px; border-radius:50%; background:rgba(0,209,255,0.1); display:flex; align-items:center; justify-content:center; flex-shrink:0;">💻</div>
+            <div>
+              <div style="font-size:0.8rem; font-weight:700; margin-bottom:2px;">Ananya Iyer <span style="font-weight:400; color:var(--text-muted); font-size:0.7rem;">· 45m ago</span></div>
+              <div style="font-size:0.9rem; color:var(--text-muted); line-height:1.4;">Would love to see how the engine-tools integrate with this feed for real-time verification.</div>
+            </div>
+          </div>
+          <div style="padding:1rem; border-radius:12px; background:rgba(255,255,255,0.03); border:1px solid var(--border); margin-top:0.5rem;">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">Add a thought...</div>
+            <div style="display:flex; gap:10px;">
+              <input type="text" placeholder="Type your comment..." style="flex:1; background:transparent; border:none; color:#fff; outline:none; font-size:0.9rem;"/>
+              <button style="background:var(--saffron); border:none; color:#fff; padding:4px 12px; border-radius:8px; font-weight:700; font-size:0.8rem; cursor:pointer;" onclick="closeSheet(); addXP(5);">Post</button>
+            </div>
+          </div>
+        </div>
+        <div class="sheet-actions"><div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Done</div></div></div></div>`;
       } else if (type === 'product-detail' && extra.product) {
         const p = extra.product;
         html = `<div class="sheet-title">${p.title}</div><div class="sheet-sub">${p.type} · ${p.price}</div>
@@ -6181,10 +6313,23 @@ section {
     <div class="sheet-actions">
       ${p.blogKey ?
             `<div class="sheet-btn" onclick="closeSheet();switchLayer('deepdives');ddLoad('${p.blogKey}', null)"><div class="sheet-btn-icon" style="background:var(--accent)">📖</div><div class="sheet-btn-text"><div class="sheet-btn-title">Read Deep Dive</div><div class="sheet-btn-sub">Open full interactive story</div></div><div class="sheet-btn-arrow">›</div></div>` :
-            `<div class="sheet-btn" onclick="alert('Order Handshake Activated.\\n\\nProcessing Requisition Quote...\\n\\n[NOTICE] We are not accepting orders in public beta yet. Your interest has been logged for the Q4 rollout.')"><div class="sheet-btn-icon" style="background:var(--accent)">🛒</div><div class="sheet-btn-text"><div class="sheet-btn-title">Requisition Item</div><div class="sheet-btn-sub">Request pricing & shipping quota</div></div><div class="sheet-btn-arrow">›</div></div>`
+            `<div class="sheet-btn" onclick="closeSheet(); openSheet('requisition-status', {product: '${p.title}'})"><div class="sheet-btn-icon" style="background:var(--accent)">🛒</div><div class="sheet-btn-text"><div class="sheet-btn-title">Requisition Item</div><div class="sheet-btn-sub">Request pricing & shipping quota</div></div><div class="sheet-btn-arrow">›</div></div>`
           }
       <div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:rgba(255,255,255,0.06)">✕</div><div class="sheet-btn-text"><div class="sheet-btn-title">Close</div></div></div>
     </div>`;
+      } else if (type === 'requisition-status') {
+        const prod = extra && extra.product ? extra.product : 'this item';
+        html = `<div class="sheet-title">Requisition Logged ✦</div>
+        <div class="sheet-sub">Batch Order Handshake Activated</div>
+        <div style="margin: 1.5rem 0; padding: 1.2rem; border-radius: 16px; background: rgba(0,209,255,0.05); border: 1px solid rgba(0,209,255,0.2); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--accent-blue);">
+          <div style="margin-bottom:8px;">[SYSTEM] Handshake initiated...</div>
+          <div style="margin-bottom:8px;">[TARGET] ${prod}</div>
+          <div style="margin-bottom:8px;">[STATUS] Interest logged for Q4 priority rollout.</div>
+          <div>[NOTICE] Public beta limit: Quotes only.</div>
+        </div>
+        <div class="sheet-actions">
+          <div class="sheet-btn" onclick="closeSheet()"><div class="sheet-btn-icon" style="background:var(--accent-blue)">✓</div><div class="sheet-btn-text"><div class="sheet-btn-title">Acknowledged</div><div class="sheet-btn-sub">Return to store</div></div><div class="sheet-btn-arrow">›</div></div>
+        </div>`;
       } else {
         const s = SHEETS[type]; if (!s) return;
         html = '<div class="sheet-title">' + s.title + '</div><div class="sheet-sub">' + s.sub + '</div><div class="sheet-actions">' + s.actions.map(a => '<div class="sheet-btn" onclick="' + (a.url ? 'window.open(\'' + a.url + '\',\'_blank\');closeSheet()' : 'addXP(5);closeSheet()') + '"><div class="sheet-btn-icon" style="background:' + a.iconBg + '">' + a.icon + '</div><div class="sheet-btn-text"><div class="sheet-btn-title">' + a.title + '</div><div class="sheet-btn-sub">' + a.sub + '</div></div><div class="sheet-btn-arrow">›</div></div>').join('') + '</div>';
@@ -6228,7 +6373,7 @@ section {
             bg: 'var(--deep)',
             emoji: '📱',
             title: "Bharat's Feed",
-            microSummary: "Stories loading — swipe to refresh.",
+            microSummary: "Stay updated with the latest Bharat trend stories and community building — swipe up to explore.",
             author: 'VIA System',
             authorEmoji: '⚙️',
             location: 'Cloud',
@@ -6453,6 +6598,43 @@ section {
     }
   </style>
   <script src="./js/viadecide-agent.js"></script>
+    // ── ONBOARDING ANIMATIONS ──
+    (function() {
+      const scroll = document.getElementById('onb-scroll');
+      const glow = document.getElementById('onb-glow');
+      const dots = document.querySelectorAll('.onb-nav-dot');
+      const frames = document.querySelectorAll('.onb-frame');
+      const zoomCard = document.getElementById('onb-zoom-card');
+      
+      if (!scroll) return;
+
+      scroll.addEventListener('scroll', () => {
+        const pct = scroll.scrollTop / (scroll.scrollHeight - window.innerHeight);
+        glow.style.transform = `translate(${Math.sin(pct*5)*20}vw, ${pct*100}vh)`;
+        
+        // Dots
+        const index = Math.round(scroll.scrollTop / window.innerHeight);
+        dots.forEach((d, i) => d.classList.toggle('active', i === index));
+        
+        // Zoom Frame 2
+        const f2 = document.getElementById('onb-2');
+        const f2Rect = f2.getBoundingClientRect();
+        if (f2Rect.top < window.innerHeight && f2Rect.bottom > 0) {
+          const progress = (window.innerHeight - f2Rect.top) / window.innerHeight;
+          const scale = 1 + (Math.min(0.8, progress * 1.5));
+          zoomCard.style.transform = `scale(${scale})`;
+          f2.classList.add('visible');
+        }
+        
+        // Frame visibility
+        frames.forEach(f => {
+          if (Math.abs(f.getBoundingClientRect().top) < 100) f.classList.add('visible');
+        });
+      });
+      // Initial trigger
+      frames[0].classList.add('visible');
+    })();
+  </script>
 </body>
 
 </html>
