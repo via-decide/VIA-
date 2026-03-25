@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "generatedAt": "2026-03-21T00:00:00Z",
   "organization": "via-decide",
-  "totalTools": 66,
+  "totalTools": 69,
   "categories": {
     "business": {
       "label": "Business",
       "icon": "\ud83d\udcbc",
       "priority": 8,
-      "count": 1
+      "count": 4
     },
     "coders": {
       "label": "Coder Tools",
@@ -61,6 +61,42 @@
     }
   },
   "tools": [
+    {
+      "id": "msme-finance-dashboard",
+      "title": "MSME Finance Dashboard",
+      "description": "Comprehensive financial management for small businesses including GST, cash flow, and loan tracking.",
+      "category": "business",
+      "path": "./finance-dashboard-msme.html",
+      "entry": "finance-dashboard-msme.html",
+      "tags": ["finance", "msme", "gst", "dashboard"],
+      "audience": ["founders", "operators"],
+      "status": "active",
+      "icon": "💰"
+    },
+    {
+      "id": "inventory-management-tool",
+      "title": "Inventory Management",
+      "description": "Stock tracking and procurement optimization for small retail and manufacturing units.",
+      "category": "business",
+      "path": "./inventory-dashboard.html",
+      "entry": "inventory-dashboard.html",
+      "tags": ["inventory", "supply-chain", "retail"],
+      "audience": ["operators", "founders"],
+      "status": "active",
+      "icon": "📦"
+    },
+    {
+      "id": "ondc-hub",
+      "title": "ONDC Integration Hub",
+      "description": "Connect your local business to India's Open Network for Digital Commerce.",
+      "category": "business",
+      "path": "/articles/ondc-for-bharat.html",
+      "entry": "articles/ondc-for-bharat.html",
+      "tags": ["ondc", "commerce", "network"],
+      "audience": ["founders", "merchants"],
+      "status": "active",
+      "icon": "🛒"
+    },
     {
       "id": "ai-tool-generator",
       "title": "AI Tool Generator",
