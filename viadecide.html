@@ -1040,6 +1040,8 @@ html, body {
     <div class="tv-header">
       <button class="tv-back" onclick="closeToolViewer()">← Back</button>
       <div class="tv-title" id="tv-title">Tool</div>
+      <div style="flex:1"></div>
+      <button class="tv-agent-btn" onclick="analyzeTool()" style="background:var(--saffron); color:#fff; border:none; border-radius:8px; padding:6px 14px; font-weight:800; font-size:11px; text-transform:uppercase; letter-spacing:1px; cursor:pointer; margin-right:10px; box-shadow:0 4px 12px var(--saffron-glow)">🤖 Analyze</button>
       <button class="tv-open-btn" id="tv-open-btn" onclick="openToolViewerExternal()">⬡ Full</button>
     </div>
     <iframe class="tv-frame" id="tv-frame" src="" title="Tool Viewer" allow="fullscreen" loading="lazy"></iframe>
@@ -1467,13 +1469,9 @@ const VIA = {
     renderApp();
     if(_sb&&_sb.auth&&!this.authSubscription&&typeof _sb.auth.onAuthStateChange==='function'){
       const { data } = _sb.auth.onAuthStateChange(async(event,session)=>{
-        console.log('Auth event:', event);
+        console.log('Orchade Auth event:', event);
         if(session){
           await this.resolveProfile(session);
-        }else{
-          currentUser=null;
-          this.user=null;
-          clearCachedProfile();
         }
         authReady=true;
         renderApp();
@@ -1486,7 +1484,8 @@ const VIA = {
     if (_fb && _fb.auth && !this._fbAuthSub) {
       this._fbAuthSub = true;
       _fb.auth.onAuthStateChanged(async (fbUser) => {
-        if (fbUser && (!currentUser || currentUser.is_guest)) {
+        if (fbUser) {
+          console.log('[VIA] Firebase state: Authenticated as', fbUser.email);
           const profile = {
             id: fbUser.uid, email: fbUser.email || '',
             username: (fbUser.displayName || fbUser.email || 'user').toLowerCase().replace(/[^a-z0-9_.]/g,'_').slice(0,20),
@@ -1497,14 +1496,32 @@ const VIA = {
             is_guest: false,
             user_metadata: { name: fbUser.displayName, avatar_url: fbUser.photoURL, full_name: fbUser.displayName }
           };
+          // Try to fetch existing profile from Firestore for real data
+          if (_fb.db) {
+            try {
+              const doc = await _fb.db.collection('users').doc(fbUser.uid).get();
+              if (doc.exists) {
+                const data = doc.data();
+                Object.assign(profile, data);
+              }
+            } catch(e){ console.warn('Firestore profile sync failed:', e.message); }
+          }
           if (window.SocialCore && typeof window.SocialCore.bootstrapProfile === 'function') {
             window.SocialCore.bootstrapProfile(profile);
           }
           localStorage.setItem('via_user', JSON.stringify(profile));
           currentUser = profile; this.user = profile;
-          authReady = true; renderApp();
-          refreshSocialSurfaces({ keepIndex: true });
+        } else {
+          console.log('[VIA] Firebase state: Disconnected');
+          // Only clear if not already guest
+          if (currentUser && !currentUser.is_guest) {
+            currentUser = null;
+            this.user = null;
+            clearCachedProfile();
+          }
         }
+        authReady = true; renderApp();
+        refreshSocialSurfaces({ keepIndex: true });
       });
     }
     return currentUser;
@@ -1552,32 +1569,52 @@ const VIA = {
         return profile;
       } catch(err) {
         if (err.code === 'auth/popup-closed-by-user') return null;
-        console.error('Google sign-in error:', err);
+        console.error('Login failed:', err);
+        alert('Authentication failed. Check your connection.');
       }
+    } else {
+      // Fallback: navigate to auth.html if Firebase not available
+      if(window.VIATransition&&typeof window.VIATransition.navigate==='function'){window.VIATransition.navigate('./auth.html');return;}
+      window.location.href='./auth.html';
     }
-    // Fallback: navigate to auth.html if Firebase not available
-    if(window.VIATransition&&typeof window.VIATransition.navigate==='function'){window.VIATransition.navigate('./auth.html');return;}
-    window.location.href='./auth.html';
   },
   async signOut(){
-    if(_sb&&_sb.auth&&typeof _sb.auth.signOut==='function'){
-      try{await _sb.auth.signOut();}catch(error){console.error('Sign out error:', error);}
-    }
-    // Also sign out from Firebase (Google sessions)
     const _fb = window.viaFirebase;
-    if (_fb && _fb.auth && typeof _fb.auth.signOut === 'function') {
-      try { await _fb.auth.signOut(); } catch(e) { console.warn('Firebase signOut:', e.message); }
-    }
-    currentUser=null;
-    this.user=null;
+    if (_fb && _fb.auth) await _fb.auth.signOut();
+    if (_sb && _sb.auth) await _sb.auth.signOut();
     clearCachedProfile();
-    authReady=true;
+    currentUser = null;
+    this.user = null;
+    authReady = true;
     renderApp();
-    refreshSocialSurfaces({ keepIndex:true });
+    refreshSocialSurfaces({ keepIndex: false });
     switchLayer('feed');
   }
 };
 window.VIA = VIA;
+
+function analyzeTool() {
+  const title = document.getElementById('tv-title').textContent;
+  const frame = document.getElementById('tv-frame');
+  let context = `Tool: ${title}`;
+  try {
+    // Try to grab some context from the iframe if possible (same-domain)
+    if (frame && frame.contentWindow && frame.contentWindow.localStorage) {
+      const data = frame.contentWindow.localStorage.getItem('via.imported.' + title.toLowerCase().replace(/\s+/g,'-'));
+      if (data) context += ` | Data: ${data}`;
+    }
+  } catch(e) {}
+  
+  openAgent();
+  if (window.AgentManager) {
+    window.AgentManager.quickCommand(`/task Analyze this ${title} scenario and provide 3 human-friendly strategic recommendations. ${context}`);
+  }
+}
+
+function refreshFeed() {
+  console.log('[VIA] Refreshing feed from mesh...');
+  if (typeof buildDeck === 'function') buildDeck();
+}
 
 // ════════════════════════════════════════════════════════════════
 // FEED DATA  (storyKey links each card to a Deep Dive)

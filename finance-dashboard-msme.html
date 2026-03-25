@@ -67,6 +67,7 @@
               </div>
               <div class="via-actions">
                 <button class="via-button via-button--primary" type="submit">Save dashboard</button>
+                <button class="via-button" type="button" id="ai-analyze-finance" style="background:#FF671F; border-color:#FF671F; color:#fff">🤖 Agent Analysis</button>
                 <button class="via-button" type="button" id="open-brief-from-finance">Open decision brief</button>
               </div>
               <div class="via-note" id="finance-status">This surface persists planning inputs in localStorage.</div>
@@ -209,6 +210,18 @@
 
         briefButton.addEventListener('click', function () {
           window.location.href = './decision-brief.html?surface=finance_dashboard_msme';
+        });
+
+        document.getElementById('ai-analyze-finance').addEventListener('click', function() {
+          var payload = collect();
+          var context = 'Rev: ' + payload.revenue + ' | Costs: ' + payload.costs + ' | Cash: ' + payload.cash + ' | Notes: ' + payload.notes;
+          if (window.parent && window.parent.openAgent) {
+            window.parent.openAgent();
+            window.parent.AgentManager.quickCommand('/task Analyze these MSME financials and give me human-friendly strategic advice: ' + context);
+          } else if (window.openAgent) {
+            window.openAgent();
+            window.AgentManager.quickCommand('/task Analyze these MSME financials: ' + context);
+          }
         });
 
         hydrate(read());
