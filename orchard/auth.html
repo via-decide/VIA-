@@ -12,12 +12,12 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
 window.VIA_FIREBASE_CONFIG = {
-  apiKey:            "REPLACE_ME",
-  authDomain:        "REPLACE_ME.firebaseapp.com",
-  projectId:         "REPLACE_ME",
-  storageBucket:     "REPLACE_ME.appspot.com",
-  messagingSenderId: "REPLACE_ME",
-  appId:             "REPLACE_ME"
+  apiKey: "AIzaSyCQMIvNgKJPZmxVHRC8lKL79k6n0wh0EKo",
+  authDomain: "gen-lang-client-0662689801.firebaseapp.com",
+  projectId: "gen-lang-client-0662689801",
+  storageBucket: "gen-lang-client-0662689801.firebasestorage.app",
+  messagingSenderId: "899475982419",
+  appId: "1:899475982419:web:fc93af4d97e6a578b31ea6"
 };
 </script>
 <script src="./shared/firebase-config.js"></script>
@@ -118,6 +118,7 @@ input.error,select.error{border-color:#ff6b6b}
     <div class="social">
       <button id="google-btn" class="sbtn" type="button">Continue with Google</button>
       <button id="telegram-btn" class="sbtn" type="button">Continue with Telegram</button>
+      <div id="recaptcha-container" style="display:none"></div>
     </div>
   </div>
 </div>
@@ -291,18 +292,40 @@ input.error,select.error{border-color:#ff6b6b}
       if(!phone){ setErr('signin-id-err','Enter valid 10-digit number.'); setInputError('signin-id',true); return; }
       
       if(state.phoneStep===1){
-        // Simulate sending OTP
-        state.phoneStep=2;
-        document.getElementById('signin-otp-wrap').classList.remove('hidden');
-        document.getElementById('signin-pass-wrap').classList.add('hidden');
-        document.getElementById('signin-btn').textContent = 'Verify & Sign In';
-        console.log("VIA Auth: OTP sent to", phone);
+        if (!FIREBASE_CONFIGURED) { setErr('signin-main-err', 'Phone auth requires Firebase configuration.'); return; }
+        try {
+          if (!window.recaptchaVerifier) {
+            window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', { 
+              size: 'invisible', 
+              callback: (response) => { console.log('reCAPTCHA solved'); } 
+            });
+          }
+          const appVerifier = window.recaptchaVerifier;
+          const confirmationResult = await _fbAuth.signInWithPhoneNumber('+91' + phone, appVerifier);
+          window.confirmationResult = confirmationResult;
+          state.phoneStep = 2;
+          document.getElementById('signin-otp-wrap').classList.remove('hidden');
+          document.getElementById('signin-pass-wrap').classList.add('hidden');
+          document.getElementById('signin-btn').textContent = 'Verify & Sign In';
+          console.log("VIA Auth: OTP sent to", phone);
+        } catch (err) {
+          console.error('Phone auth error:', err);
+          setErr('signin-main-err', err.message || 'Failed to send OTP.');
+        }
         return;
       }
       
       if(!otp || otp.length < 6){ setErr('signin-otp-err','Enter 6-digit code.'); setInputError('signin-otp',true); return; }
-      // In this demo, any 6 digits work. Real OTP would use Firebase phone auth.
-      var email=phoneToPseudoEmail(phone);
+      try {
+        const cred = await window.confirmationResult.confirm(otp);
+        currentUser = await buildCurrentUser(cred.user);
+        authReady = true;
+        renderApp();
+      } catch (err) {
+        console.error('OTP verify failed:', err);
+        setErr('signin-otp-err', 'Invalid OTP code.');
+      }
+      return;
     } else {
       if(!rawId || !/^\S+@\S+\.\S+$/.test(rawId)){ setErr('signin-id-err','Enter valid email.'); setInputError('signin-id',true); return; }
       var email=rawId;
@@ -342,13 +365,39 @@ input.error,select.error{border-color:#ff6b6b}
       if(!phone){ setErr('up-id-err','Enter valid 10-digit number.'); setInputError('up-id',true); hasErr=true; }
       else if(state.phoneStep===1){
         if(hasErr) return;
-        state.phoneStep=2;
-        document.getElementById('signup-otp-wrap').classList.remove('hidden');
-        document.getElementById('signup-pass-wrap').classList.add('hidden');
-        document.getElementById('signup-btn').textContent = 'Verify & Create';
+        if (!FIREBASE_CONFIGURED) { setErr('signup-main-err', 'Phone auth requires Firebase.'); return; }
+        try {
+          if (!window.recaptchaVerifier) {
+            window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', { size: 'invisible' });
+          }
+          const appVerifier = window.recaptchaVerifier;
+          window.confirmationResult = await _fbAuth.signInWithPhoneNumber('+91' + phone, appVerifier);
+          state.phoneStep=2;
+          document.getElementById('signup-otp-wrap').classList.remove('hidden');
+          document.getElementById('signup-pass-wrap').classList.add('hidden');
+          document.getElementById('signup-btn').textContent = 'Verify & Create';
+        } catch (err) {
+          setErr('signup-main-err', err.message || 'OTP delivery failed.');
+        }
         return;
       }
       if(state.phoneStep===2 && (!otp || otp.length < 6)){ setErr('up-otp-err','Enter 6-digit code.'); setInputError('up-otp',true); hasErr=true; }
+      if (hasErr) return;
+      
+      try {
+        const cred = await window.confirmationResult.confirm(otp);
+        const uid = cred.user.uid;
+        const profile = prepareProfile({
+          id: uid, phone: '+91' + phone, username, display_name: name, city,
+          avatar_emoji: '🌟', xp: 0, level: 1, followers: 0, following: 0, posts: 0
+        });
+        if (_fbDb) await _fbDb.collection('users').doc(uid).set(profile, { merge: true });
+        saveProfileCache(profile);
+        window.location.href = './index.html';
+      } catch (err) {
+        setErr('signup-main-err', err.message || 'Phone verification failed.');
+      }
+      return;
     } else {
       if(!rawId || !/^\S+@\S+\.\S+$/.test(rawId)){ setErr('up-id-err','Enter valid email.'); setInputError('up-id',true); hasErr=true; }
       if(password.length<8){ setErr('up-password-err','Min 8 characters.'); setInputError('up-password',true); hasErr=true; }
@@ -357,8 +406,8 @@ input.error,select.error{border-color:#ff6b6b}
     if(!city){ setErr('up-city-err','Please select your city.'); setInputError('up-city',true); hasErr=true; }
     if(hasErr) return;
     
-    let email = state.loginType==='phone' ? phoneToPseudoEmail(parsePhone(rawId)) : rawId;
-    let finalPass = state.loginType==='phone' ? 'via_demo_pass' : password;
+    let email = rawId;
+    let finalPass = password;
 
     if(!_fbAuth){ setErr('signup-main-err','Firebase not configured.'); return; }
     

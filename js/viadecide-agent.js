@@ -79,9 +79,9 @@
                             </div>
                             
                             <div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-                                <button class="agent-chip" onclick="Agent.quickCommand('/post ')">✍️ /post</button>
-                                <button class="agent-chip" onclick="Agent.quickCommand('/task ')">⚙️ /task</button>
-                                <button class="agent-chip" onclick="Agent.quickCommand('/help')">❓ /help</button>
+                                <button class="agent-chip" onclick="AgentManager.quickCommand('/post ')">✍️ /post</button>
+                                <button class="agent-chip" onclick="AgentManager.quickCommand('/task ')">⚙️ /task</button>
+                                <button class="agent-chip" onclick="AgentManager.quickCommand('/help')">❓ /help</button>
                             </div>
                         `}
                     </div>
@@ -139,20 +139,22 @@
             const msg = document.createElement('div');
             msg.className = `agent-msg ${role}`;
             
-            // Detect code blocks
-            if (text.includes('```')) {
-                const parts = text.split('```');
+            // SECURITY: Sanitize all output through the hardening layer
+            const safeText = window.VIA_HARDEN ? window.VIA_HARDEN.sanitize(text) : text;
+
+            if (safeText.includes('```')) {
+                const parts = safeText.split('```');
                 let html = '';
                 for (let i = 0; i < parts.length; i++) {
                     if (i % 2 === 1) {
-                        html += `<div class="agent-code-block">${Parser.sanitize(parts[i])}</div>`;
+                        html += `<div class="agent-code-block">${parts[i]}</div>`;
                     } else {
                         html += parts[i].replace(/\n/g, '<br>');
                     }
                 }
                 msg.innerHTML = html;
             } else {
-                msg.innerHTML = text.replace(/\n/g, '<br>');
+                msg.innerHTML = safeText.replace(/\n/g, '<br>');
             }
             
             chat.appendChild(msg);
@@ -162,41 +164,63 @@
         async handleInput(val) {
             const raw = val.trim();
             if (!raw) return;
-            const input = Parser.sanitize(raw);
-            this.addMessage(input, 'user');
-            
-            let cmd;
-            let topic;
 
-            if (input.startsWith('/')) {
-                const parts = input.split(' ');
+            // PERFORMANCE: Reject input if already processing
+            if (window.VIA_STORE?.getState().isProcessing) {
+                this.addMessage("Agent preparing previous request. Please wait.", "error");
+                return;
+            }
+
+            // SECURITY: Sanitize input
+            const sanitized = (window.VIA_HARDEN ? window.VIA_HARDEN.sanitize(raw) : raw).trim();
+            this.addMessage(sanitized, 'user');
+            
+            let cmd = null;
+            let topic = sanitized;
+
+            // 1. Explicit Slash Command Detection
+            if (sanitized.startsWith('/')) {
+                const parts = sanitized.split(' ');
                 cmd = parts[0].toLowerCase();
                 topic = parts.slice(1).join(' ');
             } else {
-                // Natural Language Intent Discovery (Bot-inspired heuristics)
-                const low = input.toLowerCase();
+                // 2. Seamless Intent Detection (Normal Language)
+                const low = sanitized.toLowerCase();
                 
-                // 1. Check for Repo Task keywords if no explicit repo: tag
-                const repoKeywords = ['commit', 'pull request', 'pr', 'branch', 'merge', 'repository', 'repo:'];
+                // Content Analysis for Intent
+                const repoKeywords = ['commit', 'pull request', 'pr', 'branch', 'merge', 'repository', 'repo:', 'build', 'implement', 'fix', 'bug'];
+                const linkedinKeywords = ['linkedin', 'professional', 'founding', 'story', 'insight', 'career'];
+                const socialKeywords = ['social', 'post', 'tweet', 'viral', 'thread', 'x'];
+                const videoKeywords = ['youtube', 'video', 'video script', 'timestamps', 'description', 'title'];
+
                 const hasRepoIntent = repoKeywords.some(k => low.includes(k));
-                
-                if (low.includes('write') && low.includes('linkedin')) cmd = '/linkedin';
-                else if (low.includes('write') && (low.includes('post') || low.includes('tweet'))) cmd = '/post';
-                else if (low.includes('video') || low.includes('youtube') || low.includes('title')) cmd = '/youtube';
-                else if (low.includes('help') || low.includes('commands')) cmd = '/help';
-                else if (low.includes('session') || low.includes('id')) cmd = '/id';
+                const hasLinkedInIntent = linkedinKeywords.some(k => low.includes(k));
+                const hasSocialIntent = socialKeywords.some(k => low.includes(k));
+                const hasVideoIntent = videoKeywords.some(k => low.includes(k));
+
+                // Prioritize Intent Mapping
+                if (hasLinkedInIntent) cmd = '/linkedin';
+                else if (hasSocialIntent) cmd = '/post';
+                else if (hasVideoIntent) cmd = '/youtube';
+                else if (hasRepoIntent || low.includes('make') || low.includes('create') || low.includes('file')) cmd = '/task';
+                else if (low.length < 15 && (low.includes('help') || low.includes('commands'))) cmd = '/help';
                 else {
-                    cmd = '/task';
-                    if (hasRepoIntent && !low.includes('repo:')) {
-                        this.addMessage("<em>Note: To run a GitHub task, use the format 'repo: owner/repo'. Proceeding with standalone synthesis...</em>");
-                    }
+                    // Default to task if it sounds like a request or question
+                    cmd = '/task'; 
                 }
-                
-                topic = input;
-                this.addMessage(`<em>Routing as ${cmd} packet...</em>`);
             }
 
-            await this.execute(cmd, topic);
+            // STATE: Set processing to true
+            window.VIA_STORE?.setState({ isProcessing: true });
+            try {
+                // Show thinking state for seamless feel
+                if (!sanitized.startsWith('/')) {
+                    this.addMessage(`<em>Auto-routing intent to <strong>${cmd}</strong> protocol...</em>`);
+                }
+                await this.execute(cmd, topic);
+            } finally {
+                window.VIA_STORE?.setState({ isProcessing: false });
+            }
         },
 
         async execute(base, args) {
@@ -204,10 +228,7 @@
 
             switch(base) {
                 case '/help':
-                    this.addMessage("<strong>GN8R Command Layer 2.0</strong><br>/task [goal] — Generate code or files<br>/post [topic] — Viral social post<br>/linkedin [topic] — Professional post<br>/youtube [topic] — Video strategy<br>/help — Show this menu");
-                    break;
-                case '/id':
-                    this.addMessage(`State: Synchronized<br>Mesh: Bharat-Core-01<br>Latency: 42ms`);
+                    this.addMessage("<strong>GN8R Command Layer 2.0 (Hardened)</strong><br>/task [goal] — Code/Files<br>/post [topic] — Social<br>/linkedin [topic] — Professional<br>/youtube [topic] — Video strategy<br>/help — Menu");
                     break;
                 case '/post':
                 case '/linkedin':
@@ -237,24 +258,27 @@
             }
 
             try {
+                // SECURITY: Apply prompt hardening
+                const hardenedTopic = window.VIA_HARDEN ? window.VIA_HARDEN.hardenPrompt(topic) : topic;
                 const prompt = SYSTEM_PROMPTS[command] || SYSTEM_PROMPTS['/task'];
+
                 const res = await fetch(`${GEMINI_CONFIG.endpoint}?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         system_instruction: { parts: [{ text: prompt }] },
-                        contents: [{ role: 'user', parts: [{ text: topic }] }],
-                        generationConfig: { temperature: 0.8, maxOutputTokens: 1024 }
+                        contents: [{ role: 'user', parts: [{ text: hardenedTopic }] }],
+                        generationConfig: { temperature: 0.7, maxOutputTokens: 2048 }
                     })
                 });
 
                 if (!res.ok) throw new Error(`API Error: ${res.status}`);
                 const data = await res.json();
                 const output = data.candidates?.[0]?.content?.parts?.[0]?.text || "Synthesis failed.";
+                
                 this.addMessage(output);
                 this.logRun(command, topic, output);
 
-                // Add filename suggestion for tasks
                 if (command === '/task') {
                     const type = Parser.detectType(topic);
                     const filename = Parser.slugify(topic, type);
@@ -262,7 +286,7 @@
                 }
 
             } catch (err) {
-                this.addMessage(`Network error in agent layer. ${err.message}`, 'error');
+                this.addMessage(`Error: ${err.message}`, 'error');
                 const fallback = this.getFallback(command, topic);
                 this.addMessage(fallback);
             }
@@ -299,4 +323,3 @@
     document.addEventListener('DOMContentLoaded', () => Agent.init());
 
 })(window);
-
