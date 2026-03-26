@@ -271,84 +271,6 @@ header {
 .choice-item.wrong   { border-color: var(--red);   background: #ff3a500f; pointer-events: none; }
 .choice-item.lock    { opacity: .35; pointer-events: none; }
 
-/* ═══════════════════════════════════════════════════════ KADA WHEEL */
-#wheel-panel { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
-
-.kada-wrap {
-  position: relative; width: 240px; height: 240px; margin: .5rem auto;
-  touch-action: none;
-}
-.kada-rotor {
-  position: absolute; inset: 0; border-radius: 50%;
-  background: radial-gradient(circle, transparent 58%, #1e3060 59%, #080d1a 70%);
-  -webkit-mask: radial-gradient(transparent 88px, black 89px);
-  mask:         radial-gradient(transparent 88px, black 89px);
-  cursor: grab; z-index: 20; touch-action: none;
-}
-.kada-rotor:active { cursor: grabbing; }
-
-.kada-stator {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-  width: 130px; height: 130px; border-radius: 50%;
-  background: #050810; border: 3px solid #0c1628;
-  box-shadow: inset 0 8px 20px rgba(0,0,0,.9), 0 0 30px rgba(0,0,0,.8);
-  z-index: 30; display: flex; flex-direction: column; align-items: center; justify-content: center;
-}
-
-/* tether node */
-.tether-wrap {
-  position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; z-index: 40; pointer-events: none;
-}
-.tether-node {
-  width: 28px; height: 28px; background: #0c1628; border: 2px solid var(--cyan);
-  border-radius: 50%; box-shadow: 0 0 12px rgba(0,229,255,.4);
-  cursor: grab; display: flex; justify-content: center; align-items: center;
-  transition: transform .15s cubic-bezier(.4,0,.2,1), border-color .15s, box-shadow .15s;
-  pointer-events: auto; touch-action: none;
-}
-.tether-core { width: 9px; height: 9px; background: var(--cyan); border-radius: 50%; transition: background .15s; }
-.tether-thread { width: 3px; height: 0; background: var(--amber); transition: height .15s cubic-bezier(.4,0,.2,1); box-shadow: 0 0 4px var(--amber); }
-.tether-node.pulled { transform: translateY(-22px); border-color: var(--amber); box-shadow: 0 0 22px rgba(245,158,11,.6); }
-.tether-node.pulled .tether-core { background: var(--amber); }
-.tether-wrap.pulled .tether-thread { height: 22px; }
-
-/* conic progress ring */
-.progress-ring {
-  position: absolute; inset: 3px; border-radius: 50%;
-  background: conic-gradient(var(--amber) var(--prog, 0%), transparent 0);
-  -webkit-mask: radial-gradient(transparent 60px, black 61px);
-  mask:         radial-gradient(transparent 60px, black 61px);
-  opacity: .8; pointer-events: none; transition: background .1s linear; z-index: 15;
-}
-
-/* sector SVG */
-#sector-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 15; overflow: visible; }
-.sector-arc { transition: fill .15s, stroke .15s, filter .15s; }
-.sector-arc.idle    { fill: rgba(21,34,64,.4);  stroke: #1e3060; stroke-width: 1; }
-.sector-arc.hover   { fill: rgba(245,158,11,.22); stroke: var(--amber); stroke-width: 1.5; filter: drop-shadow(0 0 5px rgba(245,158,11,.6)); }
-.sector-arc.confirm { fill: rgba(0,255,136,.22);  stroke: var(--green); stroke-width: 2;   filter: drop-shadow(0 0 8px rgba(0,255,136,.8)); }
-.sector-arc.wrong   { fill: rgba(255,58,80,.18);  stroke: var(--red);   stroke-width: 1.5; }
-
-.sector-label { font-family: var(--fhud); font-size: 8px; font-weight: 700; transition: fill .15s; pointer-events: none; }
-
-/* HUD center */
-.kada-hud-mode { font-family: var(--fmono); font-size: .45rem; color: var(--txt-dim); letter-spacing: .2em; text-transform: uppercase; margin-bottom: 2px; }
-.kada-hud-val  { font-family: var(--fhud); font-size: 1.1rem; font-weight: 900; color: var(--cyan); text-shadow: var(--cyan-glow); line-height: 1; transition: color .2s; }
-.kada-hud-val.pull { color: var(--amber); text-shadow: var(--amber-glow); }
-.kada-hud-sub  { font-family: var(--fmono); font-size: .42rem; color: var(--txt-dim); letter-spacing: .08em; margin-top: 2px; }
-
-/* spark layer */
-#spark-layer { position: absolute; inset: 0; z-index: 50; pointer-events: none; }
-
-.wheel-guide {
-  font-family: var(--fmono); font-size: .52rem; color: var(--txt-dim); letter-spacing: .1em;
-  text-align: center; line-height: 1.9; margin-top: .5rem;
-  background: var(--bg2); border: 1px solid var(--border); border-radius: 5px; padding: .5rem .75rem;
-  width: 100%;
-}
-.wheel-guide strong { color: var(--cyan); }
-
 /* ═══════════════════════════════════════════════════════ HEX MAP */
 .hex-svg { width: 100%; cursor: grab; }
 .hex-svg:active { cursor: grabbing; }
@@ -625,45 +547,11 @@ footer {
       <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:10%"></div></div>
     </div>
     <div class="choices-list" id="choices-list"></div>
-    <div class="btn-row">
-      <button class="btn btn-ghost" id="wheel-hint-btn" onclick="toggleWheelGuide()">⬡ Wheel Mode</button>
-    </div>
   </div>
 
-  <!-- COL 2: KADA WHEEL -->
+  <!-- COL 2: GAME PROGRESS -->
   <div class="panel" id="wheel-panel">
-    <div class="panel-hd">KADA Input Wheel</div>
-
-    <div class="kada-wrap" id="kada-wrap">
-      <!-- Sector SVG -->
-      <svg id="sector-svg" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg"></svg>
-
-      <!-- Rotor -->
-      <div class="kada-rotor" id="rotor">
-        <div class="tether-wrap" id="tether-wrap">
-          <div class="tether-node" id="tether-node">
-            <div class="tether-core" id="tether-core"></div>
-          </div>
-          <div class="tether-thread" id="tether-thread"></div>
-        </div>
-      </div>
-
-      <!-- Stator HUD -->
-      <div class="kada-stator">
-        <div class="progress-ring" id="progress-ring"></div>
-        <div class="kada-hud-mode" id="kad-mode">Rotate</div>
-        <div class="kada-hud-val" id="kad-val">—</div>
-        <div class="kada-hud-sub" id="kad-sub">No mission</div>
-      </div>
-
-      <div id="spark-layer"></div>
-    </div>
-
-    <div class="wheel-guide" id="wheel-guide">
-      <strong>Rotate ring</strong> to browse choices<br>
-      <strong>Pull node</strong> outward to aim<br>
-      <strong>Release</strong> to confirm selection
-    </div>
+    <div class="panel-hd">Mission Control</div>
 
     <!-- Streak / Pass mini-display -->
     <div style="margin-top:.75rem">
@@ -1504,8 +1392,7 @@ function renderMission() {
   renderWarmupUI();
   buildChoiceList(m);
   renderWarmupBox();
-  buildSectors(m);
-  updateKadaHUD(`M-${String(missionIdx+1).padStart(2,'0')}`, m.title.slice(0,9));
+  startMissionTimer();
 }
 
 
@@ -1534,9 +1421,10 @@ function handleChoice(choice) {
     el.classList.add(mc.ok ? 'correct' : (mc.v === choice.v ? 'wrong' : 'lock'));
   });
 
+  const warmBoost = missionWarmup ? (missionWarmup.mult || 1.0) : 1.0;
+
   if (choice.ok) {
-    const warmBoost = missionWarmup?.mult || 1;
-    const pts = Math.round((500 + (30 - kadaTimer) * 20 + MISSIONS[missionIdx].diff * 100) * warmBoost);
+    const pts = Math.round((500 + MISSIONS[missionIdx].diff * 100) * warmBoost);
     const srDelta = Math.round((pts - 600) / 25);
     STATE.sr = Math.max(300, STATE.sr + srDelta);
     STATE.xp += 40 + Math.max(0, Math.round((pts-600)/20));
@@ -1546,11 +1434,9 @@ function handleChoice(choice) {
     pushReward(`Mission ${missionIdx+1} complete: +${srDelta} SR, +${pts} pts`);
     spawnSparks();
     showToast('✓ ' + choice.fb, 'ok');
-    flashKadaCorrect();
     STATE.missionLog[missionIdx] = { title: MISSIONS[missionIdx].title, result:'pass', score: pts, skill: MISSIONS[missionIdx].skill, choice: choice.l, ts: Date.now() };
   } else {
     showToast('✗ ' + choice.fb, 'err');
-    flashKadaWrong();
     STATE.missionLog[missionIdx] = { title: MISSIONS[missionIdx].title, result:'fail', score: 0, skill: MISSIONS[missionIdx].skill, choice: choice.l, ts: Date.now() };
   }
 
@@ -1850,289 +1736,9 @@ function renderLobby() {
 function leaveRoom() { STATE.squad.room=''; STATE.squad.members=[]; document.getElementById('ft-room').textContent='—'; switchRoomTab('create'); save(); }
 function launchRoom() { if (!STATE.squad.room) return; switchRoomTab('create'); renderMission(); showToast('Game launched for room ' + STATE.squad.room, 'ok'); }
 function showRoom() { switchRoomTab('create'); document.getElementById('rt-create').scrollIntoView({behavior:'smooth'}); }
-
-/* ═══════════════════════════════════════════════════════════════════
-   KADA WHEEL SYSTEM
-═══════════════════════════════════════════════════════════════════ */
-let rotorAngle  = 0;
-let isDragging  = false;
-let isPulled    = false;
-let startAngle  = 0;
-let lastAngle   = 0;
-let pullHoldStart = 0;
-let activeSector  = -1;
-let kadaTimer     = 30;
-let kadaInterval  = null;
-
-const SECTORS = [
-  { label:'A', angle: 270 },  // top
-  { label:'B', angle: 0   },  // right
-  { label:'C', angle: 90  },  // bottom
-  { label:'D', angle: 180 },  // left
-];
-
-const INTERVIEW_WHEEL_SCENES = ['V07', 'V08', 'V09', 'V10'];
-
-function getWheelSectorLabels(mission) {
-  const modalOpen = document.getElementById('interview-modal')?.classList.contains('open');
-  if (modalOpen) return INTERVIEW_WHEEL_SCENES;
-
-  const choices = mission ? mission.choices : [];
-  return SECTORS.map((sec, i) => {
-    const label = choices[i]?.l || sec.label;
-    return label.length > 14 ? `${label.slice(0, 14)}…` : label;
-  });
-}
-
-function refreshWheelSectorLabels(mission = MISSIONS[missionIdx]) {
-  const labels = getWheelSectorLabels(mission);
-  for (let i = 0; i < 4; i++) {
-    const lbl = document.getElementById('sec-lbl-' + i);
-    if (lbl) lbl.textContent = labels[i] || SECTORS[i].label;
-  }
-}
-
-function buildSectors(mission) {
-  const svg = document.getElementById('sector-svg');
-  if (!svg) return;
-  const cx = 120, cy = 120, ri = 105, ro = 118;
-  const sectorLabels = getWheelSectorLabels(mission);
-
-  let html = '';
-  SECTORS.forEach((sec, i) => {
-    const aStart = (sec.angle - 45) * Math.PI / 180;
-    const aEnd   = (sec.angle + 45) * Math.PI / 180;
-    const cos1 = Math.cos(aStart), sin1 = Math.sin(aStart);
-    const cos2 = Math.cos(aEnd),   sin2 = Math.sin(aEnd);
-    const xI1 = cx + ri*cos1, yI1 = cy + ri*sin1;
-    const xO1 = cx + ro*cos1, yO1 = cy + ro*sin1;
-    const xI2 = cx + ri*cos2, yI2 = cy + ri*sin2;
-    const xO2 = cx + ro*cos2, yO2 = cy + ro*sin2;
-
-    const d = `M ${xI1} ${yI1} L ${xO1} ${yO1} A ${ro} ${ro} 0 0 1 ${xO2} ${yO2} L ${xI2} ${yI2} A ${ri} ${ri} 0 0 0 ${xI1} ${yI1} Z`;
-
-    const lAngle = sec.angle * Math.PI / 180;
-    const lr = ri - 16;
-    const lx = cx + lr * Math.cos(lAngle);
-    const ly = cy + lr * Math.sin(lAngle);
-
-    html += `<path id="sec-${i}" class="sector-arc idle" d="${d}" data-idx="${i}"/>`;
-    html += `<text x="${lx}" y="${ly}" class="sector-label" id="sec-lbl-${i}" text-anchor="middle" dominant-baseline="middle" fill="#4a6080">${sectorLabels[i] || sec.label}</text>`;
-  });
-
-  // Zero marker line
-  html += `<line x1="120" y1="4" x2="120" y2="17" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" opacity=".7"/>
-           <circle cx="120" cy="3" r="3" fill="var(--amber)" opacity=".7"/>`;
-
-  svg.innerHTML = html;
-
-  // Sector click
-  for (let i = 0; i < 4; i++) {
-    const p = document.getElementById('sec-' + i);
-    if (p) p.addEventListener('click', () => {
-      if (!choiceMade) confirmSector(i);
-    });
-  }
-}
-
-function getAngle(ex, ey) {
-  const wrap = document.getElementById('kada-wrap');
-  if (!wrap) return 0;
-  const rect = wrap.getBoundingClientRect();
-  return Math.atan2(ey - (rect.top + rect.height/2), ex - (rect.left + rect.width/2)) * (180/Math.PI);
-}
-
-function sectorFromAngle(deg) {
-  // normalise deg to 0-360
-  let a = ((deg % 360) + 360) % 360;
-  // sectors: A=270°, B=0°, C=90°, D=180° each ±45°
-  const sectors_a = [270, 0, 90, 180];
-  let best = 0, bestDist = Infinity;
-  sectors_a.forEach((sa, i) => {
-    let diff = Math.abs(a - sa);
-    if (diff > 180) diff = 360 - diff;
-    if (diff < bestDist) { bestDist = diff; best = i; }
-  });
-  return bestDist <= 45 ? best : -1;
-}
-
-function highlightSector(idx) {
-  for (let i = 0; i < 4; i++) {
-    const p  = document.getElementById('sec-' + i);
-    const lbl= document.getElementById('sec-lbl-' + i);
-    const isActive = i === idx;
-    if (p)   p.className.baseVal   = 'sector-arc ' + (isActive ? 'hover' : 'idle');
-    if (lbl) lbl.setAttribute('fill', isActive ? 'var(--amber)' : '#4a6080');
-    // also highlight choice item
-    const items = document.querySelectorAll('.choice-item');
-    if (items[i]) items[i].classList.toggle('active-sector', isActive && isPulled);
-  }
-  activeSector = idx;
-  updateKadaHUD(
-    isPulled ? SECTORS[idx >= 0 ? idx : 0].label : `M-${String(missionIdx+1).padStart(2,'0')}`,
-    isPulled ? 'PULL TO AIM' : MISSIONS[missionIdx]?.title?.slice(0,9) || '—'
-  );
-  const val = document.getElementById('kad-val');
-  if (val) val.className = 'kada-hud-val' + (isPulled ? ' pull' : '');
-}
-
-function confirmSector(idx) {
-  const modalOpen = document.getElementById('interview-modal')?.classList.contains('open');
-  if (modalOpen) {
-    const sectorRounds = ['V07','V08','V09','V10'];
-    if (isPulled) {
-      skipInterviewQuestion('interview-modal-body');
-      showToast('Interview: skipped to next question', 'info');
-      updateKadaHUD('INTV', 'SKIP QUESTION');
-    } else {
-      const roundId = sectorRounds[idx % 4];
-      openInterviewModal(roundId);
-      showToast('Interview round: ' + (INTERVIEW_ROUNDS[roundId]?.label || roundId), 'info');
-      updateKadaHUD('INTV', roundId);
-    }
-    const scene = INTERVIEW_WHEEL_SCENES[idx] || INTERVIEW.activeScene || 'V10';
-    const round = INTERVIEW_ROUNDS[scene] || INTERVIEW_ROUNDS.V10;
-    const cats = round?.cats || INTERVIEW_ROUNDS.V10.cats;
-    
-    if (isPulled) {
-      skipInterviewQuestion('interview-modal-body');
-      showToast('Interview: skipped to next question', 'info');
-    } else {
-      INTERVIEW.activeScene = scene;
-      const title = document.getElementById('interview-modal-title');
-      if (title) title.textContent = `${scene} · ${round.label}`;
-      mountInterview('interview-modal-body', cats, { deepDive: !!round.deepDive, compact:false });
-      showToast('Interview round: ' + scene, 'info');
-    }
-    updateKadaHUD(scene, isPulled ? 'SKIP QUESTION' : round.label);
-    refreshWheelSectorLabels();
-    return;
-  }
-
-  const m = MISSIONS[missionIdx];
-  if (!m || choiceMade || idx < 0) return;
-  const choice = m.choices[idx];
-  if (!choice) return;
-
-  // flash confirm
-  const p = document.getElementById('sec-' + idx);
-  if (p) { p.className.baseVal = 'sector-arc confirm'; setTimeout(() => { if(p) p.className.baseVal='sector-arc idle'; }, 600); }
-
-  handleChoice(choice);
-}
-
-function updateKadaHUD(val, sub) {
-  const v = document.getElementById('kad-val');
-  const s = document.getElementById('kad-sub');
-  if (v) v.textContent = val;
-  if (s) s.textContent = sub;
-}
-
-function updateTetherVisuals() {
-  const node = document.getElementById('tether-node');
-  const wrap = document.getElementById('tether-wrap');
-  if (node) node.classList.toggle('pulled', isPulled);
-  if (wrap) wrap.classList.toggle('pulled', isPulled);
-}
-
-function flashKadaCorrect() {
-  const stator = document.querySelector('.kada-stator');
-  if (stator) { stator.style.boxShadow = '0 0 30px #00ff8899, inset 0 0 20px #00ff8844'; setTimeout(()=>{stator.style.boxShadow='';},700); }
-}
-function flashKadaWrong() {
-  const stator = document.querySelector('.kada-stator');
-  if (stator) { stator.style.boxShadow = '0 0 30px #ff3a5099, inset 0 0 20px #ff3a5044'; setTimeout(()=>{stator.style.boxShadow='';},700); }
-}
-
-// Pointer handlers
-(function bindKada() {
-  window.addEventListener('pointerdown', e => {
-    const rotor = document.getElementById('rotor');
-    const node  = document.getElementById('tether-node');
-    if (!e.target.closest('#kada-wrap')) return;
-    if (e.target.closest('#rotor') || e.target.closest('#tether-node') || e.target.closest('#tether-wrap')) {
-      isDragging = true;
-      startAngle = getAngle(e.clientX, e.clientY);
-      lastAngle  = startAngle;
-      document.body.style.cursor = 'grabbing';
-      e.preventDefault();
-    }
-  });
-
-  window.addEventListener('pointermove', e => {
-    if (!isDragging) return;
-    const wrap = document.getElementById('kada-wrap');
-    if (!wrap) return;
-    const rect = wrap.getBoundingClientRect();
-    const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
-    const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-    const wasPulled = isPulled;
-    isPulled = dist > 130;
-
-    if (isPulled !== wasPulled) {
-      updateTetherVisuals();
-      if (isPulled) { pullHoldStart = Date.now(); updatePullProgress(); }
-      else {
-        pullHoldStart = 0;
-        const ring = document.getElementById('progress-ring');
-        if (ring) ring.style.setProperty('--prog', '0%');
-        document.querySelectorAll('.choice-item').forEach(el => el.classList.remove('active-sector'));
-      }
-    }
-
-    const newAngle = getAngle(e.clientX, e.clientY);
-    let delta = newAngle - lastAngle;
-    if (delta > 180) delta -= 360;
-    if (delta < -180) delta += 360;
-    rotorAngle += delta;
-    lastAngle = newAngle;
-
-    const rotor = document.getElementById('rotor');
-    if (rotor) rotor.style.transform = `rotate(${rotorAngle}deg)`;
-
-    if (isPulled) {
-      const sec = sectorFromAngle(rotorAngle);
-      highlightSector(sec);
-    }
-  });
-
-  window.addEventListener('pointerup', e => {
-    if (!isDragging) return;
-    isDragging = false;
-    document.body.style.cursor = '';
-    const wasPulled = isPulled;
-    const sec = activeSector;
-    isPulled = false;
-    pullHoldStart = 0;
-    updateTetherVisuals();
-    const ring = document.getElementById('progress-ring');
-    if (ring) ring.style.setProperty('--prog', '0%');
-
-    if (wasPulled && sec >= 0 && !choiceMade) {
-      confirmSector(sec);
-    }
-    highlightSector(-1);
-    document.querySelectorAll('.choice-item').forEach(el => el.classList.remove('active-sector'));
-  });
-})();
-
-function updatePullProgress() {
-  if (!pullHoldStart || !isPulled) return;
-  const pct = Math.min(100, ((Date.now() - pullHoldStart) / 3000) * 100);
-  const ring = document.getElementById('progress-ring');
-  if (ring) ring.style.setProperty('--prog', pct.toFixed(1) + '%');
-  if (pct < 100 && isPulled) requestAnimationFrame(updatePullProgress);
-}
-
-// Keyboard shortcuts
-document.addEventListener('keydown', e => {
-  if (e.target.matches('input,textarea,select')) return;
-  const idx = {'a':0,'b':1,'c':2,'d':3}[e.key.toLowerCase()];
-  if (idx !== undefined && !choiceMade) {
-    const m = MISSIONS[missionIdx];
-    if (m) handleChoice(m.choices[idx]);
-  }
-});
+/* MISSION TIMER & SYSTEM LOGIC */
+let missionTimer     = 30;
+let missionInterval  = null;
 
 function spawnSparks() {
   const layer = document.getElementById('spark-layer');
@@ -2152,26 +1758,14 @@ function spawnSparks() {
   }
 }
 
-function toggleWheelGuide() {
-  const g = document.getElementById('wheel-guide');
-  if (g) g.style.display = g.style.display === 'none' ? '' : 'none';
-}
-
 /* ═══ TIMER ════════════════════════════════════════════════════════ */
 function startMissionTimer() {
-  clearInterval(kadaInterval);
-  kadaTimer = 30;
-  kadaInterval = setInterval(() => {
-    kadaTimer--;
-    const mode = document.getElementById('kad-mode');
-    if (mode) {
-      mode.textContent = kadaTimer + 's';
-      if (kadaTimer <= 8) mode.style.color = 'var(--red)';
-      else if (kadaTimer <= 15) mode.style.color = 'var(--amber)';
-      else mode.style.color = 'var(--txt-dim)';
-    }
-    if (kadaTimer <= 0 && !choiceMade) {
-      clearInterval(kadaInterval);
+  clearInterval(missionInterval);
+  missionTimer = 30;
+  missionInterval = setInterval(() => {
+    missionTimer--;
+    if (missionTimer <= 0 && !choiceMade) {
+      clearInterval(missionInterval);
       choiceMade = true;
       document.querySelectorAll('.choice-item').forEach(el => el.classList.add('lock'));
       showToast('Time expired — no points awarded', 'err');
@@ -2264,7 +1858,7 @@ function jumpToMission(slot, sceneId) {
   if (slot === null || slot === undefined || !MISSIONS[slot]) return;
   missionIdx = slot;
   choiceMade = false;
-  clearInterval(kadaInterval);
+  clearInterval(missionInterval);
   renderMission();
   startMissionTimer();
   document.getElementById('mission-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -2447,7 +2041,6 @@ function openInterviewModal(sceneId) {
     modal.classList.add('open');
     mountInterview('interview-modal-body', meta.cats, { deepDive: !!meta.deepDive, compact:false });
     refreshWheelSectorLabels();
-    updateKadaHUD(sceneId, meta.label);
   }
 }
 
@@ -2511,7 +2104,6 @@ function init() {
   mountInterview('interview-shell', INTERVIEW_ROUNDS.V10.cats, { deepDive:true, compact:true });
   startMissionTimer();
   setInterval(updateEvent, 1000);
-  setInterval(() => { if (!isDragging) rotorAngle *= .98; }, 50); // drift damping
 }
 
 // Wait for DOM + Firebase SDK load
