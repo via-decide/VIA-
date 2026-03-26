@@ -765,10 +765,6 @@ html, body {
   <div class="layer-tabs" id="layer-tabs">
     <button class="layer-tab active" data-layer="feed">Feed</button>
     <button class="layer-tab" data-layer="explore">Explore</button>
-    <button class="layer-tab" data-layer="store">Store</button>
-    <button class="layer-tab" data-layer="tools">Tools</button>
-    <button class="layer-tab" data-layer="about">About</button>
-    <button class="layer-tab" data-layer="profile">Profile</button>
   </div>
 
   <!-- FEED DECK -->
@@ -809,6 +805,36 @@ html, body {
           <div class="bento-icon">🤖</div>
           <h2 class="bento-title">VIA Agent</h2>
           <p class="bento-sub">Your personal AI companion. Command to pull posts, generate content, or explore specialized tools.</p>
+        </div>
+        <div class="bento-item" onclick="switchLayer('store')">
+          <div class="bento-icon">🏪</div>
+          <h2 class="bento-title">Blueprint Shop</h2>
+          <p class="bento-sub">Custom hardware & tools.</p>
+        </div>
+        <div class="bento-item" onclick="switchLayer('tools')">
+          <div class="bento-icon">⚙️</div>
+          <h2 class="bento-title">Full Engine</h2>
+          <p class="bento-sub">Power tools & generators.</p>
+        </div>
+        <div class="bento-item" onclick="switchLayer('profile')">
+          <div class="bento-icon">👤</div>
+          <h2 class="bento-title">Progress</h2>
+          <p class="bento-sub">Your XP & achievements.</p>
+        </div>
+        <div class="bento-item" onclick="switchLayer('about')">
+          <div class="bento-icon">ℹ️</div>
+          <h2 class="bento-title">About</h2>
+          <p class="bento-sub">Mission control & vision.</p>
+        </div>
+        <div class="bento-item" onclick="window.open('https://t.me/GN8RBot','_blank')">
+          <div class="bento-icon">✈️</div>
+          <h2 class="bento-title">Telegram</h2>
+          <p class="bento-sub">AI Bot & Community.</p>
+        </div>
+        <div class="bento-item" onclick="window.open('https://github.com/via-decide','_blank')">
+          <div class="bento-icon">⭐</div>
+          <h2 class="bento-title">GitHub</h2>
+          <p class="bento-sub">Open source repository.</p>
         </div>
       </div>
     </div>
@@ -1125,11 +1151,8 @@ html, body {
     <button class="nav-create" onclick="openAgent()" title="Summon Agent">
       <span>🤖</span>
     </button>
-    <button class="nav-item" data-nav="tools" onclick="switchLayer('tools')">
-      <div class="nav-icon">⚡</div><div class="nav-label">Tools</div>
-    </button>
-    <button class="nav-item" data-nav="more" onclick="openMore()">
-      <div class="nav-icon">···</div><div class="nav-label">More</div>
+    <button class="nav-item" data-nav="profile" onclick="switchLayer('profile')">
+      <div class="nav-icon">👤</div><div class="nav-label">Profile</div>
     </button>
   </nav>
 </div>
@@ -1138,37 +1161,7 @@ html, body {
 <div id="more-overlay" class="more-overlay" onclick="closeMore()">
   <div class="more-drawer" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
-    <div class="more-grid">
-      <div class="more-item" onclick="switchLayer('store');closeMore()">
-        <div class="more-icon">🏪</div>
-        <div class="more-label">Store</div>
-        <div class="more-sub">Blueprint shop</div>
-      </div>
-      <div class="more-item" onclick="switchLayer('about');closeMore()">
-        <div class="more-icon">ℹ️</div>
-        <div class="more-label">About</div>
-        <div class="more-sub">Mission control</div>
-      </div>
-      <div class="more-item" onclick="switchLayer('profile');closeMore()">
-        <div class="more-icon">👤</div>
-        <div class="more-label">Profile</div>
-        <div class="more-sub">Your progress</div>
-      </div>
-      <div class="more-item" onclick="window.open('https://github.com/via-decide','_blank','noopener');closeMore()">
-        <div class="more-icon">⭐</div>
-        <div class="more-label">GitHub</div>
-        <div class="more-sub">Open Source</div>
-      </div>
-      <div class="more-item" onclick="window.open('https://t.me/GN8RBot','_blank','noopener');closeMore()">
-        <div class="more-icon">✈️</div>
-        <div class="more-label">Telegram</div>
-        <div class="more-sub">AI Bot</div>
-      </div>
-      <div class="more-item" onclick="window.open('https://via-decide.github.io/decide.engine-tools/','_blank','noopener');closeMore()">
-        <div class="more-icon">⚙️</div>
-        <div class="more-label">Tools</div>
-        <div class="more-sub">Full engine</div>
-      </div>
+      <p style="text-align:center; color:var(--text-muted); font-size:0.8rem; padding:1rem;">Settings & secondary links available via Explorer layer.</p>
     </div>
   </div>
 </div>
@@ -2731,7 +2724,7 @@ function getTopCard(){return document.getElementById('card-'+currentCard);}
 // GESTURE CONTROLLER
 // ════════════════════════════════════════════════════════════════
 const GC = {
-  VT:.3,LOCK:8,VTH:.17,HTH:.25,
+  VT:.3,LOCK:8,VTH:.12,HTH:.2,
   active:false,startX:0,startY:0,startTime:0,curX:0,curY:0,axis:null,ribbonWasOpen:false,
 
   init(){
@@ -3533,16 +3526,20 @@ async function buildToolsGrid() {
   // Load registry directly if not cached
   if (!_toolsData) {
     try {
-      grid.innerHTML = '<div style="text-align:center;padding:20px;color:#6e6e82;font-size:12px">Loading tools…</div>';
+      grid.innerHTML = '<div style="text-align:center;padding:20px;color:#6e6e82;font-size:12px">Synchronizing registry…</div>';
       const res = await fetch('./nav-registry.json');
-      if (!res.ok) throw new Error('Registry ' + res.status);
+      if (!res.ok) throw new Error('Root registry fetch failed');
       _toolsData = await res.json();
     } catch (e) {
-      grid.innerHTML = '<div style="text-align:center;padding:20px;color:#ff5040;font-size:12px;display:flex;flex-direction:column;gap:12px;align-items:center;">'
-        + '<span>Offline: Registry unavailable</span>'
-        + '<a href="https://via-decide.github.io/decide.engine-tools/" target="_blank" rel="noopener" style="padding:8px 16px;background:rgba(255,140,0,.1);border:1px solid rgba(255,140,0,.2);border-radius:8px;color:#ff8c00;text-decoration:none;font-weight:700;">Open Direct Link →</a>'
-        + '</div>';
-      return;
+      console.warn('Tools fallback triggered:', e);
+      _toolsData = {
+        tools: [
+          {id:'studyos', title:'StudyOS', description:'Modular offline leaning.', icon:'🎓', path:'/StudyOS/'},
+          {id:'msme', title:'MSME Dashboard', description:'Finance & GST.', icon:'💰', path:'/finance-dashboard-msme.html'},
+          {id:'ai-coach', title:'AI Coach', description:'Narrative guidance.', icon:'🤖', path:'/tools/engine/ai-coach-console/'},
+          {id:'app-gen', title:'App Generator', description:'Prompt to tool.', icon:'🛠️', path:'/app-generator.html'}
+        ]
+      };
     }
   }
 
