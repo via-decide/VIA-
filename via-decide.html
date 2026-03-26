@@ -1714,6 +1714,10 @@ const DEFAULT_CARDS = [
    title:'SwipeOS — हर decision एक <em>card</em> में। The OS built on choices.',
    author:'SwipeOS',authorEmoji:'📱',location:'ViaDecide',time:'4h ago',views:'2.7M',likes:'189K',
    storyKey:'swipeos'},
+  {id:21,cat:'games',catLabel:'🎮 Discovery',bg:'linear-gradient(160deg,#0a1a3a 0%,#0B0B1A 60%)',emoji:'🧭',
+   title:'ViaLogic — <em>Cartography of Minds</em>। भारत का पहला mathematician universe',
+   author:'ViaLogic Team',authorEmoji:'🏛️',location:'Bharat',time:'Just Now',views:'New',likes:'✦',
+   storyKey:'vialogic'},
 ];
 
 const VIA_MICRO_CONTENT = typeof window.createMicroContentArchitecture === 'function'
@@ -1766,9 +1770,10 @@ const DISCOVER_ITEMS = [
   {emoji:'◂',cat:'Dives',name:'Deep Dives',desc:'Cinematic breakdowns of Bharat\'s biggest trends and innovations.',toolPath:null,isDive:true},
   // ── Games ─────────────────────────────────────────────────────
   {isHeader:true, label:'🎮 Games Universe'},
-  {emoji:'🏛️',cat:'Games',name:'Games Hub',desc:'All 3 games. One wallet. Credits flow between SkillHex, Mars Terminal & Orchard.',toolPath:'./games.html',isGame:true},
-  {emoji:'⬡',cat:'Games',name:'SkillHex',desc:'Mission-control strategy for students & job seekers. Build skills, earn VIA Credits.',toolPath:'./skillhex/',isGame:true},
-  {emoji:'🔴',cat:'Games',name:'Mars Terminal',desc:'ISRO rover simulator. Navigate Mars, scan rocks, earn credits. For game lovers.',toolPath:'./mars/',isGame:true},
+  {emoji:'🏛️',cat:'Games',name:'ViaLogic',desc:'Explore the Cartography of Minds. 14 mathematicians, cinematic levels, and XP progression.',toolPath:'tools/games/vialogic/index.html',isGame:true,storyKey:'vialogic'},
+  {emoji:'🏛️',cat:'Games',name:'Games Hub',desc:'All 3 games. One wallet. Credits flow between SkillHex, Mars Terminal & Orchard.',toolPath:'tools/games.html',isGame:true},
+  {emoji:'⬡',cat:'Games',name:'SkillHex',desc:'Mission-control strategy for students & job seekers. Build skills, earn VIA Credits.',toolPath:'./skillhex/',isGame:true,storyKey:'skillhex'},
+  {emoji:'🔴',cat:'Games',name:'Mars Terminal',desc:'ISRO rover simulator. Navigate Mars, scan rocks, earn credits. For game lovers.',toolPath:'./mars/',isGame:true,storyKey:'mars'},
   {emoji:'🌱',cat:'Games',name:'Orchard Engine',desc:'Bio-engineer rare plants, harvest credits, trade with friends. Cross-game wallet.',toolPath:'https://orchard.viadecide.com',isGame:true,isExternal:true},
   // ── AI Tools ──────────────────────────────────────────────────
   {isHeader:true, label:'🛠 AI Tools'},
@@ -2519,6 +2524,34 @@ const BLOG_DATA = {
     ],
     clTitle:'Getting Started',
     checklist:['Swipe with intent — each card deserves 3 seconds of genuine consideration, not reflexive dismissal.','Review your weekly decision archive every Sunday — patterns you didn\'t notice become visible in retrospect.','Use Career Mode during commute — 10 minutes of swipe-based career planning beats 10 minutes of doom scroll.']
+  },
+  vialogic:{
+    theme:'#FF671F',catLabel:'· 🏛️ MATH UNIVERSE',
+    hookTitle:'ViaLogic — 14 <em>Mathematicians</em> की cinematic दुनिया',
+    hookLead:'Thales से Al-Khwarizmi तक — भारत और दुनिया के महान गणितज्ञों की कहानियाँ, अब p5.js cinematic animations के साथ।',
+    probTitle:'Why Math History is Boring',
+    probBody:'Traditional textbooks treat math history as a list of dates and names. But math was built by explorers, radicals, and dreamers facing impossible constraints.',
+    problems:[
+      {icon:'📖',text:'<strong>Dead Facts</strong> — Textbooks remove the human drama from mathematical discovery.'},
+      {icon:'📉',text:'<strong>Abstract Gap</strong> — We learn formulas but never the "Why" or the "Visual" behind them.'},
+      {icon:'🏛️',text:'<strong>Eurocentric Bias</strong> — The massive contributions of Bharat (India) and the Arabic world are often marginalized.'}
+    ],
+    insightTitle:'Cinematic Mathematics',
+    insightBody:'ViaLogic doesn\'t tell you about math; it lets you step into the mind of the mathematician through interactive code.',
+    insightQuote:'"We didn\'t build a museum. We built a time machine where you can play with the rules of the universe as they were discovered."',
+    fwTitle:'The ViaLogic Ecosystem',
+    fwSteps:[
+      {title:'Cartography of Minds',desc:'A recursive, interactive hub linking all 14 mathematicians into a single intellectual web.'},
+      {title:'Cinematic Act Structure',desc:'Each profile is a 3-act narrative — from the historical conflict to the mathematical resolution.'},
+      {title:'p5.js Visualizations',desc:'Real-time algorithmic art that brings abstract concepts like Zero, Pi, and Sine to life.'}
+    ],
+    exTitle:'The Explorer Lineup',
+    examples:[
+      {title:'ACT I: The Void',desc:'Experience Brahmagupta\'s Court in Ujjain where Zero was first treated as a formal number.'},
+      {title:'ACT III: Equations',desc:'Step into the House of Wisdom with Al-Khwarizmi and see the birth of Algebra.'}
+    ],
+    clTitle:'Become a Polymath',
+    checklist:['Complete all 14 mathematician levels to earn the "Cartographer of Minds" badge.','Collect Sparks by completing Act III of each cinematic story.','Use Sparks to unlock high-fidelity lore in the central hub.']
   }
 };
 
