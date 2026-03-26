@@ -122,12 +122,17 @@ html, body {
   background: var(--deep-glass); border: 1px solid var(--border);
   border-radius: 24px; padding: 1.5rem;
   display: flex; flex-direction: column; justify-content: space-between;
-  transition: transform 0.3s ease, border-color 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
   min-height: 140px; cursor: pointer;
+  position: relative; overflow: hidden;
 }
+.bento-item:hover { border-color: rgba(255,103,31,0.3); background: rgba(255,103,31,0.03); transform: translateY(-4px); }
 .bento-item:active { transform: scale(0.96); }
+.bento-item::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.04), transparent 50%); opacity: 0; transition: opacity 0.3s; }
+.bento-item:hover::after { opacity: 1; }
 .bento-item.large { grid-column: span 2; min-height: 200px; background: linear-gradient(135deg, rgba(255,103,31,0.1), transparent); }
-.bento-icon { font-size: 2rem; margin-bottom: 1rem; }
+.bento-icon { font-size: 2.4rem; margin-bottom: 0.5rem; filter: drop-shadow(0 0 10px rgba(255,255,255,0.1)); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.bento-item:hover .bento-icon { transform: scale(1.15) rotate(5deg); }
 .bento-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; line-height: 1.1; margin-bottom: 0.4rem; }
 .bento-sub { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
 
@@ -618,6 +623,10 @@ html, body {
   .upgrades-summary,.upgrade-track-bar,.upgrade-log-row{grid-template-columns:1fr;}
   .upgrade-phase{min-height:auto;}
 }
+
+/* ── LAYER TRANSITIONS ── */
+.v-layer, #deck { opacity: 0; transform: translateY(10px) scale(0.98); pointer-events: none; transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+.v-layer.active, #deck.active { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
 </style>
 <script type="module">
   import { inject } from 'https://cdn.jsdelivr.net/npm/@vercel/analytics@1/+esm';
@@ -641,9 +650,9 @@ html, body {
       return false;
     }
   });
-  // Disable text selection globally to prevent easy content scraping
-  document.body.style.userSelect = 'none';
-  document.body.style.webkitUserSelect = 'none';
+  // Text selection is enabled for content consumption.
+  // document.body.style.userSelect = 'none';
+  // document.body.style.webkitUserSelect = 'none';
 
   // Store Initialization
   function initStore() {
@@ -672,9 +681,54 @@ html, body {
     }
   }
   
-  window.openProduct = (title) => {
-    alert("Opening Technical Specs for: " + title + "\\n(Order flow coming soon to 2026 Edition)");
+  // Sheet UI Helper
+  const SheetUI = {
+    open(title, content) {
+      const sheet = document.getElementById('sheet');
+      const body = document.getElementById('sheet-body');
+      const overlay = document.querySelector('.sheet-overlay');
+      if (!body || !sheet || !overlay) return alert(title);
+      
+      body.innerHTML = `
+        <h2 class="sheet-title">${title}</h2>
+        <div class="sheet-body" style="margin-top:20px; color:rgba(255,255,255,0.7); line-height:1.6; font-size:0.95rem;">
+          ${content}
+          <div style="height:40px"></div>
+        </div>
+      `;
+      
+      overlay.classList.add('open');
+      sheet.classList.add('open');
+    },
+    close() {
+      const sheet = document.getElementById('sheet');
+      const overlay = document.querySelector('.sheet-overlay');
+      if (overlay) overlay.classList.remove('open');
+      if (sheet) sheet.classList.remove('open');
+    }
   };
+
+  window.openProduct = (title) => {
+    const products = {
+      "Hardcore NFC Keychain": "The Hardcore series explores industrial durability in digital keys. Featuring a dual-color 3D printed shell with a high-boundary NFC chip. <br><br><b>Specs:</b><br>• TPU/ABS Hybrid Shell<br>• NTAG213 Chip<br>• Water Resistant IP67",
+      "3D Two-Tone Plate": "Custom identifiers engineered for visibility. Choose your base color and boundary height for reflecting-ready typography. <br><br><b>Customization:</b><br>• Matte/Glossy Finishes<br>• UV-Stable Inks<br>• Custom SVG Logo Support",
+      "Memory Anchors": "Physical objects etched with digital memories. An experiment in haptic nostalgia and emotional engineering. <br><br><b>Features:</b><br>• Soundwave Etching<br>• Geotagged NFC Anchors<br>• Sustainable PLA Construction"
+    };
+    
+    const content = products[title] || "Technical specifications for this unit are being prepared for the 2026 Edition rollout.";
+    SheetUI.open(title, content);
+  };
+  
+  // Interactive Glow Mapping
+  document.addEventListener('mousemove', (e) => {
+    const bento = e.target.closest('.bento-item');
+    if (!bento) return;
+    const rect = bento.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    bento.style.setProperty('--x', `${x}%`);
+    bento.style.setProperty('--y', `${y}%`);
+  });
   
   document.addEventListener('DOMContentLoaded', initStore);
 </script>
@@ -684,7 +738,9 @@ html, body {
   <div class="status-bar">
     <div class="status-logo" onclick="switchLayer('feed')">VIA</div>
     <div class="status-actions">
-      <div class="status-xp"><div class="xp-dot"></div><span id="xp-counter">0 XP</span></div>
+      <div class="status-xp"><div class="xp-dot"></div><span id="xp-counter">
+        <script>document.write(localStorage.getItem('via_xp') || '0');</script> XP
+      </span></div>
       <button class="status-auth-btn" id="status-auth-btn" onclick="VIA.openAuth()">Sign In</button>
     </div>
   </div>
@@ -714,7 +770,7 @@ html, body {
   <div id="layer-explore" style="display:none;position:absolute;inset:0">
     <div class="explore-container">
       <div class="bento-grid">
-        <div class="bento-item large" onclick="window.location.href='/Business-Directory'">
+        <div class="bento-item large" onclick="openToolViewer('./pages/directory/index.html', 'Kutch Digital Map')">
           <div>
             <div class="bento-icon">📍</div>
             <h2 class="bento-title">Kutch Digital Map</h2>
@@ -2862,9 +2918,20 @@ function switchLayer(layer, storyKey) {
     tools: 'layer-tools'
   };
   deck.style.display = layer === 'feed' ? 'block' : 'none';
+  if (layer === 'feed') setTimeout(() => deck.classList.add('active'), 10);
+  else deck.classList.remove('active');
+
   Object.entries(layerEls).forEach(([k, id]) => {
     const el = document.getElementById(id);
-    if (el) el.style.display = layer === k ? 'block' : 'none';
+    if (!el) return;
+    if (layer === k) {
+      el.style.display = 'block';
+      el.classList.add('v-layer');
+      setTimeout(() => el.classList.add('active'), 10);
+    } else {
+      el.classList.remove('active');
+      setTimeout(() => { if(activeLayer !== k) el.style.display = 'none'; }, 500);
+    }
   });
   const dots=document.getElementById('progress-dots');
   const hint=document.querySelector('.swipe-hint');
@@ -2889,7 +2956,29 @@ function switchLayer(layer, storyKey) {
   // Bug 8: Remove top tabs on Feed (keep branding only)
   const topTabs = document.querySelector('.layer-tabs');
   if (topTabs) topTabs.style.display = layer === 'feed' ? 'none' : 'flex';
+
+  // Push State for Routing
+  const currentPath = window.location.pathname;
+  const newPath = layer === 'feed' ? currentPath : (currentPath.endsWith('/') ? currentPath + layer : currentPath + '/' + layer);
+  
+  // If we are already on this layer, don't push state again
+  const currentLayerInUrl = window.location.hash.slice(1);
+  if (currentLayerInUrl !== layer) {
+    history.pushState({ layer, storyKey }, "", "#" + layer);
+  }
 }
+
+// Handle browser back/forward
+window.addEventListener('popstate', (e) => {
+  if (e.state && e.state.layer) {
+    switchLayer(e.state.layer, e.state.storyKey);
+  } else {
+    // Check hash as fallback
+    const hash = window.location.hash.slice(1);
+    if (hash) switchLayer(hash);
+    else switchLayer('feed');
+  }
+});
 
 function openMore() {
   const overlay = document.getElementById('more-overlay');
@@ -2920,28 +3009,52 @@ document.querySelectorAll('.layer-tab').forEach(tab=>tab.addEventListener('click
     '/auth':      'profile',
     '/deepdives': 'deepdives'
   };
-  const path = window.location.pathname.replace(/\/+$/, '').toLowerCase();
-  // Strip /VIA prefix for GitHub Pages
-  const cleanPath = path.replace(/^\/via/i, '') || '/';
-  const target = pathMap[cleanPath];
-  if (target) {
-    // Wait for DOM + switchLayer to be ready
-    const trySwitch = () => {
-      if (typeof switchLayer === 'function') {
-        switchLayer(target);
-        // If games, auto-filter
-        if (cleanPath === '/games' && typeof filterToolsCat === 'function') {
-          setTimeout(() => filterToolsCat('games'), 600);
-        }
-      } else {
-        setTimeout(trySwitch, 200);
-      }
-    };
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', trySwitch);
-    } else {
-      setTimeout(trySwitch, 100);
+
+  const trySwitch = () => {
+    if (typeof switchLayer !== 'function') {
+      return setTimeout(trySwitch, 200);
     }
+
+    // 0. Check for 404 redirect from sessionStorage
+    try {
+      const redirectPath = sessionStorage.getItem('__vd_redirect__');
+      if (redirectPath) {
+        sessionStorage.removeItem('__vd_redirect__');
+        // If it's a tool path, try to parse it
+        const url = new URL(redirectPath, window.location.origin);
+        const segments = url.pathname.split('/').filter(Boolean);
+        if (segments[0] === 'tools' && segments[1]) {
+           return openToolViewer(`./tools/${segments[1]}/index.html`, segments[1]);
+        }
+        // Fallback: use hash if path matches a layer
+        const layerMatch = pathMap['/' + segments[0]];
+        if (layerMatch) return switchLayer(layerMatch);
+      }
+    } catch(e){}
+
+    // 1. Check Hash first (SPA mode)
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      return switchLayer(hash);
+    }
+
+    // 2. Fallback to path mapping
+    const path = window.location.pathname.replace(/\/+$/, '').toLowerCase();
+    const cleanPath = path.replace(/^\/via/i, '') || '/';
+    const target = pathMap[cleanPath];
+    
+    if (target) {
+      switchLayer(target);
+      if (cleanPath === '/games' && typeof filterToolsCat === 'function') {
+        setTimeout(() => filterToolsCat('games'), 600);
+      }
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', trySwitch);
+  } else {
+    setTimeout(trySwitch, 100);
   }
 })();
 
