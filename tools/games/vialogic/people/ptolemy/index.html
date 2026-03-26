@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViaMath | The Astronomer (Ptolemy)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            margin: 0; padding: 0; background-color: #010409; overflow: hidden;
+            color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+        canvas { display: block; }
+
+        /* Act Indicator */
+        #act-indicator {
+            position: absolute; top: 30px; left: 30px;
+            color: #4A90E2; font-size: 14px; font-weight: bold; letter-spacing: 3px;
+            text-transform: uppercase; z-index: 10;
+            transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+
+        /* Main Info Box */
+        #label {
+            position: absolute; top: 60px; left: 30px;
+            letter-spacing: 1px; border-left: 4px solid #4A90E2; 
+            padding-left: 20px; z-index: 10;
+            background: rgba(1, 4, 9, 0.85); padding-right: 20px;
+            padding-bottom: 15px; border-radius: 0 10px 10px 0;
+            backdrop-filter: blur(8px); max-width: 80%;
+            transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+        h1 { margin: 0; font-size: 26px; font-weight: 300; text-transform: uppercase; color: #fff; }
+        #subtitle { color: #4A90E2; font-size: 16px; margin-top: 5px; font-weight: bold; letter-spacing: 2px; }
+        #description { color: #ccc; font-size: 15px; margin-top: 10px; max-width: 450px; line-height: 1.6; }
+
+        /* Insight Bar */
+        #insight-bar {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: rgba(74, 144, 226, 0.1);
+            border-top: 1px solid rgba(74, 144, 226, 0.4);
+            padding: 15px 0; text-align: center;
+            font-size: 16px; color: #ddd; letter-spacing: 1px;
+            font-family: monospace; backdrop-filter: blur(5px);
+            transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+        .highlight { color: #4A90E2; font-weight: bold; }
+
+        /* Tap hint & Logo */
+        #nav-hint {
+            position: absolute; top: 30px; right: 30px;
+            color: #777; font-size: 12px; letter-spacing: 2px;
+            text-transform: uppercase; cursor: pointer;
+            transition: opacity 0.4s ease-in-out; text-align: right;
+        }
+        .viamath-logo { color: #4A90E2; font-weight: bold; font-size: 16px; margin-bottom: 5px; letter-spacing: 3px;}
+
+        @media (max-width: 700px) {
+            #act-indicator { top: 20px; left: 10px; font-size: 12px; }
+            #label { top: 45px; left: 10px; padding-left: 15px; max-width: 90%; }
+            h1 { font-size: 20px; }
+            #subtitle { font-size: 14px; }
+            #description { font-size: 13px; max-width: 100%; }
+            #insight-bar { font-size: 12px; padding: 10px 0; }
+            #nav-hint { top: 10px; right: 10px; font-size: 10px; }
+        }
+    </style>
+</head>
+<body onclick="nextScreen()">
+    <div id="nav-hint">
+        <a href="../../" style="text-decoration:none"><div class="viamath-logo">← VIALOGIC</div></a>
+        Tap anywhere to advance ➔
+    </div>
+    
+    <div id="act-indicator">ACT I: THE CENTER OF THE HEAVENS</div>
+
+    <div id="label">
+        <h1 id="title">Title</h1>
+        <p id="subtitle">Subtitle</p>
+        <p id="description">Description goes here.</p>
+    </div>
+
+    <div id="insight-bar">
+        <span class="highlight">HISTORICAL INSIGHT:</span> <span id="insight-text">Loading...</span>
+    </div>
+
+<script>
+let time = 0;
+let state = 0;
+
+let isTransitioning = false;
+let fadeAlpha = 0;
+let fadeDirection = 0;
+let targetState = 0;
+const FADE_SPEED = 12;
+const TOTAL_SCREENS = 10;
+
+let stars = [];
+
+const content = [
+    // ACT I: THE ALMAGEST
+    {
+        title: "The Great Synthesist", sub: "Alexandria, c. 150 CE",
+        desc: "Claudius Ptolemy lived in Roman Egypt, merging the astronomy of the Greeks with the mathematical precision of the Babylonians into one massive work: The Almagest.",
+        insight: "His work was the definitive guide to the heavens for over 1,400 years."
+    },
+    {
+        title: "The Geocentric Order", sub: "The Stationary Earth",
+        desc: "Ptolemy argued that the Earth was a sphere sitting perfectly still at the very center of the universe. To him, the sun, moon, and planets were divine beacons circling us in eternal majesty.",
+        insight: "He used trigonometry to explain why the planets moved the way they did."
+    },
+    {
+        title: "The Retrograde Problem", sub: "Planets Moving Backward",
+        desc: "Sometimes, planets like Mars appear to stop and move backward in the sky. To explain this without moving the Earth, Ptolemy invented a complex system of circles within circles.",
+        insight: "Mathematics was his way of making the messy universe look perfect."
+    },
+    // ACT II: WHEELS WITHIN WHEELS
+    {
+        title: "Epicycles Revealed", sub: "The Deferent and the Epicycle",
+        desc: "Ptolemy proposed that planets don't just circle the Earth. They move in a small circle (the Epicycle) which itself moves along a larger circle (the Deferent).",
+        insight: "The resulting path is a complex, beautiful cosmic loop-de-loop."
+    },
+    {
+        title: "The Equant Point", sub: "The Ghost Center",
+        desc: "To make his math fit the data, he had to admit that planets didn't move at a constant speed relative to the Earth, but relative to a custom 'Equant' point in space.",
+        insight: "This was the first time a scientist prioritized accuracy over ideology."
+    },
+    {
+        title: "Spherical Trigonometry", sub: "The Math of the Arc",
+        desc: "Ptolemy didn't see lines; he saw arcs. He developed the 'Table of Chords', the ancestor to modern Sine and Cosine, to calculate positions on the celestial sphere.",
+        insight: "He was effectively 'programming' the sky with geometry."
+    },
+    // ACT III: MAPPING THE WORLD
+    {
+        title: "The Geography of Earth", sub: "Latitude and Longitude",
+        desc: "Ptolemy didn't just look up. In his book 'Geography', he applied a grid to the entire known world. He invented the system of Latitude and Longitude we still use today.",
+        insight: "He was the first person to visualize the world as a coordinate system."
+    },
+    {
+        title: "The 360 Degree World", sub: "Dividing the Sphere",
+        desc: "Building on the work of Eratosthenes, Ptolemy standardized the division of the circle into 360 degrees. This allowed for precise global navigation for the first time in history.",
+        insight: "Every digital map on your phone today is built on Ptolemy's grid."
+    },
+    {
+        title: "The Hubble's Ancestor", sub: "The Lasting Vision",
+        desc: "While we now know the Sun is at the center, Ptolemy's math was so accurate it could predict eclipses within minutes. He proved that logic can bring order to even the most distant stars.",
+        insight: "He gave humanity the first 'API' for the universe."
+    },
+    {
+        title: "Navigating the Unknown", sub: "Welcome to ViaMath",
+        desc: "From the Almagest to the satellites of GPS, the grid of Ptolemy connects every point on Earth to the stars. Your journey through space-time begins here.",
+        insight: "ViaMath: The system of systems. Let's explore."
+    }
+];
+
+function setup() {
+    createCanvas(windowWidth, windowHeight);
+    for(let i=0; i<150; i++) stars.push({x: random(width), y: random(height), s: random(0.5, 2), b: random(100, 255)});
+    updateUI();
+}
+
+function windowResized() { resizeCanvas(windowWidth, windowHeight); }
+
+function nextScreen() {
+    // AWARD LOGIC
+    if (state === TOTAL_SCREENS - 1) {
+        if (!window.hasAwarded) {
+             window.parent.postMessage({ type: 'sparks_award', amount: 250 }, '*');
+             window.hasAwarded = true;
+        }
+    }
+
+    if (isTransitioning) return;
+    isTransitioning = true;
+    fadeDirection = 1;
+    targetState = (state + 1) % TOTAL_SCREENS;
+    
+    document.getElementById("label").style.opacity = 0;
+    document.getElementById("insight-bar").style.opacity = 0;
+    document.getElementById("nav-hint").style.opacity = 0;
+    document.getElementById("act-indicator").style.opacity = 0;
+}
+
+function updateUI() {
+    document.getElementById("title").innerText = content[state].title;
+    document.getElementById("subtitle").innerText = content[state].sub;
+    document.getElementById("description").innerText = content[state].desc;
+
+    let actInd = document.getElementById("act-indicator");
+    let labelBorder = document.getElementById("label");
+    
+    if (state < 3) {
+        actInd.innerText = "ACT I: THE CENTER OF THE HEAVENS";
+        actInd.style.color = "#4A90E2"; // Sky Blue
+        labelBorder.style.borderLeftColor = "#4A90E2";
+    } else if (state < 6) {
+        actInd.innerText = "ACT II: WHEELS WITHIN WHEELS";
+        actInd.style.color = "#9013FE"; // Cosmic Purple
+        labelBorder.style.borderLeftColor = "#9013FE";
+    } else {
+        actInd.innerText = "ACT III: THE GLOBAL GRID";
+        actInd.style.color = "#50E3C2"; // Seafoam
+        labelBorder.style.borderLeftColor = "#50E3C2";
+    }
+
+    document.getElementById("insight-text").innerText = content[state].insight;
+}
+
+function getScaleFactor() { return min(1, width / 800); }
+
+function draw() {
+    background(1, 4, 9);
+
+    time += 0.01;
+
+    // Twinkling stars
+    for(let s of stars) {
+        let brightness = s.b + sin(time * 2 + s.x) * 50;
+        fill(255, brightness); noStroke();
+        ellipse(s.x, s.y, s.s);
+    }
+
+    // State Router
+    if      (state === 0) drawAlexandria();
+    else if (state === 1) drawGeocentric();
+    else if (state === 2) drawRetrograde();
+    else if (state === 3) drawEpicycle();
+    else if (state === 4) drawEquant();
+    else if (state === 5) drawChords();
+    else if (state === 6) drawGeoGrid();
+    else if (state === 7) draw360World();
+    else if (state === 8) drawEclipsePredict();
+    else if (state === 9) drawHubbleGPS();
+
+    // Cinematic fade overlay
+    if (isTransitioning) {
+        fadeAlpha += FADE_SPEED * fadeDirection;
+        if (fadeDirection === 1 && fadeAlpha >= 255) {
+            fadeAlpha = 255; fadeDirection = -1;
+            state = targetState; time = 0;
+            updateUI();
+            document.getElementById("label").style.opacity = 1;
+            document.getElementById("insight-bar").style.opacity = 1;
+            document.getElementById("act-indicator").style.opacity = 1;
+            if (state !== 9) document.getElementById("nav-hint").style.opacity = 1;
+        } else if (fadeDirection === -1 && fadeAlpha <= 0) {
+            fadeAlpha = 0; isTransitioning = false; fadeDirection = 0;
+        }
+        push(); fill(1, 4, 9, fadeAlpha); noStroke(); rect(0, 0, width, height); pop();
+    }
+}
+
+// -------------------------------------------------------------
+// ACT SCREENS
+// -------------------------------------------------------------
+
+function drawAlexandria() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Lighthouse silhouette
+    fill(20, 30, 45); stroke(74, 144, 226, 100);
+    rect(-50, 0, 100, 200);
+    rect(-40, -100, 80, 100);
+    ellipse(0, -120, 40, 60);
+
+    // Lighthouse beam
+    let beamAngle = sin(time*0.5) * PI/4;
+    drawingContext.shadowBlur = 100; drawingContext.shadowColor = '#FFF';
+    fill(255, 255, 255, 30); noStroke();
+    push();
+    rotate(beamAngle);
+    triangle(0, -120, -100, -600, 100, -600);
+    pop();
+    drawingContext.shadowBlur = 0;
+    pop();
+}
+
+function drawGeocentric() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Earth at center
+    fill(50, 100, 255); stroke(255); strokeWeight(2);
+    ellipse(0, 0, 80);
+    fill(255); noStroke(); textAlign(CENTER); textSize(12); text("EARTH", 0, 5);
+
+    // Orbits
+    noFill(); stroke(255, 30);
+    for(let i=1; i<6; i++) {
+        let r = 80 + i*50;
+        ellipse(0, 0, r*2);
+        
+        // Planet on orbit
+        let a = time * (1/i);
+        fill(255, 200);
+        ellipse(cos(a)*r, sin(a)*r, 10);
+    }
+    pop();
+}
+
+function drawRetrograde() {
+    push();
+    translate(width/2, height/2 + 100);
+    scale(getScaleFactor());
+    
+    // Earth
+    fill(50, 100, 255); ellipse(-250, 0, 60);
+    
+    // Looping path
+    noFill(); stroke(255, 50);
+    beginShape();
+    for(let t=0; t<time*2; t+=0.1) {
+        let x = -200 + t*100 + cos(t*2)*50;
+        let y = sin(t*2)*50;
+        vertex(x, y);
+    }
+    endShape();
+
+    // Planet
+    let curX = -200 + time*2*100 + cos(time*2*2)*50;
+    let curY = sin(time*2*2)*50;
+    fill(255, 127, 80); ellipse(curX, curY, 15);
+    pop();
+}
+
+function drawEpicycle() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    let centerR = 200;
+    let epiR = 60;
+    
+    // Earth
+    fill(50, 100, 255); ellipse(0, 0, 40);
+    
+    // Deferent (Big Circle)
+    noFill(); stroke(255, 50); ellipse(0, 0, centerR*2);
+    
+    // Epicycle center pos
+    let ex = cos(time) * centerR;
+    let ey = sin(time) * centerR;
+    
+    // Epicycle (Small Circle)
+    stroke(144, 19, 254); ellipse(ex, ey, epiR*2);
+    
+    // Planet
+    let px = ex + cos(time*4) * epiR;
+    let py = ey + sin(time*4) * epiR;
+    fill(255); ellipse(px, py, 12);
+    
+    // Trace path
+    stroke(144, 19, 254, 80);
+    beginShape();
+    for(let t=0; t<time; t+=0.1) {
+        let tx = cos(t)*centerR + cos(t*4)*epiR;
+        let ty = sin(t)*centerR + sin(t*4)*epiR;
+        vertex(tx, ty);
+    }
+    endShape();
+    pop();
+}
+
+function drawEquant() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Centers
+    stroke(255, 50); noFill();
+    ellipse(0, 0, 300); // Orbit sphere
+    
+    fill(50, 100, 255); ellipse(-40, 0, 20); // Earth (Eccentric)
+    fill(255, 0, 0); ellipse(40, 0, 10); // Equant
+    
+    // Line from Equant to Planet
+    let a = time;
+    let px = cos(a)*150;
+    let py = sin(a)*150;
+    
+    stroke(255, 100);
+    line(40, 0, px, py);
+    fill(255); ellipse(px, py, 15);
+    pop();
+}
+
+function drawChords() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    noFill(); stroke(255, 100);
+    arc(0, 0, 400, 400, 0, PI/3);
+    
+    // Chord line
+    stroke(80, 227, 194); strokeWeight(3);
+    line(200, 0, cos(PI/3)*200, sin(PI/3)*200);
+    
+    fill(255, 150); noStroke(); textSize(20);
+    text("CHORD", 150, 50);
+    pop();
+}
+
+function drawGeoGrid() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    noFill(); stroke(80, 227, 194, 50);
+    for(let i=-200; i<=200; i+=40) {
+        line(i, -200, i, 200); // Longitude
+        line(-200, i, 200, i); // Latitude
+    }
+    
+    // Earth Sphere over grid
+    noStroke(); fill(50, 100, 255, 80);
+    ellipse(0, 0, 300);
+    pop();
+}
+
+function draw360World() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    noFill(); stroke(255, 150);
+    ellipse(0, 0, 350);
+    
+    // Compass Ticks
+    for(let i=0; i<360; i+=10) {
+        let a = radians(i);
+        line(cos(a)*175, sin(a)*175, cos(a)*185, sin(a)*185);
+    }
+    
+    fill(255, 215, 0); noStroke(); textAlign(CENTER); textSize(32);
+    text("360°", 0, 10);
+    pop();
+}
+
+function drawEclipsePredict() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Prediction clock
+    noFill(); stroke(255, 50); ellipse(0, 0, 300);
+    
+    let a = time * 2;
+    fill(255, 200, 0); noStroke(); ellipse(cos(a)*150, sin(a)*150, 40); // Sun
+    fill(200); ellipse(cos(a*1.2)*150, sin(a*1.2)*150, 20); // Moon
+    
+    pop();
+}
+
+function drawHubbleGPS() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Spinning Earth & Satellites
+    noFill(); stroke(255, 20);
+    for(let i=0; i<3; i++) {
+        push(); rotate(i*PI/3 + time*0.5); ellipse(0,0,400,100);
+        fill(255); ellipse(200, 0, 8); pop();
+    }
+    
+    fill(50, 100, 255); stroke(255); ellipse(0, 0, 120);
+    pop();
+}
+
+</script>
+</body>
+</html>

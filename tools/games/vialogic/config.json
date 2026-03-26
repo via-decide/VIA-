@@ -1,0 +1,13 @@
+{
+  "id": "vialogic",
+  "name": "ViaLogic",
+  "title": "Cartography of Minds",
+  "description": "Pan/zoom cartography game where mathematicians grow through root-tier unlock logic.",
+  "entry": "tools/games/vialogic/index.html",
+  "path": "tools/games/vialogic/index.html",
+  "tags": ["math", "history", "exploration", "game", "india"],
+  "tier": "game",
+  "icon": "🗺️",
+  "sparks": true,
+  "category": "games"
+}

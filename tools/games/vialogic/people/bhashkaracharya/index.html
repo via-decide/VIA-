@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ViaLogic | The Crown of Medieval Math (Bhaskaracharya)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            margin: 0; padding: 0; background-color: #05060F; overflow: hidden;
+            color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none; -webkit-user-select: none;
+            touch-action: manipulation; /* Prevents zoom on double tap */
+        }
+        canvas { display: block; }
+        
+        /* Pass-through clicks to the body */
+        #ui-layer { pointer-events: none; position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 10; }
+
+        #act-indicator {
+            position: absolute; top: 30px; left: 30px;
+            color: #FF8F00; font-size: 14px; font-weight: bold; letter-spacing: 3px;
+            text-transform: uppercase;
+            transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+        #label {
+            position: absolute; top: 60px; left: 30px;
+            letter-spacing: 1px; border-left: 4px solid #FF8F00;
+            padding-left: 20px;
+            background: linear-gradient(90deg, rgba(5,6,15,0.95) 0%, rgba(5,6,15,0.7) 70%, rgba(5,6,15,0) 100%);
+            padding-right: 40px; padding-bottom: 15px; padding-top: 5px;
+            border-radius: 0 10px 10px 0;
+            max-width: 80%; transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+        h1 { margin: 0; font-size: 26px; font-weight: 300; text-transform: uppercase; color: #fff; }
+        #subtitle { color: #FF8F00; font-size: 16px; margin-top: 5px; font-weight: bold; letter-spacing: 2px; }
+        #description { color: #ccc; font-size: 15px; margin-top: 10px; max-width: 480px; line-height: 1.6; }
+        
+        #insight-bar {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: rgba(255, 143, 0, 0.07);
+            border-top: 1px solid rgba(255, 143, 0, 0.4);
+            padding: 15px 20px; text-align: center; box-sizing: border-box;
+            font-size: 16px; color: #ddd; letter-spacing: 1px;
+            font-family: monospace; backdrop-filter: blur(5px);
+            transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+        .highlight { color: #FF8F00; font-weight: bold; }
+        
+        #nav-hint {
+            position: absolute; top: 30px; right: 30px;
+            color: #777; font-size: 12px; letter-spacing: 2px;
+            text-transform: uppercase; text-align: right;
+            transition: opacity 0.4s ease-in-out;
+        }
+        .vialogic-logo { color: #FF8F00; font-weight: bold; font-size: 16px; margin-bottom: 5px; letter-spacing: 3px; }
+
+        /* Responsive Breakpoints - PERFECT MOBILE ALIGNMENT */
+        @media (max-width: 768px) {
+            #act-indicator { 
+                top: 20px; left: 15px; font-size: 11px; 
+                max-width: 55vw; /* Forces wrap, guarantees no overlap */
+                line-height: 1.4; word-wrap: break-word;
+            }
+            #nav-hint { 
+                top: 20px; right: 15px; font-size: 9px; 
+                max-width: 35vw; /* Keeps strictly on the right */
+            }
+            #label { 
+                top: 65px; /* Shifted down to accommodate the wrapped act indicator */
+                left: 15px; padding-left: 15px; max-width: 85%; 
+                background: rgba(5,6,15,0.85); backdrop-filter: blur(4px); 
+            }
+            h1 { font-size: 20px; }
+            #subtitle { font-size: 14px; }
+            #description { font-size: 13px; max-width: 100%; line-height: 1.5; }
+            #insight-bar { font-size: 12px; padding: 12px 10px; }
+            .vialogic-logo { font-size: 13px; margin-bottom: 2px; }
+        }
+    </style>
+</head>
+<body onclick="nextScreen()">
+    
+    <div id="ui-layer">
+        <div id="nav-hint">
+            <a href="../../" style="text-decoration:none"><div class="vialogic-logo">← VIALOGIC</div></a>
+            Tap anywhere to advance ➔
+        </div>
+        <div id="act-indicator">ACT I: THE CROWN OF UJJAIN</div>
+        <div id="label">
+            <h1 id="title">The Throne of Ujjain</h1>
+            <p id="subtitle">Bhaskaracharya — Karnataka, 1114 CE</p>
+            <p id="description">Born in 1114 CE in Vijjadavida, Karnataka, Bhaskaracharya — 'Bhaskara the Teacher' — inherited a dynasty of mathematicians. His father Mahesvara was an astrologer. He learned mathematics at his father's knee, and in time became the head of the greatest astronomical observatory in all of India: the legendary Ujjain observatory — successor to Brahmagupta himself.</p>
+        </div>
+        <div id="insight-bar">
+            <span class="highlight">HISTORICAL INSIGHT:</span> <span id="insight-text">He stood at the peak of 600 years of Indian mathematical tradition — Aryabhata → Brahmagupta → Mahaviracharya → Bhaskaracharya.</span>
+            <h1 id="title">Title</h1>
+            <p id="subtitle">Subtitle</p>
+            <p id="description">Description goes here.</p>
+        </div>
+        <div id="insight-bar">
+            <span class="highlight">HISTORICAL INSIGHT:</span> <span id="insight-text">Loading...</span>
+        </div>
+    </div>
+
+<script>
+let time = 0;
+let state = 0;
+let isTransitioning = false;
+let fadeAlpha = 0;
+let fadeDirection = 0;
+let targetState = 0;
+const FADE_SPEED = 15; 
+const TOTAL_SCREENS = 12;
+let particles = [];
+let pellParts = [];
+
+const content = [
+    {
+        title: "The Throne of Ujjain", sub: "Bhaskaracharya — Karnataka, 1114 CE",
+        desc: "Born in 1114 CE in Vijjadavida, Karnataka, Bhaskaracharya — 'Bhaskara the Teacher' — inherited a dynasty of mathematicians. His father Mahesvara was an astrologer. He learned mathematics at his father's knee, and in time became the head of the greatest astronomical observatory in all of India: the legendary Ujjain observatory — successor to Brahmagupta himself.",
+        insight: "He stood at the peak of 600 years of Indian mathematical tradition — Aryabhata → Brahmagupta → Mahaviracharya → Bhaskaracharya."
+    },
+    {
+        title: "The Lilavati Legend", sub: "A Father's Gift to His Daughter",
+        desc: "Bhaskaracharya studied the horoscope of his daughter Lilavati and found she could only marry at one precise auspicious hour. He used a water-clock — a cup with a small hole, set to sink at exactly the right moment. But Lilavati, curious, peered in — and a pearl from her nose-ring blocked the hole. The hour passed. Heartbroken, her father wrote her the most beautiful mathematics book in history.",
+        insight: "The Lilavati is addressed to 'dear one' and 'beautiful one' — a father's letter written in equations."
+    },
+    {
+        title: "The Crown of Treatises", sub: "Siddhanta Shiromani, 1150 CE",
+        desc: "At age 36, Bhaskaracharya completed his magnum opus: the Siddhanta Shiromani — 'Crown of Treatises' — 1,450 verses across four monumental books: Lilavati (Arithmetic), Bijaganita (Algebra), Grahaganita (Planetary Math), and Goladhyaya (Celestial Sphere). It is the most complete mathematical work produced in medieval India — or medieval anywhere.",
+        insight: "J. J. O'Connor and E. F. Robertson wrote: 'He reached an understanding of number systems which was not achieved in Europe for several centuries.'"
+    },
+    {
+        title: "Lilavati — The Beautiful", sub: "Arithmetic as Poetry",
+        desc: "Lilavati's 13 chapters cover arithmetic, fractions, geometry, progressions, combinations, and the shadow of the gnomon — all written in lyrical Sanskrit verse with problems addressed to 'dear Lilavati'. It was translated into Persian in 1587, into English in 1817 by Henry Colebrooke, and became the most beloved mathematics textbook in the history of India.",
+        insight: "He was the first to write a complete, systematic work using the full decimal number system — place value, zero, and negative numbers together."
+    },
+    {
+        title: "Bijaganita — Seed Counting", sub: "The Algebra of Two Roots",
+        desc: "In Bijaganita, Bhaskaracharya declared for the first time: 'A positive number has TWO square roots — one positive and one negative.' He gave rules for surds, operations with zero and infinity, and a complete systematic algebra of equations. He filled every gap Brahmagupta had left open.",
+        insight: "He wrote: 'n ÷ 0 has zero as its divisor — this is called Khahara, and its nature is infinite, unchanged by addition or subtraction of any number.'"
+    },
+    {
+        title: "The Chakravala Method", sub: "The Cyclic Algorithm",
+        desc: "To solve the fearsome Pell's Equation (Nx² + 1 = y²), Bhaskaracharya perfected the Chakravala — the 'cyclic method'. It is an elegant, self-correcting algorithm: start with an approximate answer, then spin through a cycle of calculations, each revolution getting closer to the exact integer solution.",
+        insight: "European mathematicians Brouncker, Euler, and Lagrange wouldn't solve the Pell equation until the 17th–18th century — five hundred years after Bhaskaracharya."
+    },
+    {
+        title: "Pell's Equation", sub: "61x² + 1 = y²",
+        desc: "Bhaskaracharya posed and solved one of the hardest Diophantine equations ever attempted: 61x² + 1 = y². The smallest integer solution is staggering: x = 226,153,980 and y = 1,766,319,049. He found this using nothing but his Chakravala algorithm and pure logic — no computers, no tables.",
+        insight: "When Euler attempted this same equation in 1732, he called it extraordinarily difficult. Bhaskaracharya solved it in the 12th century."
+    },
+    {
+        title: "The Derivative of Sine", sub: "500 Years Before Newton",
+        desc: "In the Siddhanta Shiromani, Bhaskaracharya derived: δ(sin x) ≈ cos x · δx. He understood that at the peak of the sine curve — its maximum — the rate of change becomes zero. This is Rolle's Theorem, a cornerstone of calculus. He applied this to find the exact position of planets at any instant.",
+        insight: "Isaac Newton would formalize calculus in 1666. Bhaskaracharya had already used its core principle for astronomy in 1150 CE."
+    },
+    {
+        title: "Instantaneous Motion", sub: "Tatkalika-gati",
+        desc: "He defined 'Tatkalika-gati' — the velocity of a planet at a single instant in time — distinct from its average velocity over a period. This is the fundamental concept of the derivative in calculus. He used it to predict exact planetary positions, correcting accumulated errors that had plagued astronomy for centuries.",
+        insight: "The concept of instantaneous rate of change — the very soul of calculus — was stated clearly by Bhaskaracharya 500 years before Europe."
+    },
+    {
+        title: "The Silent Proof", sub: "Behold! The Pythagorean Theorem",
+        desc: "Bhaskaracharya's proof of the Pythagorean theorem is legendary for its economy. He drew a square tilted inside another square, creating four identical right triangles. He wrote just one word below the figure: 'Behold!' — as if the truth was so obvious it needed no words. A² + B² = C² requires no explanation when you can see it.",
+        insight: "His one-word proof, 'Pashyat!' (Behold!), is considered the most elegant proof in the entire history of mathematics."
+    },
+    {
+        title: "Spherical Trigonometry", sub: "Mapping the Celestial Globe",
+        desc: "In the Goladhyaya, Bhaskaracharya developed complete spherical trigonometry — the mathematics of triangles on the surface of a sphere. He computed sines of 18° and 36°, derived relationships between all trigonometric functions, and gave formulae so accurate that Indian astronomy based on his work remained the world standard for 400 years.",
+        insight: "He treated trigonometry as a subject worthy of study for its own beauty — not merely as a tool for astronomy."
+    },
+    {
+        title: "The Eternal Crown", sub: "His Legacy",
+        desc: "Bhaskaracharya's work traveled through the Islamic world into Europe, shaping the Renaissance mathematicians who never knew his name. His grandson Changadeva established a school to teach his works in 1207 CE. In 1981, ISRO launched India's second satellite — named Bhaskara II — carrying his memory into orbit.",
+        insight: "He gave the world the first calculus, the first double square root, the most powerful pre-modern algorithm. Welcome to ViaLogic."
+    }
+];
+
+function setup() {
+    createCanvas(windowWidth, windowHeight);
+    for (let i = 0; i < 80; i++) particles.push({ x: random(width), y: random(height), s: random(1.5, 4), a: random(TWO_PI) });
+    for (let i = 0; i < 30; i++) pellParts.push({ x: random(-200, 200), y: random(-300, -100), vy: random(1, 3), val: floor(random(10)) });
+    updateUI();
+}
+
+function windowResized() { resizeCanvas(windowWidth, windowHeight); }
+
+function nextScreen() {
+    // AWARD LOGIC
+    if (state === TOTAL_SCREENS - 1) {
+        if (!window.hasAwarded) {
+             window.parent.postMessage({ type: 'sparks_award', amount: 250 }, '*');
+             window.hasAwarded = true;
+        }
+    }
+
+    if (isTransitioning) return;
+    isTransitioning = true;
+    fadeDirection = 1;
+    targetState = (state + 1) % TOTAL_SCREENS;
+    
+    // Fade out UI
+    ['label','insight-bar','nav-hint','act-indicator'].forEach(id => {
+        let el = document.getElementById(id);
+        if (el) el.style.opacity = 0;
+    });
+}
+
+function updateUI() {
+    document.getElementById("title").innerText = content[state].title;
+    document.getElementById("subtitle").innerText = content[state].sub;
+    document.getElementById("description").innerText = content[state].desc;
+
+    let actInd = document.getElementById("act-indicator");
+    let labelEl = document.getElementById("label");
+    let subtitleEl = document.getElementById("subtitle");
+    let span = document.querySelector('.highlight');
+
+    let col, actText;
+    if (state < 3) {
+        col = "#FF8F00"; actText = "ACT I: THE CROWN OF UJJAIN";
+        span.innerText = "HISTORICAL INSIGHT:";
+    } else if (state < 7) {
+        col = "#00897B"; actText = "ACT II: THE FOUR BOOKS";
+        span.innerText = "MATHEMATICAL GENIUS:";
+    } else {
+        col = "#7C4DFF"; actText = "ACT III: THE EDGE OF CALCULUS";
+        span.innerText = state === 11 ? "LEGACY:" : "MATHEMATICAL GENIUS:";
+    }
+    
+    actInd.innerText = actText;
+    actInd.style.color = col;
+    labelEl.style.borderLeftColor = col;
+    subtitleEl.style.color = col;
+    span.style.color = col;
+    document.getElementById("insight-text").innerText = content[state].insight;
+}
+
+function getScaleFactor() { 
+    // Calculate available vertical space (excluding top text & bottom bar)
+    let topUI_Height = windowWidth < 768 ? 180 : 200; // Increased to account for wrapped text
+    let bottomUI_Height = windowWidth < 768 ? 60 : 80;
+    let safeHeight = height - topUI_Height - bottomUI_Height;
+    let safeWidth = width - 40;
+    return min(1, safeWidth / 600, safeHeight / 560);
+}
+
+function getCenterY() {
+    let topUI_Height = windowWidth < 768 ? 180 : 200;
+    let bottomUI_Height = windowWidth < 768 ? 60 : 80;
+    return topUI_Height + (height - topUI_Height - bottomUI_Height) / 2;
+}
+
+function getActColor() {
+    if (state < 3) return color(255, 143, 0);
+    if (state < 7) return color(0, 137, 123);
+    return color(124, 77, 255);
+}
+
+function draw() {
+    background(5, 6, 15);
+
+    stroke(255, 5); strokeWeight(1); noFill();
+    for (let i = 0; i < width; i += 70) line(i, 0, i, height);
+    for (let j = 0; j < height; j += 70) line(0, j, width, j);
+
+    time += 0.02;
+    let ac = getActColor();
+    for (let p of particles) {
+        p.y -= 0.28; p.x += sin(p.a + time) * 0.45;
+        if (p.y < 0) { p.y = height; p.x = random(width); }
+        fill(red(ac), green(ac), blue(ac), 55); noStroke();
+        ellipse(p.x, p.y, p.s);
+    }
+
+    push();
+    translate(width / 2, getCenterY());
+    scale(getScaleFactor());
+
+    if      (state === 0)  drawUjjain();
+    else if (state === 1)  drawLilavatiLegend();
+    else if (state === 2)  drawSiddhantaShiromani();
+    else if (state === 3)  drawLilavatiBook();
+    else if (state === 4)  drawBijaganita();
+    else if (state === 5)  drawChakravala();
+    else if (state === 6)  drawPellsEquation();
+    else if (state === 7)  drawDerivative();
+    else if (state === 8)  drawTatkalikagati();
+    else if (state === 9)  drawBehold();
+    else if (state === 10) drawSphericalTrig();
+    else if (state === 11) drawLegacy();
+    
+    pop();
+
+    if (isTransitioning) {
+        fadeAlpha += FADE_SPEED * fadeDirection;
+        if (fadeDirection === 1 && fadeAlpha >= 255) {
+            fadeAlpha = 255; fadeDirection = -1;
+            state = targetState; time = 0;
+            updateUI();
+            
+            ['label','insight-bar','act-indicator'].forEach(id => {
+                let el = document.getElementById(id);
+                if (el) el.style.opacity = 1;
+            });
+            if (state !== 11) document.getElementById("nav-hint").style.opacity = 1;
+            
+        } else if (fadeDirection === -1 && fadeAlpha <= 0) {
+            fadeAlpha = 0; isTransitioning = false;
+        }
+        push(); fill(5, 6, 15, fadeAlpha); noStroke(); rect(0, 0, width, height); pop();
+    }
+}
+
+function drawUjjain() {
+    let lineage = ["ARYABHATA\n476 CE", "BRAHMAGUPTA\n628 CE", "MAHAVIRACHARYA\n850 CE", "BHASKARACHARYA\n1114 CE"];
+    let cols = [color(255, 153, 51), color(229, 57, 53), color(255, 111, 0), color(255, 143, 0)];
+
+    push(); translate(0, -90);
+    for (let i = 0; i < lineage.length; i++) {
+        let lx = map(i, 0, 3, -270, 270);
+
+        if (i === 3) { drawingContext.shadowBlur = 50; drawingContext.shadowColor = '#FF8F00'; }
+        fill(10, 12, 20); stroke(cols[i]); strokeWeight(i === 3 ? 3 : 2);
+        ellipse(lx, 0, i === 3 ? 100 : 80);
+        drawingContext.shadowBlur = 0;
+
+        fill(cols[i]); noStroke(); textSize(i === 3 ? 13 : 11); textAlign(CENTER, CENTER);
+        text(lineage[i], lx, 0);
+
+        if (i < 3) {
+            stroke(255, 60); strokeWeight(2);
+            line(lx + (i === 3 ? 50 : 40), 0, lx + 90, 0);
+            fill(255, 80); noStroke(); textSize(18); text("→", lx + 70, -5);
+        }
+    }
+    pop();
+
+    let dome_y = 110;
+    fill(15, 18, 35); stroke(255, 143, 0, 80); strokeWeight(2);
+    arc(0, dome_y, 300, 160, PI, TWO_PI);
+    rect(-150, dome_y, 300, 80);
+    stroke(255, 143, 0); strokeWeight(4);
+    line(0, dome_y, 0, dome_y - 100);
+    line(0, dome_y - 100, 80, dome_y + 10);
+    
+    drawingContext.shadowBlur = 40; drawingContext.shadowColor = '#FF8F00';
+    fill(255, 200, 100); noStroke(); ellipse(0, dome_y - 105, 14);
+    drawingContext.shadowBlur = 0;
+
+    fill(255); noStroke(); textSize(20); textAlign(CENTER);
+    text("UJJAIN — MERIDIAN OF MEDIEVAL SCIENCE", 0, dome_y + 110);
+}
+
+function drawLilavatiLegend() {
+    fill(10, 20, 40); stroke(79, 195, 247); strokeWeight(3);
+    arc(0, 60, 200, 120, 0, PI); 
+    rect(-100, 60, 200, 80);
+
+    fill(30, 80, 140, 180); noStroke();
+    beginShape();
+    for (let x = -90; x <= 90; x += 5) vertex(x, 80 + sin(x * 0.1 + time * 3) * 4);
+    vertex(90, 140); vertex(-90, 140); endShape(CLOSE);
+
+    let cupSink = map(sin(time * 0.4), -1, 1, 90, 125);
+    fill(180, 150, 80); stroke(255, 200, 100); strokeWeight(2);
+    arc(0, cupSink, 50, 30, 0, PI);
+    line(-25, cupSink, 25, cupSink);
+
+    let pearlT = (sin(time * 1.2) + 1) / 2;
+    let pearlY = lerp(-80, cupSink + 5, pearlT);
+    drawingContext.shadowBlur = 20; drawingContext.shadowColor = '#fff';
+    fill(240, 220, 255); noStroke(); ellipse(5, pearlY, 12);
+    drawingContext.shadowBlur = 0;
+
+    stroke(255, 200, 100); strokeWeight(2); noFill();
+    arc(5, -90, 30, 30, PI * 0.3, PI * 1.2);
+
+    fill(255); noStroke(); textSize(24); textAlign(CENTER);
+    text("The Pearl. The Clock. The Missed Hour.", 0, -170);
+    fill(255, 143, 0); textSize(17);
+    text("And so her father wrote her a book of mathematics.", 0, -140);
+
+    fill(255, 200, 150); textSize(28); letterSpacing = 3; text("लीलावती", 0, 200);
+    fill(255, 150); textSize(16); letterSpacing = 1; text("\"The Beautiful\"", 0, 230);
+}
+
+function drawSiddhantaShiromani() {
+    let books = [
+        { name: "लीलावती\nLilavati", sub: "Arithmetic", col: color(255, 143, 0), x: -120, y: -80 },
+        { name: "बीजगणित\nBijaganita", sub: "Algebra", col: color(0, 137, 123), x: 120, y: -80 },
+        { name: "ग्रहगणित\nGrahaganita", sub: "Planetary Math", col: color(79, 195, 247), x: -120, y: 80 },
+        { name: "गोलाध्याय\nGoladhyaya", sub: "Celestial Sphere", col: color(206, 147, 216), x: 120, y: 80 }
+    ];
+
+    drawingContext.shadowBlur = 70; drawingContext.shadowColor = '#FF8F00';
+    fill(15, 14, 5); stroke(255, 143, 0); strokeWeight(4); ellipse(0, 0, 80);
+    drawingContext.shadowBlur = 0;
+    fill(255, 200, 80); noStroke(); textSize(14); textAlign(CENTER, CENTER);
+    text("SIDDHANTA\nSHIROMANI", 0, 0);
+
+    for (let b of books) {
+        let pulse = 0.9 + sin(time * 1.5 + b.x) * 0.06;
+        drawingContext.shadowBlur = 30; drawingContext.shadowColor = 'rgba(' + red(b.col) + ',' + green(b.col) + ',' + blue(b.col) + ',1)';
+        fill(8, 12, 22); stroke(b.col); strokeWeight(2);
+        rect(b.x - 85 * pulse, b.y - 55 * pulse, 170 * pulse, 110 * pulse, 10);
+        drawingContext.shadowBlur = 0;
+
+        fill(red(b.col), green(b.col), blue(b.col));
+        noStroke(); textSize(18); textAlign(CENTER, CENTER); text(b.name, b.x, b.y - 8);
+        fill(255, 180); textSize(13); text(b.sub, b.x, b.y + 28);
+
+        stroke(red(b.col), green(b.col), blue(b.col), 60); strokeWeight(2);
+        line(b.x, b.y, 0, 0);
+    }
+
+    fill(255); noStroke(); textSize(24); textAlign(CENTER);
+    text("1,450 Verses  —  Written at age 36  —  1150 CE", 0, -220);
+}
+
+function drawLilavatiBook() {
+    let n = Math.floor(time * 0.8) % 6 + 1;
+    let dotR = 14;
+    let total = n * (n + 1) / 2;
+
+    for (let row = 0; row < n; row++) {
+        for (let col = 0; col <= row; col++) {
+            let px = (col - row / 2) * 35;
+            let py = row * 35 - 100;
+            fill(255, 143, 0, 200); stroke(255, 180); strokeWeight(1);
+            ellipse(px, py, dotR);
+        }
+    }
+
+    fill(255); noStroke(); textSize(24); textAlign(CENTER);
+    text("Triangular Numbers: T(" + n + ") = " + total, 0, -180);
+
+    drawingContext.shadowBlur = 20; drawingContext.shadowColor = '#FF8F00';
+    fill(10, 14, 25); stroke(255, 143, 0); strokeWeight(2); rect(-260, 60, 520, 58, 10);
+    drawingContext.shadowBlur = 0;
+    fill(255); noStroke(); textSize(20); textAlign(CENTER, CENTER);
+    text("Progressions  •  Fractions  •  Combinations  •  Gnomon", 0, 89);
+
+    for (let i = 0; i < 13; i++) {
+        let a = TWO_PI * i / 13 - HALF_PI;
+        let px = cos(a) * 180, py = sin(a) * 180 + 80;
+        let active = (Math.floor(time * 1.5) % 13) === i;
+        fill(active ? color(255, 143, 0) : color(30, 35, 60));
+        stroke(255, 143, 0, active ? 255 : 80); strokeWeight(1);
+        ellipse(px, py, active ? 22 : 14);
+        if (active) { fill(0); noStroke(); textSize(12); textAlign(CENTER, CENTER); text(i + 1, px, py); }
+    }
+
+    fill(255, 143, 0); noStroke(); textSize(16); textAlign(CENTER);
+    text("13 Chapters of the most beloved math textbook in history", 0, 280);
+}
+
+function drawBijaganita() {
+    fill(255); noStroke(); textAlign(CENTER); textSize(40);
+    text("√25  =  ?", 0, -180);
+
+    let revealT = min(time * 0.5, 1.0);
+
+    drawingContext.shadowBlur = 30; drawingContext.shadowColor = '#00897B';
+    fill(10, 30, 25); stroke(0, 137, 123); strokeWeight(3); rect(-160, -120, 130, 70, 10);
+    drawingContext.shadowBlur = 0;
+    fill(0, 137, 123); noStroke(); textSize(32); textAlign(CENTER, CENTER); text("+5", -95, -85);
+    fill(255, 150); textSize(14); text("Positive Root", -95, -55);
+
+    drawingContext.shadowBlur = 30 * revealT; drawingContext.shadowColor = '#FF5252';
+    fill(25, 10, 10); stroke(229, 57, 53, 255 * revealT); strokeWeight(3);
+    rect(30, -120, 130, 70, 10);
+    drawingContext.shadowBlur = 0;
+    fill(229, 57, 53, 255 * revealT); noStroke(); textSize(32); textAlign(CENTER, CENTER); text("−5", 95, -85);
+    fill(255, 150 * revealT); textSize(14); text("Negative Root!", 95, -55);
+
+    if (revealT > 0.8) {
+        fill(255, 230, 100); noStroke(); textSize(22); textAlign(CENTER);
+        text("\"A positive number has TWO square roots.\"", 0, -10);
+        fill(255, 150); textSize(16); text("— Bhaskaracharya, Bijaganita, 1150 CE", 0, 18);
+    }
+
+    drawingContext.shadowBlur = 20; drawingContext.shadowColor = '#FF8F00';
+    fill(12, 14, 28); stroke(255, 143, 0); strokeWeight(2); rect(-260, 60, 520, 70, 10);
+    drawingContext.shadowBlur = 0;
+    fill(255, 180, 50); noStroke(); textSize(22); textAlign(CENTER, CENTER);
+    text("n ÷ 0 = ∞  (Khahara — The Infinite Void)", 0, 95);
+    fill(255, 150); textSize(15); textAlign(CENTER);
+    text("Unchanged by addition or subtraction of any finite number.", 0, 160);
+}
+
+function drawChakravala() {
+    let r = 160;
+    let steps = 8;
+    let currentStep = Math.floor(time * 1.5) % steps;
+
+    noFill(); stroke(0, 137, 123, 80); strokeWeight(2); ellipse(0, 0, r * 2);
+
+    for (let i = 0; i < steps; i++) {
+        let a = TWO_PI * i / steps - HALF_PI;
+        let px = cos(a) * r, py = sin(a) * r;
+        let isActive = i === currentStep;
+
+        drawingContext.shadowBlur = isActive ? 30 : 0; drawingContext.shadowColor = '#00897B';
+        fill(isActive ? color(0, 50, 40) : color(10, 18, 16));
+        stroke(0, 137, 123, isActive ? 255 : 100); strokeWeight(isActive ? 3 : 1);
+        ellipse(px, py, isActive ? 70 : 50);
+        drawingContext.shadowBlur = 0;
+
+        fill(isActive ? color(0, 137, 123) : color(100));
+        noStroke(); textSize(isActive ? 14 : 11); textAlign(CENTER, CENTER);
+        let labels = ["Start\nApprox.", "Compute\nm", "Minimise\n|k|", "Next\ncycle", "Check\nk=1?", "Refine\na,b", "Update\nN", "Solution"];
+        text(labels[i], px, py);
+
+        if (i > 0) {
+            let pa = TWO_PI * (i - 1) / steps - HALF_PI;
+            stroke(0, 137, 123, 60); strokeWeight(2);
+            line(cos(pa) * r, sin(pa) * r, px, py);
+        }
+    }
+    let a0 = -HALF_PI, a_last = TWO_PI * (steps - 1) / steps - HALF_PI;
+    stroke(0, 137, 123, 60); strokeWeight(2);
+    line(cos(a_last) * r, sin(a_last) * r, cos(a0) * r, sin(a0) * r);
+
+    drawingContext.shadowBlur = 40; drawingContext.shadowColor = '#00897B';
+    fill(8, 18, 14); stroke(0, 137, 123); strokeWeight(3); ellipse(0, 0, 90);
+    drawingContext.shadowBlur = 0;
+    fill(255); noStroke(); textSize(16); textAlign(CENTER, CENTER); text("CHAKRA\nVALA", 0, 0);
+
+    fill(255); noStroke(); textSize(26); textAlign(CENTER); text("Nx² + 1 = y²", 0, -220);
+    fill(0, 137, 123); textSize(16); text("The Cyclic Method — Spinning towards integer truth.", 0, 220);
+}
+
+function drawPellsEquation() {
+    fill(255); noStroke(); textAlign(CENTER); textSize(48); text("61x² + 1 = y²", 0, -200);
+
+    for (let p of pellParts) {
+        p.y += p.vy;
+        if (p.y > 200) { p.y = random(-300, -50); p.x = random(-260, 260); }
+        fill(0, 137, 123, 100); noStroke(); textSize(14); textAlign(CENTER); text(p.val, p.x, p.y);
+    }
+
+    drawingContext.shadowBlur = 40; drawingContext.shadowColor = '#00897B';
+    fill(8, 22, 18); stroke(0, 137, 123); strokeWeight(3);
+    rect(-280, -80, 240, 70, 10); rect(40, -80, 240, 70, 10);
+    drawingContext.shadowBlur = 0;
+
+    fill(0, 137, 123); noStroke(); textSize(16); textAlign(CENTER, CENTER); text("x =", -220, -45);
+    fill(255); textSize(20); text("226,153,980", -160, -45);
+
+    fill(0, 137, 123); textSize(16); text("y =", 100, -45);
+    fill(255); textSize(20); text("1,766,319,049", 170, -45);
+
+    fill(255, 200, 80); textSize(18); textAlign(CENTER); text("Verify: 61 × (226,153,980)² + 1 = (1,766,319,049)²  ✓", 0, 50);
+    fill(255, 150); textSize(15); text("Found by Bhaskaracharya using Chakravala alone.", 0, 90);
+    fill(229, 57, 53); textSize(15); text("Euler called this problem 'extraordinarily difficult' in 1732.", 0, 120);
+    fill(0, 137, 123); textSize(15); text("Bhaskaracharya solved it 580 years earlier.", 0, 150);
+}
+
+function drawDerivative() {
+    stroke(124, 77, 255); strokeWeight(3); noFill();
+    beginShape();
+    for (let x = -300; x <= 300; x += 3) vertex(x, -sin(x / 80) * 120);
+    endShape();
+
+    let px_n = time * 0.7;
+    let px = (px_n % (TWO_PI * 2) - PI * 2) * 80;
+    let py = -sin(px_n) * 120;
+
+    let slope = -cos(px_n);
+    let tanLen = 80;
+    stroke(255, 143, 0); strokeWeight(3); line(px - tanLen, py - slope * tanLen, px + tanLen, py + slope * tanLen);
+
+    drawingContext.shadowBlur = 20; drawingContext.shadowColor = '#FF8F00';
+    fill(255, 143, 0); noStroke(); ellipse(px, py, 14);
+    drawingContext.shadowBlur = 0;
+
+    let maxX_n = HALF_PI;
+    let maxX = (maxX_n % (TWO_PI * 2) - PI * 2) * 80;
+    stroke(255, 80, 80); strokeWeight(2); drawingContext.setLineDash([5, 5]);
+    line(maxX, -130, maxX, 20); drawingContext.setLineDash([]);
+    fill(255, 80, 80); noStroke(); textSize(14); textAlign(CENTER); text("Maximum →\nslope = 0", maxX + 60, -140);
+
+    stroke(255, 40); strokeWeight(2); line(-300, 0, 300, 0); line(0, -170, 0, 50);
+
+    drawingContext.shadowBlur = 25; drawingContext.shadowColor = '#7C4DFF';
+    fill(12, 10, 25); stroke(124, 77, 255); strokeWeight(2); rect(-220, 80, 440, 60, 10);
+    drawingContext.shadowBlur = 0;
+    fill(255); noStroke(); textSize(22); textAlign(CENTER, CENTER); text("δ(sin x)  ≈  cos x · δx", 0, 110);
+
+    fill(255, 150); noStroke(); textSize(14); textAlign(CENTER);
+    text("Newton would write this same formula in 1666. Bhaskara wrote it in 1150.", 0, 170);
+}
+
+function drawTatkalikagati() {
+    let r = 150;
+    noFill(); stroke(255, 30); strokeWeight(2); ellipse(0, 0, r * 2);
+
+    drawingContext.shadowBlur = 40; drawingContext.shadowColor = '#FFA500';
+    fill(255, 200, 80); noStroke(); ellipse(0, 0, 40);
+    drawingContext.shadowBlur = 0;
+
+    let pa = time * 0.7 - HALF_PI;
+    let plx = cos(pa) * r, ply = sin(pa) * r;
+    fill(79, 195, 247); stroke(255); strokeWeight(2); ellipse(plx, ply, 22);
+
+    let pa2 = pa + 0.6;
+    let plx2 = cos(pa2) * r, ply2 = sin(pa2) * r;
+    stroke(255, 143, 0, 120); strokeWeight(2); drawingContext.setLineDash([8, 6]);
+    line(plx, ply, plx2, ply2); drawingContext.setLineDash([]);
+    fill(255, 143, 0, 150); noStroke(); textSize(13); textAlign(CENTER);
+    text("Average\nVelocity", (plx + plx2) / 2 + 40, (ply + ply2) / 2 - 20);
+
+    let tangX = -sin(pa), tangY = cos(pa);
+    stroke(124, 77, 255); strokeWeight(4); line(plx, ply, plx + tangX * 80, ply + tangY * 80);
+    
+    fill(124, 77, 255); noStroke();
+    let ax = plx + tangX * 80, ay = ply + tangY * 80;
+    let ang = atan2(tangY, tangX);
+    push(); translate(ax, ay); rotate(ang); triangle(0, 0, -12, -6, -12, 6); pop();
+
+    fill(124, 77, 255); textSize(14); textAlign(CENTER);
+    text("Tatkalika-gati\n(Instantaneous Velocity)", plx + tangX * 100 + 30, ply + tangY * 100);
+
+    drawingContext.shadowBlur = 25; drawingContext.shadowColor = '#7C4DFF';
+    fill(10, 8, 22); stroke(124, 77, 255); strokeWeight(2); rect(-240, 185, 480, 55, 10);
+    drawingContext.shadowBlur = 0;
+    fill(255); noStroke(); textSize(20); textAlign(CENTER, CENTER);
+    text("The velocity of a planet at a SINGLE instant in time.", 0, 213);
+
+    fill(255); noStroke(); textSize(22); textAlign(CENTER);
+    text("The Concept of the Derivative — Defined.", 0, -210);
+}
+
+function drawBehold() {
+    let a = 80, b = 55, c = sqrt(a * a + b * b);
+    let scale_ = 1.4; a *= scale_; b *= scale_; c *= scale_;
+
+    let pts = [ { x: 0, y: -c }, { x: c, y: 0 }, { x: 0, y: c }, { x: -c, y: 0 } ];
+    fill(124, 77, 255, 30); stroke(124, 77, 255); strokeWeight(3);
+    beginShape(); for (let p of pts) vertex(p.x, p.y); endShape(CLOSE);
+
+    let ib = b * 0.9;
+    fill(5, 6, 15, 200); stroke(255, 143, 0); strokeWeight(2); rect(-ib / 2, -ib / 2, ib, ib);
+
+    let triCols = [color(255, 80, 80, 100), color(80, 200, 120, 100), color(80, 160, 255, 100), color(255, 200, 80, 100)];
+    let corners = [
+        [{ x: 0, y: -c }, { x: c, y: 0 }, { x: ib / 2, y: -ib / 2 }],
+        [{ x: c, y: 0 }, { x: 0, y: c }, { x: ib / 2, y: ib / 2 }],
+        [{ x: 0, y: c }, { x: -c, y: 0 }, { x: -ib / 2, y: ib / 2 }],
+        [{ x: -c, y: 0 }, { x: 0, y: -c }, { x: -ib / 2, y: -ib / 2 }]
+    ];
+    for (let i = 0; i < 4; i++) {
+        fill(triCols[i]); stroke(255, 80); strokeWeight(1);
+        beginShape(); for (let v of corners[i]) vertex(v.x, v.y); endShape(CLOSE);
+    }
+
+    fill(124, 77, 255); noStroke(); textSize(22); textAlign(CENTER, CENTER); text("c²", 0, 0);
+
+    let pulse = 150 + sin(time * 2) * 80;
+    fill(255, 200, 80, pulse); textSize(48); textAlign(CENTER); text("पश्यत्  !  BEHOLD !", 0, -210);
+    fill(255, 150); textSize(16);
+    text("a² + b² = c²", 0, 200);
+    text("The most elegant proof in history — one word.", 0, 228);
+}
+
+function drawSphericalTrig() {
+    let r = 150;
+
+    noFill(); stroke(255, 30); strokeWeight(2);
+    ellipse(0, 0, r * 2); ellipse(0, 0, r * 2, r * 0.5); 
+    stroke(255, 20); ellipse(0, 0, r * 0.5 * 2, r * 2);
+
+    push(); rotate(time * 0.3);
+    noFill(); stroke(124, 77, 255, 150); strokeWeight(3); ellipse(0, 0, r * 2, r * 0.6);
+    pop();
+
+    let pts = [
+        { x: cos(0.5) * r, y: sin(0.5) * r * 0.5 },
+        { x: cos(2.0) * r, y: sin(2.0) * r * 0.5 },
+        { x: cos(1.2) * r * 0.5, y: sin(1.2) * r }
+    ];
+    fill(255, 143, 0, 50); stroke(255, 143, 0); strokeWeight(3);
+    beginShape(); for (let p of pts) vertex(p.x, p.y); endShape(CLOSE);
+
+    for (let p of pts) {
+        noFill(); stroke(255, 200, 100, 150); strokeWeight(2); arc(p.x, p.y, 30, 30, 0, TWO_PI * 0.6);
+    }
+
+    drawingContext.shadowBlur = 20; drawingContext.shadowColor = '#7C4DFF';
+    fill(10, 8, 22); stroke(124, 77, 255); strokeWeight(2); rect(-240, 175, 480, 55, 10);
+    drawingContext.shadowBlur = 0;
+    fill(255); noStroke(); textSize(20); textAlign(CENTER, CENTER);
+    text("sin(18°) and sin(36°) — computed for the first time.", 0, 202);
+
+    fill(255); noStroke(); textSize(24); textAlign(CENTER); text("Mapping the Celestial Globe", 0, -205);
+    fill(255, 150); textSize(15); text("Triangles on the surface of a sphere — the math of stars.", 0, 260);
+}
+
+function drawLegacy() {
+    let orbitR = 170;
+    noFill(); stroke(255, 143, 0, 60); strokeWeight(2); ellipse(0, 0, orbitR * 2, orbitR * 0.6);
+
+    let sa = time * 0.6;
+    let sx = cos(sa) * orbitR, sy = sin(sa) * orbitR * 0.3;
+    fill(180, 180, 200); stroke(255); strokeWeight(2); rect(sx - 12, sy - 8, 24, 16, 3);
+    fill(30, 60, 150); stroke(79, 195, 247); strokeWeight(2);
+    rect(sx - 40, sy - 5, 26, 10, 2); rect(sx + 14, sy - 5, 26, 10, 2);
+
+    drawingContext.shadowBlur = 30; drawingContext.shadowColor = '#4FC3F7';
+    fill(20, 50, 120); stroke(79, 195, 247); strokeWeight(2); ellipse(0, 0, 80);
+    drawingContext.shadowBlur = 0;
+
+    let ideas = ["δ(sinx)", "Chakravala", "Lilavati", "√±n", "Tatkalika", "Pashyat!", "Pell x²"];
+    for (let i = 0; i < ideas.length; i++) {
+        let a = TWO_PI * i / ideas.length + time * 0.2;
+        let px = cos(a) * 230, py = sin(a) * 230; 
+        fill(255, 180 + sin(time + i) * 70); noStroke(); textSize(14); textAlign(CENTER, CENTER);
+        text(ideas[i], px, py);
+        stroke(255, 143, 0, 30); strokeWeight(1); line(px, py, 0, 0);
+    }
+
+    fill(255); noStroke(); textSize(30); textAlign(CENTER); letterSpacing = 3;
+    text("THE CROWN OF MEDIEVAL MATH", 0, orbitR + 50);
+    fill(255, 143, 0); textSize(16); letterSpacing = 1; text("Karnataka → Ujjain → The Universe", 0, orbitR + 80);
+    fill(255, 150); textSize(14); text("ISRO Bhaskara II Satellite launched 1981", 0, orbitR + 105);
+}
+</script>
+</body>
+</html>

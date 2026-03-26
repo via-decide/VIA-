@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<!-- CODEX: loreData is hand-authored. Surgical edits only. -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ViaLogic — Cartography of Minds</title>
+
+  <!-- p5.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <!-- Shared Tools -->
+  <script src="../../shared/vd-nav-fix.js"></script>
+  <script src="../../shared/vd-auth.js"></script>
+  <script src="../../shared/vd-wallet.js"></script>
+  <script src="../../shared/tool-storage.js"></script>
+
+  <style>
+    :root {
+      --bg: #0f0d0c;
+      --bg2: #1a1614;
+      --panel: rgba(26, 22, 20, 0.95);
+      --border: #3a2e28;
+      --border2: #4f3e36;
+      --text: #f0e4d0;
+      --muted: #8a7568;
+      --subtle: #5a4e47;
+      --leaf: #52B756;
+      --leafdk: #357a39;
+      --water: #29B6F6;
+      --waterdk: #0277BD;
+      --gold: #FFCA28;
+      --golddk: #c79800;
+      --amber: #f59e0b;
+      --rose: #f472b6;
+      --violet: #a78bfa;
+      --system: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #canvas-container {
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+    }
+
+    /* HUD Layers */
+    .hud {
+      position: fixed;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .hud * {
+      pointer-events: auto;
+    }
+
+    .hud-top-left {
+      top: 60px;
+      left: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .spark-badge {
+      background: var(--bg2);
+      padding: 10px 16px;
+      border-radius: 99px;
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      color: var(--amber);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    .node-badge {
+      background: var(--panel);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .hud-top-right {
+      top: 16px;
+      right: 16px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      max-width: 300px;
+    }
+
+    .era-pill {
+      padding: 6px 12px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+
+    .era-pill.active {
+      background: var(--amber);
+      color: #000;
+      border-color: var(--amber);
+    }
+
+    .hud-bottom-right {
+      bottom: 24px;
+      right: 24px;
+    }
+
+    #minimap {
+      width: 130px;
+      height: 90px;
+      background: var(--panel);
+      border: 1px solid var(--amber-muted);
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Modal Bottom Sheet */
+    #modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    #modal-overlay.active {
+      display: block;
+      opacity: 1;
+    }
+
+    #bottom-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      border-radius: 32px 32px 0 0;
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 101;
+      padding: 24px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    #modal-overlay.active #bottom-sheet {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .modal-title-group h2 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .modal-subtitle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .era-badge {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: var(--amber);
+      color: #000;
+    }
+
+    .contribution {
+      font-style: italic;
+      color: #94a3b8;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .stats-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--amber);
+    }
+
+    .next-unlocks {
+      margin-top: 16px;
+    }
+
+    .next-unlocks-hd {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--amber);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .unlock-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .unlock-chip {
+      background: rgba(255, 143, 0, 0.15);
+      border: 1px solid var(--amber-muted);
+      color: var(--amber);
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .upgrade-btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: none;
+      background: var(--amber);
+      color: #000;
+      font-weight: 800;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .upgrade-btn:disabled {
+      background: #334155;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+
+    .upgrade-btn.shake {
+      animation: shake 0.4s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 12px 24px;
+      border-radius: 99px;
+      z-index: 1000;
+      transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      font-weight: 600;
+      pointer-events: none;
+    }
+
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+    /* Onboarding */
+    #onboarding {
+      position: fixed; inset: 0; background: var(--bg); z-index: 2000;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 40px; text-align: center; transition: transform 0.8s cubic-bezier(0.85, 0, 0.15, 1);
+    }
+    #onboarding.dismissed { transform: translateY(-100%); }
+    .ob-title { font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 1rem; color: var(--gold); }
+    .ob-desc { max-width: 400px; color: var(--muted); margin-bottom: 2rem; }
+    .ob-btn { 
+      background: var(--leaf); color: #fff; padding: 12px 32px; border-radius: 99px; border: none; 
+      font-weight: 700; cursor: pointer; font-size: 1rem; transition: transform 0.2s;
+    }
+    .ob-btn:hover { transform: scale(1.05); }
+  </style>
+</head>
+<body>
+
+  <div id="onboarding">
+    <h1 class="ob-title">Cartography<br>of Minds</h1>
+    <p class="ob-desc">Unlock the roots of mathematics. Discover the lineages of thought from Thales to the Golden Ratio.</p>
+    <button class="ob-btn" onclick="dismissOnboarding()">BEGIN JOURNEY</button>
+  </div>
+
+  <div id="canvas-container"></div>
+
+  <!-- HUD -->
+  <div class="hud hud-top-left">
+    <div class="spark-badge">
+      <i class="ph-fill ph-lightbulb"></i>
+      <span id="bal-val">0</span>
+    </div>
+    <div class="node-badge" id="node-count">⬡ 0 / 14 Unlocked</div>
+  </div>
+
+  <div class="hud hud-top-right" id="era-filter">
+    <button class="era-pill active" data-era="all">All</button>
+    <button class="era-pill" data-era="Greece">Greece</button>
+    <button class="era-pill" data-era="India">India</button>
+    <button class="era-pill" data-era="Islam">Islam</button>
+    <button class="era-pill" data-era="Hellenistic">Hellenistic</button>
+    <button class="era-pill" data-era="Medieval">Medieval</button>
+  </div>
+
+  <div class="hud hud-bottom-right">
+    <div id="minimap"></div>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal-overlay">
+    <div id="bottom-sheet">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <h2 id="m-title">Entity Name</h2>
+          <div class="modal-subtitle">
+            <span class="era-badge" id="m-era">ERA</span>
+            <span id="m-role">The Title</span>
+          </div>
+        </div>
+        <button onclick="closeModal()" style="background:none; border:none; color:var(--muted); cursor:pointer; font-size:24px;">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+
+      <p class="contribution" id="m-contribution">
+        Contribution text goes here...
+      </p>
+
+      <div class="stats-card">
+        <div class="stat-item">
+          <span class="stat-label" id="m-buff1-name">BUFF 1</span>
+          <span class="stat-value" id="m-buff1-val">0.0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label" id="m-buff2-name">BUFF 2</span>
+          <span class="stat-value" id="m-buff2-val">0.0</span>
+        </div>
+      </div>
+
+      <div id="next-unlock-container" class="next-unlocks">
+        <div class="next-unlocks-hd">Next Unlock</div>
+        <div class="unlock-chips" id="m-unlocks">
+          <!-- chips -->
+        </div>
+      </div>
+
+      <div style="margin-top: 32px;">
+        <button class="upgrade-btn" id="upgrade-btn">
+          <span id="btn-label">Upgrade to Lv.1</span>
+          <div style="display:flex; align-items:center; gap:4px; font-size:14px; opacity:0.8;">
+            <i class="ph-fill ph-lightbulb"></i>
+            <span id="btn-cost">100</span>
+          </div>
+        </button>
+
+        <button class="upgrade-btn" id="launch-btn" style="background: var(--rose); margin-top: 12px; display: none;">
+          <i class="ph ph-play-circle"></i>
+          <span>LAUNCH CINEMATIC</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast">Message</div>
+
+  <script>
+    // ═══════════════════════════════════════════
+    //  LORE DATA
+    // ═══════════════════════════════════════════
+    const loreData = {
+      thales: {
+        id: "thales", x: 1200, y: 1500, color: "#3B82F6", icon: "🌊",
+        title: "The First Philosopher", era: "Greece",
+        contribution: "Thales asked why the world works, not just that it does — the first documented deductive proofs in geometry. He proved that a circle is bisected by its diameter.",
+        buff1Name: "Deductive Proof", buff1Val: 1.0,
+        buff2Name: "Water Theory", buff2Val: 0.5,
+        path: "people/thales/",
+        unlockedBy: []
+      },
+      aryabhata: {
+        id: "aryabhata", x: 1800, y: 1500, color: "#10B981", icon: "🕉️",
+        title: "Father of Zero", era: "India",
+        contribution: "Aryabhata formalised the concept of zero and positional notation in 499 CE, 1,100 years before Europe adopted it. He also calculated π to 4 decimal places.",
+        buff1Name: "Zero Positional", buff1Val: 1.0,
+        buff2Name: "Solar Orbit", buff2Val: 0.5,
+        path: "people/aryabhata/",
+        unlockedBy: []
+      },
+      pythagoras: {
+        id: "pythagoras", x: 800, y: 1200, color: "#8B5CF6", icon: "📐",
+        title: "The Number Mystic", era: "Greece",
+        contribution: "Pythagoras formalised the theorem bearing his name and founded a mathematical brotherhood that treated numbers as the fabric of reality.",
+        buff1Name: "Harmonic Ratios", buff1Val: 2.0,
+        buff2Name: "Right Angles", buff2Val: 1.5,
+        path: "people/pythagoras/",
+        unlockedBy: ["thales"]
+      },
+      euclid: {
+        id: "euclid", x: 1000, y: 1800, color: "#06B6D4", icon: "📘",
+        title: "Architect of Geometry", era: "Hellenistic",
+        contribution: "Euclid's Elements — 13 books written around 300 BCE — defined rigorous mathematical proof and remained the geometry textbook for 2,000 years.",
+        buff1Name: "Axiomatic Proof", buff1Val: 2.5,
+        buff2Name: "Prime Numbers", buff2Val: 1.0,
+        path: "people/euclid/",
+        unlockedBy: ["thales"]
+      },
+      brahmagupta: {
+        id: "brahmagupta", x: 2000, y: 1100, color: "#F59E0B", icon: "🌑",
+        title: "Algebraist of the Void", era: "India",
+        contribution: "Brahmagupta defined arithmetic rules for zero and negative numbers in 628 CE — five centuries before European mathematicians acknowledged their existence.",
+        buff1Name: "Negative Numbers", buff1Val: 2.0,
+        buff2Name: "Cyclic Quadrilateral", buff2Val: 1.5,
+        path: "people/brahmagupta/",
+        unlockedBy: ["aryabhata"]
+      },
+      archimedes: {
+        id: "archimedes", x: 600, y: 1000, color: "#EF4444", icon: "⚖️",
+        title: "The Original Engineer", era: "Greece",
+        contribution: "Archimedes computed areas under curves using exhaustion — a precursor to integral calculus — and invented the screw pump still used in irrigation today.",
+        buff1Name: "Exhaustion Method", buff1Val: 3.0,
+        buff2Name: "Lever Principle", buff2Val: 2.0,
+        path: "people/archimedes/",
+        unlockedBy: ["pythagoras", "euclid"]
+      },
+      "al-khwarizmi": {
+        id: "al-khwarizmi", x: 2300, y: 900, color: "#EC4899", icon: "📜",
+        title: "Father of Algebra", era: "Islam",
+        contribution: "Al-Khwarizmi's 9th-century treatise gave us the word algebra (al-jabr) and algorithm (his Latinised name). He systematised solving linear and quadratic equations.",
+        buff1Name: "Linear Equations", buff1Val: 3.5,
+        buff2Name: "Hindu-Arabic Numerals", buff2Val: 2.5,
+        path: "people/al-khwarizmi/",
+        unlockedBy: ["brahmagupta"]
+      },
+      mahaviracharya: {
+        id: "mahaviracharya", x: 2200, y: 1500, color: "#84CC16", icon: "🔢",
+        title: "Master of Fractions", era: "India",
+        contribution: "Mahavira's 9th-century Gaṇitasārasaṅgraha was the first text dedicated entirely to mathematics — covering fractions, permutations, and geometric series.",
+        buff1Name: "Fraction Arithmetic", buff1Val: 3.0,
+        buff2Name: "Permutations", buff2Val: 2.0,
+        path: "people/mahaviracharya/",
+        unlockedBy: ["brahmagupta", "aryabhata"]
+      },
+      plato: {
+        id: "plato", x: 500, y: 1400, color: "#A78BFA", icon: "🏛️",
+        title: "Philosopher of Forms", era: "Greece",
+        contribution: "Plato argued that mathematical objects — triangles, numbers — exist independently of the physical world, establishing mathematical Platonism still debated today.",
+        buff1Name: "Abstract Forms", buff1Val: 2.5,
+        buff2Name: "Platonic Solids", buff2Val: 2.0,
+        path: "people/plato/",
+        unlockedBy: ["pythagoras"]
+      },
+      hypatia: {
+        id: "hypatia", x: 700, y: 1600, color: "#FB923C", icon: "🕯️",
+        title: "The Last Librarian", era: "Hellenistic",
+        contribution: "Hypatia of Alexandria edited and preserved Ptolemy's Almagest and Diophantus's Arithmetica. Without her work, much of ancient mathematics would be lost.",
+        buff1Name: "Conic Sections", buff1Val: 3.5,
+        buff2Name: "Astrolabe Design", buff2Val: 2.5,
+        path: "people/hypatia/",
+        unlockedBy: ["euclid", "plato"]
+      },
+      ptolemy: {
+        id: "ptolemy", x: 900, y: 2000, color: "#67E8F9", icon: "🔭",
+        title: "Mapper of the Cosmos", era: "Hellenistic",
+        contribution: "Ptolemy's Almagest compiled centuries of Greek astronomy into a single trigonometric framework — including the chord table that preceded the sine function.",
+        buff1Name: "Chord Tables", buff1Val: 3.0,
+        buff2Name: "Star Catalogue", buff2Val: 2.5,
+        path: "people/ptolemy/",
+        unlockedBy: ["euclid"]
+      },
+      "omar-khayyam": {
+        id: "omar-khayyam", x: 2500, y: 700, color: "#FCD34D", icon: "🍷",
+        title: "Poet of Infinity", era: "Islam",
+        contribution: "Omar Khayyam solved every class of cubic equation geometrically in 1070 CE and wrote a reform of the Euclidean parallel postulate — 700 years before Lobachevsky.",
+        buff1Name: "Cubic Equations", buff1Val: 4.0,
+        buff2Name: "Calendar Reform", buff2Val: 3.0,
+        path: "people/omar-khayyam/",
+        unlockedBy: ["al-khwarizmi"]
+      },
+      bhaskara: {
+        id: "bhaskara", x: 1500, y: 700, color: "#FF8F00", icon: "☸️",
+        title: "The Crown of Mathematics", era: "India",
+        contribution: "Bhaskaracharya's Lilavati (1150 CE) solved differential equations conceptually and described a rotating wheel whose velocity approached instantaneous change — early calculus.",
+        buff1Name: "Instantaneous Motion", buff1Val: 5.0,
+        buff2Name: "Planetary Ephemeris", buff2Val: 4.0,
+        path: "people/bhashkaracharya/",
+        unlockedBy: ["mahaviracharya", "brahmagupta"]
+      },
+      "golden-ratio": {
+        id: "golden-ratio", x: 1500, y: 400, color: "#FFD700", icon: "🌀",
+        title: "φ — The Universal Constant", era: "Medieval",
+        contribution: "The golden ratio φ = 1.618... appears in Euclid's Elements, in Pythagorean pentagrams, in Bhaskara's geometry, and in every living spiral in nature.",
+        buff1Name: "Aesthetic Proportion", buff1Val: 6.0,
+        buff2Name: "Fibonacci Resonance", buff2Val: 5.0,
+        path: "people/golden-ratio/",
+        unlockedBy: ["bhaskara", "euclid"]
+      }
+    };
+
+    // ═══════════════════════════════════════════
+    //  SPARKS / WALLET COMPATIBILITY
+    // ═══════════════════════════════════════════
+    const Sparks = {
+      getBalance: () => VDWallet.balance('focusDrops'),
+      add: (n) => VDWallet.earn('focusDrops', n, 'vialogic'),
+      deduct: (n) => {
+        const bal = VDWallet.balance('focusDrops');
+        if (bal >= n) {
+          VDWallet.earn('focusDrops', -n, 'vialogic_upgrade');
+          return true;
+        }
+        return false;
+      }
+    };
+
+    // ═══════════════════════════════════════════
+    //  STATE & INITIALIZATION
+    // ═══════════════════════════════════════════
+    const STORAGE_KEY = "vialogic_state";
+    let state = {
+      version: 1,
+      entities: {}
+    };
+
+    function initDefaults() {
+      for (let id in loreData) {
+        state.entities[id] = {
+          level: (loreData[id].unlockedBy.length === 0) ? 1 : 0,
+          unlocked: (loreData[id].unlockedBy.length === 0)
+        };
+      }
+    }
+
+    function loadState() {
+      const saved = ToolStorage.read(STORAGE_KEY, null);
+      if (saved && saved.version === state.version) {
+        // Merge saved into defaults
+        for (let id in saved.entities) {
+          if (state.entities[id]) {
+            state.entities[id] = { ...state.entities[id], ...saved.entities[id] };
+          }
+        }
+      }
+      refreshUnlocks();
+    }
+
+    function saveState() {
+      ToolStorage.write(STORAGE_KEY, state);
+    }
+
+    function refreshUnlocks() {
+      for (let id in loreData) {
+        if (state.entities[id].level > 0) {
+          state.entities[id].unlocked = true;
+          continue;
+        }
+        
+        let canUnlock = true;
+        for (let parentId of loreData[id].unlockedBy) {
+          if (!state.entities[parentId] || state.entities[parentId].level < 2) {
+            canUnlock = false;
+            break;
+          }
+        }
+        state.entities[id].unlocked = canUnlock;
+      }
+    }
+
+    // ═══════════════════════════════════════════
+    //  MAP ENGINE (p5.js)
+    // ═══════════════════════════════════════════
+    let cam = { x: -1500, y: -1200, zoom: 0.6 };
+    let targetCam = { x: -1500, y: -1200, zoom: 0.6 };
+    let drag = { active: false, x: 0, y: 0, startX: 0, startY: 0 };
+    let activeEra = 'all';
+    let selectedEntity = null;
+    let paths = [];
+
+    function setup() {
+      // --- AUTH GUARD ---
+      if (global._VD_AUTH) {
+        _VD_AUTH.onReady((user) => {
+          if (!user) {
+            console.warn("ViaLogic: Authentication required. Redirecting...");
+            return;
+          }
+          finishSetup();
+        });
+      } else {
+        finishSetup();
+      }
+    }
+
+    function finishSetup() {
+      const cnv = createCanvas(windowWidth, windowHeight);
+      cnv.parent('canvas-container');
+      
+      initDefaults();
+      loadState();
+      updateHUD();
+
+      // Pre-calculate paths
+      for (let id in loreData) {
+        for (let pid of loreData[id].unlockedBy) {
+          paths.push({ from: pid, to: id });
+        }
+      }
+
+      // Initial center on roots
+      targetCam.x = width/2 - 1500 * cam.zoom;
+      targetCam.y = height/2 - 1500 * cam.zoom;
+      cam.x = targetCam.x;
+      cam.y = targetCam.y;
+    }
+
+    function draw() {
+      background(11, 15, 23);
+      
+      // Hover check for cursor
+      let hovering = false;
+      if (!isModalOpen) {
+        const wx = (mouseX - cam.x) / cam.zoom;
+        const wy = (mouseY - cam.y) / cam.zoom;
+        for (let id in loreData) {
+          if (dist(wx, wy, loreData[id].x, loreData[id].y) < 50) {
+            hovering = true;
+            if (!state.entities[id].unlocked) cursor('not-allowed');
+            else cursor('pointer');
+            break;
+          }
+        }
+      }
+      if (!hovering && !drag.active) cursor('crosshair');
+
+      // Smooth camera
+      cam.x = lerp(cam.x, targetCam.x, 0.1);
+      cam.y = lerp(cam.y, targetCam.y, 0.1);
+      cam.zoom = lerp(cam.zoom, targetCam.zoom, 0.1);
+
+      push();
+      translate(cam.x, cam.y);
+      scale(cam.zoom);
+
+      // Draw Paths
+      for (let p of paths) {
+        drawPath(p);
+      }
+
+      // Draw Nodes
+      for (let id in loreData) {
+        drawNode(loreData[id]);
+      }
+      pop();
+
+      drawMinimap();
+    }
+
+    function drawPath(p) {
+      const from = loreData[p.from];
+      const to = loreData[p.to];
+      const isUnlocked = state.entities[p.to].level > 0;
+      
+      strokeWeight(4);
+      if (isUnlocked) {
+        stroke(255, 143, 0); // Solid Amber
+        drawingContext.setLineDash([]);
+      } else {
+        stroke(255, 143, 0, 40); // Faint dashed amber
+        drawingContext.setLineDash([12, 12]);
+      }
+      
+      line(from.x, from.y, to.x, to.y);
+      drawingContext.setLineDash([]);
+    }
+
+    function drawNode(n) {
+      const entity = state.entities[n.id];
+      const isMatch = activeEra === 'all' || n.era === activeEra;
+      const opacityMultiplier = isMatch ? 1 : 0.25;
+      
+      push();
+      translate(n.x, n.y);
+      
+      // Selection ring
+      if (selectedEntity === n.id) {
+        noFill();
+        stroke(255, 143, 0, 200 * opacityMultiplier);
+        strokeWeight(4);
+        ellipse(0, 0, 110, 110);
+      }
+
+      // Main Circle
+      noStroke();
+      let c = color(n.color);
+      if (!entity.unlocked) {
+        // Locked nodes: opacity 0.35, grayscale filter
+        fill(100, 100, 100, 90 * opacityMultiplier);
+      } else {
+        fill(red(c), green(c), blue(c), 255 * opacityMultiplier);
+      }
+      
+      ellipse(0, 0, 80, 80);
+      
+      // Icon
+      fill(255, 255 * opacityMultiplier);
+      textAlign(CENTER, CENTER);
+      textSize(32);
+      text(n.icon, 0, 0);
+      
+      // Label
+      textSize(16);
+      textStyle(BOLD);
+      fill(255, 255 * opacityMultiplier);
+      text(n.id.toUpperCase(), 0, 70);
+      
+      // Level Badge
+      if (entity.level > 0) {
+        fill(15, 23, 42, 230 * opacityMultiplier);
+        stroke(31, 41, 55, 255 * opacityMultiplier);
+        rect(-25, 30, 50, 22, 6);
+        noStroke();
+        fill(255, 143, 0, 255 * opacityMultiplier);
+        textSize(13);
+        text('Lv.' + entity.level, 0, 42);
+      } else if (!entity.unlocked) {
+        fill(255, 120 * opacityMultiplier);
+        textSize(14);
+        text('🔒', 0, 42);
+      }
+
+      pop();
+    }
+
+    function drawMinimap() {
+      resetMatrix();
+      const mapEl = document.getElementById('minimap');
+      mapEl.innerHTML = '';
+      
+      for (let id in loreData) {
+        const n = loreData[id];
+        const dot = document.createElement('div');
+        dot.style.position = 'absolute';
+        dot.style.width = '5px';
+        dot.style.height = '5px';
+        dot.style.borderRadius = '2px';
+        dot.style.background = state.entities[id].level > 0 ? 'var(--amber)' : '#4b5563';
+        
+        const px = (n.x - 500) / 2200 * 130;
+        const py = (n.y - 400) / 1800 * 90;
+        
+        dot.style.left = px + 'px';
+        dot.style.top = py + 'px';
+        dot.style.cursor = 'pointer';
+        dot.onclick = (e) => {
+          e.stopPropagation();
+          panTo(n.x, n.y);
+        };
+        mapEl.appendChild(dot);
+      }
+    }
+
+    // ═══════════════════════════════════════════
+    //  INTERACTIONS
+    // ═══════════════════════════════════════════
+    function mousePressed() {
+      if (isModalOpen || mouseX > width || mouseY > height) return;
+      drag.active = true;
+      drag.startX = mouseX;
+      drag.startY = mouseY;
+      drag.x = targetCam.x;
+      drag.y = targetCam.y;
+    }
+
+    function mouseDragged() {
+      if (!drag.active) return;
+      targetCam.x = drag.x + (mouseX - drag.startX);
+      targetCam.y = drag.y + (mouseY - drag.startY);
+    }
+
+    function mouseReleased() {
+      if (!drag.active) return;
+      const dx = abs(mouseX - drag.startX);
+      const dy = abs(mouseY - drag.startY);
+      drag.active = false;
+      
+      if (dx < 5 && dy < 5) {
+        handleTap(mouseX, mouseY);
+      }
+    }
+
+    function mouseWheel(event) {
+      if (isModalOpen) return;
+      let zoomIn = event.delta < 0;
+      let factor = zoomIn ? 1.05 : 0.95;
+      
+      let newZoom = constrain(targetCam.zoom * factor, 0.2, 2.0);
+      
+      targetCam.x = mouseX - (mouseX - targetCam.x) * (newZoom / targetCam.zoom);
+      targetCam.y = mouseY - (mouseY - targetCam.y) * (newZoom / targetCam.zoom);
+      targetCam.zoom = newZoom;
+    }
+
+    function handleTap(mx, my) {
+      const wx = (mx - cam.x) / cam.zoom;
+      const wy = (my - cam.y) / cam.zoom;
+      
+      let found = false;
+      for (let id in loreData) {
+        const n = loreData[id];
+        const d = dist(wx, wy, n.x, n.y);
+        if (d < 50) {
+          if (!state.entities[id].unlocked) {
+            let parents = loreData[id].unlockedBy.map(p => loreData[p].id.toUpperCase());
+            showToast(`🔒 Upgrade ${parents.join(' & ')} first`, 'info');
+            return;
+          }
+          openModal(id);
+          found = true;
+          break;
+        }
+      }
+      if (!found && isModalOpen) closeModal();
+    }
+
+    function panTo(x, y) {
+      targetCam.x = width/2 - x * cam.zoom;
+      targetCam.y = height/2 - y * cam.zoom;
+    }
+
+    function varColor(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    // ═══════════════════════════════════════════
+    //  MODAL & UI
+    // ═══════════════════════════════════════════
+    let isModalOpen = false;
+    let currentEntityId = null;
+
+    function openModal(id) {
+      currentEntityId = id;
+      selectedEntity = id;
+      const data = loreData[id];
+      const entity = state.entities[id];
+      
+      document.getElementById('m-title').textContent = data.id.toUpperCase();
+      document.getElementById('m-era').textContent = data.era;
+      document.getElementById('m-role').textContent = data.title;
+      document.getElementById('m-contribution').textContent = data.contribution;
+      
+      // Buffs
+      const levelBonus = 1 + entity.level * 0.25;
+      document.getElementById('m-buff1-name').textContent = data.buff1Name;
+      document.getElementById('m-buff1-val').textContent = (data.buff1Val * levelBonus).toFixed(1);
+      document.getElementById('m-buff2-name').textContent = data.buff2Name;
+      document.getElementById('m-buff2-val').textContent = (data.buff2Val * levelBonus).toFixed(1);
+      
+      // Unlocks logic
+      const container = document.getElementById('next-unlock-container');
+      const chips = document.getElementById('m-unlocks');
+      chips.innerHTML = '';
+      
+      let unlocks = [];
+      for (let eId in loreData) {
+        if (loreData[eId].unlockedBy.includes(id)) {
+          unlocks.push(eId);
+        }
+      }
+      
+      if (unlocks.length > 0 && entity.level < 2) {
+        container.style.display = 'block';
+        unlocks.forEach(u => {
+          const chip = document.createElement('div');
+          chip.className = 'unlock-chip';
+          chip.textContent = u.toUpperCase();
+          chips.appendChild(chip);
+        });
+      } else {
+        container.style.display = 'none';
+      }
+
+      // Upgrade Button
+      const cost = getCost(id, entity.level);
+      document.getElementById('btn-label').textContent = entity.level === 0 ? "Unlock Mind" : `Upgrade to Lv.${entity.level + 1}`;
+      document.getElementById('btn-cost').textContent = cost;
+      
+      document.getElementById('upgrade-btn').onclick = () => upgrade(id);
+      document.getElementById('upgrade-btn').disabled = false;
+      
+      const launchBtn = document.getElementById('launch-btn');
+      if (entity.level > 0) {
+        launchBtn.style.display = 'flex';
+        launchBtn.onclick = () => {
+          location.href = data.path;
+        };
+      } else {
+        launchBtn.style.display = 'none';
+      }
+
+      document.getElementById('modal-overlay').style.display = 'block';
+      setTimeout(() => document.getElementById('modal-overlay').classList.add('active'), 10);
+      isModalOpen = true;
+    }
+
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('active');
+      setTimeout(() => {
+        if (!isModalOpen) document.getElementById('modal-overlay').style.display = 'none';
+      }, 400);
+      isModalOpen = false;
+      selectedEntity = null;
+    }
+
+    function getCost(id, currentLevel) {
+      const baseCosts = {
+        thales: 50, aryabhata: 50, pythagoras: 150, euclid: 150, brahmagupta: 200,
+        archimedes: 400, "al-khwarizmi": 500, mahaviracharya: 450, plato: 300,
+        hypatia: 400, ptolemy: 350, "omar-khayyam": 600, bhaskara: 1000, "golden-ratio": 2500
+      };
+      const base = baseCosts[id] || 100;
+      return Math.floor(base * Math.pow(2.2, currentLevel));
+    }
+
+    function upgrade(id) {
+      const entity = state.entities[id];
+      const cost = getCost(id, entity.level);
+      
+      if (Sparks.deduct(cost)) {
+        state.entities[id].level++;
+        refreshUnlocks();
+        saveState();
+        updateHUD();
+        openModal(id); // refresh modal
+        showToast(`✨ ${id.toUpperCase()} UPGRADED`, 'success');
+      } else {
+        const btn = document.getElementById('upgrade-btn');
+        btn.classList.add('shake');
+        setTimeout(() => btn.classList.remove('shake'), 400);
+        showToast("Insufficient Sparks 💡", "error");
+      }
+    }
+
+    function updateHUD() {
+      const balance = Sparks.getBalance();
+      document.getElementById('bal-val').textContent = balance;
+      
+      let unlockedCount = 0;
+      for (let id in state.entities) {
+        if (state.entities[id].level > 0) unlockedCount++;
+      }
+      document.getElementById('node-count').textContent = `⬡ ${unlockedCount} / 14 Unlocked`;
+    }
+
+    function showToast(msg, type = 'info') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `show ${type}`;
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // Filter interaction
+    document.querySelectorAll('.era-pill').forEach(pill => {
+      pill.onclick = () => {
+        document.querySelectorAll('.era-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        activeEra = pill.dataset.era;
+      };
+    });
+
+    // Handle wallet updates from outside (iframe mode)
+    window.addEventListener('message', (e) => {
+      if (e.data.type === 'sparks_sync') {
+        updateHUD();
+      }
+      if (e.data.type === 'sparks_award') {
+        Sparks.add(e.data.amount || 250);
+        showToast(`✨ Received ${e.data.amount} Sparks!`, 'success');
+        updateHUD();
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      resizeCanvas(windowWidth, windowHeight);
+    });
+
+    function dismissOnboarding() {
+      document.getElementById('onboarding').classList.add('dismissed');
+      localStorage.setItem('vialogic_onboarded', 'true');
+    }
+
+    if (localStorage.getItem('vialogic_onboarded')) {
+      document.getElementById('onboarding').style.display = 'none';
+    }
+
+  </script>
+</body>
+</html>

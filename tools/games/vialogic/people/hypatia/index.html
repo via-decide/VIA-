@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViaMath | The Last Guardian (Hypatia)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            margin: 0; padding: 0; background-color: #0F0505; overflow: hidden;
+            color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+        canvas { display: block; }
+
+        /* Act Indicator */
+        #act-indicator {
+            position: absolute; top: 30px; left: 30px;
+            color: #FF5252; font-size: 14px; font-weight: bold; letter-spacing: 3px;
+            text-transform: uppercase; z-index: 10;
+            transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+
+        /* Main Info Box */
+        #label {
+            position: absolute; top: 60px; left: 30px;
+            letter-spacing: 1px; border-left: 4px solid #FF5252; 
+            padding-left: 20px; z-index: 10;
+            background: rgba(15, 5, 5, 0.85); padding-right: 20px;
+            padding-bottom: 15px; border-radius: 0 10px 10px 0;
+            backdrop-filter: blur(8px); max-width: 80%;
+            transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+        h1 { margin: 0; font-size: 26px; font-weight: 300; text-transform: uppercase; color: #fff; }
+        #subtitle { color: #FF5252; font-size: 16px; margin-top: 5px; font-weight: bold; letter-spacing: 2px; }
+        #description { color: #ccc; font-size: 15px; margin-top: 10px; max-width: 450px; line-height: 1.6; }
+
+        /* Insight Bar */
+        #insight-bar {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: rgba(255, 82, 82, 0.1);
+            border-top: 1px solid rgba(255, 82, 82, 0.4);
+            padding: 15px 0; text-align: center;
+            font-size: 16px; color: #ddd; letter-spacing: 1px;
+            font-family: monospace; backdrop-filter: blur(5px);
+            transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+        .highlight { color: #FF5252; font-weight: bold; }
+
+        /* Tap hint & Logo */
+        #nav-hint {
+            position: absolute; top: 30px; right: 30px;
+            color: #777; font-size: 12px; letter-spacing: 2px;
+            text-transform: uppercase; cursor: pointer;
+            transition: opacity 0.4s ease-in-out; text-align: right;
+        }
+        .viamath-logo { color: #FF5252; font-weight: bold; font-size: 16px; margin-bottom: 5px; letter-spacing: 3px;}
+
+        @media (max-width: 700px) {
+            #act-indicator { top: 20px; left: 10px; font-size: 12px; }
+            #label { top: 45px; left: 10px; padding-left: 15px; max-width: 90%; }
+            h1 { font-size: 20px; }
+            #subtitle { font-size: 14px; }
+            #description { font-size: 13px; max-width: 100%; }
+            #insight-bar { font-size: 12px; padding: 10px 0; }
+            #nav-hint { top: 10px; right: 10px; font-size: 10px; }
+        }
+    </style>
+</head>
+<body onclick="nextScreen()">
+    <div id="nav-hint">
+        <a href="../../" style="text-decoration:none"><div class="viamath-logo">← VIALOGIC</div></a>
+        Tap anywhere to advance ➔
+    </div>
+    
+    <div id="act-indicator">ACT I: THE LAST LUMINARY</div>
+
+    <div id="label">
+        <h1 id="title">Title</h1>
+        <p id="subtitle">Subtitle</p>
+        <p id="description">Description goes here.</p>
+    </div>
+
+    <div id="insight-bar">
+        <span class="highlight">HISTORICAL INSIGHT:</span> <span id="insight-text">Loading...</span>
+    </div>
+
+<script>
+let time = 0;
+let state = 0;
+
+let isTransitioning = false;
+let fadeAlpha = 0;
+let fadeDirection = 0;
+let targetState = 0;
+const FADE_SPEED = 12;
+const TOTAL_SCREENS = 10;
+
+let flameParticles = [];
+
+const content = [
+    // ACT I: THE LIBRARY
+    {
+        title: "The Daughter of Theon", sub: "Alexandria, c. 370 CE",
+        desc: "Hypatia was the daughter of the last head of the Great Library. She grew up within its massive walls, studying the entire history of human knowledge as the world around her began to crumble.",
+        insight: "She was the first woman in history to lead the Neoplatonic school."
+    },
+    {
+        title: "The Great Library", sub: "The World's Memory",
+        desc: "The Library of Alexandria was a temple to logic. Hypatia lectured on the work of Diophantus and Apollonius, keeping the flame of mathematical proof alive in an age of rising dogma.",
+        insight: "She believed that 'to teach superstitions as truths was a most terrible thing.'"
+    },
+    {
+        title: "Conic Sections", sub: "Visualizing the Invisible",
+        desc: "Hypatia edited the massive 'Conics' of Apollonius. She taught students how to see the parabola, hyperbola, and ellipse within the simple cut of a cone—mapping the paths of future planets.",
+        insight: "Her work provided the bridge from ancient geometry to modern mechanics."
+    },
+    // ACT II: THE INNOVATOR
+    {
+        title: "The Astrolabe", sub: "Calculators of the Stars",
+        desc: "Hypatia built astrolabes—ancient computers that could predict the positions of stars and planets. She simplified the math to make the heavens accessible to any navigator.",
+        insight: "She was effectively a hardware engineer for the astronomers of the day."
+    },
+    {
+        title: "The Hydrometer", sub: "Measuring the Unseen",
+        desc: "When a student fell ill, Hypatia designed a system for measuring the density of liquids. This hydrometer used physics to reveal the underlying properties of even the simplest water.",
+        insight: "She was applying math to the physical world in ways no one had before."
+    },
+    {
+        title: "The Teacher of Alexandria", sub: "A Magnet for Minds",
+        desc: "Brilliant men from across the world traveled to Egypt just to hear her speak. She commanded the respect of the city's leaders, regardless of their faith or background.",
+        insight: "She represented the absolute authority of the human mind."
+    },
+    // ACT III: THE END OF AN AGE
+    {
+        title: "The Darkening Sky", sub: "The Fall of Reason",
+        desc: "As religious tensions gripped the city, Hypatia refused to stop her lectures. In 415 CE, she was pulled from her carriage by a mob and murdered. With her, the ancient age of science ended.",
+        insight: "Her death is often cited as the definitive start of the Dark Ages."
+    },
+    {
+        title: "The Lost Scrolls", sub: "Preserving the Light",
+        desc: "After her death, the Great Library was destroyed. But the work she edited—the core of Algebra and Geometry—was smuggled out and eventually reached the Islamic world and the Renaissance.",
+        insight: "Her work survived because she was a master of clear, logical writing."
+    },
+    {
+        title: "Hypatia's Moon", sub: "A Crater of Her Own",
+        desc: "Today, there is a crater on the Moon named after her. She remains the patron of every student who dares to seek truth when the world demands conformity.",
+        insight: "ViaMath is her library reborn in the digital age."
+    },
+    {
+        title: "The Unbroken Line", sub: "The Future Awaits",
+        desc: "She was the last guardian of the scrolls, but you are the first of a new generation. The line of Hypatia is long, and its end is not yet written. Welcome to the search.",
+        insight: "ViaMath: Where the light never goes out. Welcome home."
+    }
+];
+
+function setup() {
+    createCanvas(windowWidth, windowHeight);
+    for(let i=0; i<40; i++) flameParticles.push({x: random(width), y: height+random(100), s: random(5, 15), a: random(TWO_PI), life: random(100, 255)});
+    updateUI();
+}
+
+function windowResized() { resizeCanvas(windowWidth, windowHeight); }
+
+function nextScreen() {
+    // AWARD LOGIC
+    if (state === TOTAL_SCREENS - 1) {
+        if (!window.hasAwarded) {
+             window.parent.postMessage({ type: 'sparks_award', amount: 250 }, '*');
+             window.hasAwarded = true;
+        }
+    }
+
+    if (isTransitioning) return;
+    isTransitioning = true;
+    fadeDirection = 1;
+    targetState = (state + 1) % TOTAL_SCREENS;
+    
+    document.getElementById("label").style.opacity = 0;
+    document.getElementById("insight-bar").style.opacity = 0;
+    document.getElementById("nav-hint").style.opacity = 0;
+    document.getElementById("act-indicator").style.opacity = 0;
+}
+
+function updateUI() {
+    document.getElementById("title").innerText = content[state].title;
+    document.getElementById("subtitle").innerText = content[state].sub;
+    document.getElementById("description").innerText = content[state].desc;
+
+    let actInd = document.getElementById("act-indicator");
+    let labelBorder = document.getElementById("label");
+    
+    if (state < 3) {
+        actInd.innerText = "ACT I: THE LAST LUMINARY";
+        actInd.style.color = "#FF5252"; // Soft Red
+        labelBorder.style.borderLeftColor = "#FF5252";
+    } else if (state < 6) {
+        actInd.innerText = "ACT II: THE TOOLS OF LOGIC";
+        actInd.style.color = "#FFD700"; // Gold
+        labelBorder.style.borderLeftColor = "#FFD700";
+    } else {
+        actInd.innerText = "ACT III: THE ETERNAL SEARCH";
+        actInd.style.color = "#BBDEFB"; // Soft Blue
+        labelBorder.style.borderLeftColor = "#BBDEFB";
+    }
+
+    document.getElementById("insight-text").innerText = content[state].insight;
+}
+
+function getScaleFactor() { return min(1, width / 800); }
+
+function draw() {
+    background(15, 5, 5); // Ominous deep red shadow
+
+    time += 0.02;
+
+    // Flickering ambient heat
+    for(let f of flameParticles) {
+        f.y -= 2.5; f.x += sin(f.a + time) * 1.5; f.life -= 2;
+        if(f.life < 0) { f.y = height + 100; f.life = 255; f.x = random(width); }
+        fill(255, 82, 82, f.life/4); noStroke();
+        ellipse(f.x, f.y, f.s);
+    }
+
+    // State Router
+    if      (state === 0) drawLibrary();
+    else if (state === 1) drawScrolls();
+    else if (state === 2) drawConics();
+    else if (state === 3) drawAstrolabe();
+    else if (state === 4) drawHydrometer();
+    else if (state === 5) drawLectures();
+    else if (state === 6) drawDarkMob();
+    else if (state === 7) drawSurvival();
+    else if (state === 8) drawMoonHypatia();
+    else if (state === 9) drawFutureRebirth();
+
+    // Cinematic fade overlay
+    if (isTransitioning) {
+        fadeAlpha += FADE_SPEED * fadeDirection;
+        if (fadeDirection === 1 && fadeAlpha >= 255) {
+            fadeAlpha = 255; fadeDirection = -1;
+            state = targetState; time = 0;
+            updateUI();
+            document.getElementById("label").style.opacity = 1;
+            document.getElementById("insight-bar").style.opacity = 1;
+            document.getElementById("act-indicator").style.opacity = 1;
+            if (state !== 9) document.getElementById("nav-hint").style.opacity = 1;
+        } else if (fadeDirection === -1 && fadeAlpha <= 0) {
+            fadeAlpha = 0; isTransitioning = false; fadeDirection = 0;
+        }
+        push(); fill(15, 5, 5, fadeAlpha); noStroke(); rect(0, 0, width, height); pop();
+    }
+}
+
+// -------------------------------------------------------------
+// ACT SCREENS
+// -------------------------------------------------------------
+
+function drawLibrary() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Rows of columns
+    stroke(255, 50); strokeWeight(2);
+    for(let i=0; i<5; i++) {
+        let x = map(i, 0, 4, -300, 300);
+        line(x, -200, x, 200); rect(x-20, -210, 40, 10);
+    }
+    
+    // Central torch flame
+    fill(255, 69, 0, 150 + sin(time*5)*50); noStroke();
+    ellipse(0, -50, 40, 60);
+    pop();
+}
+
+function drawScrolls() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Abstract scrolls
+    stroke(255, 100); fill(255, 50);
+    for(let i=0; i<3; i++) {
+        push(); translate(-100 + i*100, 0); rotate(i*0.2); rect(-50, -100, 100, 200, 5); pop();
+    }
+    pop();
+}
+
+function drawConics() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Cone and sections
+    noFill(); stroke(255, 150);
+    triangle(0, -150, -100, 150, 100, 150);
+    
+    // Ellipse cut
+    stroke(255, 0, 0); ellipse(0, 50, 120, 30);
+    // Parabola curve
+    stroke(255, 127, 80); beginShape(); for(let x=-40;x<=40;x+=5) vertex(x, 70 + (x*x)*0.05); endShape();
+    pop();
+}
+
+function drawAstrolabe() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    rotate(time*0.5);
+    stroke(255, 215, 0); noFill();
+    ellipse(0, 0, 300);
+    for(let a=0; a<TWO_PI; a+=PI/4) line(0, 0, cos(a)*150, sin(a)*150);
+    
+    // Inner rings
+    rotate(-time);
+    stroke(255, 100); ellipse(0, 0, 200);
+    pop();
+}
+
+function drawHydrometer() {
+    push();
+    translate(width/2, height/2 + 80);
+    scale(getScaleFactor());
+    
+    // Tube
+    stroke(255); noFill(); rect(-30, -150, 60, 300);
+    
+    // Water level
+    let level = sin(time)*50;
+    fill(0, 0, 255, 50); noStroke(); rect(-28, -148 + level, 56, 296 - level);
+    
+    // Weighted bulb
+    fill(200); ellipse(0, 120, 50);
+    pop();
+}
+
+function drawLectures() {
+    push();
+    translate(width/2, height/2 + 100);
+    scale(getScaleFactor());
+    
+    // Silhouette nodes
+    fill(255, 100); noStroke();
+    for(let i=0; i<12; i++) {
+        let a = map(i, 0, 11, -PI, 0);
+        ellipse(cos(a)*300, sin(a)*100, 30);
+    }
+    
+    // Center figure (light)
+    drawingContext.shadowBlur = 50; drawingContext.shadowColor = '#FFF';
+    fill(255); ellipse(0, -120, 60);
+    pop();
+}
+
+function drawDarkMob() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Many black shadowy spikes closing in
+    fill(0); noStroke();
+    for(let i=0; i<20; i++) {
+        let a = i * (TWO_PI / 20);
+        let ext = 200 + sin(time*4 + i)*50;
+        triangle(cos(a)*500, sin(a)*500, cos(a)*ext, sin(a)*ext, cos(a+0.2)*500, sin(a+0.2)*500);
+    }
+    
+    // The central light flickering
+    fill(255, random(100)); ellipse(0, 0, 50);
+    pop();
+}
+
+function drawSurvival() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Light trail moving away
+    noFill(); stroke(255, 215, 0, 150); strokeWeight(5);
+    beginShape();
+    for(let i=0; i<10; i++) curveVertex(i*50 - 400, sin(i + time*2)*100);
+    endShape();
+    pop();
+}
+
+function drawMoonHypatia() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Moon
+    fill(200); noStroke(); ellipse(0, 0, 300);
+    // Crater
+    stroke(0, 50); fill(150); ellipse(-50, -40, 60, 40);
+    pop();
+}
+
+function drawFutureRebirth() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Digital sphere forming
+    noFill(); stroke(255, 100, 100, 150);
+    rotateY(time); rotateX(time*0.3);
+    sphere(150, 10, 10);
+    pop();
+}
+
+</script>
+</body>
+</html>

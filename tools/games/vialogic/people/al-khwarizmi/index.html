@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViaMath | The Father of Algebra (Al-Khwarizmi)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            margin: 0; padding: 0; background-color: #040D0A; overflow: hidden;
+            color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+        canvas { display: block; }
+
+        /* Act Indicator */
+        #act-indicator {
+            position: absolute; top: 30px; left: 30px;
+            color: #00BFA5; font-size: 14px; font-weight: bold; letter-spacing: 3px;
+            text-transform: uppercase; z-index: 10;
+            transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+
+        /* Main Info Box */
+        #label {
+            position: absolute; top: 60px; left: 30px;
+            letter-spacing: 1px; border-left: 4px solid #00BFA5; 
+            padding-left: 20px; z-index: 10;
+            background: rgba(4, 13, 10, 0.85); padding-right: 20px;
+            padding-bottom: 15px; border-radius: 0 10px 10px 0;
+            backdrop-filter: blur(8px); max-width: 80%;
+            transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+        h1 { margin: 0; font-size: 26px; font-weight: 300; text-transform: uppercase; color: #fff; }
+        #subtitle { color: #00BFA5; font-size: 16px; margin-top: 5px; font-weight: bold; letter-spacing: 2px; }
+        #description { color: #ccc; font-size: 15px; margin-top: 10px; max-width: 450px; line-height: 1.6; }
+
+        /* Insight Bar */
+        #insight-bar {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: rgba(255, 213, 79, 0.1);
+            border-top: 1px solid rgba(255, 213, 79, 0.4);
+            padding: 15px 0; text-align: center;
+            font-size: 16px; color: #ddd; letter-spacing: 1px;
+            font-family: monospace; backdrop-filter: blur(5px);
+            transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+        .highlight { color: #FFD54F; font-weight: bold; }
+
+        /* Tap hint & Logo */
+        #nav-hint {
+            position: absolute; top: 30px; right: 30px;
+            color: #777; font-size: 12px; letter-spacing: 2px;
+            text-transform: uppercase; cursor: pointer;
+            transition: opacity 0.4s ease-in-out; text-align: right;
+        }
+        .viamath-logo { color: #FFD54F; font-weight: bold; font-size: 16px; margin-bottom: 5px; letter-spacing: 3px;}
+
+        @media (max-width: 700px) {
+            #act-indicator { top: 20px; left: 10px; font-size: 12px; }
+            #label { top: 45px; left: 10px; padding-left: 15px; max-width: 90%; }
+            h1 { font-size: 20px; }
+            #subtitle { font-size: 14px; }
+            #description { font-size: 13px; max-width: 100%; }
+            #insight-bar { font-size: 12px; padding: 10px 0; }
+            #nav-hint { top: 10px; right: 10px; font-size: 10px; }
+        }
+    </style>
+</head>
+<body onclick="nextScreen()">
+    <div id="nav-hint">
+        <a href="../../" style="text-decoration:none"><div class="viamath-logo">← VIALOGIC</div></a>
+        Tap anywhere to advance ➔
+    </div>
+    
+    <div id="act-indicator">ACT I: THE HOUSE OF WISDOM</div>
+
+    <div id="label">
+        <h1 id="title">Title</h1>
+        <p id="subtitle">Subtitle</p>
+        <p id="description">Description goes here.</p>
+    </div>
+
+    <div id="insight-bar">
+        <span class="highlight">HISTORICAL INSIGHT:</span> <span id="insight-text">Loading...</span>
+    </div>
+
+<script>
+let time = 0;
+let state = 0;
+
+let isTransitioning = false;
+let fadeAlpha = 0;
+let fadeDirection = 0;
+let targetState = 0;
+const FADE_SPEED = 12;
+const TOTAL_SCREENS = 10;
+
+let particles = [];
+
+const content = [
+    // ACT I: HISTORY AND TRANSLATION
+    {
+        title: "The Grand Translation", sub: "Baghdad, c. 820 CE",
+        desc: "Under the Abbasid Caliphate, Baghdad became the largest city in the world. The Caliph established the 'House of Wisdom', a massive library dedicated to translating every piece of global knowledge into Arabic.",
+        insight: "Greek geometry and Indian arithmetic finally met in one place."
+    },
+    {
+        title: "The Chief Astronomer", sub: "Muhammad ibn Musa al-Khwarizmi",
+        desc: "A brilliant Persian polymath named Al-Khwarizmi was appointed head of the library. He studied Brahmagupta's 'Sindhind' and immediately recognized the world-changing power of the numbers 0 through 9.",
+        insight: "He wrote a book teaching the Islamic world how to calculate using the Indian decimal system."
+    },
+    {
+        title: "Dixit Algoritmi", sub: "The Birth of the Algorithm",
+        desc: "Centuries later, his book on Indian numbers was translated into Latin in Europe. The translation began with the phrase 'Dixit Algoritmi' (Thus spoke Al-Khwarizmi).",
+        insight: "His Latinized name, Algoritmi, is where the modern word 'ALGORITHM' comes from."
+    },
+    // ACT II: THE BIRTH OF ALGEBRA
+    {
+        title: "The Book of Restoring", sub: "Al-Kitab al-Mukhtasar",
+        desc: "In 820 CE, he published his absolute masterpiece: The Compendious Book on Calculation by Completion and Balancing. It was the first book in history to treat algebra as an independent mathematical discipline.",
+        insight: "The Arabic word for 'Completion/Restoring' is Al-Jabr. This gave us the word ALGEBRA."
+    },
+    {
+        title: "Al-Jabr (Completion)", sub: "Fixing the Broken Equation",
+        desc: "Al-Jabr means restoring a broken or negative quantity. If you have an equation like (x - 2 = 5), you 'restore' the missing 2 by moving it to the other side to make it positive (x = 5 + 2).",
+        insight: "This simple rule of moving negative terms across the equals sign changed math forever."
+    },
+    {
+        title: "Al-Muqabala (Balancing)", sub: "The Scales of Justice",
+        desc: "Al-Muqabala means balancing the scales by removing equal amounts from both sides. If you have (x + 5 = 10 + 5), you cancel out the 5s, leaving the balanced truth: (x = 10).",
+        insight: "He proved that an equation is just a scale; whatever you do to one side, you must do to the other."
+    },
+    // ACT III: COMPLETING THE SQUARE (THE GENIUS)
+    {
+        title: "The Geometry of Algebra", sub: "Solving x² + 10x = 39",
+        desc: "Al-Khwarizmi didn't use letters like x and y. He solved complex quadratic equations by physically drawing them. To solve x² + 10x = 39, he started with a square of unknown size (x²).",
+        insight: "He then took the 10x, split it in half, and attached two (5x) rectangles to the sides."
+    },
+    {
+        title: "Completing the Square", sub: "The Missing Corner",
+        desc: "The shape now had an area of 39, but it was missing exactly one corner to make a perfect square. That corner was a 5 by 5 square (Area = 25). He added 25 to both the shape and the total area.",
+        insight: "The total area became 39 + 25 = 64. A perfect square!"
+    },
+    {
+        title: "The Universal Solution", sub: "Extracting the Root",
+        desc: "Since the new, complete square has an area of 64, its sides must be exactly 8. Looking at the geometry, the side is equal to (x + 5). Therefore, x + 5 = 8. Which means x = 3.",
+        insight: "He had discovered a universal, flawless algorithm for solving quadratic equations."
+    },
+    {
+        title: "The Bridge of ViaMath", sub: "From Antiquity to Tomorrow",
+        desc: "He took the logical proofs of Thales, the equations of Brahmagupta, and the geometry of Euclid, and fused them into a universal language. From the sands of Alexandria to the code running this very screen...",
+        insight: "Mathematics is the unbroken chain of human brilliance. Welcome to ViaMath."
+    }
+];
+
+function setup() {
+    createCanvas(windowWidth, windowHeight);
+    for(let i=0; i<60; i++) particles.push({x: random(width), y: random(height), s: random(2, 5), a: random(TWO_PI)});
+    updateUI();
+}
+
+function windowResized() { resizeCanvas(windowWidth, windowHeight); }
+
+function nextScreen() {
+    // AWARD LOGIC
+    if (state === TOTAL_SCREENS - 1) {
+        if (!window.hasAwarded) {
+             window.parent.postMessage({ type: 'sparks_award', amount: 250 }, '*');
+             window.hasAwarded = true;
+        }
+    }
+
+    if (isTransitioning) return;
+    isTransitioning = true;
+    fadeDirection = 1;
+    targetState = (state + 1) % TOTAL_SCREENS;
+    
+    document.getElementById("label").style.opacity = 0;
+    document.getElementById("insight-bar").style.opacity = 0;
+    document.getElementById("nav-hint").style.opacity = 0;
+    document.getElementById("act-indicator").style.opacity = 0;
+}
+
+function updateUI() {
+    document.getElementById("title").innerText = content[state].title;
+    document.getElementById("subtitle").innerText = content[state].sub;
+    document.getElementById("description").innerText = content[state].desc;
+
+    let actInd = document.getElementById("act-indicator");
+    let labelBorder = document.getElementById("label");
+    
+    if (state < 3) {
+        actInd.innerText = "ACT I: THE HOUSE OF WISDOM";
+        actInd.style.color = "#FFD54F"; // Desert Gold
+        labelBorder.style.borderLeftColor = "#FFD54F";
+    } else if (state < 6) {
+        actInd.innerText = "ACT II: THE BIRTH OF ALGEBRA";
+        actInd.style.color = "#00BFA5"; // Emerald
+        labelBorder.style.borderLeftColor = "#00BFA5";
+    } else {
+        actInd.innerText = "ACT III: THE GEOMETRY OF EQUATIONS";
+        actInd.style.color = "#29B6F6"; // Scholar Blue
+        labelBorder.style.borderLeftColor = "#29B6F6";
+    }
+
+    let span = document.querySelector('.highlight');
+    if (state === 9) {
+        span.innerText = "THE FINALE:"; span.style.color = "#FFD54F";
+    } else if (state < 3) {
+        span.innerText = "HISTORICAL INSIGHT:"; span.style.color = "#FFD54F";
+    } else {
+        span.innerText = "MATHEMATICAL GENIUS:"; span.style.color = "#00BFA5";
+    }
+    document.getElementById("insight-text").innerText = content[state].insight;
+}
+
+function getScaleFactor() { return min(1, width / 800); }
+
+function draw() {
+    background(4, 13, 10); // Deep Emerald Night
+
+    // Islamic geometric tiling background (subtle)
+    stroke(255, 6); strokeWeight(1); noFill();
+    for (let i = -100; i < width + 100; i += 100) {
+        for (let j = -100; j < height + 100; j += 100) {
+            push(); translate(i, j); rotate(PI/4); rect(-35, -35, 70, 70); pop();
+        }
+    }
+
+    time += 0.02;
+
+    // Ambient floating magic (dust of the library)
+    for(let p of particles) {
+        p.y -= 0.5; p.x += sin(p.a + time) * 0.5;
+        if(p.y < 0) { p.y = height; p.x = random(width); }
+        
+        let cColor;
+        if(state < 3) cColor = color(255, 213, 79, 60);
+        else if (state < 6) cColor = color(0, 191, 165, 60);
+        else cColor = color(41, 182, 246, 60);
+
+        fill(cColor); noStroke();
+        ellipse(p.x, p.y, p.s);
+    }
+
+    // State Router
+    if      (state === 0) drawBaghdad();
+    else if (state === 1) drawTranslation();
+    else if (state === 2) drawAlgoritmi();
+    else if (state === 3) drawAlJabr();
+    else if (state === 4) drawRestoring();
+    else if (state === 5) drawBalancing();
+    else if (state === 6) drawQuadStep1();
+    else if (state === 7) drawQuadStep2();
+    else if (state === 8) drawQuadStep3();
+    else if (state === 9) drawLegacyFinale();
+
+    // Cinematic fade overlay
+    if (isTransitioning) {
+        fadeAlpha += FADE_SPEED * fadeDirection;
+        if (fadeDirection === 1 && fadeAlpha >= 255) {
+            fadeAlpha = 255; fadeDirection = -1;
+            state = targetState; time = 0;
+            updateUI();
+            document.getElementById("label").style.opacity = 1;
+            document.getElementById("insight-bar").style.opacity = 1;
+            document.getElementById("act-indicator").style.opacity = 1;
+            if (state !== 9) document.getElementById("nav-hint").style.opacity = 1;
+        } else if (fadeDirection === -1 && fadeAlpha <= 0) {
+            fadeAlpha = 0; isTransitioning = false; fadeDirection = 0;
+        }
+        push(); fill(4, 13, 10, fadeAlpha); noStroke(); rect(0, 0, width, height); pop();
+    }
+}
+
+// ============================================================
+// ACT I: THE HOUSE OF WISDOM
+// ============================================================
+
+function drawBaghdad() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+
+    // Crescent Moon
+    fill(255, 213, 79); noStroke();
+    arc(-250, -200, 80, 80, PI/4, TWO_PI-PI/4);
+    fill(4, 13, 10);
+    ellipse(-230, -200, 60); // Cutout for crescent
+
+    // House of Wisdom Silhouette
+    fill(15, 30, 25); stroke(0, 191, 165, 100); strokeWeight(2);
+    // Base building
+    rect(-300, 0, 600, 200);
+    // Domes
+    arc(0, 0, 250, 200, PI, TWO_PI); // Center dome
+    arc(-200, 0, 100, 100, PI, TWO_PI); // Left
+    arc(200, 0, 100, 100, PI, TWO_PI); // Right
+
+    // Glowing arches (doors of knowledge)
+    for(let i=-200; i<=200; i+=100) {
+        fill(255, 213, 79, 150 + sin(time*2 + i)*50); noStroke();
+        arc(i, 200, 60, 120, PI, TWO_PI);
+        rect(i-30, 200, 60, 100);
+    }
+
+    fill(255); noStroke(); textAlign(CENTER); textSize(24);
+    text("THE INTELLECTUAL CAPITAL OF THE WORLD", 0, -100);
+    pop();
+}
+
+function drawTranslation() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+
+    // Greek Geometry (Left) and Indian Numbers (Right) merging
+    let t = (sin(time*1.5) + 1)/2; // 0 to 1 pulse
+
+    // Greek Triangle
+    stroke(0, 191, 165, 150); noFill(); strokeWeight(3);
+    let gx = -250 + t*100;
+    triangle(gx, -50, gx+60, 50, gx-60, 50);
+    fill(0, 191, 165); noStroke(); textSize(20); textAlign(CENTER); text("GREEK\nGEOMETRY", -250, 100);
+
+    // Indian Numbers
+    fill(255, 213, 79, 150); noStroke(); textSize(48);
+    let ix = 250 - t*100;
+    text("० १ २ ३", ix, 20); // Indian numerals
+    textSize(20); text("INDIAN\nARITHMETIC", 250, 100);
+
+    // Center Fusion (The Book)
+    drawingContext.shadowBlur = 50; drawingContext.shadowColor = '#FFD54F';
+    fill(20, 40, 30); stroke(255, 213, 79); strokeWeight(3);
+    rect(-50, -60, 100, 120, 5);
+    drawingContext.shadowBlur = 0;
+    
+    // Arabic script appearing
+    fill(255, 213, 79, t*255); noStroke(); textSize(28);
+    text("الحساب", 0, 0); // "Calculation"
+
+    // Rays of fusion
+    if (t > 0.8) {
+        stroke(255, 213, 79, 100); strokeWeight(2);
+        for(let i=0; i<8; i++) {
+            let a = TWO_PI * i/8 + time;
+            line(cos(a)*70, sin(a)*70, cos(a)*120, sin(a)*120);
+        }
+    }
+    pop();
+}
+
+function drawAlgoritmi() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+
+    // Flowchart tree showing the evolution of the word
+    fill(255); noStroke(); textAlign(CENTER); textSize(36);
+    text("AL-KHWARIZMI", 0, -150);
+
+    stroke(255, 50); strokeWeight(3);
+    line(0, -130, 0, -50);
+    
+    // Latin translation box
+    fill(20, 40, 30); stroke(0, 191, 165); strokeWeight(2);
+    rect(-150, -50, 300, 60, 10);
+    fill(0, 191, 165); noStroke(); textSize(28);
+    text("ALGORITMI", 0, -15);
+
+    stroke(255, 50); strokeWeight(3);
+    line(0, 10, 0, 90);
+
+    // Modern Computing box
+    drawingContext.shadowBlur = 50; drawingContext.shadowColor = '#29B6F6';
+    fill(10, 20, 40); stroke(41, 182, 246); strokeWeight(3);
+    rect(-180, 90, 360, 80, 10);
+    drawingContext.shadowBlur = 0;
+    
+    fill(255); noStroke(); textSize(40); fontStyle = "bold";
+    text("ALGORITHM", 0, 145);
+
+    // Code particles falling
+    fill(41, 182, 246, 150); textSize(14); fontStyle = "normal";
+    for(let i=0; i<10; i++) {
+        let px = random(-160, 160);
+        let py = 180 + (time * 100 + i*20) % 150;
+        text(random() > 0.5 ? "0" : "1", px, py);
+    }
+    pop();
+}
+
+// ============================================================
+// ACT II: THE BIRTH OF ALGEBRA
+// ============================================================
+
+function drawAlJabr() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+
+    // Massive glowing text morphing
+    let morphT = (sin(time * 1.5) + 1) / 2; // 0 to 1
+
+    textAlign(CENTER, CENTER);
+    textSize(70); fontStyle = "bold";
+
+    drawingContext.shadowBlur = 60;
+    drawingContext.shadowColor = '#FFD54F';
+    fill(255, 213, 79, 255 * (1 - morphT));
+    text("AL-JABR", 0, -30);
+
+    drawingContext.shadowColor = '#00BFA5';
+    fill(0, 191, 165, 255 * morphT);
+    text("ALGEBRA", 0, 30);
+    drawingContext.shadowBlur = 0;
+
+    // Subtext meaning
+    fill(255, 150); textSize(20); fontStyle = "normal";
+    text("The Science of Restoration and Balancing", 0, 120);
+
+    // Mathematical orbit
+    noFill(); stroke(255, 30); strokeWeight(2);
+    ellipse(0, 0, 350, 100);
+    let ox = cos(time)*175; let oy = sin(time)*50;
+    fill(255); noStroke(); ellipse(ox, oy, 10);
+    textSize(18); text("x", ox + 20, oy - 10);
+
+    pop();
+}
+
+function drawRestoring() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+
+    // Al-Jabr (Restoration) Animation: x - 2 = 5  -->  x = 5 + 2
+    let t = min(time * 0.5, 1.0); // Animation progress 0 to 1
+
+    fill(255); noStroke(); textAlign(CENTER, CENTER); textSize(48);
+    
+    // The "x" and "=" are fixed
+    text("x", -150, 0);
+    text("=", 0, 0);
+    text("5", 150, 0);
+
+    // The "- 2" moving across the equals sign
+    let startX = -80;
+    let endX = 220;
+    let currentX = lerp(startX, endX, t);
+    
+    // Animate color and sign change
+    let valText = "- 2";
+    let valColor = color(229, 57, 53); // Red (Debt/Negative)
+    
+    if (t > 0.5) {
+        valText = "+ 2";
+        valColor = color(0, 191, 165); // Green (Restored/Positive)
+    }
+
+    fill(valColor);
+    text(valText, currentX, 0);
+
+    // Arching jump path
+    if (t > 0.1 && t < 0.9) {
+        noFill(); stroke(255, 50); strokeWeight(2); drawingContext.setLineDash([5,5]);
+        let arcH = -100;
+        bezier(startX, -30, startX, arcH, endX, arcH, endX, -30);
+        drawingContext.setLineDash([]);
+    }
+
+    fill(255, 213, 79); noStroke(); textSize(24);
+    text("Al-Jabr (Restoration)", 0, -150);
+    fill(255, 150); textSize(16);
+    text("Moving a negative debt across the scale to make it a positive fortune.", 0, 100);
+
+    pop();
+}
+
+function drawBalancing() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+
+    // Al-Muqabala (Balancing) Animation: x + 5 = 10 + 5
+    
+    // The Scale
+    stroke(255, 100); strokeWeight(4);
+    line(0, -50, 0, 150); // Fulcrum
+    triangle(0, -50, -20, 0, 20, 0);
+    line(-200, -50, 200, -50); // Beam
+
+    // Left Pan: x + 5
+    fill(41, 182, 246); noStroke(); rect(-230, -40, 40, 40, 5); // x block
+    fill(255); textSize(24); textAlign(CENTER, CENTER); text("x", -210, -20);
+    
+    // Right Pan: 10
+    fill(41, 182, 246); rect(170, -40, 60, 40, 5); // 10 block
+    fill(255); text("10", 200, -20);
+
+    // The identical blocks (+5) on both sides
+    let fadeT = min(max((time - 1.5) * 2, 0), 1); // Fades out after 1.5 seconds
+
+    if (fadeT < 1.0) {
+        fill(0, 191, 165, 255 * (1-fadeT)); noStroke();
+        rect(-180, -40, 30, 40, 5); // left 5
+        rect(240, -40, 30, 40, 5); // right 5
+        fill(255, 255 * (1-fadeT)); textSize(20);
+        text("+5", -165, -20);
+        text("+5", 255, -20);
+
+        // Cancel lines
+        if (time > 1.0) {
+            stroke(229, 57, 53, 255 * (1-fadeT)); strokeWeight(4);
+            line(-190, -10, -140, -50);
+            line(230, -10, 280, -50);
+        }
+    }
+
+    fill(255, 213, 79); noStroke(); textSize(24);
+    text("Al-Muqabala (Balancing)", 0, -150);
+    fill(255, 150); textSize(16);
+    text("Canceling identical amounts from both sides maintains the balance.", 0, 200);
+    pop();
+}
+
+// ============================================================
+// ACT III: COMPLETING THE SQUARE
+// ============================================================
+
+function drawQuadStep1() {
+    push();
+    translate(width/2, height/2 + 80);
+    scale(getScaleFactor());
+
+    fill(255); noStroke(); textAlign(CENTER); textSize(36);
+    text("x² + 10x = 39", 0, -220);
+
+    // Step 1: Draw x^2 square
+    let sqW = 100;
+    
+    stroke(0, 191, 165); fill(0, 191, 165, 40); strokeWeight(3);
+    rect(-sqW/2, -sqW/2, sqW, sqW);
+    
+    fill(255); noStroke(); textSize(24); textAlign(CENTER, CENTER);
+    text("x²", 0, 0);
+
+    fill(255, 213, 79); textSize(20);
+    text("Step 1: Start with a square of unknown area (x²).", 0, 180);
+    pop();
+}
+
+function drawQuadStep2() {
+    push();
+    translate(width/2, height/2 + 80);
+    scale(getScaleFactor());
+
+    fill(255); noStroke(); textAlign(CENTER); textSize(36);
+    text("x² + 10x = 39", 0, -220);
+
+    let sqW = 100;
+    let rectW = 50; // 5x
+    
+    // Center square (x^2)
+    stroke(0, 191, 165); fill(0, 191, 165, 40); strokeWeight(3);
+    rect(-sqW/2, -sqW/2, sqW, sqW);
+    fill(255); noStroke(); textSize(24); textAlign(CENTER, CENTER); text("x²", 0, 0);
+
+    // Animate adding the two 5x rectangles
+    let t = min(time, 1.0);
+    
+    stroke(41, 182, 246, 255*t); fill(41, 182, 246, 40*t); strokeWeight(2);
+    // Right rectangle
+    rect(sqW/2, -sqW/2, rectW*t, sqW);
+    // Bottom rectangle
+    rect(-sqW/2, sqW/2, sqW, rectW*t);
+
+    if (t >= 1.0) {
+        fill(255); noStroke(); textSize(18);
+        text("5x", sqW/2 + rectW/2, 0);
+        text("5x", 0, sqW/2 + rectW/2);
+    }
+
+    fill(255, 213, 79); noStroke(); textSize(20);
+    text("Step 2: Split the 10x into two equal rectangles (5x).", 0, 180);
+    text("Attach them to the sides.", 0, 210);
+    pop();
+}
+
+function drawQuadStep3() {
+    push();
+    translate(width/2, height/2 + 80);
+    scale(getScaleFactor());
+
+    let sqW = 100;
+    let rectW = 50;
+    let totalW = sqW + rectW; // 150
+
+    // Center square (x^2)
+    stroke(0, 191, 165); fill(0, 191, 165, 40); strokeWeight(2);
+    rect(-totalW/2, -totalW/2, sqW, sqW);
+    fill(255); noStroke(); textSize(24); textAlign(CENTER, CENTER); text("x²", -totalW/2 + sqW/2, -totalW/2 + sqW/2);
+
+    // Right and Bottom rectangles (5x)
+    stroke(41, 182, 246); fill(41, 182, 246, 40);
+    rect(-totalW/2 + sqW, -totalW/2, rectW, sqW); // Right
+    rect(-totalW/2, -totalW/2 + sqW, sqW, rectW); // Bottom
+    fill(255); noStroke(); textSize(16);
+    text("5x", -totalW/2 + sqW + rectW/2, -totalW/2 + sqW/2);
+    text("5x", -totalW/2 + sqW/2, -totalW/2 + sqW + rectW/2);
+
+    // The Missing Corner!
+    let t = min(max(time - 0.5, 0), 1.0); // Delay start
+    
+    stroke(255, 213, 79, 255*t); fill(255, 213, 79, 80*t); strokeWeight(3);
+    rect(-totalW/2 + sqW, -totalW/2 + sqW, rectW*t, rectW*t);
+
+    if (t >= 1.0) {
+        fill(255); noStroke(); textSize(18); fontStyle = "bold";
+        text("25", -totalW/2 + sqW + rectW/2, -totalW/2 + sqW + rectW/2); // 5x5 = 25
+    }
+
+    // Logic Text
+    fill(255); noStroke(); textAlign(CENTER); textSize(28); fontStyle = "normal";
+    text("Area was 39. Add the missing corner (25).", 0, -200);
+    
+    if (t >= 1.0) {
+        fill(0, 191, 165); textSize(36);
+        text("Total Area = 64", 0, -150);
+        
+        // Final calculation
+        fill(255, 213, 79); textSize(20);
+        text("If the perfect square area is 64, its sides must be 8.", 0, 180);
+        text("Side = (x + 5) = 8.   Therefore, x = 3.", 0, 210);
+        
+        // Side bracket
+        stroke(255, 100); strokeWeight(2); noFill();
+        beginShape();
+        vertex(-totalW/2, -totalW/2 - 10);
+        vertex(-totalW/2, -totalW/2 - 20);
+        vertex(totalW/2, -totalW/2 - 20);
+        vertex(totalW/2, -totalW/2 - 10);
+        endShape();
+        fill(255); noStroke(); textSize(18); text("x + 5 = 8", 0, -totalW/2 - 30);
+    }
+    pop();
+}
+
+function drawLegacyFinale() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+
+    // The giant interconnected web of mathematics
+    let mathematicians = ["THALES", "PYTHAGORAS", "PLATO", "EUCLID", "ARCHIMEDES", "PTOLEMY", "HYPATIA", "ARYABHATA", "BRAHMAGUPTA", "AL-KHWARIZMI"];
+    
+    let r = 250;
+    rotate(time * 0.1);
+
+    // Draw web
+    stroke(0, 191, 165, 30); strokeWeight(1);
+    for(let i=0; i<mathematicians.length; i++) {
+        for(let j=i+1; j<mathematicians.length; j++) {
+            let a1 = TWO_PI * i / mathematicians.length;
+            let a2 = TWO_PI * j / mathematicians.length;
+            line(cos(a1)*r, sin(a1)*r, cos(a2)*r, sin(a2)*r);
+        }
+    }
+
+    // Draw Nodes
+    for(let i=0; i<mathematicians.length; i++) {
+        let a = TWO_PI * i / mathematicians.length;
+        let px = cos(a)*r; let py = sin(a)*r;
+        
+        fill(255, 213, 79); noStroke();
+        ellipse(px, py, 12);
+        
+        push();
+        translate(px, py);
+        rotate(-time * 0.1); // Keep text upright
+        fill(255, 200); textSize(14); textAlign(CENTER, CENTER);
+        text(mathematicians[i], 0, (py > 0) ? 20 : -20);
+        pop();
+    }
+
+    // Center Core (ViaMath)
+    drawingContext.shadowBlur = 80; drawingContext.shadowColor = '#00BFA5';
+    fill(10, 20, 15, 200); stroke(0, 191, 165); strokeWeight(4);
+    ellipse(0, 0, 150);
+    drawingContext.shadowBlur = 0;
+
+    push(); rotate(-time*0.1); // Keep upright
+    fill(255); noStroke(); textAlign(CENTER, CENTER); textSize(32); fontStyle = "bold";
+    text("VIAMATH", 0, 0);
+    pop();
+
+    pop();
+
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    fill(255); noStroke(); textAlign(CENTER); textSize(24); fontStyle = "normal";
+    text("The language of the universe, unbroken.", 0, 320);
+    pop();
+}
+</script>
+</body>
+</html>
