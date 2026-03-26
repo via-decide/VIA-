@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViaMath | The Master of Zero (Brahmagupta)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            margin: 0; padding: 0; background-color: #0F1108; overflow: hidden;
+            color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+        canvas { display: block; }
+
+        /* Act Indicator */
+        #act-indicator {
+            position: absolute; top: 30px; left: 30px;
+            color: #FFD54F; font-size: 14px; font-weight: bold; letter-spacing: 3px;
+            text-transform: uppercase; z-index: 10;
+            transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+
+        /* Main Info Box */
+        #label {
+            position: absolute; top: 60px; left: 30px;
+            letter-spacing: 1px; border-left: 4px solid #FFD54F; 
+            padding-left: 20px; z-index: 10;
+            background: rgba(15, 17, 8, 0.85); padding-right: 20px;
+            padding-bottom: 15px; border-radius: 0 10px 10px 0;
+            backdrop-filter: blur(8px); max-width: 80%;
+            transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+        h1 { margin: 0; font-size: 26px; font-weight: 300; text-transform: uppercase; color: #fff; }
+        #subtitle { color: #FFD54F; font-size: 16px; margin-top: 5px; font-weight: bold; letter-spacing: 2px; }
+        #description { color: #ccc; font-size: 15px; margin-top: 10px; max-width: 450px; line-height: 1.6; }
+
+        /* Insight Bar */
+        #insight-bar {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: rgba(255, 213, 79, 0.1);
+            border-top: 1px solid rgba(255, 213, 79, 0.4);
+            padding: 15px 0; text-align: center;
+            font-size: 16px; color: #ddd; letter-spacing: 1px;
+            font-family: monospace; backdrop-filter: blur(5px);
+            transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+        .highlight { color: #FFD54F; font-weight: bold; }
+
+        /* Tap hint & Logo */
+        #nav-hint {
+            position: absolute; top: 30px; right: 30px;
+            color: #777; font-size: 12px; letter-spacing: 2px;
+            text-transform: uppercase; cursor: pointer;
+            transition: opacity 0.4s ease-in-out; text-align: right;
+        }
+        .viamath-logo { color: #FFD54F; font-weight: bold; font-size: 16px; margin-bottom: 5px; letter-spacing: 3px;}
+
+        @media (max-width: 700px) {
+            #act-indicator { top: 20px; left: 10px; font-size: 12px; }
+            #label { top: 45px; left: 10px; padding-left: 15px; max-width: 90%; }
+            h1 { font-size: 20px; }
+            #subtitle { font-size: 14px; }
+            #description { font-size: 13px; max-width: 100%; }
+            #insight-bar { font-size: 12px; padding: 10px 0; }
+            #nav-hint { top: 10px; right: 10px; font-size: 10px; }
+        }
+    </style>
+</head>
+<body onclick="nextScreen()">
+    <div id="nav-hint">
+        <a href="../../" style="text-decoration:none"><div class="viamath-logo">← VIALOGIC</div></a>
+        Tap anywhere to advance ➔
+    </div>
+    
+    <div id="act-indicator">ACT I: THE VOID MADE VISIBLE</div>
+
+    <div id="label">
+        <h1 id="title">Title</h1>
+        <p id="subtitle">Subtitle</p>
+        <p id="description">Description goes here.</p>
+    </div>
+
+    <div id="insight-bar">
+        <span class="highlight">HISTORICAL INSIGHT:</span> <span id="insight-text">Loading...</span>
+    </div>
+
+<script>
+let time = 0;
+let state = 0;
+
+let isTransitioning = false;
+let fadeAlpha = 0;
+let fadeDirection = 0;
+let targetState = 0;
+const FADE_SPEED = 12;
+const TOTAL_SCREENS = 10;
+
+let particles = [];
+
+const content = [
+    // ACT I: THE SHUNYA (ZERO)
+    {
+        title: "The Court of Ujjain", sub: "Central India, c. 628 CE",
+        desc: "Brahmagupta was the head of the astronomical observatory in Ujjain. In his absolute masterpiece, the Brahmasphutasiddhanta, he did something no human had dared: he treated Zero as a number.",
+        insight: "He called it 'Shunya' - the Void that contains all possibilities."
+    },
+    {
+        title: "The Rules of Nothing", sub: "Defining the Indefinable",
+        desc: "Before Brahmagupta, zero was just a placeholder. He gave it rules: 'When zero is added to a number or subtracted from a number, the number remains unchanged.'",
+        insight: "He was the first to realize that 'Nothing' has mathematical properties."
+    },
+    {
+        title: "The Danger of Division", sub: "Zero's Ultimate Secret",
+        desc: "Brahmagupta correctly identified that 0 / n = 0. However, he struggled with division BY zero, though he paved the path that would eventually lead to the concept of Infinity.",
+        insight: "His work was the foundation for the entire Arabic and Western decimal systems."
+    },
+    // ACT II: FORTUNES AND DEBTS (NEGATIVES)
+    {
+        title: "Fortunes and Debts", sub: "The Invention of Negative Numbers",
+        desc: "Brahmagupta used financial metaphors to explain algebra. He called positive numbers 'Fortunes' and negative numbers 'Debts.'",
+        insight: "A debt minus zero is a debt. A fortune minus zero is a fortune."
+    },
+    {
+        title: "The Law of Signs", sub: "Multiplying the Void",
+        desc: "He famously wrote: 'The product of two debts is a fortune.' In modern math, this is (negative × negative = positive). It was a conceptual leap that baffled people for centuries.",
+        insight: "He proved that math could describe reality beyond what we can physically touch."
+    },
+    {
+        title: "The Algebra of Debt", sub: "Balancing the Books",
+        desc: "By combining fortunes and debts with zero, Brahmagupta created the first complete arithmetic for integers. He allowed math to go 'below the ground' of zero for the first time.",
+        insight: "Every digital bank balance in the world today runs on Brahmagupta's logic."
+    },
+    // ACT III: THE CYCLIC QUADRILATERAL
+    {
+        title: "The Pulverizer", sub: "The Chakravala Method",
+        desc: "Brahmagupta was a master of indeterminate equations. He developed the 'Chakravala' (cyclic) method to find integer solutions for complex quadratic equations.",
+        insight: "His methods were not rediscovered in Europe for another 1,000 years."
+    },
+    {
+        title: "Geometric Perfection", sub: "Brahmagupta's Formula",
+        desc: "He discovered the formula for the area of a cyclic quadrilateral (p-a)(p-b)(p-c)(p-d). It is one of the most beautiful and symmetric theorems in all of geometry.",
+        insight: "He saw the hidden connection between the sides of a shape and the circle that holds it."
+    },
+    {
+        title: "The Master Astronomer", sub: "Mapping the Kalpa",
+        desc: "Brahmagupta used his math to calculate the length of a solar year and the positions of the planets with incredible accuracy, seeing the universe as a giant, balanced equation.",
+        insight: "He believed the Earth was a sphere that used its own mass to pull things toward it."
+    },
+    {
+        title: "The Ocean of Logic", sub: "Welcome to ViaMath",
+        desc: "From the first Sanskrit verses of Ujjain to the binary 0s and 1s that power this screen, Brahmagupta's vision of 'The Void' remains the heart of our world. Step into the zero.",
+        insight: "ViaMath: The origin of the code. Let's begin."
+    }
+];
+
+function setup() {
+    createCanvas(windowWidth, windowHeight);
+    for(let i=0; i<60; i++) particles.push({x: random(width), y: random(height), s: random(2, 5), a: random(TWO_PI)});
+    updateUI();
+}
+
+function windowResized() { resizeCanvas(windowWidth, windowHeight); }
+
+function nextScreen() {
+    // AWARD LOGIC
+    if (state === TOTAL_SCREENS - 1) {
+        if (!window.hasAwarded) {
+             window.parent.postMessage({ type: 'sparks_award', amount: 250 }, '*');
+             window.hasAwarded = true;
+        }
+    }
+
+    if (isTransitioning) return;
+    isTransitioning = true;
+    fadeDirection = 1;
+    targetState = (state + 1) % TOTAL_SCREENS;
+    
+    document.getElementById("label").style.opacity = 0;
+    document.getElementById("insight-bar").style.opacity = 0;
+    document.getElementById("nav-hint").style.opacity = 0;
+    document.getElementById("act-indicator").style.opacity = 0;
+}
+
+function updateUI() {
+    document.getElementById("title").innerText = content[state].title;
+    document.getElementById("subtitle").innerText = content[state].sub;
+    document.getElementById("description").innerText = content[state].desc;
+
+    let actInd = document.getElementById("act-indicator");
+    let labelBorder = document.getElementById("label");
+    
+    if (state < 3) {
+        actInd.innerText = "ACT I: THE VOID MADE VISIBLE";
+        actInd.style.color = "#FFD54F"; // Saffron/Gold
+        labelBorder.style.borderLeftColor = "#FFD54F";
+    } else if (state < 6) {
+        actInd.innerText = "ACT II: FORTUNES AND DEBTS";
+        actInd.style.color = "#81C784"; // Wealth Green
+        labelBorder.style.borderLeftColor = "#81C784";
+    } else {
+        actInd.innerText = "ACT III: THE MASTER OF THE CYCLE";
+        actInd.style.color = "#64B5F6"; // Cosmic Blue
+        labelBorder.style.borderLeftColor = "#64B5F6";
+    }
+
+    document.getElementById("insight-text").innerText = content[state].insight;
+}
+
+function getScaleFactor() { return min(1, width / 800); }
+
+function draw() {
+    background(15, 17, 8); // Deep Forest Night
+
+    // Ancient Sanskrit pattern (subtle)
+    stroke(255, 10); strokeWeight(1); noFill();
+    for (let i = 0; i < width; i += 150) {
+        for (let j = 0; j < height; j += 150) {
+            ellipse(i, j, 100);
+        }
+    }
+
+    time += 0.02;
+
+    // Dust particles
+    for(let p of particles) {
+        p.y -= 0.5; p.x += sin(p.a + time) * 0.5;
+        if(p.y < 0) { p.y = height; p.x = random(width); }
+        fill(255, 30); noStroke();
+        ellipse(p.x, p.y, p.s);
+    }
+
+    // State Router
+    if      (state === 0) drawUjjain();
+    else if (state === 1) drawRulesZero();
+    else if (state === 2) drawDivisionRisk();
+    else if (state === 3) drawFortunesDebts();
+    else if (state === 4) drawLawOfSigns();
+    else if (state === 5) drawIntegerGround();
+    else if (state === 6) drawChakravala();
+    else if (state === 7) drawCyclicQuad();
+    else if (state === 8) drawEarthGravity();
+    else if (state === 9) drawBinaryLegacy();
+
+    // Cinematic fade overlay
+    if (isTransitioning) {
+        fadeAlpha += FADE_SPEED * fadeDirection;
+        if (fadeDirection === 1 && fadeAlpha >= 255) {
+            fadeAlpha = 255; fadeDirection = -1;
+            state = targetState; time = 0;
+            updateUI();
+            document.getElementById("label").style.opacity = 1;
+            document.getElementById("insight-bar").style.opacity = 1;
+            document.getElementById("act-indicator").style.opacity = 1;
+            if (state !== 9) document.getElementById("nav-hint").style.opacity = 1;
+        } else if (fadeDirection === -1 && fadeAlpha <= 0) {
+            fadeAlpha = 0; isTransitioning = false; fadeDirection = 0;
+        }
+        push(); fill(15, 17, 8, fadeAlpha); noStroke(); rect(0, 0, width, height); pop();
+    }
+}
+
+// -------------------------------------------------------------
+// ACT SCREENS
+// -------------------------------------------------------------
+
+function drawUjjain() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Abstract Indian Temple silhouette
+    fill(40, 30, 10); stroke(255, 213, 79, 100);
+    beginShape();
+    vertex(-150, 200); vertex(-150, 0); vertex(-100, -80);
+    vertex(-50, -150); vertex(0, -200); vertex(50, -150);
+    vertex(100, -80); vertex(150, 0); vertex(150, 200);
+    endShape(CLOSE);
+    
+    // Glowing Bindu (Point/Zero)
+    drawingContext.shadowBlur = 50; drawingContext.shadowColor = '#FFD54F';
+    fill(255, 213, 79); ellipse(0, -20, 30);
+    drawingContext.shadowBlur = 0;
+    pop();
+}
+
+function drawRulesZero() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    let t = sin(time*2);
+    
+    // Equation visualization
+    fill(255); noStroke(); textAlign(CENTER); textSize(60);
+    text("5 + 0 = 5", 0, -20);
+    text("5 - 0 = 5", 0, 80);
+    
+    // Pulsing Shunya
+    stroke(255, 213, 79, 150 + t*100); noFill(); strokeWeight(5);
+    ellipse(-70, -40, 60 + t*10);
+    ellipse(-70, 60, 60 + t*10);
+    pop();
+}
+
+function drawDivisionRisk() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // 0 / 5 = 0
+    fill(255); textSize(48); text("0 / 5 = 0", 0, -50);
+    
+    // 5 / 0 = ? (Infinity risk)
+    let flicker = random(50, 255);
+    fill(255, 0, 0, flicker); text("5 / 0 = ???", 0, 50);
+    
+    stroke(255, 50); noFill();
+    for(let i=0; i<10; i++) ellipse(0, 50, i*30 + time*50, i*15);
+    pop();
+}
+
+function drawFortunesDebts() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Scale balance
+    stroke(255, 100); strokeWeight(3);
+    line(-200, 0, 200, 0); line(0, -150, 0, 150);
+    
+    // Fortune (Gold node)
+    fill(255, 213, 79); ellipse(-150, -50, 40);
+    textAlign(CENTER); textSize(20); text("FORTUNE (+)", -150, 20);
+    
+    // Debt (Red node)
+    fill(255, 82, 82); ellipse(150, 50, 40);
+    text("DEBT (-)", 150, 120);
+    pop();
+}
+
+function drawLawOfSigns() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    fill(255, 82, 82); textSize(40); text("DEBT", -150, 0);
+    text("DEBT", 50, 0);
+    fill(255); text("×", -50, 0);
+    
+    // Pulsing result
+    let t = (sin(time*3)+1)/2;
+    fill(255, 213, 79, 150 + t*105);
+    text("= FORTUNE", 0, 100);
+    pop();
+}
+
+function drawIntegerGround() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Number line showing levels
+    stroke(255, 50); line(-300, 0, 300, 0);
+    for(let i=-5; i<=5; i++) {
+        let x = i*60;
+        line(x, -10, x, 10);
+        fill(255, 150); textSize(16); text(i, x, 30);
+    }
+    
+    // Ground level zero
+    fill(255, 213, 79); ellipse(0, 0, 15);
+    strokeWeight(2); stroke(255, 213, 79); line(0, -100, 0, 100);
+    pop();
+}
+
+function drawChakravala() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    rotate(time);
+    noFill(); stroke(100, 200, 255, 150);
+    for(let i=0; i<8; i++) {
+        rotate(PI/4);
+        ellipse(50, 0, 150, 50);
+    }
+    fill(255); noStroke(); ellipse(0, 0, 10);
+    pop();
+}
+
+function drawCyclicQuad() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Circle
+    noFill(); stroke(255, 50); ellipse(0, 0, 300);
+    
+    // Quad inside
+    stroke(255, 213, 79); strokeWeight(3); fill(255, 213, 79, 40);
+    beginShape();
+    vertex(cos(0.5)*150, sin(0.5)*150);
+    vertex(cos(2.2)*150, sin(2.2)*150);
+    vertex(cos(3.8)*150, sin(3.8)*150);
+    vertex(cos(5.4)*150, sin(5.4)*150);
+    endShape(CLOSE);
+    pop();
+}
+
+function drawEarthGravity() {
+    push();
+    translate(width/2, height/2 + 100);
+    scale(getScaleFactor());
+    
+    // Earth core
+    fill(30, 20, 10); stroke(255, 100); ellipse(0, 0, 200);
+    
+    // Gravity lines pulling in
+    stroke(255, 213, 79, 100);
+    for(let i=0; i<12; i++) {
+        rotate(PI/6);
+        let d = 150 + sin(time*3 + i)*20;
+        line(0, d, 0, 100);
+    }
+    pop();
+}
+
+function drawBinaryLegacy() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // 0 and 1 dancing
+    fill(255, 213, 79); textSize(100); textAlign(CENTER);
+    text("0", cos(time)*150, sin(time)*50);
+    fill(255);
+    text("1", cos(time + PI)*150, sin(time + PI)*50);
+    pop();
+}
+
+</script>
+</body>
+</html>

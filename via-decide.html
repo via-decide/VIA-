@@ -90,7 +90,9 @@ html, body {
   position: absolute; top: 0; left: 0; right: 0; z-index: 100;
   backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   background: linear-gradient(to bottom, rgba(5,5,10,0.8), transparent);
+  pointer-events: none;
 }
+.status-bar > * { pointer-events: auto; }
 
 .status-logo {
   font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.8rem;
@@ -105,8 +107,10 @@ html, body {
   display: flex; gap: 0.5rem; z-index: 90;
   overflow-x: auto; scrollbar-width: none;
   padding: 0.2rem;
+  pointer-events: none;
 }
 .layer-tabs::-webkit-scrollbar { display: none; }
+.layer-tabs > * { pointer-events: auto; }
 
 .layer-tab {
   white-space: nowrap; padding: 0.6rem 1.2rem; border-radius: 99px;
@@ -178,7 +182,9 @@ html, body {
   backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur));
   border-top: 1px solid var(--border);
   z-index: 100;
+  pointer-events: none;
 }
+.bottom-nav > * { pointer-events: auto; }
 
 .nav-item {
   display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
@@ -1714,6 +1720,10 @@ const DEFAULT_CARDS = [
    title:'SwipeOS — हर decision एक <em>card</em> में। The OS built on choices.',
    author:'SwipeOS',authorEmoji:'📱',location:'ViaDecide',time:'4h ago',views:'2.7M',likes:'189K',
    storyKey:'swipeos'},
+  {id:21,cat:'games',catLabel:'🎮 Discovery',bg:'linear-gradient(160deg,#0a1a3a 0%,#0B0B1A 60%)',emoji:'🧭',
+   title:'ViaLogic — <em>Cartography of Minds</em>। भारत का पहला mathematician universe',
+   author:'ViaLogic Team',authorEmoji:'🏛️',location:'Bharat',time:'Just Now',views:'New',likes:'✦',
+   storyKey:'vialogic'},
 ];
 
 const VIA_MICRO_CONTENT = typeof window.createMicroContentArchitecture === 'function'
@@ -1766,9 +1776,10 @@ const DISCOVER_ITEMS = [
   {emoji:'◂',cat:'Dives',name:'Deep Dives',desc:'Cinematic breakdowns of Bharat\'s biggest trends and innovations.',toolPath:null,isDive:true},
   // ── Games ─────────────────────────────────────────────────────
   {isHeader:true, label:'🎮 Games Universe'},
-  {emoji:'🏛️',cat:'Games',name:'Games Hub',desc:'All 3 games. One wallet. Credits flow between SkillHex, Mars Terminal & Orchard.',toolPath:'./games.html',isGame:true},
-  {emoji:'⬡',cat:'Games',name:'SkillHex',desc:'Mission-control strategy for students & job seekers. Build skills, earn VIA Credits.',toolPath:'./skillhex/',isGame:true},
-  {emoji:'🔴',cat:'Games',name:'Mars Terminal',desc:'ISRO rover simulator. Navigate Mars, scan rocks, earn credits. For game lovers.',toolPath:'./mars/',isGame:true},
+  {emoji:'🏛️',cat:'Games',name:'ViaLogic',desc:'Explore the Cartography of Minds. 14 mathematicians, cinematic levels, and XP progression.',toolPath:'tools/games/vialogic/index.html',isGame:true,storyKey:'vialogic'},
+  {emoji:'🏛️',cat:'Games',name:'Games Hub',desc:'All 3 games. One wallet. Credits flow between SkillHex, Mars Terminal & Orchard.',toolPath:'tools/games.html',isGame:true},
+  {emoji:'⬡',cat:'Games',name:'SkillHex',desc:'Mission-control strategy for students & job seekers. Build skills, earn VIA Credits.',toolPath:'./skillhex/',isGame:true,storyKey:'skillhex'},
+  {emoji:'🔴',cat:'Games',name:'Mars Terminal',desc:'ISRO rover simulator. Navigate Mars, scan rocks, earn credits. For game lovers.',toolPath:'./mars/',isGame:true,storyKey:'mars'},
   {emoji:'🌱',cat:'Games',name:'Orchard Engine',desc:'Bio-engineer rare plants, harvest credits, trade with friends. Cross-game wallet.',toolPath:'https://orchard.viadecide.com',isGame:true,isExternal:true},
   // ── AI Tools ──────────────────────────────────────────────────
   {isHeader:true, label:'🛠 AI Tools'},
@@ -2519,6 +2530,34 @@ const BLOG_DATA = {
     ],
     clTitle:'Getting Started',
     checklist:['Swipe with intent — each card deserves 3 seconds of genuine consideration, not reflexive dismissal.','Review your weekly decision archive every Sunday — patterns you didn\'t notice become visible in retrospect.','Use Career Mode during commute — 10 minutes of swipe-based career planning beats 10 minutes of doom scroll.']
+  },
+  vialogic:{
+    theme:'#FF671F',catLabel:'· 🏛️ MATH UNIVERSE',
+    hookTitle:'ViaLogic — 14 <em>Mathematicians</em> की cinematic दुनिया',
+    hookLead:'Thales से Al-Khwarizmi तक — भारत और दुनिया के महान गणितज्ञों की कहानियाँ, अब p5.js cinematic animations के साथ।',
+    probTitle:'Why Math History is Boring',
+    probBody:'Traditional textbooks treat math history as a list of dates and names. But math was built by explorers, radicals, and dreamers facing impossible constraints.',
+    problems:[
+      {icon:'📖',text:'<strong>Dead Facts</strong> — Textbooks remove the human drama from mathematical discovery.'},
+      {icon:'📉',text:'<strong>Abstract Gap</strong> — We learn formulas but never the "Why" or the "Visual" behind them.'},
+      {icon:'🏛️',text:'<strong>Eurocentric Bias</strong> — The massive contributions of Bharat (India) and the Arabic world are often marginalized.'}
+    ],
+    insightTitle:'Cinematic Mathematics',
+    insightBody:'ViaLogic doesn\'t tell you about math; it lets you step into the mind of the mathematician through interactive code.',
+    insightQuote:'"We didn\'t build a museum. We built a time machine where you can play with the rules of the universe as they were discovered."',
+    fwTitle:'The ViaLogic Ecosystem',
+    fwSteps:[
+      {title:'Cartography of Minds',desc:'A recursive, interactive hub linking all 14 mathematicians into a single intellectual web.'},
+      {title:'Cinematic Act Structure',desc:'Each profile is a 3-act narrative — from the historical conflict to the mathematical resolution.'},
+      {title:'p5.js Visualizations',desc:'Real-time algorithmic art that brings abstract concepts like Zero, Pi, and Sine to life.'}
+    ],
+    exTitle:'The Explorer Lineup',
+    examples:[
+      {title:'ACT I: The Void',desc:'Experience Brahmagupta\'s Court in Ujjain where Zero was first treated as a formal number.'},
+      {title:'ACT III: Equations',desc:'Step into the House of Wisdom with Al-Khwarizmi and see the birth of Algebra.'}
+    ],
+    clTitle:'Become a Polymath',
+    checklist:['Complete all 14 mathematician levels to earn the "Cartographer of Minds" badge.','Collect Sparks by completing Act III of each cinematic story.','Use Sparks to unlock high-fidelity lore in the central hub.']
   }
 };
 
@@ -2770,9 +2809,14 @@ const GC = {
     const dx=this.curX-this.startX,dy=this.curY-this.startY;
     const speed=Math.sqrt(dx*dx+dy*dy)/Math.max(1,Date.now()-this.startTime);
     this._clearOverlays(card);
-    if(speed<this.VT){this._snap(card);this.axis=null;return;}
-    if(this.axis==='v'){const th=window.innerHeight*this.VTH;if(dy<-th)this._up(card);else if(dy>th)this._down(card);else this._snap(card);}
-    else if(this.axis==='h'){const th=window.innerWidth*this.HTH;if(dx>th)this._right(card);else if(dx<-th)this._left(card);else this._snap(card);}
+
+    const vth=window.innerHeight*this.VTH;
+    const hth=window.innerWidth*this.HTH;
+
+    if(speed<this.VT && Math.abs(dx)<hth && Math.abs(dy)<vth){this._snap(card);this.axis=null;return;}
+    
+    if(this.axis==='v'){if(dy<-vth)this._up(card);else if(dy>vth)this._down(card);else this._snap(card);}
+    else if(this.axis==='h'){if(dx>hth)this._right(card);else if(dx<-hth)this._left(card);else this._snap(card);}
     else this._snap(card);
     this.axis=null;
   },
@@ -2788,7 +2832,7 @@ const GC = {
     card.style.transition='transform .3s cubic-bezier(.4,0,.6,1),opacity .25s ease';
     card.style.transform='translateY(-110vh)';card.style.opacity='0';
     currentCard++;
-    setTimeout(()=>{positionAllCards(true);updateProgressDots();setTimeout(()=>{isAnimating=false;},360);},80);
+    setTimeout(()=>{positionAllCards(true);updateProgressDots();setTimeout(()=>{isAnimating=false;},340);},80);
   },
   _down(card){
     if(currentCard===0){if(this.curY-this.startY>80){this._snap(card);setTimeout(()=>{currentCard=0;buildDeck();},320);return;}this._snap(card);return;}
@@ -2799,7 +2843,7 @@ const GC = {
     if(prev){prev.style.transition='none';prev.style.transform='translateY(-40px)';prev.style.opacity='0';prev.style.zIndex='11';}
     requestAnimationFrame(()=>{requestAnimationFrame(()=>{
       if(prev){prev.style.transition='transform .34s cubic-bezier(.16,1,.3,1),opacity .28s ease';prev.style.transform='translateY(0) scale(1)';prev.style.opacity='1';prev.style.pointerEvents='auto';}
-      positionAllCards(true);updateProgressDots();setTimeout(()=>{isAnimating=false;},380);
+      positionAllCards(true);updateProgressDots();setTimeout(()=>{isAnimating=false;},340);
     });});
   },
   _right(card){if(!this.ribbonWasOpen)likeCard(currentCard);this._snap(card);},

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViaMath | The Engineer (Archimedes)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            margin: 0; padding: 0; background-color: #0A1118; overflow: hidden;
+            color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+        canvas { display: block; }
+
+        /* Act Indicator */
+        #act-indicator {
+            position: absolute; top: 30px; left: 30px;
+            color: #FF7F50; font-size: 14px; font-weight: bold; letter-spacing: 3px;
+            text-transform: uppercase; z-index: 10;
+            transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+
+        /* Main Info Box */
+        #label {
+            position: absolute; top: 60px; left: 30px;
+            letter-spacing: 1px; border-left: 4px solid #FF7F50; 
+            padding-left: 20px; z-index: 10;
+            background: rgba(10, 17, 24, 0.85); padding-right: 20px;
+            padding-bottom: 15px; border-radius: 0 10px 10px 0;
+            backdrop-filter: blur(8px); max-width: 80%;
+            transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+        h1 { margin: 0; font-size: 26px; font-weight: 300; text-transform: uppercase; color: #fff; }
+        #subtitle { color: #FF7F50; font-size: 16px; margin-top: 5px; font-weight: bold; letter-spacing: 2px; }
+        #description { color: #ccc; font-size: 15px; margin-top: 10px; max-width: 450px; line-height: 1.6; }
+
+        /* Insight Bar */
+        #insight-bar {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: rgba(255, 127, 80, 0.1);
+            border-top: 1px solid rgba(255, 127, 80, 0.4);
+            padding: 15px 0; text-align: center;
+            font-size: 16px; color: #ddd; letter-spacing: 1px;
+            font-family: monospace; backdrop-filter: blur(5px);
+            transition: opacity 0.4s ease-in-out; opacity: 1;
+        }
+        .highlight { color: #FF7F50; font-weight: bold; }
+
+        /* Tap hint & Logo */
+        #nav-hint {
+            position: absolute; top: 30px; right: 30px;
+            color: #777; font-size: 12px; letter-spacing: 2px;
+            text-transform: uppercase; cursor: pointer;
+            transition: opacity 0.4s ease-in-out; text-align: right;
+        }
+        .viamath-logo { color: #FF7F50; font-weight: bold; font-size: 16px; margin-bottom: 5px; letter-spacing: 3px;}
+
+        @media (max-width: 700px) {
+            #act-indicator { top: 20px; left: 10px; font-size: 12px; }
+            #label { top: 45px; left: 10px; padding-left: 15px; max-width: 90%; }
+            h1 { font-size: 20px; }
+            #subtitle { font-size: 14px; }
+            #description { font-size: 13px; max-width: 100%; }
+            #insight-bar { font-size: 12px; padding: 10px 0; }
+            #nav-hint { top: 10px; right: 10px; font-size: 10px; }
+        }
+    </style>
+</head>
+<body onclick="nextScreen()">
+    <div id="nav-hint">
+        <a href="../../" style="text-decoration:none"><div class="viamath-logo">← VIALOGIC</div></a>
+        Tap anywhere to advance ➔
+    </div>
+    
+    <div id="act-indicator">ACT I: THE CITY OF SYRACUSE</div>
+
+    <div id="label">
+        <h1 id="title">Title</h1>
+        <p id="subtitle">Subtitle</p>
+        <p id="description">Description goes here.</p>
+    </div>
+
+    <div id="insight-bar">
+        <span class="highlight">HISTORICAL INSIGHT:</span> <span id="insight-text">Loading...</span>
+    </div>
+
+<script>
+let time = 0;
+let state = 0;
+
+let isTransitioning = false;
+let fadeAlpha = 0;
+let fadeDirection = 0;
+let targetState = 0;
+const FADE_SPEED = 12;
+const TOTAL_SCREENS = 10;
+
+let particles = [];
+
+const content = [
+    // ACT I: THE LEGEND
+    {
+        title: "The Siege of Syracuse", sub: "Defending the Homeland",
+        desc: "Archimedes spent his life in Syracuse, Sicily. When the Romans attacked, he didn't use a sword; he used math. He designed massive cranes and mirrors to destroy the Roman fleet.",
+        insight: "He is considered the first 'Weapon Systems' engineer in history."
+    },
+    {
+        title: "Eureka!", sub: "The Law of Buoyancy",
+        desc: "Legend says the King tasked him with verifying a gold crown's purity without damaging it. While stepping into a bath, he noticed the water level rise. He had found a way to measure volume by displacement.",
+        insight: "Buoyant force is equal to the weight of the fluid displaced."
+    },
+    {
+        title: "Give Me a Lever", sub: "Moving the World",
+        desc: "Archimedes proved the power of leverage. He famously said, 'Give me a place to stand, and I shall move the Earth.' He invented the compound pulley and calculated the mechanical advantage of the simple machine.",
+        insight: "He understood that smaller forces could move massive objects with enough distance."
+    },
+    // ACT II: THE INFINITE PI
+    {
+        title: "Approximating Pi", sub: "The 96-Sided Polygon",
+        desc: "By surrounding a circle with polygons and increasing the number of sides, Archimedes was the first to rigorously calculate Pi. He stopped at 96 sides, proving Pi was between 3.1408 and 3.1428.",
+        insight: "This was the world's most accurate calculation for over 1,000 years."
+    },
+    {
+        title: "Area of a Circle", sub: "Infinite Triangles",
+        desc: "He proved that the area of a circle is equal to a triangle with a base equal to the circumference and height equal to the radius. This 'Method of Exhaustion' laid the foundations for calculus.",
+        insight: "He was doing integration 2,000 years before Newton and Leibniz."
+    },
+    {
+        title: "Sphere and Cylinder", sub: "His Favorite Discovery",
+        desc: "His proudest achievement was proving that a sphere has two-thirds the volume and surface area of its circumscribing cylinder. He even requested this diagram be engraved on his tombstone.",
+        insight: "It is considered one of the most elegant geometric proofs in history."
+    },
+    // ACT III: THE ENGINEER'S REACH
+    {
+        title: "The Archimedean Screw", sub: "Anti-Gravity Irrigation",
+        desc: "Syracuse needed to pump water out of massive ships. Archimedes designed a rotating spiral within a cylinder that could 'lift' water uphill. It is still used today in modern irrigation and space technology.",
+        insight: "A testament to his ability to see the world as a complex machine."
+    },
+    {
+        title: "The Sand Reckoner", sub: "Naming Large Numbers",
+        desc: "To prove math had no limit, he tried to calculate how many grains of sand would fit in the universe. He had to invent a new system for counting massive numbers, reaching 10 to the power of 64.",
+        insight: "He proved that 'Infinity' was a concept that math could tackle."
+    },
+    {
+        title: "The Death of a GIANT", sub: "Do Not Disturb My Circles",
+        desc: "When Syracuse finally fell to the Romans, a soldier found him drawing diagrams in the sand. Archimedes reportedly told the soldier, 'Do not disturb my circles.' The soldier killed him where he sat.",
+        insight: "His legacy is the blueprint for the modern world's mechanical power."
+    },
+    {
+        title: "The Engineer's Spirit", sub: "Build the Future",
+        desc: "From the Archimedean screw to the calculus of NASA, your journey into engineering begins with the man who looked at a circle and saw a world waiting to be moved.",
+        insight: "ViaMath: Where history and logic connect. Welcome home."
+    }
+];
+
+function setup() {
+    createCanvas(windowWidth, windowHeight);
+    for(let i=0; i<50; i++) particles.push({x: random(width), y: random(height), s: random(2, 4), a: random(TWO_PI)});
+    updateUI();
+}
+
+function windowResized() { resizeCanvas(windowWidth, windowHeight); }
+
+function nextScreen() {
+    // AWARD LOGIC
+    if (state === TOTAL_SCREENS - 1) {
+        if (!window.hasAwarded) {
+             window.parent.postMessage({ type: 'sparks_award', amount: 250 }, '*');
+             window.hasAwarded = true;
+        }
+    }
+
+    if (isTransitioning) return;
+    isTransitioning = true;
+    fadeDirection = 1;
+    targetState = (state + 1) % TOTAL_SCREENS;
+    
+    document.getElementById("label").style.opacity = 0;
+    document.getElementById("insight-bar").style.opacity = 0;
+    document.getElementById("nav-hint").style.opacity = 0;
+    document.getElementById("act-indicator").style.opacity = 0;
+}
+
+function updateUI() {
+    document.getElementById("title").innerText = content[state].title;
+    document.getElementById("subtitle").innerText = content[state].sub;
+    document.getElementById("description").innerText = content[state].desc;
+
+    let actInd = document.getElementById("act-indicator");
+    let labelBorder = document.getElementById("label");
+    
+    if (state < 3) {
+        actInd.innerText = "ACT I: THE CITY OF SYRACUSE";
+        actInd.style.color = "#FF7F50"; // Coral
+        labelBorder.style.borderLeftColor = "#FF7F50";
+    } else if (state < 6) {
+        actInd.innerText = "ACT II: THE INFINITE PI";
+        actInd.style.color = "#FFD700"; // Gold
+        labelBorder.style.borderLeftColor = "#FFD700";
+    } else {
+        actInd.innerText = "ACT III: THE ENGINEER'S REACH";
+        actInd.style.color = "#00BFFF"; // Deep Sky Blue
+        labelBorder.style.borderLeftColor = "#00BFFF";
+    }
+
+    document.getElementById("insight-text").innerText = content[state].insight;
+}
+
+function getScaleFactor() { return min(1, width / 800); }
+
+function draw() {
+    background(10, 17, 24);
+
+    // Ancient stone grid background
+    stroke(255, 5); strokeWeight(1);
+    for (let i = 0; i < width; i += 100) line(i, 0, i, height);
+    for (let j = 0; j < height; j += 100) line(0, j, width, j);
+
+    time += 0.02;
+
+    // Dust particles
+    for(let p of particles) {
+        p.y -= 0.3; p.x += sin(p.a + time) * 0.2;
+        if(p.y < 0) { p.y = height; p.x = random(width); }
+        fill(255, 50); noStroke();
+        ellipse(p.x, p.y, p.s);
+    }
+
+    // State Router
+    if      (state === 0) drawSyracuse();
+    else if (state === 1) drawEureka();
+    else if (state === 2) drawLever();
+    else if (state === 3) draw96Sides();
+    else if (state === 4) drawCircleTri();
+    else if (state === 5) drawSphereCyl();
+    else if (state === 6) drawScrew();
+    else if (state === 7) drawSand();
+    else if (state === 8) drawCirclesDeath();
+    else if (state === 9) drawLegacy();
+
+    // Cinematic fade overlay
+    if (isTransitioning) {
+        fadeAlpha += FADE_SPEED * fadeDirection;
+        if (fadeDirection === 1 && fadeAlpha >= 255) {
+            fadeAlpha = 255; fadeDirection = -1;
+            state = targetState; time = 0;
+            updateUI();
+            document.getElementById("label").style.opacity = 1;
+            document.getElementById("insight-bar").style.opacity = 1;
+            document.getElementById("act-indicator").style.opacity = 1;
+            if (state !== 9) document.getElementById("nav-hint").style.opacity = 1;
+        } else if (fadeDirection === -1 && fadeAlpha <= 0) {
+            fadeAlpha = 0; isTransitioning = false; fadeDirection = 0;
+        }
+        push(); fill(10, 17, 24, fadeAlpha); noStroke(); rect(0, 0, width, height); pop();
+    }
+}
+
+// -------------------------------------------------------------
+// ACT SCREENS
+// -------------------------------------------------------------
+
+function drawSyracuse() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Sunlight reflecting on harbor
+    let yOffset = sin(time)*10;
+    noStroke(); fill(255, 127, 80, 20);
+    rect(-300, 100, 600, 100);
+
+    // Ships
+    fill(139, 69, 19); stroke(0);
+    for(let i=-200; i<=200; i+=100) {
+        arc(i + sin(time + i)*10, 150, 80, 40, 0, PI);
+        line(i + sin(time + i)*10, 150, i + sin(time + i)*10, 80);
+    }
+    
+    // Greek Columns
+    fill(200); rect(-350, -50, 40, 200); rect(-280, -50, 40, 200);
+    rect(310, -50, 40, 200); rect(240, -50, 40, 200);
+    pop();
+}
+
+function drawEureka() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Bathing tub
+    noFill(); stroke(200); strokeWeight(5);
+    arc(0, 50, 300, 200, 0, PI);
+
+    // Water level
+    let wLevel = 50 + sin(time*4)*5;
+    fill(0, 191, 215, 150); noStroke();
+    rect(-145, wLevel, 290, 100-wLevel);
+
+    // The Crown
+    fill(255, 215, 0); stroke(255); strokeWeight(1);
+    ellipse(0, wLevel + 20, 40, 40);
+    
+    // Water droplets
+    fill(255, 100);
+    for(let i=0; i<5; i++) ellipse(random(-150, 150), wLevel + random(0, 30), 5);
+    pop();
+}
+
+function drawLever() {
+    push();
+    translate(width/2, height/2 + 100);
+    scale(getScaleFactor());
+    
+    // Fulcrum
+    fill(100); noStroke();
+    triangle(0, 0, -20, 40, 20, 40);
+    
+    // Lever beam
+    let angle = sin(time)*0.2;
+    rotate(angle);
+    stroke(255); strokeWeight(10);
+    line(-300, 0, 150, 0);
+    
+    // Person (effort)
+    fill(255, 127, 80); noStroke();
+    ellipse(-300, -20, 20);
+    
+    // Heavy mass
+    fill(60); stroke(255); strokeWeight(1);
+    rect(120, -50, 60, 50);
+    pop();
+}
+
+function draw96Sides() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    noFill(); stroke(255, 100);
+    ellipse(0, 0, 250); // Circle
+    
+    // Polygon approximation
+    stroke(255, 215, 0); strokeWeight(2);
+    let sides = 6 + floor((sin(time)*0.5+0.5)*90);
+    beginShape();
+    for(let a=0; a<TWO_PI; a+=TWO_PI/sides) {
+        let x = cos(a)*125;
+        let y = sin(a)*125;
+        vertex(x, y);
+    }
+    endShape(CLOSE);
+    
+    fill(255); noStroke(); textAlign(CENTER); textSize(24);
+    text(sides + " SIDES", 0, -150);
+    pop();
+}
+
+function drawCircleTri() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    let radius = 100;
+    noFill(); stroke(255, 50);
+    ellipse(-150, 0, radius*2);
+    
+    // Connecting line to triangle
+    let circum = PI * radius * 2;
+    stroke(255, 215, 0);
+    triangle(50, -radius, 50 + circum/4, -radius, 50, radius);
+    
+    pop();
+}
+
+function drawSphereCyl() {
+    push();
+    translate(width/2, height/2 + 80);
+    scale(getScaleFactor());
+    
+    rotateY(time);
+    noFill(); stroke(255, 150); strokeWeight(1);
+    
+    // Cylinder
+    for(let a=0; a<TWO_PI; a+=PI/8) {
+        line(cos(a)*100, -100, cos(a)*100, 100);
+    }
+    ellipse(0, -100, 200, 50);
+    ellipse(0, 100, 200, 50);
+
+    // Sphere
+    stroke(0, 191, 255);
+    sphere(100);
+    pop();
+}
+
+function drawScrew() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    rotate(PI/4);
+    noFill(); stroke(255); strokeWeight(3);
+    
+    // Cylinder
+    rect(-30, -150, 60, 300);
+    
+    // Moving spiral
+    stroke(0, 191, 255);
+    for(let y=-150; y<150; y+=2) {
+        let a = y*0.1 + time*5;
+        let x = cos(a)*25;
+        point(x, y);
+    }
+    pop();
+}
+
+function drawSand() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    for(let i=0; i<200; i++) {
+        let a = random(TWO_PI);
+        let d = random(250);
+        let x = cos(a)*d;
+        let y = sin(a)*d;
+        fill(255, 215, 0, 150); noStroke();
+        ellipse(x, y, 2, 2);
+    }
+    
+    fill(255); textAlign(CENTER); textSize(32);
+    text("COUNTING THE UNCOUNTABLE", 0, 0);
+    pop();
+}
+
+function drawCirclesDeath() {
+    push();
+    translate(width/2, height/2 + 80);
+    scale(getScaleFactor());
+    
+    // Sand drawing
+    stroke(255, 150); strokeWeight(2);
+    for(let i=1; i<4; i++) ellipse(0, 0, i*50);
+    line(-100, 0, 100, 0);
+    
+    // Ominous shadow
+    fill(0, 150); noStroke();
+    rect(-200, -300 + (time%4)*100, 400, 50);
+    pop();
+}
+
+function drawLegacy() {
+    push();
+    translate(width/2, height/2 + 50);
+    scale(getScaleFactor());
+    
+    // Floating gear
+    push();
+    rotate(time);
+    stroke(255, 127, 80); noFill(); strokeWeight(2);
+    for(let a=0; a<TWO_PI; a+=TWO_PI/12) {
+        push(); rotate(a); rect(80, -10, 30, 20); pop();
+    }
+    ellipse(0, 0, 160);
+    pop();
+    
+    fill(255); textAlign(CENTER); textSize(40);
+    text("MODERN ENGINEERING", 0, -10);
+    pop();
+}
+
+</script>
+</body>
+</html>
