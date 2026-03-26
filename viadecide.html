@@ -59,6 +59,11 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ── PWA INSTALL TILE ── */
+#pwa-install-tile { display: none; background: linear-gradient(135deg, #10b981, #059669); color: #fff; cursor: pointer; transition: transform 0.2s; }
+#pwa-install-tile:active { transform: scale(0.96); }
+#pwa-install-tile .bento-sub { color: rgba(255,255,255,0.85); }
+
 /* ── 2026 APP SHELL ── */
 #app {
   position: fixed; inset: 0; 
@@ -734,6 +739,39 @@ html, body {
     bento.style.setProperty('--y', `${y}%`);
   });
   
+  // PWA Install Logic
+  let deferredPrompt;
+  const showPWAInstall = () => {
+    // Only show after user has swiped or on-screen for a bit (onboarding-done proxy)
+    const tile = document.getElementById('pwa-install-tile');
+    if (tile && deferredPrompt) tile.style.display = 'flex';
+  };
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // Show tile after a small delay (simulating 'after-onboarding' check)
+    setTimeout(showPWAInstall, 5000);
+  });
+
+  window.promptPWAInstallation = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      const tile = document.getElementById('pwa-install-tile');
+      if (tile) tile.style.display = 'none';
+    }
+    deferredPrompt = null;
+  };
+
+  // Service Worker Registration
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW failed:', err));
+    });
+  }
+  
   document.addEventListener('DOMContentLoaded', initStore);
 </script>
 
@@ -796,6 +834,12 @@ html, body {
           <div class="bento-icon">🤖</div>
           <h2 class="bento-title">VIA Agent</h2>
           <p class="bento-sub">Your personal AI companion. Command to pull posts, generate content, or explore specialized tools.</p>
+        </div>
+        <!-- PWA INSTALL TILE (Visible after onboarding) -->
+        <div id="pwa-install-tile" class="bento-item" onclick="promptPWAInstallation()">
+          <div class="bento-icon">📲</div>
+          <h2 class="bento-title">Install VIA App</h2>
+          <p class="bento-sub">Add to your home screen for quick access and offline features.</p>
         </div>
       </div>
     </div>
