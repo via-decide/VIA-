@@ -3,59 +3,59 @@
   "version": "1.0.0",
   "generatedAt": "2026-03-21T00:00:00Z",
   "organization": "via-decide",
-  "totalTools": 69,
+  "totalTools": 70,
   "categories": {
     "business": {
       "label": "Business",
-      "icon": "\ud83d\udcbc",
+      "icon": "💼",
       "priority": 8,
       "count": 4
     },
     "coders": {
       "label": "Coder Tools",
-      "icon": "\ud83d\udcbb",
+      "icon": "💻",
       "priority": 1,
       "count": 8
     },
     "creators": {
       "label": "Creator Tools",
-      "icon": "\ud83c\udfa8",
+      "icon": "🎨",
       "priority": 2,
       "count": 4
     },
     "engine": {
       "label": "Engine",
-      "icon": "\ud83d\udcc2",
+      "icon": "📂",
       "priority": 50,
       "count": 34
     },
     "misc": {
       "label": "Misc",
-      "icon": "\ud83d\udd27",
+      "icon": "🔧",
       "priority": 99,
       "count": 5
     },
     "operators": {
       "label": "Operator Tools",
-      "icon": "\u2699\ufe0f",
+      "icon": "⚙️",
       "priority": 3,
       "count": 2
     },
     "researchers": {
       "label": "Research Tools",
-      "icon": "\ud83d\udd2c",
+      "icon": "🔬",
       "priority": 4,
       "count": 1
     },
     "system": {
       "label": "System Tools",
-      "icon": "\ud83d\udda5\ufe0f",
+      "icon": "🖥️",
       "priority": 5,
       "count": 3
     },
     "games": {
       "label": "Games & Simulations",
-      "icon": "\ud83c\udfae",
+      "icon": "🎮",
       "priority": 2,
       "count": 8
     }
@@ -68,8 +68,16 @@
       "category": "business",
       "path": "./finance-dashboard-msme.html",
       "entry": "finance-dashboard-msme.html",
-      "tags": ["finance", "msme", "gst", "dashboard"],
-      "audience": ["founders", "operators"],
+      "tags": [
+        "finance",
+        "msme",
+        "gst",
+        "dashboard"
+      ],
+      "audience": [
+        "founders",
+        "operators"
+      ],
       "status": "active",
       "icon": "💰"
     },
@@ -80,8 +88,15 @@
       "category": "business",
       "path": "./inventory-dashboard.html",
       "entry": "inventory-dashboard.html",
-      "tags": ["inventory", "supply-chain", "retail"],
-      "audience": ["operators", "founders"],
+      "tags": [
+        "inventory",
+        "supply-chain",
+        "retail"
+      ],
+      "audience": [
+        "operators",
+        "founders"
+      ],
       "status": "active",
       "icon": "📦"
     },
@@ -92,8 +107,15 @@
       "category": "business",
       "path": "/articles/ondc-for-bharat.html",
       "entry": "articles/ondc-for-bharat.html",
-      "tags": ["ondc", "commerce", "network"],
-      "audience": ["founders", "merchants"],
+      "tags": [
+        "ondc",
+        "commerce",
+        "network"
+      ],
+      "audience": [
+        "founders",
+        "merchants"
+      ],
       "status": "active",
       "icon": "🛒"
     },
@@ -130,7 +152,7 @@
         "workflow-template-gallery"
       ],
       "status": "active",
-      "icon": "\ud83d\udcbb"
+      "icon": "💻"
     },
     {
       "id": "code-generator",
@@ -158,7 +180,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udcbb",
+      "icon": "💻",
       "pipeline": {
         "position": 3,
         "next": "code-reviewer",
@@ -192,7 +214,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udcbb",
+      "icon": "💻",
       "pipeline": {
         "position": 4,
         "next": "output-evaluator",
@@ -228,7 +250,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udcbb",
+      "icon": "💻",
       "pipeline": {
         "position": 1,
         "next": "spec-builder",
@@ -263,7 +285,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udcbb",
+      "icon": "💻",
       "pipeline": {
         "position": 0,
         "next": null,
@@ -303,7 +325,7 @@
         "context-packager"
       ],
       "status": "active",
-      "icon": "\ud83d\udcbb"
+      "icon": "💻"
     },
     {
       "id": "spec-builder",
@@ -331,7 +353,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udcbb",
+      "icon": "💻",
       "pipeline": {
         "position": 2,
         "next": "code-generator",
@@ -364,7 +386,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udcbb",
+      "icon": "💻",
       "pipeline": {
         "position": 0,
         "next": "context-packager",
@@ -404,7 +426,7 @@
         "repo-improvement-brief"
       ],
       "status": "active",
-      "icon": "\ud83c\udfa8"
+      "icon": "🎨"
     },
     {
       "id": "promptalchemy",
@@ -435,7 +457,7 @@
         "code-generator"
       ],
       "status": "active",
-      "icon": "\ud83c\udfa8"
+      "icon": "🎨"
     },
     {
       "id": "script-generator",
@@ -466,7 +488,7 @@
         "export-studio"
       ],
       "status": "active",
-      "icon": "\ud83c\udfa8"
+      "icon": "🎨"
     },
     {
       "id": "typography-scale-calculator",
@@ -488,7 +510,7 @@
       "outputs": [],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83c\udfa8"
+      "icon": "🎨"
     },
     {
       "id": "export-studio",
@@ -519,7 +541,7 @@
         "template-vault"
       ],
       "status": "active",
-      "icon": "\u2699\ufe0f"
+      "icon": "⚙️"
     },
     {
       "id": "template-vault",
@@ -550,7 +572,7 @@
         "export-studio"
       ],
       "status": "active",
-      "icon": "\u2699\ufe0f"
+      "icon": "⚙️"
     },
     {
       "id": "prompt-compare",
@@ -583,7 +605,7 @@
         "output-evaluator"
       ],
       "status": "active",
-      "icon": "\ud83d\udd2c"
+      "icon": "🔬"
     },
     {
       "id": "tool-router",
@@ -614,7 +636,7 @@
         "code-reviewer"
       ],
       "status": "active",
-      "icon": "\ud83d\udda5\ufe0f"
+      "icon": "🖥️"
     },
     {
       "id": "tool-search-discovery",
@@ -647,7 +669,7 @@
         "context-packager"
       ],
       "status": "active",
-      "icon": "\ud83d\udda5\ufe0f"
+      "icon": "🖥️"
     },
     {
       "id": "workflow-template-gallery",
@@ -679,7 +701,7 @@
         "tool-search-discovery"
       ],
       "status": "active",
-      "icon": "\ud83d\udda5\ufe0f"
+      "icon": "🖥️"
     },
     {
       "id": "meeting-cost-calculator",
@@ -701,7 +723,7 @@
       "outputs": [],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udcbc"
+      "icon": "💼"
     },
     {
       "id": "thirty-day-promotion-engine",
@@ -732,7 +754,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "ai-coach-console",
@@ -763,7 +785,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "balance-dashboard",
@@ -796,7 +818,7 @@
         "synthetic-player-generator"
       ],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "circle-builder",
@@ -827,7 +849,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "daily-quest-generator",
@@ -858,7 +880,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "eco-engine-test",
@@ -893,7 +915,7 @@
         "starter-farm-generator"
       ],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "fair-ranking-engine",
@@ -924,7 +946,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "four-direction-pipeline",
@@ -955,7 +977,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "fruit-sharing",
@@ -986,7 +1008,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "fruit-yield-engine",
@@ -1017,7 +1039,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "grid-evolution",
@@ -1039,7 +1061,7 @@
       "outputs": [],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "growth-milestone-engine",
@@ -1078,7 +1100,7 @@
         "recruiter-dashboard"
       ],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "growth-path-recommender",
@@ -1109,7 +1131,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "hire-readiness-scorer",
@@ -1140,11 +1162,11 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "layer1-swipe-crucible",
-      "title": "Layer 1 \u2014 Swipe Crucible",
+      "title": "Layer 1 — Swipe Crucible",
       "description": "Daily swipe-card sessions for Layer 1 players. Drag cards to complete micro-tasks, earn XP, grow roots.",
       "category": "engine",
       "path": "/tools/engine/layer1-swipe-crucible/",
@@ -1168,7 +1190,7 @@
         "reward-wallet"
       ],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "market-dynamics",
@@ -1190,7 +1212,7 @@
       "outputs": [],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "meta-health-dashboard",
@@ -1221,7 +1243,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "orchard-discovery-search",
@@ -1252,7 +1274,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "orchard-profile-builder",
@@ -1283,7 +1305,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "peer-validation-engine",
@@ -1314,7 +1336,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "player-signup",
@@ -1345,7 +1367,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "recruiter-dashboard",
@@ -1376,7 +1398,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "root-strength-calculator",
@@ -1407,7 +1429,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "script-generator-files",
@@ -1441,7 +1463,7 @@
         "export-studio"
       ],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "seed-exchange",
@@ -1472,7 +1494,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "seed-quality-scorer",
@@ -1498,7 +1520,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "simulation-runner",
@@ -1529,7 +1551,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "starter-farm-generator",
@@ -1560,7 +1582,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "synthetic-player-generator",
@@ -1593,7 +1615,7 @@
         "balance-dashboard"
       ],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "traffic-router",
@@ -1615,7 +1637,7 @@
       "outputs": [],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "trunk-growth-calculator",
@@ -1646,7 +1668,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "trust-score-engine",
@@ -1677,7 +1699,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "wave1-simulation-runner",
@@ -1715,7 +1737,7 @@
         "simulation-runner"
       ],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "weekly-harvest-engine",
@@ -1746,7 +1768,7 @@
       ],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "color-palette",
@@ -1763,7 +1785,7 @@
       "outputs": [],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "json-formatter",
@@ -1780,7 +1802,7 @@
       "outputs": [],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "pomodoro",
@@ -1797,7 +1819,7 @@
       "outputs": [],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "regex-tester",
@@ -1814,7 +1836,7 @@
       "outputs": [],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "revenue-forecaster",
@@ -1831,7 +1853,7 @@
       "outputs": [],
       "relatedTools": [],
       "status": "active",
-      "icon": "\ud83d\udd27"
+      "icon": "🔧"
     },
     {
       "id": "hex-wars",
@@ -1840,7 +1862,7 @@
       "category": "games",
       "path": "/tools/games/hex-wars/",
       "entry": "index.html",
-      "icon": "\u2694\ufe0f",
+      "icon": "⚔️",
       "tags": [
         "game",
         "strategy",
@@ -1857,11 +1879,11 @@
     {
       "id": "snake-game",
       "title": "Decision Snake",
-      "description": "Classic snake with a twist \u2014 make decisions at every turn that affect the game.",
+      "description": "Classic snake with a twist — make decisions at every turn that affect the game.",
       "category": "games",
       "path": "/tools/games/snake-game/",
       "entry": "index.html",
-      "icon": "\ud83d\udc0d",
+      "icon": "🐍",
       "tags": [
         "game",
         "arcade"
@@ -1881,7 +1903,7 @@
       "category": "games",
       "path": "/tools/games/freecell-classic/",
       "entry": "index.html",
-      "icon": "\ud83c\udccf",
+      "icon": "🃏",
       "tags": [
         "game",
         "cards"
@@ -1901,7 +1923,7 @@
       "category": "games",
       "path": "/skillhex/",
       "entry": "index.html",
-      "icon": "\ud83d\udef8",
+      "icon": "🛸",
       "tags": [
         "game",
         "missions"
@@ -1921,7 +1943,7 @@
       "category": "games",
       "path": "/tools/games/wings-of-fire-quiz/",
       "entry": "index.html",
-      "icon": "\ud83d\udc09",
+      "icon": "🐉",
       "tags": [
         "quiz",
         "books"
@@ -1941,7 +1963,7 @@
       "category": "games",
       "path": "/game/",
       "entry": "index.html",
-      "icon": "\ud83c\udf33",
+      "icon": "🌳",
       "tags": [
         "game",
         "farming",
@@ -1962,7 +1984,7 @@
       "category": "games",
       "path": "/mars/",
       "entry": "index.html",
-      "icon": "\ud83d\ude80",
+      "icon": "🚀",
       "tags": [
         "game",
         "mars",
@@ -1983,7 +2005,7 @@
       "category": "games",
       "path": "/tools/games/orchard/",
       "entry": "index.html",
-      "icon": "\ud83c\udf31",
+      "icon": "🌱",
       "tags": [
         "game",
         "farming",
@@ -1996,6 +2018,28 @@
       "inputs": [],
       "outputs": [],
       "relatedTools": []
+    },
+    {
+      "id": "engine-tools",
+      "title": "decide.engine-tools",
+      "description": "The full browser-native decision tool engine. 44+ tools across creators, coders, researchers, business, and simulations.",
+      "category": "engine",
+      "path": "https://decide-engine-tools.vercel.app",
+      "entry": "https://decide-engine-tools.vercel.app",
+      "tags": [
+        "core",
+        "platform",
+        "decision",
+        "browser-native"
+      ],
+      "audience": [
+        "general"
+      ],
+      "status": "active",
+      "icon": "⚙️",
+      "external": true,
+      "commits": 1138,
+      "notes": "Standalone deployment — pending migration into VIA monorepo (Phase 2)"
     }
   ]
 }
