@@ -3541,7 +3541,7 @@ function closeSheet(){
 let appStarted=false;
 async function startApp(){
   if(appStarted)return;appStarted=true;
-  
+
   // IMMEDIATELY show app shell to prevent bounce
   console.log('[VIA] Starting engine...');
   const boot = document.getElementById('boot');
@@ -3549,26 +3549,32 @@ async function startApp(){
   if (boot) boot.classList.add('exit');
   if (app) app.classList.add('visible');
 
-  // Bug 1: Feed Load Guard (4s timeout)
-  const feedTimeout = setTimeout(() => {
-    const isStuck = !CARDS || CARDS.length === 0 || 
-                   (CARDS[0] && (CARDS[0].title === 'Loading...' || String(CARDS[0].title).includes('Loading')));
-    if (isStuck) {
-      console.warn('[VIA] Feed load timeout. Showing fallback.');
-      CARDS = [{
-        id: 'fallback',
-        cat: 'bharat',
-        catLabel: '🇮🇳 Bharat',
-        bg: 'var(--deep)',
-        emoji: '📱',
-        title: "Bharat's Feed",
-        microSummary: "Stories loading — swipe to refresh.",
-        author: 'VIA System',
-        authorEmoji: '⚙️',
-        location: 'Cloud',
-        time: 'Now',
-        likes: '∞'
-      }].concat(DEFAULT_CARDS);
+  // FIX Bug 2: Explicitly activate feed layer so deck gets .active
+  // and GC touch guard (activeLayer !== 'feed') never blocks swipes on load
+  if (typeof switchLayer === 'function') switchLayer('feed');
+
+  // FIX Bug 1+3: Guard checks DOM directly — only fires if buildDeck was never called
+  const feedGuard = setTimeout(() => {
+    const deck = document.getElementById('deck');
+    const hasCards = deck && deck.querySelectorAll('.card').length > 0;
+    if (!hasCards) {
+      console.warn('[VIA] Feed guard: deck empty, forcing buildDeck.');
+      if (!CARDS || CARDS.length === 0) {
+        CARDS = [{
+          id: 'fallback',
+          cat: 'bharat',
+          catLabel: '🇮🇳 Bharat',
+          bg: 'var(--deep)',
+          emoji: '📱',
+          title: "Bharat's Feed",
+          microSummary: "Stories loading — swipe to refresh.",
+          author: 'VIA System',
+          authorEmoji: '⚙️',
+          location: 'Cloud',
+          time: 'Now',
+          likes: '∞'
+        }].concat(DEFAULT_CARDS);
+      }
       buildDeck();
     }
   }, 4000);
@@ -3587,19 +3593,26 @@ async function startApp(){
       authReady = true;
       renderApp();
     }
-    
-    // Clear the fallback timeout safely
-    if (typeof feedTimeout !== 'undefined') clearTimeout(feedTimeout);
-    
+
     // Final UI hydration
     syncCreatorContentSurface();
     if (window.GC) GC.init();
     if (typeof buildDiscover === 'function') buildDiscover();
     if (typeof buildProfile === 'function') buildProfile();
     renderApp();
+
+    // FIX Bug 1: Always call buildDeck after auth resolves (was entirely missing)
+    if (typeof buildDeck === 'function') buildDeck();
+
+    // FIX Bug 2: Re-assert feed layer so .active is guaranteed on deck
+    if (typeof switchLayer === 'function') switchLayer('feed');
+
+    // FIX Bug 3: Only clear guard AFTER deck is confirmed built
+    clearTimeout(feedGuard);
+
     if (typeof initUpgradesPanel === 'function') initUpgradesPanel();
     if (typeof ddLoad === 'function') { try { ddLoad('food', null); } catch(_e){} }
-    
+
     // Advanced micro-services (non-blocking)
     if (typeof initMicroFrontendArchitecture === 'function') initMicroFrontendArchitecture();
     if (typeof initFederatedRuntime === 'function') initFederatedRuntime();
