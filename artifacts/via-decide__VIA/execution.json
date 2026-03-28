@@ -2,6 +2,7 @@
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
   "branch": "simba/implement-global-click-interception-for-subpage-",
+  "branch": "simba/build-a-urlresolver-utility-to-permanently-safeg",
   "files_to_create": [
     "codex-task.md",
     "antigravity-repair-task.md",

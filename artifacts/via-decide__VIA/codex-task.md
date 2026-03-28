@@ -5,6 +5,10 @@ Implement global click interception for Subpage Cards to prevent default browser
 
 CONSTRAINTS
 Pure Vanilla JS. Use event delegation (attaching one listener to the document) rather than attaching individual listeners to 50 different cards, to ensure it works for cards injected dynamically later.
+Build a URLResolver utility to permanently safeguard against GitHub Pages pathing errors. 1. Create a new utility file shared/url-resolver.js. 2. Implement a function resolvePath(targetPath) that detects the current environment. 3. Logic: Check window.location.hostname. If it includes github.io, detect the repository name from window.location.pathname (which will be /VIA/). 4. If the environment is GitHub Pages, the function must automatically prepend /VIA/ (or the detected repo name) to any path passed into it (e.g., resolvePath('subpage.html') returns /VIA/subpage.html). 5. If the environment is localhost, it just returns /subpage.html. 6. Refactor the index.html card rendering logic or the central router to wrap all destination URLs in this resolvePath() function before attempting navigation.
+
+CONSTRAINTS
+Pure Vanilla JS. The detection must be dynamic so that if the repository is ever renamed from "VIA" to something else, the routing doesn't break again.
 
 PROCESS (MANDATORY)
 1. Read README.md and AGENTS.md before editing.
