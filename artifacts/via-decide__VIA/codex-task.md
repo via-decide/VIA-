@@ -1,6 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
+Fix Subpage Card routing on index.html: Convert absolute paths to relative/hash paths. 1. Open index.html and locate all the "Subpage Card" elements. 2. Inspect their href attributes or data-route attributes. 3. If they start with a forward slash (e.g., href="/pages/tool.html" or href="/subpage"), remove the leading slash or replace it with a dot (e.g., href="./pages/tool.html" or href="?page=subpage" or href="#/subpage" depending on the routing architecture). 4. If the cards use JavaScript onclick events featuring window.location.href = '/something', update those strings to be relative to the current path. 5. Apply this same fix to any navigation menus or headers present in index.html.
+
+CONSTRAINTS
+Do not change the visual layout of the cards. Ensure the fix respects the current routing pattern (whether it's multi-page HTML or Single Page App hash routing).
 Implement global click interception for Subpage Cards to prevent default browser navigation. 1. Create or update the main JavaScript file loaded by index.html (e.g., app.js or router.js). 2. Add a global event listener to the document that listens for click events. 3. If the clicked element (or its parent) has a specific class like .subpage-card or an attribute like data-link, call event.preventDefault(). 4. Extract the target destination from the card's href or data-route attribute. 5. Pass this destination to your internal JavaScript router to dynamically load the content into the DOM, OR manually construct the correct GitHub Pages URL (appending the repo name) and set window.location.assign().
 
 CONSTRAINTS

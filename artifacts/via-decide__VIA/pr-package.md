@@ -1,3 +1,9 @@
+Branch: simba/fix-subpage-card-routing-on-indexhtml-convert-ab
+Title: Fix Subpage Card routing on index.html: Convert absolute paths to rel...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Stop the browser from breaking out of the /VIA/ GitHub Pages repository subdirectory when a user clicks a card.
 Branch: simba/implement-global-click-interception-for-subpage-
 Title: Implement global click interception for Subpage Cards to prevent defa...
 
