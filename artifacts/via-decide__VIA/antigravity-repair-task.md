@@ -4,8 +4,7 @@ TARGET
 Validate and repair only the files touched by the previous implementation.
 
 TASK
-Fix the submodule data-sync blockade (CORS & Session passing). 1. In the main index.html, add a secure postMessage protocol to transmit the active Google ID JWT token down into the Mars and Orchade iframes the moment they load. 2. Update the backend API endpoints (/api/sync, /api/telemetry) to include strict CORS headers allowing requests ONLY from viadecide.com.
-Fix the '404 on Refresh' bug by implementing a Sovereign Reverse Proxy routing rule. 1. Create or update the nginx.conf (or vercel.json/netlify.toml depending on host). 2. Implement the Catch-All SPA fallback: All requests to /mars/* or /orchade/* must resolve back to the main index.html WITHOUT changing the URL in the browser. 3. Map the proxy routes explicitly so the main server knows exactly where the cloned submodule assets live.
+Fix the World Map routing bug: Register subpage routes in the central Router. 1. Locate your central routing logic file (likely router.js, app.js, or commandRouter.js). 2. Check the route registration map/switch statement. The reason the map redirects to the platform is likely because the router catches the /map/region URL, fails to find a match, and executes its fallback logic (default: loadPlatform()). 3. Dynamically or statically register the map subpages. If the regions share a template, create a wildcard route handler like matchRoute('/map/:regionId'). 4. When this route is matched, write the logic to fetch/render the correct subpage view (e.g., loading views/map/[regionId].html into the main DOM container). 5. If the subpages are standalone tools, ensure their IDs are added to the exact same registry that handles normal tool routing.
 
 RULES
 1. Audit touched files first and identify regressions.
