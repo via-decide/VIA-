@@ -8,6 +8,8 @@
     "setup": "bash setup-monorepo.sh",
     "init": "node init-monorepo.js",
     "validate": "node scripts/validate-registry.js",
+    "geo:ingest": "node scripts/geo_ingest.js --all",
+    "geo:ingest:india": "node scripts/geo_ingest.js --region india-states",
     "test": "echo 'ok'"
   },
   "repository": {

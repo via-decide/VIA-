@@ -8,11 +8,19 @@
       (function () {
         try {
           sessionStorage.setItem('__vd_redirect__', location.pathname + location.search + location.hash);
-        } catch (_error) {}
-        location.replace('/viadecide.html');
+        } catch (_) {}
+
+        // Detect GitHub Pages base prefix (e.g. /VIA/) vs root deployment
+        var hostname = location.hostname;
+        var base = '/';
+        if (hostname.indexOf('.github.io') !== -1) {
+          var seg = location.pathname.replace(/^\//, '').split('/')[0];
+          if (seg) base = '/' + seg + '/';
+        }
+
+        location.replace(base + 'viadecide.html');
       })();
     </script>
   </head>
   <body></body>
 </html>
-

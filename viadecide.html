@@ -2694,7 +2694,7 @@ function ddLoad(key, btnEl) {
       ctaBtn.onclick = () => {
         addXP(25);
         if (d.toolPath.startsWith('http')) window.open(d.toolPath, '_blank', 'noopener');
-        else window.location.href = d.toolPath;
+        else window.location.href = window.URLResolver ? window.URLResolver.resolvePath(d.toolPath) : d.toolPath;
       };
       ctaBtn.innerHTML = d.toolLabel || 'Launch Live Dashboard →';
       ctaBtn.style.setProperty('--acc', d.theme);
@@ -3114,7 +3114,7 @@ function openToolViewer(path, title) {
     frame.src = 'about:blank';
     if (_tvLoadRAF) cancelAnimationFrame(_tvLoadRAF);
     _tvLoadRAF = requestAnimationFrame(() => {
-      frame.src = path;
+      frame.src = window.URLResolver ? window.URLResolver.resolvePath(path) : path;
       _tvLoadRAF = 0;
     });
   }
@@ -3311,6 +3311,9 @@ async function buildDiscover() {
     cardIdx++;
     const arrow=item.toolPath?`<div class="dc-arrow">Open →</div>`:'';
     card.innerHTML=`<div class="discover-card-bg">${item.emoji}</div><div style="flex:1"><div class="discover-card-cat">${item.cat}</div><div class="discover-card-name">${item.name}</div><div class="discover-card-desc">${item.desc}</div>${arrow}</div>`;
+    if(item.toolPath && !item.isExternal && !item.toolPath.startsWith('http')) {
+      card.dataset.prefetchPath = item.toolPath;
+    }
     card.addEventListener('click',()=>{
       addXP(10);
       if(item.isDive){switchLayer('deepdives');return;}
@@ -3324,6 +3327,29 @@ async function buildDiscover() {
     });
     grid.appendChild(card);
   });
+
+  // Prefetch tool iframes as cards enter viewport — skip on metered/slow connections
+  (function attachPrefetchObserver() {
+    var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    var skipPrefetch = conn && (conn.saveData || conn.effectiveType === '2g' || conn.effectiveType === 'slow-2g');
+    if (skipPrefetch || !('IntersectionObserver' in window)) return;
+    var prefetched = window._vdPrefetched || (window._vdPrefetched = new Set());
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (!entry.isIntersecting) return;
+        var toolPath = entry.target.dataset.prefetchPath;
+        if (!toolPath || prefetched.has(toolPath)) return;
+        prefetched.add(toolPath);
+        // Use <link rel="prefetch"> to hint the browser — no iframe cost
+        var link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = window.URLResolver ? window.URLResolver.resolvePath(toolPath) : toolPath;
+        document.head.appendChild(link);
+        obs.unobserve(entry.target);
+      });
+    }, { rootMargin: '200px' });
+    grid.querySelectorAll('[data-prefetch-path]').forEach(function(el) { obs.observe(el); });
+  })();
 
   const input=document.getElementById('discover-user-search');
   if(input&&!discoverState.inputBound){

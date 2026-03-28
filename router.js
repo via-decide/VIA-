@@ -226,6 +226,28 @@
   function deregisterReact() {}
   function unregisterReact() {}
 
+  /**
+   * matchWildcard(pattern, path)
+   * Supports * (single segment) and ** (multi-segment) wildcards.
+   * e.g. matchWildcard('tools/*', 'tools/code-generator') → true
+   *      matchWildcard('tools/**', 'tools/engine/foo/bar')  → true
+   */
+  function matchWildcard(pattern, path) {
+    var p = String(pattern || '').replace(/^\/|\/$/g, '');
+    var s = String(path || '').replace(/^\/|\/$/g, '');
+    // Escape regex special chars except * which we handle manually
+    var regexStr = p
+      .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+      .replace(/\*\*/g, '###GLOBSTAR###')
+      .replace(/\*/g, '[^/]+')
+      .replace(/###GLOBSTAR###/g, '.+');
+    try {
+      return new RegExp('^' + regexStr + '$').test(s);
+    } catch (e) {
+      return false;
+    }
+  }
+
   window.VIARouter = {
     navigate,
     syncFromURL,
@@ -241,7 +263,9 @@
     toProfile: () => navigate('profile'),
     toTool: (slug) => navigate(slug),
     toUser: (uid) => navigate('profile', { params: { uid } }),
-    toReactDive: (id) => navigate('about', { params: { dive: id } })
+    toReactDive: (id) => navigate('about', { params: { dive: id } }),
+    toMap: (mapId) => navigate(mapId ? 'directory' : 'directory', { params: mapId ? { map: mapId } : {} }),
+    matchWildcard: matchWildcard
   };
 
   window.Router = {
@@ -252,7 +276,8 @@
       Object.entries(SUBPAGES).map(([key, value]) => [key, value.replace(/^\.\//, '')])
     ),
     goToRoute: navigate,
-    syncFromHash: syncFromURL
+    syncFromHash: syncFromURL,
+    matchWildcard: matchWildcard
   };
 
   // ── Global click interceptor ──────────────────────────────────────────────
