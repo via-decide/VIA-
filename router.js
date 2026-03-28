@@ -153,7 +153,28 @@
   }
 
   function buildTarget(route, params) {
-    const target = new URL(resolveRoute(route), window.location.href);
+    const raw = resolveRoute(route);
+
+    // External absolute URL — handle params directly, skip root-relative logic
+    if (/^https?:\/\//.test(raw)) {
+      if (!params || !Object.keys(params).length) return raw;
+      const t = new URL(raw);
+      Object.keys(params).forEach((k) => {
+        const v = params[k];
+        if (v === undefined || v === null || v === '') return;
+        t.searchParams.set(k, String(v));
+      });
+      return t.toString();
+    }
+
+    // Root-relative resolution: always resolve SUBPAGES paths from the site
+    // root, not from window.location.href. This fixes GitHub Pages subpath
+    // deployments where the current page may be several directories deep
+    // (e.g. /VIA/tools/code-generator/) but the target is at /VIA/viadecide.html.
+    const rootHref = window.URLResolver ? window.URLResolver.getRootHref()
+                                        : window.location.origin + '/';
+    const target = new URL(raw.replace(/^\.\//, ''), rootHref);
+
     if (params && typeof params === 'object') {
       Object.keys(params).forEach((key) => {
         const value = params[key];
@@ -233,4 +254,51 @@
     goToRoute: navigate,
     syncFromHash: syncFromURL
   };
+
+  // ── Global click interceptor ──────────────────────────────────────────────
+  // Catches <a> clicks for .subpage-card, [data-route], and any same-origin
+  // relative link, then resolves the URL through URLResolver so GitHub Pages
+  // subpath deployments never lose the /VIA/ prefix.
+  document.addEventListener('click', function (event) {
+    // Walk up the DOM to find the closest anchor
+    var target = event.target;
+    while (target && target !== document) {
+      if (target.tagName === 'A') break;
+      target = target.parentElement;
+    }
+    if (!target || target.tagName !== 'A') return;
+
+    var href = target.getAttribute('href');
+    if (!href) return;
+
+    // Skip: external, hash-only, javascript:, mailto:, tel:, download, new-tab
+    if (/^https?:\/\//.test(href)) return;
+    if (href.charAt(0) === '#') return;
+    if (/^(javascript|mailto|tel):/.test(href)) return;
+    if (target.hasAttribute('download')) return;
+    if (target.getAttribute('target') === '_blank') return;
+    // Skip if already an absolute URL produced by URLResolver
+    if (href.indexOf(window.location.origin) === 0) return;
+
+    // data-route attribute: treat value as a named route
+    var dataRoute = target.getAttribute('data-route');
+    if (dataRoute) {
+      event.preventDefault();
+      navigate(dataRoute);
+      return;
+    }
+
+    // Relative or root-relative path — resolve through URLResolver
+    if (window.URLResolver) {
+      var resolved = window.URLResolver.resolvePath(href);
+      if (resolved !== href) {
+        event.preventDefault();
+        if (window.VIATransition && typeof window.VIATransition.navigate === 'function') {
+          window.VIATransition.navigate(resolved);
+        } else {
+          window.location.assign(resolved);
+        }
+      }
+    }
+  }, true); // capture phase so it fires before other listeners
 })();
