@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#030508"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>ViaDecide World</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --void:#030508;--panel:#080d1a;--border:#152240;--border2:#1e3060;
+  --text:#d4dce8;--muted:#5a6a80;--saffron:#ff671f;
+  --font-d:'Syne',sans-serif;--font-m:'JetBrains Mono',monospace;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  width:100%;height:100%;
+  overflow:hidden;
+  background:var(--void);
+  color:var(--text);
+  font-family:var(--font-m);
+  -webkit-font-smoothing:antialiased;
+  touch-action:none;
+  user-select:none;-webkit-user-select:none;
+}
+
+/* ── VIEWPORT ── */
+#vp{
+  position:fixed;inset:0;
+  overflow:hidden;
+  touch-action:none;
+}
+
+/* ── WORLD WRAP ── */
+#ww{
+  position:absolute;top:0;left:0;
+  transform-origin:0 0;
+  will-change:transform;
+}
+#tc{position:absolute;top:0;left:0;display:block;pointer-events:none}
+#ps{position:absolute;top:0;left:0;pointer-events:none;overflow:visible}
+
+/* ── ZONE NODE ── */
+.zn{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  pointer-events:all;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.zn-orb{
+  width:56px;height:56px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+  transition:transform .18s ease,box-shadow .18s ease;
+  border:2px solid rgba(255,255,255,.1);
+  position:relative;z-index:2;
+}
+.zn:hover .zn-orb,.zn:active .zn-orb{transform:scale(1.18)}
+.zn-ring{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;border:1px solid;
+  pointer-events:none;
+  animation:rp 3s ease-in-out infinite;
+}
+@keyframes rp{0%,100%{opacity:.18;transform:translate(-50%,-50%) scale(1)}50%{opacity:.45;transform:translate(-50%,-50%) scale(1.07)}}
+.zn-lbl{
+  position:absolute;top:calc(100% + 10px);left:50%;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  font-family:var(--font-d);font-size:11px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  text-shadow:0 0 14px rgba(0,0,0,.95),0 2px 6px rgba(0,0,0,.9);
+  pointer-events:none;
+}
+.zn-cnt{
+  position:absolute;top:-3px;right:-3px;
+  width:20px;height:20px;border-radius:50%;
+  background:rgba(3,5,8,.9);border:1px solid rgba(255,255,255,.15);
+  font-size:9px;display:flex;align-items:center;justify-content:center;
+  z-index:3;
+}
+
+/* ── TOOL DOTS ── */
+.td{
+  position:absolute;transform:translate(-50%,-50%);
+  pointer-events:all;cursor:pointer;z-index:8;
+  -webkit-tap-highlight-color:transparent;
+}
+.td-i{
+  width:9px;height:9px;border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.3);
+  transition:transform .15s;
+}
+.td:hover .td-i,.td:active .td-i{transform:scale(1.9)}
+.td-l{
+  position:absolute;top:13px;left:50%;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  font-size:9px;color:rgba(212,220,232,.6);
+  letter-spacing:.03em;pointer-events:none;
+  opacity:0;transition:opacity .15s;
+}
+.td:hover .td-l{opacity:1}
+
+/* ── CONNECTION PATH ── */
+.cp{fill:none;stroke-width:1.5;stroke-dasharray:6 4;opacity:.22;animation:df 8s linear infinite}
+@keyframes df{to{stroke-dashoffset:-200}}
+
+/* ── HUD ── */
+#hud{
+  position:fixed;
+  top:calc(var(--safe-top) + 10px);
+  left:50%;transform:translateX(-50%);
+  z-index:500;
+  display:flex;align-items:center;gap:10px;
+  background:rgba(3,5,8,.88);
+  border:1px solid rgba(21,34,64,.9);
+  border-radius:100px;padding:8px 18px;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  white-space:nowrap;
+  max-width:calc(100vw - 32px);
+}
+.hud-brand{
+  font-family:var(--font-d);font-weight:800;font-size:13px;
+  letter-spacing:-.02em;color:var(--text);flex-shrink:0;
+}
+.hud-brand b{color:var(--saffron)}
+.hud-sep{width:1px;height:14px;background:rgba(21,34,64,.9);flex-shrink:0}
+.hud-info{font-size:10px;color:rgba(90,106,128,.8);letter-spacing:.06em;display:none}
+@media(min-width:500px){.hud-info{display:block}}
+.hud-zone{font-size:10px;color:rgba(90,106,128,.8);letter-spacing:.06em;max-width:120px;overflow:hidden;text-overflow:ellipsis}
+.hud-back{
+  background:none;border:1px solid var(--border2);border-radius:100px;
+  color:rgba(90,106,128,.8);font-family:var(--font-m);font-size:10px;
+  padding:4px 10px;cursor:pointer;letter-spacing:.06em;flex-shrink:0;
+  -webkit-tap-highlight-color:transparent;transition:all .12s;
+}
+.hud-back:active{background:rgba(21,34,64,.5)}
+
+/* ── MINIMAP ── */
+#mm{
+  position:fixed;
+  bottom:calc(var(--safe-bot) + 16px);
+  right:16px;
+  z-index:500;
+  border-radius:8px;overflow:hidden;
+  border:1px solid rgba(30,48,96,.8);
+  background:rgba(3,5,8,.88);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+#mm-c{display:block}
+#mm-vp{
+  position:absolute;border:1.5px solid rgba(255,103,31,.7);
+  border-radius:2px;pointer-events:none;
+}
+.mm-lbl{
+  position:absolute;bottom:0;left:0;right:0;
+  text-align:center;font-size:8px;letter-spacing:.1em;
+  text-transform:uppercase;color:rgba(90,106,128,.5);
+  padding:2px 0;background:rgba(0,0,0,.4);
+}
+
+/* ── ZOOM CONTROLS ── */
+#zc{
+  position:fixed;
+  bottom:calc(var(--safe-bot) + 16px);
+  left:16px;
+  z-index:500;display:flex;flex-direction:column;gap:6px;
+}
+.z-btn{
+  width:36px;height:36px;
+  background:rgba(3,5,8,.88);
+  border:1px solid rgba(30,48,96,.8);border-radius:8px;
+  color:rgba(90,106,128,.8);font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  transition:all .12s;-webkit-tap-highlight-color:transparent;
+  font-family:monospace;line-height:1;
+}
+.z-btn:active{background:rgba(21,34,64,.5);color:var(--text)}
+
+/* ── LEGEND ── */
+#leg{
+  position:fixed;
+  top:calc(var(--safe-top) + 58px);
+  left:16px;
+  z-index:500;
+  background:rgba(3,5,8,.88);
+  border:1px solid rgba(21,34,64,.9);border-radius:10px;
+  padding:10px 12px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  display:none;
+}
+@media(min-width:560px){#leg{display:block}}
+.leg-title{font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:rgba(90,106,128,.5);margin-bottom:8px}
+.leg-item{
+  display:flex;align-items:center;gap:7px;
+  margin-bottom:6px;font-size:10px;color:rgba(212,220,232,.55);
+  cursor:pointer;transition:color .12s;-webkit-tap-highlight-color:transparent;
+}
+.leg-item:last-child{margin-bottom:0}
+.leg-item:active{color:var(--text)}
+.leg-d{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* ── BOTTOM SHEET (mobile panel) ── */
+#sheet{
+  position:fixed;bottom:0;left:0;right:0;
+  z-index:600;
+  background:rgba(6,10,20,.98);
+  border-top:1px solid var(--border2);
+  border-radius:20px 20px 0 0;
+  padding-bottom:calc(var(--safe-bot) + 8px);
+  transform:translateY(100%);
+  transition:transform .32s cubic-bezier(.22,1,.36,1);
+  max-height:80vh;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+#sheet.open{transform:translateY(0)}
+.sh-handle{
+  width:36px;height:4px;border-radius:2px;
+  background:var(--border2);margin:12px auto 16px;
+}
+.sh-head{padding:0 20px 16px;border-bottom:1px solid rgba(21,34,64,.7)}
+.sh-icon{font-size:28px;margin-bottom:10px;display:block}
+.sh-name{font-family:var(--font-d);font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px}
+.sh-lore{font-size:11px;color:var(--muted);line-height:1.6}
+.sh-close{
+  position:absolute;top:14px;right:16px;
+  width:30px;height:30px;border-radius:50%;
+  border:1px solid var(--border2);background:none;
+  color:var(--muted);font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.sh-tools{padding:12px 16px}
+.sh-tool{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:11px 12px;border:1px solid rgba(21,34,64,.8);
+  border-radius:8px;margin-bottom:7px;
+  text-decoration:none;transition:all .15s;
+  background:rgba(8,13,26,.8);
+  -webkit-tap-highlight-color:transparent;
+}
+.sh-tool:active{background:rgba(21,34,64,.4);transform:scale(.99)}
+.sh-tdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.sh-tname{font-size:11px;font-weight:500;color:var(--text);margin-bottom:3px;letter-spacing:.02em}
+.sh-tdesc{font-size:10px;color:var(--muted);line-height:1.4}
+.sh-tarrow{margin-left:auto;font-size:11px;color:rgba(30,48,96,.9);flex-shrink:0;align-self:center;transition:color .15s}
+.sh-tool:active .sh-tarrow{color:var(--saffron)}
+
+/* ── OVERLAY (sheet bg) ── */
+#overlay{
+  position:fixed;inset:0;z-index:590;
+  background:rgba(0,0,0,.5);
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+#overlay.show{opacity:1;pointer-events:all}
+
+/* ── TOOLTIP (desktop hover) ── */
+#tt{
+  position:fixed;pointer-events:none;z-index:700;
+  background:rgba(6,10,20,.97);border:1px solid var(--border2);
+  border-radius:10px;padding:10px 14px;font-size:11px;
+  color:var(--text);opacity:0;transition:opacity .15s;
+  max-width:200px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  letter-spacing:.03em;
+}
+#tt.show{opacity:1}
+#tt-name{font-weight:500;margin-bottom:3px;font-size:12px}
+#tt-count{color:var(--muted);font-size:10px}
+
+/* scan line */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:999;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);
+}
+/* vignette */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:1;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.5) 100%);
+}
+</style>
+</head>
+<body>
+
+<!-- HUD -->
+<div id="hud">
+  <span class="hud-brand">Via<b>Décide</b></span>
+  <div class="hud-sep"></div>
+  <span class="hud-zone" id="hud-zone">World</span>
+  <div class="hud-sep"></div>
+  <span class="hud-info">8 zones · 55 tools</span>
+  <button class="hud-back" onclick="window.location.href='./index.html'">← Home</button>
+</div>
+
+<!-- LEGEND -->
+<div id="leg"><div class="leg-title">Zones</div></div>
+
+<!-- VIEWPORT -->
+<div id="vp">
+  <div id="ww">
+    <canvas id="tc"></canvas>
+    <svg id="ps"></svg>
+    <div id="dl"></div>
+  </div>
+</div>
+
+<!-- MINIMAP -->
+<div id="mm">
+  <canvas id="mm-c" width="150" height="90"></canvas>
+  <div id="mm-vp"></div>
+  <div class="mm-lbl">Map</div>
+</div>
+
+<!-- ZOOM -->
+<div id="zc">
+  <button class="z-btn" id="zin">+</button>
+  <button class="z-btn" id="zout">−</button>
+</div>
+
+<!-- TOOLTIP (desktop) -->
+<div id="tt"><div id="tt-name"></div><div id="tt-count"></div></div>
+
+<!-- OVERLAY -->
+<div id="overlay" onclick="closeSheet()"></div>
+
+<!-- BOTTOM SHEET -->
+<div id="sheet">
+  <div class="sh-handle"></div>
+  <div class="sh-head">
+    <button class="sh-close" onclick="closeSheet()">✕</button>
+    <span class="sh-icon" id="sh-icon"></span>
+    <div class="sh-name" id="sh-name"></div>
+    <div class="sh-lore" id="sh-lore"></div>
+  </div>
+  <div class="sh-tools" id="sh-tools"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+const W = 3600, H = 2600;
+
+const ZONES = [
+  { id:'decision-core',   name:'Decision Core',    emoji:'⚡', lore:'The crystalline heart. Weighted matrices, scenario trees, clarity engines.',
+    x:1750, y:1250, color:'#ff671f', glow:'rgba(255,103,31,0.35)', dot:'#ff9a6b',
+    tools:[
+      {id:'decision-matrix',      name:'Decision Matrix',         desc:'Weighted scoring across options'},
+      {id:'scenario-planner',     name:'Scenario Planner',        desc:'Probability-weighted outcome mapping'},
+      {id:'decision-brief-guide', name:'Decision Brief',          desc:'Structure any decision into a brief'},
+      {id:'output-evaluator',     name:'Output Evaluator',        desc:'Score AI outputs against rubrics'},
+      {id:'four-direction-pipeline',name:'Four Direction Pipeline',desc:'Growth planning across 4 dimensions'},
+    ]},
+  { id:'orchard-engine',  name:'Orchard Engine',   emoji:'🌳', lore:'A living meritocracy. Players grow through trust, contribution, and validated progress.',
+    x:2550, y:880, color:'#00ff88', glow:'rgba(0,255,136,0.3)', dot:'#4dffaa',
+    tools:[
+      {id:'player-signup',          name:'Player Signup',           desc:'Create identity and assign archetype'},
+      {id:'daily-quest-generator',  name:'Daily Quests',            desc:'Generate daily quests for growth'},
+      {id:'fruit-yield-engine',     name:'Fruit Yield Engine',      desc:'Convert tasks into weighted outputs'},
+      {id:'weekly-harvest-engine',  name:'Weekly Harvest',          desc:'Score and summarize weekly quality'},
+      {id:'growth-path-recommender',name:'Growth Path',             desc:'Recommend next best action'},
+      {id:'fair-ranking-engine',    name:'Fair Ranking',            desc:'Merit-based ranking across all signals'},
+      {id:'trust-score-engine',     name:'Trust Score Engine',      desc:'Compute trust from collaboration'},
+      {id:'circle-builder',         name:'Circle Builder',          desc:'Trusted learning collaboration circles'},
+      {id:'leaderboard-analytics',  name:'Leaderboard',             desc:'Player rankings with fairness analytics'},
+      {id:'meta-health-dashboard',  name:'Meta Health',             desc:'Monitor fairness and trust metrics'},
+      {id:'ai-coach-console',       name:'AI Coach Console',        desc:'Advisory-only narrative coaching'},
+      {id:'hire-readiness-scorer',  name:'Hire Readiness',          desc:'Score readiness from growth signals'},
+    ]},
+  { id:'game-arena',      name:'Game Arena',        emoji:'⚔️', lore:'Where decisions become battles. Hex combat, quiz wars, arcade classics.',
+    x:3100, y:1600, color:'#FFCA28', glow:'rgba(255,202,40,0.3)', dot:'#FFD740',
+    tools:[
+      {id:'hex-wars',                name:'HexWars',                desc:'Conquer the hex battlefield with knowledge'},
+      {id:'vialogic',                name:'ViaLogic',               desc:'Pan/zoom cartography of mathematical minds'},
+      {id:'snake-game',              name:'Decision Snake',         desc:'Navigate the path of choices'},
+      {id:'freecell-classic',        name:'FreeCell Classic',       desc:'Strict tableau FreeCell'},
+      {id:'skillhex-mission-control',name:'SkillHex',               desc:'Mission-based skill progression'},
+      {id:'wings-of-fire-quiz',      name:'Wings of Fire',          desc:'Multiplayer quiz from APJ Abdul Kalam'},
+      {id:'layer1-swipe-crucible',   name:'Swipe Crucible',         desc:'Daily swipe-card sessions'},
+    ]},
+  { id:'logic-academy',   name:'Logic Academy',    emoji:'🏛️', lore:'An ancient school where mathematical giants walk golden paths.',
+    x:580, y:760, color:'#00e5ff', glow:'rgba(0,229,255,0.3)', dot:'#40C4FF',
+    tools:[
+      {id:'vialogic-thales',     name:'Thales of Miletus',   desc:'Father of Greek philosophy and geometry'},
+      {id:'vialogic-pythagoras', name:'Pythagoras',          desc:'Harmony of spheres and number mysticism'},
+      {id:'vialogic-euclid',     name:'Euclid',              desc:'Father of geometry — Elements'},
+      {id:'vialogic-archimedes', name:'Archimedes',          desc:'Lever, buoyancy, infinitesimals'},
+      {id:'vialogic-hypatia',    name:'Hypatia',             desc:'Neoplatonist philosopher and astronomer'},
+      {id:'vialogic-aryabhata',  name:'Aryabhata',           desc:'Indian mathematician, zero pioneer'},
+      {id:'vialogic-al-khwarizmi',name:'Al-Khwarizmi',       desc:'Father of algebra'},
+    ]},
+  { id:'mars-outpost',    name:'Mars Outpost',     emoji:'🔴', lore:'Sol 1. Basaltic Flats A3-07. Dust fronts incoming. Mission viability: 72%.',
+    x:1900, y:380, color:'#FF5722', glow:'rgba(255,87,34,0.3)', dot:'#FF7043',
+    tools:[
+      {id:'mars-sim',                  name:'Mars Simulation',         desc:'Terrain analysis and sol management'},
+      {id:'simulation-runner',         name:'Simulation Runner',       desc:'Multi-archetype simulations over time'},
+      {id:'wave1-simulation-runner',   name:'Wave 1 Simulation',       desc:'30/60/90-day farm loop simulations'},
+      {id:'synthetic-player-generator',name:'Synthetic Players',       desc:'Generate test players with archetypes'},
+      {id:'balance-dashboard',         name:'Balance Dashboard',       desc:'Analyze Wave 1 fairness'},
+      {id:'network-latency-simulator', name:'Latency Simulator',       desc:'Inject latency and jitter for tests'},
+      {id:'market-dynamics',           name:'Market Dynamics',         desc:'Supply, demand, and volatility sim'},
+    ]},
+  { id:'creator-studio',  name:'Creator Studio',   emoji:'✨', lore:'Where raw prompts become structured art. PromptAlchemy transmutes intent into first-render stable packs.',
+    x:680, y:1820, color:'#a855f7', glow:'rgba(168,85,247,0.3)', dot:'#C084FC',
+    tools:[
+      {id:'promptalchemy',               name:'PromptAlchemy',         desc:'Cross-model first-render stable packs'},
+      {id:'creator-tool',                name:'Course Builder',        desc:'Topic → Problem + Solution generator'},
+      {id:'script-generator',            name:'Script Generator',      desc:'Convert prompts into scripts'},
+      {id:'idea-remixer',                name:'Idea Remixer',          desc:'Cross-pollinate ideas from domains'},
+      {id:'template-vault',              name:'Template Vault',        desc:'Save and retrieve reusable prompts'},
+      {id:'color-palette',               name:'Palette Studio',        desc:'Generate harmonious color systems'},
+      {id:'typography-scale-calculator', name:'Typography Scale',      desc:'CSS typography tokens'},
+    ]},
+  { id:'mission-control', name:'Mission Control',  emoji:'🚀', lore:'Orbital command for the SkillHex galaxy. Oxygen crisis, power allocation, final approach.',
+    x:2900, y:460, color:'#00E5FF', glow:'rgba(0,229,255,0.3)', dot:'#18FFFF',
+    tools:[
+      {id:'game-command-center',    name:'Game Command Center',   desc:'Live stats, farm health, all layers'},
+      {id:'tool-search-discovery',  name:'Tool Discovery',        desc:'Search the full ecosystem by category'},
+      {id:'ai-tool-generator',      name:'AI Tool Generator',     desc:'Turn prompts into tool specs'},
+      {id:'gesture-feedback-ui',    name:'Gesture Feedback UI',   desc:'Toast notifications, consensus meter'},
+      {id:'casio-drone-controller', name:'Drone Controller',      desc:'Casio GBD-200 drone autopilot interface'},
+    ]},
+  { id:'analytics-bay',   name:'Analytics Bay',    emoji:'📊', lore:'Revenue tide charts. Meeting cost currents. Where business signals become decisions.',
+    x:1350, y:2280, color:'#34d399', glow:'rgba(52,211,153,0.3)', dot:'#6EE7B7',
+    tools:[
+      {id:'revenue-forecaster',     name:'Revenue Forecaster',    desc:'Model growth across pricing tiers'},
+      {id:'meeting-cost-calculator',name:'Meeting Cost',          desc:'Estimate direct cost of any meeting'},
+      {id:'code-generator',         name:'Code Generator',        desc:'Codex execution prompts from specs'},
+      {id:'code-reviewer',          name:'Code Reviewer',         desc:'Reviews code against spec'},
+      {id:'task-splitter',          name:'Task Splitter',         desc:'Break features into atomic tasks'},
+      {id:'json-formatter',         name:'JSON Formatter',        desc:'Format, validate, diff JSON'},
+      {id:'regex-tester',           name:'Regex Tester',          desc:'Live regex with match highlighting'},
+      {id:'pomodoro',               name:'Pomodoro',              desc:'Focus intervals with task tracking'},
+    ]},
+];
+
+const CONNS = [
+  ['decision-core','orchard-engine','#00ff88'],
+  ['decision-core','logic-academy','#00e5ff'],
+  ['decision-core','analytics-bay','#34d399'],
+  ['decision-core','mars-outpost','#FF5722'],
+  ['orchard-engine','game-arena','#FFCA28'],
+  ['orchard-engine','mission-control','#00E5FF'],
+  ['game-arena','mission-control','#00E5FF'],
+  ['mars-outpost','mission-control','#FF5722'],
+  ['logic-academy','creator-studio','#a855f7'],
+  ['creator-studio','analytics-bay','#34d399'],
+];
+
+// ═══════════════════════════════════════════
+// CAMERA
+// ═══════════════════════════════════════════
+const cam = {x:-200, y:-100, z:0.42};
+const MIN_Z=0.18, MAX_Z=2.2;
+let vpW = window.innerWidth, vpH = window.innerHeight;
+
+function applyCamera(){
+  document.getElementById('ww').style.transform =
+    `translate(${cam.x}px,${cam.y}px) scale(${cam.z})`;
+}
+
+function clampCam(){
+  const pad = 160;
+  cam.x = Math.min(pad, Math.max(vpW - W*cam.z - pad, cam.x));
+  cam.y = Math.min(pad, Math.max(vpH - H*cam.z - pad, cam.y));
+}
+
+function zoomAt(cx,cy,delta){
+  const nz = Math.min(MAX_Z, Math.max(MIN_Z, cam.z + delta));
+  const r = nz / cam.z;
+  cam.x = cx - r*(cx - cam.x);
+  cam.y = cy - r*(cy - cam.y);
+  cam.z = nz;
+  clampCam(); applyCamera(); updateMM();
+}
+
+function animCam(tx,ty,tz,dur=550){
+  const sx=cam.x, sy=cam.y, sz=cam.z;
+  const s = performance.now();
+  function step(t){
+    const p = Math.min(1,(t-s)/dur);
+    const e = p<.5 ? 2*p*p : -1+(4-2*p)*p;
+    cam.x = sx+(tx-sx)*e; cam.y = sy+(ty-sy)*e; cam.z = sz+(tz-sz)*e;
+    applyCamera(); updateMM();
+    if(p<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function flyTo(zone){ animCam(vpW/2-zone.x*0.75, vpH/2-zone.y*0.75, 0.75); }
+function reset(){ animCam(-200,-100,0.42); }
+
+// ═══════════════════════════════════════════
+// POINTER / TOUCH
+// ═══════════════════════════════════════════
+let drag = null, pinchDist = 0;
+
+const vp = document.getElementById('vp');
+
+vp.addEventListener('pointerdown', e => {
+  if(e.target.closest('.zn,.td')) return;
+  drag = {sx:e.clientX, sy:e.clientY, cx:cam.x, cy:cam.y, id:e.pointerId};
+  vp.setPointerCapture(e.pointerId);
+});
+
+vp.addEventListener('pointermove', e => {
+  if(!drag || drag.id !== e.pointerId) return;
+  cam.x = drag.cx + (e.clientX - drag.sx);
+  cam.y = drag.cy + (e.clientY - drag.sy);
+  clampCam(); applyCamera(); updateMM();
+});
+
+vp.addEventListener('pointerup', e => {
+  if(drag && drag.id === e.pointerId) drag = null;
+});
+
+vp.addEventListener('pointercancel', e => {
+  if(drag && drag.id === e.pointerId) drag = null;
+});
+
+// Wheel zoom
+vp.addEventListener('wheel', e => {
+  e.preventDefault();
+  zoomAt(e.clientX, e.clientY, e.deltaY > 0 ? -0.1 : 0.1);
+}, {passive:false});
+
+// Pinch zoom (two-finger touch)
+let t1=null, t2=null;
+vp.addEventListener('touchstart', e => {
+  if(e.touches.length === 2){
+    t1 = e.touches[0]; t2 = e.touches[1];
+    pinchDist = Math.hypot(t1.clientX-t2.clientX, t1.clientY-t2.clientY);
+    drag = null;
+  }
+}, {passive:true});
+
+vp.addEventListener('touchmove', e => {
+  if(e.touches.length === 2 && t1 && t2){
+    e.preventDefault();
+    const a = e.touches[0], b = e.touches[1];
+    const nd = Math.hypot(a.clientX-b.clientX, a.clientY-b.clientY);
+    const delta = (nd - pinchDist) * 0.004;
+    const mx = (a.clientX + b.clientX)/2, my = (a.clientY + b.clientY)/2;
+    zoomAt(mx, my, delta);
+    pinchDist = nd;
+  }
+}, {passive:false});
+
+vp.addEventListener('touchend', () => { t1=null; t2=null; }, {passive:true});
+
+// Zoom buttons
+document.getElementById('zin').addEventListener('click', ()=> zoomAt(vpW/2,vpH/2, 0.18));
+document.getElementById('zout').addEventListener('click',()=> zoomAt(vpW/2,vpH/2,-0.18));
+
+// Keyboard
+window.addEventListener('keydown', e => {
+  if(e.key==='Escape') closeSheet();
+  if(e.key==='=') zoomAt(vpW/2,vpH/2,.15);
+  if(e.key==='-') zoomAt(vpW/2,vpH/2,-.15);
+  if(e.key==='r') reset();
+});
+
+// ═══════════════════════════════════════════
+// TERRAIN
+// ═══════════════════════════════════════════
+function buildTerrain(){
+  const c = document.getElementById('tc');
+  c.width = W; c.height = H;
+  const ctx = c.getContext('2d');
+
+  // Ocean
+  const og = ctx.createRadialGradient(W/2,H/2,0, W/2,H/2,W*.75);
+  og.addColorStop(0,'#060d18'); og.addColorStop(.5,'#04090f'); og.addColorStop(1,'#020507');
+  ctx.fillStyle=og; ctx.fillRect(0,0,W,H);
+
+  // Grid
+  ctx.strokeStyle='rgba(21,34,64,0.07)'; ctx.lineWidth=1;
+  for(let x=0;x<W;x+=70){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+  for(let y=0;y<H;y+=70){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+
+  ZONES.forEach(z => drawIsland(ctx, z));
+
+  // Compass rose (faint)
+  const cx=1750, cy=1250;
+  ctx.save(); ctx.globalAlpha=.025; ctx.strokeStyle='#ff671f'; ctx.lineWidth=.8;
+  for(let i=0;i<16;i++){
+    const a=(i/16)*Math.PI*2, r=i%4===0?500:i%2===0?300:180;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r); ctx.stroke();
+  }
+  ctx.globalAlpha=.04; ctx.strokeStyle='#ff671f'; ctx.setLineDash([4,8]);
+  [400,700].forEach(r=>{ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke()});
+  ctx.setLineDash([]); ctx.restore();
+}
+
+function drawIsland(ctx, zone){
+  const {x,y,color,glow} = zone;
+  const seed = zone.id.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const rng = n => { let s=seed*(n+1)*9301+49297; return (s%233280)/233280; };
+  const baseR = 130 + rng(0)*35;
+  const nPts  = 9 + Math.floor(rng(1)*4);
+
+  // Halo
+  const halo = ctx.createRadialGradient(x,y,baseR*.3, x,y,baseR*2.4);
+  halo.addColorStop(0, color+'2a'); halo.addColorStop(.5,color+'10'); halo.addColorStop(1,'transparent');
+  ctx.fillStyle=halo; ctx.beginPath(); ctx.arc(x,y,baseR*2.4,0,Math.PI*2); ctx.fill();
+
+  // Island shape
+  const pts=[];
+  for(let i=0;i<nPts;i++){
+    const a=(i/nPts)*Math.PI*2-Math.PI/2;
+    const r=baseR*(0.65+rng(i+2)*0.6);
+    pts.push({x:x+Math.cos(a)*r, y:y+Math.sin(a)*r});
+  }
+  const grad = ctx.createRadialGradient(x,y-baseR*.1,0, x,y,baseR*1.05);
+  grad.addColorStop(0, color+'1a'); grad.addColorStop(.7, color+'0c'); grad.addColorStop(1,color+'04');
+  ctx.beginPath(); smoothPoly(ctx,pts);
+  ctx.fillStyle=grad; ctx.fill();
+  ctx.strokeStyle=color+'55'; ctx.lineWidth=2; ctx.stroke();
+
+  // Rings
+  [.78,.54,.34].forEach((s,ri)=>{
+    const rp=pts.map(p=>({x:x+(p.x-x)*s,y:y+(p.y-y)*s}));
+    ctx.beginPath(); smoothPoly(ctx,rp);
+    ctx.strokeStyle=color+(ri===0?'18':ri===1?'0e':'08'); ctx.lineWidth=1; ctx.stroke();
+  });
+
+  // Shore
+  [1.06,1.12,1.18,1.24].forEach((s,si)=>{
+    const rp=pts.map(p=>({x:x+(p.x-x)*s,y:y+(p.y-y)*s}));
+    ctx.beginPath(); smoothPoly(ctx,rp);
+    ctx.strokeStyle=color+['12','0d','08','04'][si]; ctx.lineWidth=1.5; ctx.stroke();
+  });
+}
+
+function smoothPoly(ctx,pts){
+  if(!pts.length) return;
+  ctx.moveTo(pts[0].x,pts[0].y);
+  for(let i=0;i<pts.length;i++){
+    const c=pts[i], n=pts[(i+1)%pts.length];
+    ctx.quadraticCurveTo(c.x,c.y,(c.x+n.x)/2,(c.y+n.y)/2);
+  }
+  ctx.closePath();
+}
+
+// ═══════════════════════════════════════════
+// CONNECTION PATHS
+// ═══════════════════════════════════════════
+function buildPaths(){
+  const svg = document.getElementById('ps');
+  svg.setAttribute('width',W); svg.setAttribute('height',H); svg.innerHTML='';
+  const zm={};
+  ZONES.forEach(z=>zm[z.id]=z);
+  CONNS.forEach(([a,b,color])=>{
+    const za=zm[a],zb=zm[b]; if(!za||!zb) return;
+    const mx=(za.x+zb.x)/2+(Math.random()-.5)*300;
+    const my=(za.y+zb.y)/2+(Math.random()-.5)*300;
+    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d',`M${za.x},${za.y} Q${mx},${my} ${zb.x},${zb.y}`);
+    p.setAttribute('class','cp'); p.setAttribute('stroke',color);
+    p.style.animationDelay=Math.random()*-8+'s';
+    svg.appendChild(p);
+  });
+}
+
+// ═══════════════════════════════════════════
+// DOM NODES
+// ═══════════════════════════════════════════
+const isHover = window.matchMedia('(hover:hover)').matches;
+const tt = document.getElementById('tt');
+
+function buildNodes(){
+  const layer = document.getElementById('dl');
+  layer.innerHTML='';
+  const ORB = [78,110,142,175];
+
+  ZONES.forEach((zone,zi)=>{
+    // Zone node
+    const el = document.createElement('div');
+    el.className='zn'; el.style.left=zone.x+'px'; el.style.top=zone.y+'px';
+
+    const r1=document.createElement('div');
+    r1.className='zn-ring';
+    r1.style.cssText=`width:116px;height:116px;border-color:${zone.color}50;animation-delay:${zi*.4}s`;
+
+    const r2=document.createElement('div');
+    r2.className='zn-ring';
+    r2.style.cssText=`width:170px;height:170px;border-color:${zone.color}28;animation-delay:${zi*.4+1.5}s`;
+
+    const orb=document.createElement('div');
+    orb.className='zn-orb'; orb.textContent=zone.emoji;
+    orb.style.background=`radial-gradient(circle at 35% 30%,${zone.color}2a,${zone.color}0a)`;
+    orb.style.boxShadow=`0 0 18px ${zone.glow},0 0 36px ${zone.glow.replace('.3','.1')}`;
+    orb.style.borderColor=zone.color+'38';
+
+    const cnt=document.createElement('div');
+    cnt.className='zn-cnt'; cnt.style.color=zone.color;
+    cnt.style.borderColor=zone.color+'45'; cnt.textContent=zone.tools.length;
+    orb.appendChild(cnt);
+
+    const lbl=document.createElement('div');
+    lbl.className='zn-lbl'; lbl.textContent=zone.name; lbl.style.color=zone.color;
+
+    el.appendChild(r2); el.appendChild(r1); el.appendChild(orb); el.appendChild(lbl);
+
+    el.addEventListener('click', e=>{ e.stopPropagation(); openSheet(zone); flyTo(zone); });
+
+    if(isHover){
+      el.addEventListener('mouseenter', e=>{ tt.classList.add('show'); document.getElementById('tt-name').textContent=zone.name; document.getElementById('tt-count').textContent=zone.tools.length+' tools · click to explore'; document.getElementById('tt-name').style.color=zone.color; });
+      el.addEventListener('mousemove', e=>{ tt.style.left=(e.clientX+14)+'px'; tt.style.top=(e.clientY-8)+'px'; });
+      el.addEventListener('mouseleave', ()=>tt.classList.remove('show'));
+    }
+
+    layer.appendChild(el);
+
+    // Tool dots
+    zone.tools.forEach((tool,ti)=>{
+      const r=ORB[Math.min(Math.floor(ti/4),ORB.length-1)];
+      const a=(ti/zone.tools.length)*Math.PI*2+(zi*.6);
+      const tx=zone.x+Math.cos(a)*r, ty=zone.y+Math.sin(a)*r;
+      const d=document.createElement('div');
+      d.className='td'; d.style.left=tx+'px'; d.style.top=ty+'px';
+      const di=document.createElement('div');
+      di.className='td-i'; di.style.background=zone.dot; di.style.borderColor=zone.dot+'80'; di.style.boxShadow=`0 0 4px ${zone.dot}60`;
+      const dl=document.createElement('div');
+      dl.className='td-l'; dl.textContent=tool.name;
+      d.appendChild(di); d.appendChild(dl);
+      d.addEventListener('click', e=>{ e.stopPropagation(); openSheet(zone,tool.id); });
+      layer.appendChild(d);
+    });
+  });
+}
+
+// ═══════════════════════════════════════════
+// LEGEND
+// ═══════════════════════════════════════════
+function buildLegend(){
+  const el=document.getElementById('leg');
+  const existing=el.querySelector('.leg-title');
+  while(el.children.length>1) el.removeChild(el.lastChild);
+  ZONES.forEach(z=>{
+    const it=document.createElement('div');
+    it.className='leg-item';
+    it.innerHTML=`<div class="leg-d" style="background:${z.color}"></div>${z.name}`;
+    it.addEventListener('click',()=>{ flyTo(z); });
+    el.appendChild(it);
+  });
+}
+
+// ═══════════════════════════════════════════
+// MINIMAP
+// ═══════════════════════════════════════════
+const MM_W=150, MM_H=90;
+let mmCtx;
+
+function initMM(){
+  const c=document.getElementById('mm-c');
+  mmCtx=c.getContext('2d');
+  drawMMBase();
+}
+
+function drawMMBase(){
+  if(!mmCtx) return;
+  mmCtx.clearRect(0,0,MM_W,MM_H);
+  mmCtx.fillStyle='#030810'; mmCtx.fillRect(0,0,MM_W,MM_H);
+
+  const zm={};
+  ZONES.forEach(z=>zm[z.id]=z);
+  CONNS.forEach(([a,b,color])=>{
+    const za=zm[a],zb=zm[b]; if(!za||!zb) return;
+    mmCtx.strokeStyle=color+'35'; mmCtx.lineWidth=.6;
+    mmCtx.beginPath(); mmCtx.moveTo((za.x/W)*MM_W,(za.y/H)*MM_H);
+    mmCtx.lineTo((zb.x/W)*MM_W,(zb.y/H)*MM_H); mmCtx.stroke();
+  });
+
+  ZONES.forEach(z=>{
+    const mx=(z.x/W)*MM_W, my=(z.y/H)*MM_H, mr=3.5;
+    const g=mmCtx.createRadialGradient(mx,my,0,mx,my,mr*3);
+    g.addColorStop(0,z.color+'aa'); g.addColorStop(1,'transparent');
+    mmCtx.fillStyle=g; mmCtx.beginPath(); mmCtx.arc(mx,my,mr*3,0,Math.PI*2); mmCtx.fill();
+    mmCtx.fillStyle=z.color; mmCtx.beginPath(); mmCtx.arc(mx,my,mr,0,Math.PI*2); mmCtx.fill();
+  });
+}
+
+function updateMM(){
+  if(!mmCtx) return;
+  drawMMBase();
+  const vx=(-cam.x/cam.z/W)*MM_W;
+  const vy=(-cam.y/cam.z/H)*MM_H;
+  const vw=(vpW/cam.z/W)*MM_W;
+  const vh=(vpH/cam.z/H)*MM_H;
+  const mv=document.getElementById('mm-vp');
+  mv.style.left=Math.max(0,vx)+'px';
+  mv.style.top=Math.max(0,vy)+'px';
+  mv.style.width=Math.min(MM_W-Math.max(0,vx),vw)+'px';
+  mv.style.height=Math.min(MM_H-Math.max(0,vy),vh)+'px';
+}
+
+document.getElementById('mm-c').addEventListener('click', e=>{
+  const r=e.target.getBoundingClientRect();
+  const wx=((e.clientX-r.left)/MM_W)*W;
+  const wy=((e.clientY-r.top)/MM_H)*H;
+  animCam(vpW/2-wx*cam.z, vpH/2-wy*cam.z, cam.z, 350);
+});
+
+// ═══════════════════════════════════════════
+// SHEET
+// ═══════════════════════════════════════════
+function openSheet(zone, highlightId){
+  document.getElementById('sh-icon').textContent=zone.emoji;
+  document.getElementById('sh-name').textContent=zone.name;
+  document.getElementById('sh-lore').textContent=zone.lore;
+  document.getElementById('hud-zone').textContent=zone.name;
+
+  const list=document.getElementById('sh-tools');
+  list.innerHTML='';
+  zone.tools.forEach(t=>{
+    const a=document.createElement('a');
+    a.className='sh-tool';
+    a.href=`./tools/${zone.id}/${t.id}/index.html`;
+    if(t.id===highlightId){
+      a.style.borderColor=zone.color+'50';
+      a.style.background=zone.color+'0a';
+    }
+    a.innerHTML=`<div class="sh-tdot" style="background:${zone.dot}"></div><div style="flex:1"><div class="sh-tname">${t.name}</div><div class="sh-tdesc">${t.desc}</div></div><div class="sh-tarrow">→</div>`;
+    list.appendChild(a);
+  });
+
+  document.getElementById('sheet').classList.add('open');
+  document.getElementById('overlay').classList.add('show');
+}
+
+function closeSheet(){
+  document.getElementById('sheet').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('hud-zone').textContent='World';
+}
+
+// Click outside nodes on world to close
+document.getElementById('vp').addEventListener('click', e=>{
+  if(!e.target.closest('.zn,.td')) closeSheet();
+});
+
+// ═══════════════════════════════════════════
+// DOT PULSE ANIMATION
+// ═══════════════════════════════════════════
+let af=0;
+function animDots(){
+  af++;
+  const dots=document.querySelectorAll('.td-i');
+  dots.forEach((d,i)=>{
+    const t=(af*.018+i*.35)%(Math.PI*2);
+    d.style.opacity=0.6+Math.sin(t)*0.4;
+  });
+  requestAnimationFrame(animDots);
+}
+
+// ═══════════════════════════════════════════
+// RESIZE
+// ═══════════════════════════════════════════
+window.addEventListener('resize', ()=>{
+  vpW=window.innerWidth; vpH=window.innerHeight;
+  updateMM();
+});
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+function init(){
+  const ww=document.getElementById('ww');
+  ww.style.width=W+'px'; ww.style.height=H+'px';
+  document.getElementById('ps').style.width=W+'px';
+  document.getElementById('ps').style.height=H+'px';
+
+  buildTerrain();
+  buildNodes();
+  buildPaths();
+  buildLegend();
+  applyCamera();
+  initMM();
+  updateMM();
+  animDots();
+}
+
+init();
+</script>
+</body>
+</html>

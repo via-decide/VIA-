@@ -1,188 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>ViaDecide — Sovereign Digital Ecosystem</title>
-<meta name="description" content="ViaDecide: A Bharat-first sovereign digital ecosystem. Decision engineering, math maps, skill games, and creator tools. Built in Kutch." />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&display=swap" rel="stylesheet" />
+<meta name="description" content="ViaDecide: A Bharat-first sovereign digital ecosystem. Decision engineering, math maps, skill games, and creator tools. Built in Kutch."/>
+<meta name="theme-color" content="#030508"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="ViaDecide"/>
+<link rel="manifest" href="./manifest.webmanifest"/>
+<meta property="og:title" content="ViaDecide — Sovereign Digital Ecosystem"/>
+<meta property="og:description" content="44 browser-native tools. Decision engineering, math maps, skill games. Built in Kutch."/>
+<meta property="og:url" content="https://www.viadecide.com/"/>
+<meta property="og:type" content="website"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&display=swap" rel="stylesheet"/>
 <style>
-:root {
-  --void: #030508;
-  --deep: #060a14;
-  --panel: #080d1a;
-  --border: #152240;
-  --border2: #1e3060;
-  --text: #d4dce8;
-  --muted: #5a6a80;
-  --saffron: #ff671f;
-  --teal: #00e5cc;
-  --neon: #f5e642;
-  --cyan: #00e5ff;
-  --green: #00ff88;
-  --amber: #f59e0b;
-  --violet: #a855f7;
-  --font-display: 'Syne', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-  --font-body: 'Fraunces', serif;
+:root{
+  --void:#030508;--deep:#060a14;--panel:#080d1a;
+  --border:#152240;--border2:#1e3060;
+  --text:#d4dce8;--muted:#5a6a80;
+  --saffron:#ff671f;--teal:#00e5cc;--neon:#f5e642;
+  --cyan:#00e5ff;--green:#00ff88;--amber:#f59e0b;--violet:#a855f7;
+  --font-d:'Syne',sans-serif;--font-m:'JetBrains Mono',monospace;--font-b:'Fraunces',serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--void);color:var(--text);font-family:var(--font-display);overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:0.5}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--void);color:var(--text);font-family:var(--font-d);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:.5}
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:var(--void)}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;align-items:center;justify-content:space-between;padding:16px 40px;background:linear-gradient(to bottom,rgba(3,5,8,0.96),transparent);backdrop-filter:blur(6px)}
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 24px;
+  background:linear-gradient(to bottom,rgba(3,5,8,.96),transparent);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.nav-logo-mark{width:32px;height:32px;border:1.5px solid var(--saffron);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--saffron);box-shadow:0 0 12px rgba(255,103,31,0.3)}
-.nav-logo-text{font-size:14px;font-weight:700;color:var(--text);letter-spacing:0.06em;text-transform:uppercase}
+.nav-logo-mark{
+  width:30px;height:30px;border:1.5px solid var(--saffron);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-m);font-size:10px;font-weight:600;
+  color:var(--saffron);box-shadow:0 0 12px rgba(255,103,31,.3);flex-shrink:0;
+}
+.nav-logo-text{font-size:13px;font-weight:700;color:var(--text);letter-spacing:.06em;text-transform:uppercase}
 .nav-logo-text span{color:var(--saffron)}
-.nav-links{display:flex;align-items:center;gap:32px;list-style:none}
-.nav-links a{font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--muted);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s}
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none}
+.nav-links a{font-family:var(--font-m);font-size:11px;font-weight:500;color:var(--muted);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;transition:color .2s}
 .nav-links a:hover{color:var(--text)}
-.nav-cta{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--void);background:var(--saffron);padding:8px 18px;border-radius:6px;text-decoration:none;letter-spacing:0.06em;text-transform:uppercase;transition:box-shadow 0.2s}
-.nav-cta:hover{box-shadow:0 0 20px rgba(255,103,31,0.4)}
+.nav-cta{
+  font-family:var(--font-m);font-size:11px;font-weight:600;
+  color:var(--void);background:var(--saffron);
+  padding:8px 16px;border-radius:6px;text-decoration:none;
+  letter-spacing:.06em;text-transform:uppercase;transition:box-shadow .2s;white-space:nowrap;
+}
+.nav-cta:hover{box-shadow:0 0 20px rgba(255,103,31,.4)}
 
-/* HERO */
-#hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:80px 20px 40px}
-.hero-grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 70% at 50% 50%,black 30%,transparent 100%);opacity:0.2}
-.hero-glow-a{position:absolute;width:700px;height:450px;background:radial-gradient(ellipse,rgba(255,103,31,0.12),transparent 70%);top:-150px;left:-150px;pointer-events:none}
-.hero-glow-b{position:absolute;width:600px;height:500px;background:radial-gradient(ellipse,rgba(0,229,204,0.08),transparent 70%);bottom:-150px;right:-100px;pointer-events:none}
-.hero-tag{font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--teal);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px;opacity:0;animation:fadeUp 0.6s ease 0.2s forwards}
-.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse-dot 2s ease infinite}
-@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:0.3}}
+/* ── HERO ── */
+#hero{
+  position:relative;min-height:100svh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  overflow:hidden;padding:100px 20px 60px;
+}
+.hero-grid-bg{
+  position:absolute;inset:0;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 70% at 50% 50%,black 30%,transparent 100%);
+  -webkit-mask-image:radial-gradient(ellipse 80% 70% at 50% 50%,black 30%,transparent 100%);
+  opacity:.2;pointer-events:none;
+}
+.hero-glow-a{position:absolute;width:min(700px,100vw);height:450px;background:radial-gradient(ellipse,rgba(255,103,31,.12),transparent 70%);top:-150px;left:-150px;pointer-events:none}
+.hero-glow-b{position:absolute;width:min(600px,100vw);height:500px;background:radial-gradient(ellipse,rgba(0,229,204,.08),transparent 70%);bottom:-150px;right:-100px;pointer-events:none}
+
+.hero-tag{
+  font-family:var(--font-m);font-size:11px;font-weight:500;
+  color:var(--teal);letter-spacing:.14em;text-transform:uppercase;
+  margin-bottom:16px;display:flex;align-items:center;gap:8px;
+  opacity:0;animation:fadeUp .6s ease .2s forwards;text-align:center;
+}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex-shrink:0;animation:pulse-dot 2s ease infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-.hero-title{font-size:clamp(52px,8vw,110px);font-weight:800;line-height:0.9;text-align:center;letter-spacing:-0.03em;margin-bottom:24px;opacity:0;animation:fadeUp 0.8s ease 0.4s forwards}
+
+.hero-title{
+  font-size:clamp(48px,11vw,110px);font-weight:800;line-height:.9;
+  text-align:center;letter-spacing:-.03em;margin-bottom:24px;
+  opacity:0;animation:fadeUp .8s ease .4s forwards;
+}
 .hero-title .line1{color:var(--text);display:block}
 .hero-title .line2{color:transparent;-webkit-text-stroke:1px var(--saffron);display:block}
 .hero-title .line3{color:var(--saffron);display:block}
-.hero-sub{font-family:var(--font-body);font-size:clamp(15px,2vw,18px);font-weight:300;font-style:italic;color:var(--muted);text-align:center;max-width:500px;line-height:1.6;margin-bottom:40px;opacity:0;animation:fadeUp 0.8s ease 0.6s forwards}
-.hero-actions{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:60px;opacity:0;animation:fadeUp 0.8s ease 0.8s forwards}
-.btn-primary{font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--void);background:var(--saffron);padding:14px 28px;border-radius:8px;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:all 0.2s}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,103,31,0.35)}
-.btn-outline{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--text);background:transparent;padding:14px 28px;border-radius:8px;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--border2);transition:all 0.2s}
-.btn-outline:hover{border-color:var(--teal);color:var(--teal);box-shadow:0 0 20px rgba(0,229,204,0.15)}
+.hero-sub{
+  font-family:var(--font-b);font-size:clamp(14px,2vw,18px);font-weight:300;
+  font-style:italic;color:var(--muted);text-align:center;
+  max-width:480px;line-height:1.6;margin-bottom:36px;
+  opacity:0;animation:fadeUp .8s ease .6s forwards;
+}
+.hero-actions{
+  display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
+  margin-bottom:56px;opacity:0;animation:fadeUp .8s ease .8s forwards;
+}
+.btn-primary{
+  font-family:var(--font-m);font-size:12px;font-weight:600;
+  color:var(--void);background:var(--saffron);
+  padding:14px 24px;border-radius:8px;text-decoration:none;
+  letter-spacing:.08em;text-transform:uppercase;transition:all .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,103,31,.35)}
+.btn-outline{
+  font-family:var(--font-m);font-size:12px;font-weight:500;
+  color:var(--text);background:transparent;
+  padding:14px 24px;border-radius:8px;text-decoration:none;
+  letter-spacing:.08em;text-transform:uppercase;
+  border:1px solid var(--border2);transition:all .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-outline:hover{border-color:var(--teal);color:var(--teal);box-shadow:0 0 20px rgba(0,229,204,.15)}
 
-/* WORLD MAP */
-.map-wrap{position:relative;width:100%;max-width:1100px;margin:0 auto;opacity:0;animation:fadeUp 1s ease 1s forwards}
-.map-label{font-family:var(--font-mono);font-size:10px;font-weight:500;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;text-align:center;margin-bottom:20px}
-#worldmap{width:100%;height:auto;display:block}
+/* ── WORLD MAP ── */
+.map-wrap{
+  position:relative;width:100%;max-width:min(1100px,96vw);margin:0 auto;
+  opacity:0;animation:fadeUp 1s ease 1s forwards;
+}
+.map-label{
+  font-family:var(--font-m);font-size:10px;font-weight:500;
+  color:var(--muted);letter-spacing:.14em;text-transform:uppercase;
+  text-align:center;margin-bottom:16px;
+}
+.map-label a{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(0,229,204,.3);padding-bottom:1px}
+.map-label a:hover{color:var(--text)}
+#worldmap{width:100%;height:auto;display:block;cursor:pointer}
 .territory{cursor:pointer}
-.territory:hover .t-body{filter:brightness(1.5) saturate(1.3)}
+.territory:hover .t-body{filter:brightness(1.6) saturate(1.4)}
 .t-ring{fill:none;animation:ring-pulse 3s ease infinite}
-@keyframes ring-pulse{0%,100%{opacity:0.5}50%{opacity:0.05}}
+@keyframes ring-pulse{0%,100%{opacity:.5}50%{opacity:.05}}
 .trade-path{fill:none;stroke-dasharray:6 4;animation:dash-flow 3s linear infinite}
 @keyframes dash-flow{from{stroke-dashoffset:0}to{stroke-dashoffset:-40}}
 
-/* TOOLTIP */
-#map-tooltip{position:fixed;background:rgba(6,10,20,0.97);border:1px solid var(--border2);border-radius:12px;padding:14px 18px;min-width:220px;max-width:280px;pointer-events:none;opacity:0;transition:opacity 0.18s;z-index:800;backdrop-filter:blur(10px)}
+/* ── TOOLTIP (desktop only) ── */
+#map-tooltip{
+  position:fixed;background:rgba(6,10,20,.97);border:1px solid var(--border2);
+  border-radius:12px;padding:14px 18px;min-width:220px;max-width:280px;
+  pointer-events:none;opacity:0;transition:opacity .18s;z-index:800;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
 #map-tooltip.vis{opacity:1}
-.tt-tag{font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:6px}
-.tt-name{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
-.tt-desc{font-family:var(--font-body);font-size:12px;font-style:italic;color:var(--muted);line-height:1.5;margin-bottom:8px}
-.tt-badge{font-family:var(--font-mono);font-size:9px;font-weight:500;padding:3px 8px;border-radius:4px;display:inline-block;letter-spacing:0.08em;text-transform:uppercase}
+.tt-tag{font-family:var(--font-m);font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
+.tt-name{font-family:var(--font-d);font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+.tt-desc{font-family:var(--font-b);font-size:12px;font-style:italic;color:var(--muted);line-height:1.5;margin-bottom:8px}
+.tt-badge{font-family:var(--font-m);font-size:9px;font-weight:500;padding:3px 8px;border-radius:4px;display:inline-block;letter-spacing:.08em;text-transform:uppercase}
 
-/* PRODUCTS */
-#products{padding:100px 40px;max-width:1200px;margin:0 auto}
-.section-eyebrow{font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--saffron);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:16px}
-.section-title{font-family:var(--font-display);font-size:clamp(32px,5vw,56px);font-weight:800;letter-spacing:-0.02em;line-height:1.05;margin-bottom:60px;max-width:600px}
+/* ── EXPLORE BTN ── */
+.map-world-cta{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-top:16px;font-family:var(--font-m);font-size:11px;font-weight:500;
+  color:var(--muted);letter-spacing:.1em;text-transform:uppercase;
+  text-decoration:none;transition:color .2s;-webkit-tap-highlight-color:transparent;
+}
+.map-world-cta:hover{color:var(--teal)}
+.map-world-cta span{
+  border:1px solid var(--border2);border-radius:4px;
+  padding:6px 14px;transition:border-color .2s;
+}
+.map-world-cta:hover span{border-color:var(--teal)}
+
+/* ── PRODUCTS ── */
+#products{padding:100px 24px;max-width:1200px;margin:0 auto}
+.section-eyebrow{font-family:var(--font-m);font-size:10px;font-weight:600;color:var(--saffron);letter-spacing:.18em;text-transform:uppercase;margin-bottom:16px}
+.section-title{font-family:var(--font-d);font-size:clamp(28px,5vw,56px);font-weight:800;letter-spacing:-.02em;line-height:1.05;margin-bottom:48px;max-width:600px}
 .section-title em{font-style:normal;color:var(--teal)}
-.product-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.product-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
 .card-hero{grid-column:span 8}
 .card-side{grid-column:span 4}
 .card-third{grid-column:span 4}
 .card-half{grid-column:span 6}
-.product-card{position:relative;background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:32px;overflow:hidden;text-decoration:none;display:block;transition:all 0.3s}
-.product-card::before{content:'';position:absolute;inset:0;border-radius:16px;opacity:0;transition:opacity 0.3s}
-.product-card:hover{transform:translateY(-4px);border-color:var(--card-accent,var(--saffron))}
+.product-card{
+  position:relative;background:var(--panel);border:1px solid var(--border);
+  border-radius:16px;padding:28px;overflow:hidden;text-decoration:none;display:block;
+  transition:all .3s;-webkit-tap-highlight-color:transparent;
+}
+.product-card::before{content:'';position:absolute;inset:0;border-radius:16px;opacity:0;transition:opacity .3s;pointer-events:none}
+.product-card:hover{transform:translateY(-3px)}
+.product-card:active{transform:scale(.99)}
+.c-s{--ca:var(--saffron)}.c-s::before{background:radial-gradient(ellipse 60% 50% at 80% 0%,rgba(255,103,31,.07),transparent)}.c-s:hover{border-color:var(--saffron);box-shadow:0 20px 60px rgba(255,103,31,.09)}
+.c-t{--ca:var(--teal)}.c-t::before{background:radial-gradient(ellipse 60% 50% at 80% 0%,rgba(0,229,204,.07),transparent)}.c-t:hover{border-color:var(--teal);box-shadow:0 20px 60px rgba(0,229,204,.07)}
+.c-c{--ca:var(--cyan)}.c-c::before{background:radial-gradient(ellipse 60% 50% at 80% 0%,rgba(0,229,255,.07),transparent)}.c-c:hover{border-color:var(--cyan);box-shadow:0 20px 60px rgba(0,229,255,.07)}
+.c-v{--ca:var(--violet)}.c-v::before{background:radial-gradient(ellipse 60% 50% at 80% 0%,rgba(168,85,247,.07),transparent)}.c-v:hover{border-color:var(--violet);box-shadow:0 20px 60px rgba(168,85,247,.07)}
+.c-g{--ca:var(--green)}.c-g::before{background:radial-gradient(ellipse 60% 50% at 80% 0%,rgba(0,255,136,.07),transparent)}.c-g:hover{border-color:var(--green);box-shadow:0 20px 60px rgba(0,255,136,.07)}
+.c-a{--ca:var(--amber)}.c-a::before{background:radial-gradient(ellipse 60% 50% at 80% 0%,rgba(245,158,11,.07),transparent)}.c-a:hover{border-color:var(--amber);box-shadow:0 20px 60px rgba(245,158,11,.07)}
+.c-n{--ca:var(--neon)}.c-n::before{background:radial-gradient(ellipse 60% 50% at 80% 0%,rgba(245,230,66,.07),transparent)}.c-n:hover{border-color:var(--neon);box-shadow:0 20px 60px rgba(245,230,66,.07)}
 .product-card:hover::before{opacity:1}
-.c-s{--card-accent:var(--saffron)}.c-s::before{background:radial-gradient(ellipse 60% 50% at 80% 0%,rgba(255,103,31,0.07),transparent)}.c-s:hover{box-shadow:0 20px 60px rgba(255,103,31,0.09)}
-.c-t{--card-accent:var(--teal)}.c-t::before{background:radial-gradient(ellipse 60% 50% at 80% 0%,rgba(0,229,204,0.07),transparent)}.c-t:hover{box-shadow:0 20px 60px rgba(0,229,204,0.07)}
-.c-c{--card-accent:var(--cyan)}.c-c::before{background:radial-gradient(ellipse 60% 50% at 80% 0%,rgba(0,229,255,0.07),transparent)}.c-c:hover{box-shadow:0 20px 60px rgba(0,229,255,0.07)}
-.c-v{--card-accent:var(--violet)}.c-v::before{background:radial-gradient(ellipse 60% 50% at 80% 0%,rgba(168,85,247,0.07),transparent)}.c-v:hover{box-shadow:0 20px 60px rgba(168,85,247,0.07)}
-.c-g{--card-accent:var(--green)}.c-g::before{background:radial-gradient(ellipse 60% 50% at 80% 0%,rgba(0,255,136,0.07),transparent)}.c-g:hover{box-shadow:0 20px 60px rgba(0,255,136,0.07)}
-.c-a{--card-accent:var(--amber)}.c-a::before{background:radial-gradient(ellipse 60% 50% at 80% 0%,rgba(245,158,11,0.07),transparent)}.c-a:hover{box-shadow:0 20px 60px rgba(245,158,11,0.07)}
-.c-n{--card-accent:var(--neon)}.c-n::before{background:radial-gradient(ellipse 60% 50% at 80% 0%,rgba(245,230,66,0.07),transparent)}.c-n:hover{box-shadow:0 20px 60px rgba(245,230,66,0.07)}
-.card-num{font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0.1em;margin-bottom:24px}
-.card-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:20px;background:rgba(255,255,255,0.04);border:1px solid var(--border)}
-.card-name{font-family:var(--font-display);font-size:clamp(20px,2.5vw,28px);font-weight:800;letter-spacing:-0.02em;color:var(--text);margin-bottom:8px;line-height:1.1}
-.card-tagline{font-family:var(--font-mono);font-size:11px;font-weight:400;color:var(--card-accent,var(--saffron));letter-spacing:0.06em;margin-bottom:14px;text-transform:uppercase}
-.card-desc{font-family:var(--font-body);font-size:14px;font-weight:300;font-style:italic;color:var(--muted);line-height:1.65;margin-bottom:24px}
-.card-hero .card-desc{font-size:16px}
-.card-chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{font-family:var(--font-mono);font-size:10px;font-weight:500;color:var(--muted);background:rgba(255,255,255,0.04);border:1px solid var(--border);padding:4px 10px;border-radius:20px;letter-spacing:0.06em;text-transform:uppercase}
-.card-arrow{position:absolute;bottom:28px;right:28px;width:36px;height:36px;border:1px solid var(--border2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted);transition:all 0.3s}
-.product-card:hover .card-arrow{border-color:var(--card-accent);color:var(--card-accent);background:rgba(255,255,255,0.04)}
-.card-deco{position:absolute;right:-30px;bottom:-30px;width:180px;height:180px;opacity:0.04;pointer-events:none}
+.card-num{font-family:var(--font-m);font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.1em;margin-bottom:20px}
+.card-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px;background:rgba(255,255,255,.04);border:1px solid var(--border)}
+.card-name{font-family:var(--font-d);font-size:clamp(18px,2.5vw,26px);font-weight:800;letter-spacing:-.02em;color:var(--text);margin-bottom:6px;line-height:1.1}
+.card-tagline{font-family:var(--font-m);font-size:11px;font-weight:400;color:var(--ca,var(--saffron));letter-spacing:.06em;margin-bottom:12px;text-transform:uppercase}
+.card-desc{font-family:var(--font-b);font-size:13px;font-weight:300;font-style:italic;color:var(--muted);line-height:1.65;margin-bottom:20px}
+.card-hero .card-desc{font-size:15px}
+.card-chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--font-m);font-size:10px;font-weight:500;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--border);padding:4px 9px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase}
+.card-arrow{position:absolute;bottom:24px;right:24px;width:32px;height:32px;border:1px solid var(--border2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);transition:all .3s}
+.product-card:hover .card-arrow{border-color:var(--ca);color:var(--ca);background:rgba(255,255,255,.04)}
+.card-deco{position:absolute;right:-30px;bottom:-30px;width:160px;height:160px;opacity:.04;pointer-events:none}
 
-/* MANIFESTO */
-#manifesto{padding:100px 40px;background:linear-gradient(180deg,var(--void),var(--deep) 50%,var(--void));position:relative}
+/* ── MANIFESTO ── */
+#manifesto{padding:100px 24px;background:linear-gradient(180deg,var(--void),var(--deep) 50%,var(--void));position:relative}
 .manifesto-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1.6fr;gap:80px;align-items:start}
 .manifesto-left{position:sticky;top:100px}
-.manifesto-quote{font-family:var(--font-body);font-size:clamp(24px,3.5vw,40px);font-weight:300;font-style:italic;line-height:1.3;color:var(--text);margin-bottom:32px}
+.manifesto-quote{font-family:var(--font-b);font-size:clamp(22px,3.5vw,38px);font-weight:300;font-style:italic;line-height:1.3;color:var(--text);margin-bottom:28px}
 .manifesto-quote strong{font-style:normal;font-weight:300;color:var(--saffron)}
-.manifesto-sig{font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase}
+.manifesto-sig{font-family:var(--font-m);font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
 .manifesto-sig span{color:var(--text)}
-.manifesto-right{display:flex;flex-direction:column;gap:32px}
-.stat-row{border-top:1px solid var(--border);padding-top:28px}
-.stat-num{font-family:var(--font-display);font-size:clamp(40px,6vw,72px);font-weight:800;letter-spacing:-0.04em;line-height:1;margin-bottom:8px}
-.stat-label{font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase}
+.manifesto-right{display:flex;flex-direction:column;gap:28px}
+.stat-row{border-top:1px solid var(--border);padding-top:24px}
+.stat-num{font-family:var(--font-d);font-size:clamp(36px,6vw,72px);font-weight:800;letter-spacing:-.04em;line-height:1;margin-bottom:8px}
+.stat-label{font-family:var(--font-m);font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
 
-/* STACK */
-#ecosystem{padding:80px 40px;max-width:1200px;margin:0 auto}
-.ecosystem-title{font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:800;letter-spacing:-0.02em;margin-bottom:48px;text-align:center}
-.tech-stack{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1px;background:var(--border);border-radius:16px;overflow:hidden}
-.tech-cell{background:var(--panel);padding:28px 24px;transition:background 0.2s}
+/* ── STACK ── */
+#ecosystem{padding:80px 24px;max-width:1200px;margin:0 auto}
+.ecosystem-title{font-family:var(--font-d);font-size:clamp(24px,4vw,48px);font-weight:800;letter-spacing:-.02em;margin-bottom:40px;text-align:center}
+.tech-stack{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--border);border-radius:16px;overflow:hidden}
+.tech-cell{background:var(--panel);padding:24px 20px;transition:background .2s}
 .tech-cell:hover{background:var(--deep)}
-.tech-icon{font-size:24px;margin-bottom:12px}
-.tech-name{font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px;letter-spacing:0.06em}
-.tech-detail{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.04em}
+.tech-icon{font-size:22px;margin-bottom:10px}
+.tech-name{font-family:var(--font-m);font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px;letter-spacing:.06em}
+.tech-detail{font-family:var(--font-m);font-size:10px;color:var(--muted);letter-spacing:.04em}
 
-/* CTA */
-#cta{padding:120px 40px;text-align:center;position:relative;overflow:hidden}
-#cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(255,103,31,0.05),transparent);pointer-events:none}
-.cta-eyebrow{font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--saffron);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:20px}
-.cta-title{font-family:var(--font-display);font-size:clamp(40px,7vw,90px);font-weight:800;letter-spacing:-0.03em;line-height:0.95;margin-bottom:24px}
-.cta-title .ghost{color:transparent;-webkit-text-stroke:1px rgba(255,255,255,0.12)}
-.cta-sub{font-family:var(--font-body);font-size:17px;font-style:italic;font-weight:300;color:var(--muted);max-width:400px;margin:0 auto 40px;line-height:1.6}
-.cta-links{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
-.link-icon{font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:8px;transition:color 0.2s;letter-spacing:0.06em}
+/* ── CTA ── */
+#cta{padding:120px 24px;text-align:center;position:relative;overflow:hidden}
+#cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(255,103,31,.05),transparent);pointer-events:none}
+.cta-eyebrow{font-family:var(--font-m);font-size:10px;font-weight:600;color:var(--saffron);letter-spacing:.18em;text-transform:uppercase;margin-bottom:20px}
+.cta-title{font-family:var(--font-d);font-size:clamp(40px,8vw,90px);font-weight:800;letter-spacing:-.03em;line-height:.95;margin-bottom:24px}
+.cta-title .ghost{color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.12)}
+.cta-sub{font-family:var(--font-b);font-size:clamp(14px,2vw,17px);font-style:italic;font-weight:300;color:var(--muted);max-width:400px;margin:0 auto 36px;line-height:1.6}
+.cta-links{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+.link-icon{font-family:var(--font-m);font-size:11px;font-weight:500;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:8px;transition:color .2s;letter-spacing:.06em;-webkit-tap-highlight-color:transparent}
 .link-icon:hover{color:var(--text)}
 
-/* FOOTER */
-footer{border-top:1px solid var(--border);padding:40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
-.footer-brand{font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:0.08em}
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border);padding:32px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-brand{font-family:var(--font-m);font-size:11px;color:var(--muted);letter-spacing:.08em}
 .footer-brand strong{color:var(--saffron);font-weight:600}
-.footer-india{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase}
+.footer-india{font-family:var(--font-m);font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
 
-/* MOBILE */
-@media(max-width:900px){
-  nav{padding:14px 20px}
-  .nav-links{display:none}
-  #products{padding:60px 20px}
-  .product-grid{grid-template-columns:1fr;gap:12px}
-  .card-hero,.card-side,.card-third,.card-half{grid-column:span 1}
-  .manifesto-inner{grid-template-columns:1fr;gap:40px}
-  .manifesto-left{position:static}
-  #manifesto,#ecosystem,#cta{padding:60px 20px}
-  footer{flex-direction:column;align-items:flex-start;padding:28px 20px}
-}
-
-/* REVEALS */
-.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.7s ease,transform 0.7s ease}
+/* ── REVEALS ── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
 .reveal.vis{opacity:1;transform:none}
-.stagger>*{opacity:0;transform:translateY(18px);transition:opacity 0.5s ease,transform 0.5s ease}
-.stagger.vis>*:nth-child(1){opacity:1;transform:none;transition-delay:0s}
-.stagger.vis>*:nth-child(2){opacity:1;transform:none;transition-delay:0.07s}
-.stagger.vis>*:nth-child(3){opacity:1;transform:none;transition-delay:0.14s}
-.stagger.vis>*:nth-child(4){opacity:1;transform:none;transition-delay:0.21s}
-.stagger.vis>*:nth-child(5){opacity:1;transform:none;transition-delay:0.28s}
-.stagger.vis>*:nth-child(6){opacity:1;transform:none;transition-delay:0.35s}
-.stagger.vis>*:nth-child(7){opacity:1;transform:none;transition-delay:0.42s}
+.stagger>*{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s ease}
+.stagger.vis>*:nth-child(1){opacity:1;transform:none;transition-delay:.00s}
+.stagger.vis>*:nth-child(2){opacity:1;transform:none;transition-delay:.07s}
+.stagger.vis>*:nth-child(3){opacity:1;transform:none;transition-delay:.14s}
+.stagger.vis>*:nth-child(4){opacity:1;transform:none;transition-delay:.21s}
+.stagger.vis>*:nth-child(5){opacity:1;transform:none;transition-delay:.28s}
+.stagger.vis>*:nth-child(6){opacity:1;transform:none;transition-delay:.35s}
+.stagger.vis>*:nth-child(7){opacity:1;transform:none;transition-delay:.42s}
+
+/* ── MOBILE ── */
+@media(max-width:760px){
+  nav{padding:12px 16px}
+  .nav-links{display:none}
+  #products{padding:60px 16px}
+  .product-grid{display:flex;flex-direction:column;gap:12px}
+  .card-hero,.card-side,.card-third,.card-half{width:100%}
+  .card-deco{display:none}
+  .manifesto-inner{grid-template-columns:1fr;gap:36px}
+  .manifesto-left{position:static}
+  #manifesto,#ecosystem,#cta{padding:60px 16px}
+  #hero{padding:90px 16px 48px}
+  footer{flex-direction:column;align-items:flex-start;padding:24px 16px}
+  .hero-actions{gap:10px}
+  .btn-primary,.btn-outline{padding:13px 20px;font-size:11px}
+}
+@media(max-width:480px){
+  .hero-title{font-size:clamp(42px,13vw,64px)}
+}
 </style>
 </head>
 <body>
@@ -197,9 +295,9 @@ footer{border-top:1px solid var(--border);padding:40px;display:flex;align-items:
     <li><a href="#products">Products</a></li>
     <li><a href="#manifesto">Story</a></li>
     <li><a href="#ecosystem">Stack</a></li>
-    <li><a href="https://github.com/via-decide" target="_blank">GitHub</a></li>
+    <li><a href="https://github.com/via-decide" target="_blank" rel="noopener">GitHub</a></li>
   </ul>
-  <a href="https://www.viadecide.com/viadecide.html" class="nav-cta">Launch →</a>
+  <a href="./viadecide.html" class="nav-cta">Launch →</a>
 </nav>
 
 <!-- HERO -->
@@ -207,7 +305,7 @@ footer{border-top:1px solid var(--border);padding:40px;display:flex;align-items:
   <div class="hero-grid-bg"></div>
   <div class="hero-glow-a"></div>
   <div class="hero-glow-b"></div>
-  <div class="hero-tag"><div class="status-dot"></div> System Online · Bharat-First · Built in Kutch</div>
+  <div class="hero-tag"><div class="status-dot"></div>System Online · Bharat-First · Built in Kutch</div>
   <h1 class="hero-title">
     <span class="line1">Sovereign</span>
     <span class="line2">Digital</span>
@@ -215,14 +313,14 @@ footer{border-top:1px solid var(--border);padding:40px;display:flex;align-items:
   </h1>
   <p class="hero-sub">Not another AI wrapper. A constellation of tools built on math, logic, and structure — for founders who think in systems.</p>
   <div class="hero-actions">
-    <a href="https://www.viadecide.com/viadecide.html" class="btn-primary">Enter the Engine →</a>
+    <a href="./viadecide.html" class="btn-primary">Enter the Engine →</a>
     <a href="#products" class="btn-outline">Explore Products</a>
   </div>
 
-  <!-- WORLD MAP -->
+  <!-- WORLD MAP SVG -->
   <div class="map-wrap">
-    <p class="map-label">// VD-Verse · Territory Map · 7 Products Active</p>
-    <svg id="worldmap" viewBox="0 0 1100 560" xmlns="http://www.w3.org/2000/svg">
+    <p class="map-label">// VD-Verse · Territory Map · 7 Products Active · <a href="./world.html">Open Interactive Map →</a></p>
+    <svg id="worldmap" viewBox="0 0 1100 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ViaDecide ecosystem map">
       <defs>
         <filter id="glo-s"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         <filter id="glo-t"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -234,53 +332,26 @@ footer{border-top:1px solid var(--border);padding:40px;display:flex;align-items:
           <stop offset="0%" stop-color="transparent"/>
           <stop offset="100%" stop-color="rgba(3,5,8,0.9)"/>
         </radialGradient>
-        <!-- Territory gradients -->
-        <radialGradient id="grad-s" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="rgba(255,103,31,0.25)"/>
-          <stop offset="100%" stop-color="rgba(255,103,31,0.04)"/>
-        </radialGradient>
-        <radialGradient id="grad-t" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="rgba(0,229,204,0.2)"/>
-          <stop offset="100%" stop-color="rgba(0,229,204,0.03)"/>
-        </radialGradient>
-        <radialGradient id="grad-c" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="rgba(0,229,255,0.18)"/>
-          <stop offset="100%" stop-color="rgba(0,229,255,0.03)"/>
-        </radialGradient>
-        <radialGradient id="grad-v" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="rgba(168,85,247,0.18)"/>
-          <stop offset="100%" stop-color="rgba(168,85,247,0.03)"/>
-        </radialGradient>
-        <radialGradient id="grad-g" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="rgba(0,255,136,0.18)"/>
-          <stop offset="100%" stop-color="rgba(0,255,136,0.03)"/>
-        </radialGradient>
-        <radialGradient id="grad-a" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="rgba(245,158,11,0.18)"/>
-          <stop offset="100%" stop-color="rgba(245,158,11,0.03)"/>
-        </radialGradient>
-        <radialGradient id="grad-n" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="rgba(245,230,66,0.18)"/>
-          <stop offset="100%" stop-color="rgba(245,230,66,0.03)"/>
-        </radialGradient>
+        <radialGradient id="grad-s" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(255,103,31,0.25)"/><stop offset="100%" stop-color="rgba(255,103,31,0.04)"/></radialGradient>
+        <radialGradient id="grad-t" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(0,229,204,0.20)"/><stop offset="100%" stop-color="rgba(0,229,204,0.03)"/></radialGradient>
+        <radialGradient id="grad-c" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(0,229,255,0.18)"/><stop offset="100%" stop-color="rgba(0,229,255,0.03)"/></radialGradient>
+        <radialGradient id="grad-v" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(168,85,247,0.18)"/><stop offset="100%" stop-color="rgba(168,85,247,0.03)"/></radialGradient>
+        <radialGradient id="grad-g" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(0,255,136,0.18)"/><stop offset="100%" stop-color="rgba(0,255,136,0.03)"/></radialGradient>
+        <radialGradient id="grad-a" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(245,158,11,0.18)"/><stop offset="100%" stop-color="rgba(245,158,11,0.03)"/></radialGradient>
+        <radialGradient id="grad-n" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(245,230,66,0.18)"/><stop offset="100%" stop-color="rgba(245,230,66,0.03)"/></radialGradient>
       </defs>
-
-      <!-- BG -->
       <rect width="1100" height="560" fill="url(#mapgrid)" rx="16"/>
-      <!-- continent blobs -->
       <ellipse cx="550" cy="280" rx="470" ry="220" fill="rgba(6,10,20,0.6)" filter="url(#fog)"/>
       <rect width="1100" height="560" fill="url(#vignette)" rx="16"/>
-
-      <!-- TRADE ROUTES -->
-      <path class="trade-path" d="M550,280 Q630,340 720,360" stroke="rgba(255,103,31,0.28)" stroke-width="1.5"/>
-      <path class="trade-path" d="M550,280 Q490,210 400,190" stroke="rgba(0,229,255,0.25)" stroke-width="1.5" style="animation-delay:-1s"/>
-      <path class="trade-path" d="M550,280 Q430,290 300,270" stroke="rgba(168,85,247,0.25)" stroke-width="1.5" style="animation-delay:-0.5s"/>
-      <path class="trade-path" d="M550,280 Q590,370 640,430" stroke="rgba(0,255,136,0.22)" stroke-width="1.5" style="animation-delay:-1.5s"/>
-      <path class="trade-path" d="M550,280 Q640,210 770,148" stroke="rgba(245,158,11,0.25)" stroke-width="1.5" style="animation-delay:-2s"/>
-      <path class="trade-path" d="M550,280 Q470,370 360,420" stroke="rgba(245,230,66,0.22)" stroke-width="1.5" style="animation-delay:-0.8s"/>
-
-      <!-- ══ DECIDE.ENGINE — CENTER ══ -->
-      <g class="territory" data-name="decide.engine" data-cat="PLATFORM" data-color="#ff671f" data-href="https://www.viadecide.com/viadecide.html" data-desc="44 browser-native tools. No build step. Decisions, code, research, games — all in one sovereign mesh.">
+      <!-- Trade Routes -->
+      <path class="trade-path" d="M550,280 Q630,340 720,362" stroke="rgba(255,103,31,0.28)" stroke-width="1.5"/>
+      <path class="trade-path" d="M550,280 Q490,215 398,188" stroke="rgba(0,229,255,0.25)" stroke-width="1.5" style="animation-delay:-1s"/>
+      <path class="trade-path" d="M550,280 Q430,290 290,268" stroke="rgba(168,85,247,0.25)" stroke-width="1.5" style="animation-delay:-0.5s"/>
+      <path class="trade-path" d="M550,280 Q590,370 640,435" stroke="rgba(0,255,136,0.22)" stroke-width="1.5" style="animation-delay:-1.5s"/>
+      <path class="trade-path" d="M550,280 Q650,210 775,148" stroke="rgba(245,158,11,0.25)" stroke-width="1.5" style="animation-delay:-2s"/>
+      <path class="trade-path" d="M550,280 Q460,370 352,424" stroke="rgba(245,230,66,0.22)" stroke-width="1.5" style="animation-delay:-0.8s"/>
+      <!-- decide.engine — CENTER -->
+      <g class="territory" data-name="decide.engine" data-cat="PLATFORM" data-color="#ff671f" data-href="./viadecide.html" data-desc="44 browser-native tools. No build step. Decisions, code, research, games — all in one sovereign mesh.">
         <circle cx="550" cy="280" r="52" fill="url(#grad-s)" class="t-ring" style="animation-duration:2.6s"/>
         <ellipse cx="550" cy="280" rx="32" ry="30" fill="rgba(255,103,31,0.12)" class="t-body"/>
         <ellipse cx="550" cy="280" rx="32" ry="30" fill="none" stroke="rgba(255,103,31,0.55)" stroke-width="1.5"/>
@@ -289,20 +360,18 @@ footer{border-top:1px solid var(--border);padding:40px;display:flex;align-items:
         <text x="550" y="326" text-anchor="middle" font-family="Syne,sans-serif" font-size="11.5" font-weight="700" fill="#ff671f" opacity="0.95">decide.engine</text>
         <text x="550" y="340" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="rgba(90,106,128,0.7)">THE CAPITAL · 44 TOOLS</text>
       </g>
-
-      <!-- ══ VIALOGIC ══ -->
-      <g class="territory" data-name="ViaLogic" data-cat="MATH MAP" data-color="#00e5cc" data-href="https://github.com/via-decide/ViaLogic" data-desc="Cartography of Minds. An interactive SVG journey through 4000 years of mathematical history — from Thales to Turing.">
-        <circle cx="730" cy="362" r="40" fill="url(#grad-t)" class="t-ring" style="animation-duration:3.2s"/>
-        <ellipse cx="730" cy="362" rx="24" ry="22" fill="rgba(0,229,204,0.1)" class="t-body"/>
-        <ellipse cx="730" cy="362" rx="24" ry="22" fill="none" stroke="rgba(0,229,204,0.45)" stroke-width="1.5"/>
-        <circle cx="730" cy="362" r="6" fill="#00e5cc" filter="url(#glo-t)"/>
-        <text x="730" y="366.5" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="rgba(3,5,8,0.95)" font-weight="700">∑</text>
-        <text x="730" y="400" text-anchor="middle" font-family="Syne,sans-serif" font-size="10.5" font-weight="700" fill="#00e5cc" opacity="0.9">ViaLogic</text>
-        <text x="730" y="414" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="rgba(90,106,128,0.65)">CARTOGRAPHY</text>
+      <!-- ViaLogic -->
+      <g class="territory" data-name="ViaLogic" data-cat="MATH MAP" data-color="#00e5cc" data-href="https://github.com/via-decide/ViaLogic" data-desc="Cartography of Minds. An interactive SVG journey through 4000 years of mathematical history — from Thales to Al-Khwarizmi.">
+        <circle cx="720" cy="362" r="40" fill="url(#grad-t)" class="t-ring" style="animation-duration:3.2s"/>
+        <ellipse cx="720" cy="362" rx="24" ry="22" fill="rgba(0,229,204,0.1)" class="t-body"/>
+        <ellipse cx="720" cy="362" rx="24" ry="22" fill="none" stroke="rgba(0,229,204,0.45)" stroke-width="1.5"/>
+        <circle cx="720" cy="362" r="6" fill="#00e5cc" filter="url(#glo-t)"/>
+        <text x="720" y="366.5" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="rgba(3,5,8,0.95)" font-weight="700">∑</text>
+        <text x="720" y="400" text-anchor="middle" font-family="Syne,sans-serif" font-size="10.5" font-weight="700" fill="#00e5cc" opacity="0.9">ViaLogic</text>
+        <text x="720" y="414" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="rgba(90,106,128,0.65)">CARTOGRAPHY</text>
       </g>
-
-      <!-- ══ SKILLHEX ══ -->
-      <g class="territory" data-name="SkillHex" data-cat="SKILL GAME" data-color="#00e5ff" data-href="https://github.com/via-decide/skillhex-mission-control" data-desc="Mission Control v3. A hexagonal skill-development game with Firebase leaderboards, mission XP, and Play Store PWA.">
+      <!-- SkillHex -->
+      <g class="territory" data-name="SkillHex" data-cat="SKILL GAME" data-color="#00e5ff" data-href="https://github.com/via-decide/skillhex-mission-control" data-desc="Mission Control v3. Hexagonal skill-development game with Firebase leaderboards, mission XP, and Play Store PWA.">
         <circle cx="398" cy="188" r="37" fill="url(#grad-c)" class="t-ring" style="animation-duration:2.9s"/>
         <polygon points="398,165 420,177 420,201 398,213 376,201 376,177" fill="rgba(0,229,255,0.1)" class="t-body"/>
         <polygon points="398,165 420,177 420,201 398,213 376,201 376,177" fill="none" stroke="rgba(0,229,255,0.45)" stroke-width="1.5"/>
@@ -310,9 +379,8 @@ footer{border-top:1px solid var(--border);padding:40px;display:flex;align-items:
         <text x="398" y="224" text-anchor="middle" font-family="Syne,sans-serif" font-size="10.5" font-weight="700" fill="#00e5ff" opacity="0.9">SkillHex</text>
         <text x="398" y="237" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="rgba(90,106,128,0.65)">MISSION CTRL</text>
       </g>
-
-      <!-- ══ PROMPTALCHEMY ══ -->
-      <g class="territory" data-name="PromptAlchemy" data-cat="CREATOR FORGE" data-color="#a855f7" data-href="https://github.com/via-decide/PromptAlchemy" data-desc="Cross-model prompt reliability engine. Generate first-render stable prompt packs for Canva, ChatGPT, Gemini, Claude.">
+      <!-- PromptAlchemy -->
+      <g class="territory" data-name="PromptAlchemy" data-cat="CREATOR FORGE" data-color="#a855f7" data-href="https://github.com/via-decide/PromptAlchemy" data-desc="Cross-model prompt reliability engine. Generate first-render stable packs for Canva, ChatGPT, Gemini, Claude.">
         <circle cx="290" cy="268" r="36" fill="url(#grad-v)" class="t-ring" style="animation-duration:3.5s"/>
         <ellipse cx="290" cy="268" rx="22" ry="21" fill="rgba(168,85,247,0.1)" class="t-body"/>
         <ellipse cx="290" cy="268" rx="22" ry="21" fill="none" stroke="rgba(168,85,247,0.45)" stroke-width="1.5"/>
@@ -320,9 +388,8 @@ footer{border-top:1px solid var(--border);padding:40px;display:flex;align-items:
         <text x="290" y="302" text-anchor="middle" font-family="Syne,sans-serif" font-size="9.5" font-weight="700" fill="#a855f7" opacity="0.9">PromptAlchemy</text>
         <text x="290" y="315" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="rgba(90,106,128,0.65)">THE FORGE</text>
       </g>
-
-      <!-- ══ ORCHADE ══ -->
-      <g class="territory" data-name="Orchade" data-cat="SIMULATION" data-color="#00ff88" data-href="https://github.com/via-decide/Orchade" data-desc="Orchard Engine — a merit-based farming-career game. Layer-by-layer simulation of trust, growth, and progression.">
+      <!-- Orchade -->
+      <g class="territory" data-name="Orchade" data-cat="SIMULATION" data-color="#00ff88" data-href="https://github.com/via-decide/Orchade" data-desc="Orchard Engine — a merit-based farming-career game. Gemini AI, Firebase, layer-by-layer trust and growth simulation.">
         <circle cx="640" cy="435" r="35" fill="url(#grad-g)" class="t-ring" style="animation-duration:4s"/>
         <ellipse cx="640" cy="435" rx="21" ry="20" fill="rgba(0,255,136,0.1)" class="t-body"/>
         <ellipse cx="640" cy="435" rx="21" ry="20" fill="none" stroke="rgba(0,255,136,0.4)" stroke-width="1.5"/>
@@ -330,9 +397,8 @@ footer{border-top:1px solid var(--border);padding:40px;display:flex;align-items:
         <text x="640" y="469" text-anchor="middle" font-family="Syne,sans-serif" font-size="10.5" font-weight="700" fill="#00ff88" opacity="0.9">Orchade</text>
         <text x="640" y="482" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="rgba(90,106,128,0.65)">THE ORCHARD</text>
       </g>
-
-      <!-- ══ MARS ══ -->
-      <g class="territory" data-name="Mars" data-cat="AI STUDIO" data-color="#f59e0b" data-href="https://github.com/via-decide/Mars" data-desc="Gemini-powered AI Studio application. Deep research, structured analysis, and intelligent exploration at scale.">
+      <!-- Mars -->
+      <g class="territory" data-name="Mars" data-cat="AI STUDIO" data-color="#f59e0b" data-href="https://github.com/via-decide/Mars" data-desc="Gemini-powered AI Studio. Deep research, structured terrain analysis, risk scoring. Built on TypeScript + Vite.">
         <circle cx="775" cy="148" r="33" fill="url(#grad-a)" class="t-ring" style="animation-duration:3.7s"/>
         <ellipse cx="775" cy="148" rx="20" ry="19" fill="rgba(245,158,11,0.1)" class="t-body"/>
         <ellipse cx="775" cy="148" rx="20" ry="19" fill="none" stroke="rgba(245,158,11,0.45)" stroke-width="1.5"/>
@@ -340,9 +406,8 @@ footer{border-top:1px solid var(--border);padding:40px;display:flex;align-items:
         <text x="775" y="181" text-anchor="middle" font-family="Syne,sans-serif" font-size="10.5" font-weight="700" fill="#f59e0b" opacity="0.9">Mars</text>
         <text x="775" y="194" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="rgba(90,106,128,0.65)">AI STUDIO</text>
       </g>
-
-      <!-- ══ CREATOR TOOL ══ -->
-      <g class="territory" data-name="Creator Tool" data-cat="CONTENT OPS" data-color="#f5e642" data-href="https://github.com/via-decide/creator-tool" data-desc="Topic → Problem + Solution generator. Programmatic YouTube script, thumbnail, and metadata pipeline for the Decide Engine.">
+      <!-- Creator Tool -->
+      <g class="territory" data-name="Creator Tool" data-cat="CONTENT OPS" data-color="#f5e642" data-href="https://github.com/via-decide/creator-tool" data-desc="Topic → Problem + Solution generator. YouTube script, thumbnail, and metadata pipeline for the Decide Engine.">
         <circle cx="352" cy="424" r="32" fill="url(#grad-n)" class="t-ring" style="animation-duration:3.1s"/>
         <ellipse cx="352" cy="424" rx="19" ry="18" fill="rgba(245,230,66,0.09)" class="t-body"/>
         <ellipse cx="352" cy="424" rx="19" ry="18" fill="none" stroke="rgba(245,230,66,0.4)" stroke-width="1.5"/>
@@ -350,14 +415,12 @@ footer{border-top:1px solid var(--border);padding:40px;display:flex;align-items:
         <text x="352" y="456" text-anchor="middle" font-family="Syne,sans-serif" font-size="9.5" font-weight="700" fill="#f5e642" opacity="0.9">Creator Tool</text>
         <text x="352" y="469" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="rgba(90,106,128,0.65)">CONTENT OPS</text>
       </g>
-
-      <!-- Map border & labels -->
+      <!-- Border + labels -->
       <rect width="1100" height="560" fill="none" stroke="rgba(21,34,64,0.55)" stroke-width="1" rx="16"/>
       <text x="28" y="26" font-family="JetBrains Mono,monospace" font-size="8" fill="rgba(90,106,128,0.35)">00°N · 00°E</text>
       <text x="1072" y="26" font-family="JetBrains Mono,monospace" font-size="8" fill="rgba(90,106,128,0.35)" text-anchor="end">VD-VERSE v3</text>
       <text x="28" y="548" font-family="JetBrains Mono,monospace" font-size="8" fill="rgba(90,106,128,0.35)">KUTCH · GUJARAT · 🇮🇳</text>
-      <text x="1072" y="548" font-family="JetBrains Mono,monospace" font-size="8" fill="rgba(90,106,128,0.35)" text-anchor="end">2025 · SOVEREIGN</text>
-      <!-- Compass -->
+      <text x="1072" y="548" font-family="JetBrains Mono,monospace" font-size="8" fill="rgba(90,106,128,0.35)" text-anchor="end">2026 · SOVEREIGN</text>
       <g transform="translate(66,470)" opacity="0.22">
         <line x1="0" y1="-14" x2="0" y2="14" stroke="#5a6a80" stroke-width="0.8"/>
         <line x1="-14" y1="0" x2="14" y2="0" stroke="#5a6a80" stroke-width="0.8"/>
@@ -365,10 +428,11 @@ footer{border-top:1px solid var(--border);padding:40px;display:flex;align-items:
         <text x="0" y="-18" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#ff671f">N</text>
       </g>
     </svg>
+    <a href="./world.html" class="map-world-cta"><span>🗺 Open Interactive World Map</span></a>
   </div>
 </section>
 
-<!-- TOOLTIP -->
+<!-- TOOLTIP (desktop) -->
 <div id="map-tooltip">
   <div class="tt-tag" id="tt-cat"></div>
   <div class="tt-name" id="tt-name"></div>
@@ -380,85 +444,69 @@ footer{border-top:1px solid var(--border);padding:40px;display:flex;align-items:
 <section id="products">
   <div class="section-eyebrow">// Products</div>
   <h2 class="section-title reveal">Seven tools.<br><em>One ecosystem.</em></h2>
-
   <div class="product-grid stagger">
-    <!-- DECIDE.ENGINE — hero -->
-    <a href="https://www.viadecide.com/viadecide.html" class="product-card card-hero c-s">
+    <a href="./viadecide.html" class="product-card card-hero c-s">
       <div class="card-num">01 / 07</div>
       <div class="card-icon">⊞</div>
       <div class="card-name">decide.engine</div>
       <div class="card-tagline">The Capital · Platform Hub</div>
-      <p class="card-desc">44 browser-native decision and productivity tools. Zero npm dependencies. No build step. Everything runs directly from a single HTML file — from code generators to Orchard Engine simulations.</p>
-      <div class="card-chips">
-        <span class="chip">Vanilla JS</span><span class="chip">44 Tools</span><span class="chip">9 Categories</span><span class="chip">Cloudflare Pages</span><span class="chip">Firebase Auth</span>
-      </div>
+      <p class="card-desc">44 browser-native decision and productivity tools. Zero npm dependencies, no build step. From code generators to Orchard Engine simulations — everything in a single HTML file.</p>
+      <div class="card-chips"><span class="chip">Vanilla JS</span><span class="chip">44 Tools</span><span class="chip">9 Categories</span><span class="chip">Firebase Auth</span><span class="chip">PWA</span></div>
       <div class="card-arrow">→</div>
-      <svg class="card-deco" viewBox="0 0 180 180"><defs><pattern id="hex-p" width="36" height="41.6" patternUnits="userSpaceOnUse"><polygon points="18,0 36,10 36,31 18,41.6 0,31 0,10" fill="none" stroke="rgba(255,103,31,1)" stroke-width="1"/></pattern></defs><rect width="180" height="180" fill="url(#hex-p)"/></svg>
+      <svg class="card-deco" viewBox="0 0 180 180"><defs><pattern id="hx" width="36" height="41.6" patternUnits="userSpaceOnUse"><polygon points="18,0 36,10 36,31 18,41.6 0,31 0,10" fill="none" stroke="rgba(255,103,31,1)" stroke-width="1"/></pattern></defs><rect width="180" height="180" fill="url(#hx)"/></svg>
     </a>
-
-    <!-- VIALOGIC -->
-    <a href="https://github.com/via-decide/ViaLogic" class="product-card card-side c-t">
+    <a href="https://github.com/via-decide/ViaLogic" target="_blank" rel="noopener" class="product-card card-side c-t">
       <div class="card-num">02 / 07</div>
       <div class="card-icon">🗺</div>
       <div class="card-name">ViaLogic</div>
       <div class="card-tagline">Cartography of Minds</div>
-      <p class="card-desc">4000 years of mathematical history as an interactive SVG world map. Node-based journey from Thales to Turing.</p>
+      <p class="card-desc">4000 years of math history as a pan/zoom SVG world. Thales to Al-Khwarizmi — each node a philosopher, each edge a proof.</p>
       <div class="card-chips"><span class="chip">SVG Map</span><span class="chip">Math History</span><span class="chip">Interactive</span></div>
       <div class="card-arrow">→</div>
     </a>
-
-    <!-- SKILLHEX -->
-    <a href="https://github.com/via-decide/skillhex-mission-control" class="product-card card-third c-c">
+    <a href="https://github.com/via-decide/skillhex-mission-control" target="_blank" rel="noopener" class="product-card card-third c-c">
       <div class="card-num">03 / 07</div>
       <div class="card-icon">⬡</div>
       <div class="card-name">SkillHex</div>
       <div class="card-tagline">Mission Control v3</div>
-      <p class="card-desc">A hexagonal skill-development game with Firebase leaderboards, Firestore progress tracking, and mission-based XP system.</p>
-      <div class="card-chips"><span class="chip">PWA</span><span class="chip">Play Store</span><span class="chip">Gamified</span></div>
+      <p class="card-desc">Hexagonal skill-development game. Firebase leaderboards, Firestore progress, mission-based XP. Play Store PWA ready.</p>
+      <div class="card-chips"><span class="chip">PWA</span><span class="chip">Play Store</span><span class="chip">Firebase</span></div>
       <div class="card-arrow">→</div>
     </a>
-
-    <!-- PROMPTALCHEMY -->
-    <a href="https://github.com/via-decide/PromptAlchemy" class="product-card card-third c-v">
+    <a href="https://github.com/via-decide/PromptAlchemy" target="_blank" rel="noopener" class="product-card card-third c-v">
       <div class="card-num">04 / 07</div>
-      <div class="card-icon">⚗</div>
+      <div class="card-icon">⚗️</div>
       <div class="card-name">PromptAlchemy</div>
       <div class="card-tagline">The Forge · Creator Tools</div>
-      <p class="card-desc">Cross-model prompt reliability engine. Generate first-render stable prompt packs for Canva, ChatGPT, Gemini, Claude.</p>
-      <div class="card-chips"><span class="chip">Multi-Model</span><span class="chip">Social Growth</span></div>
+      <p class="card-desc">Cross-model prompt reliability engine. First-render stable packs for Canva, ChatGPT, Gemini, Claude — structured, not improvised.</p>
+      <div class="card-chips"><span class="chip">Multi-Model</span><span class="chip">Social Growth</span><span class="chip">No-Code</span></div>
       <div class="card-arrow">→</div>
     </a>
-
-    <!-- ORCHADE -->
-    <a href="https://github.com/via-decide/Orchade" class="product-card card-third c-g">
+    <a href="https://github.com/via-decide/Orchade" target="_blank" rel="noopener" class="product-card card-third c-g">
       <div class="card-num">05 / 07</div>
       <div class="card-icon">🌱</div>
       <div class="card-name">Orchade</div>
       <div class="card-tagline">Orchard Engine · Simulation</div>
-      <p class="card-desc">Merit-based farming-career game. Farm initialization, daily progression loops, trust mechanics, and recruiter scoring — all simulated in the browser.</p>
-      <div class="card-chips"><span class="chip">Gemini AI</span><span class="chip">Game Sim</span><span class="chip">Vite</span></div>
+      <p class="card-desc">Merit-based farming-career game. Farm init, daily loops, trust mechanics, and recruiter scoring — simulated in the browser with Gemini AI.</p>
+      <div class="card-chips"><span class="chip">Gemini AI</span><span class="chip">React</span><span class="chip">Vite</span><span class="chip">Firebase</span></div>
       <div class="card-arrow">→</div>
     </a>
-
-    <!-- MARS -->
-    <a href="https://github.com/via-decide/Mars" class="product-card card-half c-a">
+    <a href="https://github.com/via-decide/Mars" target="_blank" rel="noopener" class="product-card card-half c-a">
       <div class="card-num">06 / 07</div>
       <div class="card-icon">🔴</div>
       <div class="card-name">Mars</div>
       <div class="card-tagline">AI Studio · Research Engine</div>
-      <p class="card-desc">Gemini-powered AI Studio application. Deep research, structured analysis, and intelligent exploration. Built for operators who need answers, not text walls.</p>
-      <div class="card-chips"><span class="chip">Gemini API</span><span class="chip">Research</span><span class="chip">TypeScript</span></div>
+      <p class="card-desc">Gemini-powered AI Studio. Terrain analysis, sol management, risk scoring across Basaltic Flats, Regolith Fields, Sulfate Layers. Built for operators who need structured answers, not text walls.</p>
+      <div class="card-chips"><span class="chip">Gemini API</span><span class="chip">TypeScript</span><span class="chip">Vite</span><span class="chip">Research</span></div>
       <div class="card-arrow">→</div>
     </a>
-
-    <!-- CREATOR TOOL -->
-    <a href="https://github.com/via-decide/creator-tool" class="product-card card-half c-n">
+    <a href="https://github.com/via-decide/creator-tool" target="_blank" rel="noopener" class="product-card card-half c-n">
       <div class="card-num">07 / 07</div>
       <div class="card-icon">🎬</div>
       <div class="card-name">Creator Tool</div>
       <div class="card-tagline">Content Ops · Course Builder</div>
-      <p class="card-desc">Topic → Problem + Solution generator for the Decide Engine content system. Programmatic YouTube script, thumbnail, and metadata generation pipeline.</p>
-      <div class="card-chips"><span class="chip">Content Gen</span><span class="chip">YouTube</span><span class="chip">Remotion</span></div>
+      <p class="card-desc">Topic → Problem + Solution generator. Programmatic YouTube script, thumbnail, and metadata pipeline. Alchemist branching for the Decide Engine content system.</p>
+      <div class="card-chips"><span class="chip">Content Gen</span><span class="chip">YouTube</span><span class="chip">PWA</span><span class="chip">Offline</span></div>
       <div class="card-arrow">→</div>
     </a>
   </div>
@@ -473,22 +521,10 @@ footer{border-top:1px solid var(--border);padding:40px;display:flex;align-items:
       <div class="manifesto-sig">— <span>Dharm Daxini</span>, Founder<br>Kutch, Gujarat · 🇮🇳</div>
     </div>
     <div class="manifesto-right stagger">
-      <div class="stat-row">
-        <div class="stat-num" style="color:var(--saffron)">44</div>
-        <div class="stat-label">Browser-native tools, zero dependencies</div>
-      </div>
-      <div class="stat-row">
-        <div class="stat-num" style="color:var(--teal)">7</div>
-        <div class="stat-label">Active products across the VD-Verse</div>
-      </div>
-      <div class="stat-row">
-        <div class="stat-num" style="color:var(--cyan)">∞</div>
-        <div class="stat-label">Decisions structured through math and logic</div>
-      </div>
-      <div class="stat-row">
-        <div class="stat-num" style="color:var(--neon)">1</div>
-        <div class="stat-label">Sovereign ecosystem, built in Bharat</div>
-      </div>
+      <div class="stat-row"><div class="stat-num" style="color:var(--saffron)">44</div><div class="stat-label">Browser-native tools, zero dependencies</div></div>
+      <div class="stat-row"><div class="stat-num" style="color:var(--teal)">7</div><div class="stat-label">Active products across the VD-Verse</div></div>
+      <div class="stat-row"><div class="stat-num" style="color:var(--cyan)">∞</div><div class="stat-label">Decisions structured through math and logic</div></div>
+      <div class="stat-row"><div class="stat-num" style="color:var(--neon)">1</div><div class="stat-label">Sovereign ecosystem, built in Bharat</div></div>
     </div>
   </div>
 </section>
@@ -498,12 +534,12 @@ footer{border-top:1px solid var(--border);padding:40px;display:flex;align-items:
   <div class="section-eyebrow" style="text-align:center">// Tech Stack</div>
   <h2 class="ecosystem-title reveal">Built on <em style="color:var(--teal);font-style:normal">first-principles</em></h2>
   <div class="tech-stack stagger">
-    <div class="tech-cell"><div class="tech-icon">🌐</div><div class="tech-name">Vanilla JS</div><div class="tech-detail">Zero npm · Single-file HTML</div></div>
-    <div class="tech-cell"><div class="tech-icon">☁️</div><div class="tech-name">Cloudflare Pages</div><div class="tech-detail">Edge deployment · Global CDN</div></div>
-    <div class="tech-cell"><div class="tech-icon">🔥</div><div class="tech-name">Firebase</div><div class="tech-detail">Auth + Firestore · Real-time</div></div>
-    <div class="tech-cell"><div class="tech-icon">🗺</div><div class="tech-name">VDRouter v3</div><div class="tech-detail">Custom SPA routing · No deps</div></div>
+    <div class="tech-cell"><div class="tech-icon">🌐</div><div class="tech-name">Vanilla JS</div><div class="tech-detail">Zero npm · Single HTML</div></div>
+    <div class="tech-cell"><div class="tech-icon">☁️</div><div class="tech-name">Vercel / CF Pages</div><div class="tech-detail">Edge · Global CDN</div></div>
+    <div class="tech-cell"><div class="tech-icon">🔥</div><div class="tech-name">Firebase</div><div class="tech-detail">Auth + Firestore</div></div>
+    <div class="tech-cell"><div class="tech-icon">🗺</div><div class="tech-name">VDRouter v3</div><div class="tech-detail">Custom SPA · No deps</div></div>
     <div class="tech-cell"><div class="tech-icon">🤖</div><div class="tech-name">Gemini + Claude</div><div class="tech-detail">Multi-model AI layer</div></div>
-    <div class="tech-cell"><div class="tech-icon">📱</div><div class="tech-name">Capacitor 6</div><div class="tech-detail">Android · Play Store ready</div></div>
+    <div class="tech-cell"><div class="tech-icon">📱</div><div class="tech-name">Capacitor 6</div><div class="tech-detail">Android · Play Store</div></div>
   </div>
 </section>
 
@@ -512,54 +548,62 @@ footer{border-top:1px solid var(--border);padding:40px;display:flex;align-items:
   <div class="cta-eyebrow">// Enter the Ecosystem</div>
   <h2 class="cta-title">Start<br><span class="ghost">deciding</span><br><span style="color:var(--saffron)">better.</span></h2>
   <p class="cta-sub">Structure your thinking. Ship faster. Build systems that outlast the prompt.</p>
-  <div style="margin-bottom:32px"><a href="https://www.viadecide.com/viadecide.html" class="btn-primary">Launch decide.engine →</a></div>
+  <div style="margin-bottom:28px"><a href="./viadecide.html" class="btn-primary">Launch decide.engine →</a></div>
   <div class="cta-links">
-    <a href="https://github.com/via-decide" class="link-icon" target="_blank">⌂ GitHub org</a>
-    <a href="https://youtube.com/@decide.engine" class="link-icon" target="_blank">▶ YouTube</a>
-    <a href="https://open.spotify.com/show/2okZ1WXMWXLrSwFzClUPPp" class="link-icon" target="_blank">🎙 Podcast</a>
-    <a href="https://www.instagram.com/dharamdaxini" class="link-icon" target="_blank">◈ Instagram</a>
+    <a href="https://github.com/via-decide" class="link-icon" target="_blank" rel="noopener">⌂ GitHub org</a>
+    <a href="https://youtube.com/@decide.engine" class="link-icon" target="_blank" rel="noopener">▶ YouTube</a>
+    <a href="https://open.spotify.com/show/2okZ1WXMWXLrSwFzClUPPp" class="link-icon" target="_blank" rel="noopener">🎙 Podcast</a>
+    <a href="https://www.instagram.com/dharamdaxini" class="link-icon" target="_blank" rel="noopener">◈ Instagram</a>
+    <a href="./world.html" class="link-icon">🗺 World Map</a>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-brand"><strong>ViaDecide</strong> · Structured AI · Decision Engineering</div>
-  <div class="footer-india">Built in Kutch, Gujarat · Bharat 🇮🇳 · 2025</div>
+  <div class="footer-india">Built in Kutch, Gujarat · Bharat 🇮🇳 · 2026</div>
 </footer>
 
 <script>
-// MAP TOOLTIP
+// ── MAP TOOLTIP (pointer only) ──
 const tooltip = document.getElementById('map-tooltip');
+const isTouch = window.matchMedia('(hover:none)').matches;
+
 document.querySelectorAll('.territory').forEach(t => {
-  t.addEventListener('mouseenter', () => {
-    document.getElementById('tt-name').textContent = t.dataset.name;
-    document.getElementById('tt-cat').textContent  = '// ' + t.dataset.cat;
-    document.getElementById('tt-cat').style.color  = t.dataset.color;
-    document.getElementById('tt-desc').textContent = t.dataset.desc;
-    const b = document.getElementById('tt-badge');
-    b.style.cssText = `background:${t.dataset.color}20;color:${t.dataset.color};border:1px solid ${t.dataset.color}40`;
-    tooltip.classList.add('vis');
+  if (!isTouch) {
+    t.addEventListener('mouseenter', () => {
+      document.getElementById('tt-name').textContent = t.dataset.name;
+      document.getElementById('tt-cat').textContent  = '// ' + t.dataset.cat;
+      document.getElementById('tt-cat').style.color  = t.dataset.color;
+      document.getElementById('tt-desc').textContent = t.dataset.desc;
+      const b = document.getElementById('tt-badge');
+      b.style.cssText = `background:${t.dataset.color}20;color:${t.dataset.color};border:1px solid ${t.dataset.color}40`;
+      tooltip.classList.add('vis');
+    });
+    t.addEventListener('mousemove', e => {
+      let x = e.clientX + 16, y = e.clientY - 20;
+      if (x + 290 > window.innerWidth) x = e.clientX - 300;
+      if (y + 160 > window.innerHeight) y = e.clientY - 160;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top  = y + 'px';
+    });
+    t.addEventListener('mouseleave', () => tooltip.classList.remove('vis'));
+  }
+  t.addEventListener('click', () => {
+    if (t.dataset.href) window.open(t.dataset.href, t.dataset.href.startsWith('http') ? '_blank' : '_self');
   });
-  t.addEventListener('mousemove', e => {
-    let x = e.clientX + 16, y = e.clientY - 20;
-    if (x + 290 > window.innerWidth) x = e.clientX - 300;
-    tooltip.style.cssText += `left:${x}px;top:${y}px`;
-  });
-  t.addEventListener('mouseleave', () => tooltip.classList.remove('vis'));
-  t.addEventListener('click', () => t.dataset.href && window.open(t.dataset.href, '_blank'));
 });
 
-// SCROLL REVEALS
+// ── SCROLL REVEALS ──
 const io = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
-}, { threshold: 0.1 });
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); io.unobserve(e.target); } });
+}, { threshold: 0.08 });
 document.querySelectorAll('.reveal, .stagger').forEach(el => io.observe(el));
 
-// SMOOTH SCROLL
+// ── SMOOTH SCROLL ──
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
     const el = document.getElementById(a.getAttribute('href').slice(1));
-    if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
+    if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   });
 });
 </script>
