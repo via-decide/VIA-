@@ -1,6 +1,7 @@
 {
   "repo": "via-decide/VIA",
   "mode": "codex_then_antigravity",
+  "branch": "simba/fix-the-world-map-routing-bug-implement-a-robust",
   "branch": "simba/fix-subpage-card-routing-on-indexhtml-convert-ab",
   "branch": "simba/implement-global-click-interception-for-subpage-",
   "branch": "simba/build-a-urlresolver-utility-to-permanently-safeg",

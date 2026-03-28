@@ -1,3 +1,9 @@
+Branch: simba/fix-the-world-map-routing-bug-implement-a-robust
+Title: Fix the World Map routing bug: Implement a robust 404 / Deep Linking ...
+
+## Summary
+- Repo orchestration task for via-decide/VIA
+- Goal: Fix the environment-level routing so that direct links and page refreshes maintain the user's location on the map.
 Branch: simba/fix-subpage-card-routing-on-indexhtml-convert-ab
 Title: Fix Subpage Card routing on index.html: Convert absolute paths to rel...
 

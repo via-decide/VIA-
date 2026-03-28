@@ -1,6 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
+Fix the World Map routing bug: Implement a robust 404 / Deep Linking handler for GitHub Pages. 1. Because this is hosted on GitHub Pages, if a user refreshes the page while on a map subpage (e.g., via-decide.github.io/VIA/map/greece), GitHub will look for a physical folder named /map/greece/ and throw a 404, redirecting to the main platform. 2. Implement the standard SPA hash-routing fix OR the 404.html redirect hack for GitHub Pages. 3. Option A (Hash Routing): Refactor the router to use window.location.hash (e.g., #/map/greece). Update the hashchange event listener to trigger view updates. 4. Option B (404 Hack): Create a 404.html file in the root that captures the intended URL, saves it to sessionStorage, and redirects to index.html. Then, in index.html's init script, check sessionStorage for a saved redirect and force the router to load that subpage immediately.
+
+CONSTRAINTS
+Ensure deep linking works. A user should be able to copy the URL of a specific world map subpage, send it to a friend, and have it open directly to that subpage without forcing them through the main platform dashboard first.
 Fix Subpage Card routing on index.html: Convert absolute paths to relative/hash paths. 1. Open index.html and locate all the "Subpage Card" elements. 2. Inspect their href attributes or data-route attributes. 3. If they start with a forward slash (e.g., href="/pages/tool.html" or href="/subpage"), remove the leading slash or replace it with a dot (e.g., href="./pages/tool.html" or href="?page=subpage" or href="#/subpage" depending on the routing architecture). 4. If the cards use JavaScript onclick events featuring window.location.href = '/something', update those strings to be relative to the current path. 5. Apply this same fix to any navigation menus or headers present in index.html.
 
 CONSTRAINTS
