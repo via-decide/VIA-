@@ -1,14 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
-Fix the submodule data-sync blockade (CORS & Session passing). 1. In the main index.html, add a secure postMessage protocol to transmit the active Google ID JWT token down into the Mars and Orchade iframes the moment they load. 2. Update the backend API endpoints (/api/sync, /api/telemetry) to include strict CORS headers allowing requests ONLY from viadecide.com.
+Build a URLResolver utility to permanently safeguard against GitHub Pages pathing errors. 1. Create a new utility file shared/url-resolver.js. 2. Implement a function resolvePath(targetPath) that detects the current environment. 3. Logic: Check window.location.hostname. If it includes github.io, detect the repository name from window.location.pathname (which will be /VIA/). 4. If the environment is GitHub Pages, the function must automatically prepend /VIA/ (or the detected repo name) to any path passed into it (e.g., resolvePath('subpage.html') returns /VIA/subpage.html). 5. If the environment is localhost, it just returns /subpage.html. 6. Refactor the index.html card rendering logic or the central router to wrap all destination URLs in this resolvePath() function before attempting navigation.
 
 CONSTRAINTS
-Must use defense-grade token handling. Never expose the raw Google OAuth keys in the frontend URL parameters.
-Fix the '404 on Refresh' bug by implementing a Sovereign Reverse Proxy routing rule. 1. Create or update the nginx.conf (or vercel.json/netlify.toml depending on host). 2. Implement the Catch-All SPA fallback: All requests to /mars/* or /orchade/* must resolve back to the main index.html WITHOUT changing the URL in the browser. 3. Map the proxy routes explicitly so the main server knows exactly where the cloned submodule assets live.
-
-CONSTRAINTS
-Do not disrupt the /api/auth Google Login routes.
+Pure Vanilla JS. The detection must be dynamic so that if the repository is ever renamed from "VIA" to something else, the routing doesn't break again.
 
 PROCESS (MANDATORY)
 1. Read README.md and AGENTS.md before editing.
