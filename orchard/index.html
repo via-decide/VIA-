@@ -205,6 +205,29 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
 .stagger-enter{animation:staggerFade .5s cubic-bezier(.16,1,.3,1) both;opacity:0;transform:translateY(15px);}
 @keyframes staggerFade{to{opacity:1;transform:translateY(0)}}
 
+/* ── EXPLORE ONBOARDING ── */
+.explore-ob{position:absolute;inset:0;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:5rem 1.2rem 6rem;background:var(--deep);z-index:10;}
+.explore-ob-card{width:100%;max-width:480px;background:var(--deep2);border:1px solid rgba(255,107,0,.2);border-radius:24px;padding:1.8rem;display:flex;flex-direction:column;gap:1.2rem;}
+.explore-ob-step{font-size:.6rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--saffron);}
+.explore-ob-track{height:4px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:.4rem;}
+.explore-ob-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--saffron),var(--gold));transition:width 220ms cubic-bezier(.16,1,.3,1);}
+.explore-ob-emoji{font-size:2.8rem;line-height:1;}
+.explore-ob-title{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:-.02em;line-height:1.15;color:var(--white);}
+.explore-ob-sub{font-size:.88rem;color:rgba(255,255,255,.6);line-height:1.6;margin-top:.4rem;}
+.explore-ob-choices{display:flex;gap:.6rem;flex-wrap:wrap;}
+.explore-ob-choice{padding:.65rem 1.1rem;border-radius:99px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.75);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .18s ease;-webkit-tap-highlight-color:transparent;}
+.explore-ob-choice.selected{border-color:var(--saffron);background:rgba(255,107,0,.12);color:var(--saffron);}
+.explore-ob-mini-list{display:flex;flex-direction:column;gap:.6rem;}
+.explore-ob-mini{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:.9rem 1rem;}
+.explore-ob-mini-title{font-size:.88rem;font-weight:700;color:var(--white);margin-bottom:.2rem;}
+.explore-ob-mini-desc{font-size:.75rem;color:rgba(255,255,255,.5);line-height:1.5;}
+.explore-ob-footer{display:flex;justify-content:space-between;align-items:center;gap:.8rem;margin-top:.4rem;}
+.explore-ob-ghost{background:transparent;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.55);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;padding:.65rem 1rem;border-radius:12px;cursor:pointer;transition:all .18s ease;-webkit-tap-highlight-color:transparent;}
+.explore-ob-ghost:disabled{opacity:.3;pointer-events:none;}
+.explore-ob-primary{background:linear-gradient(135deg,var(--saffron),var(--saffron2));color:#fff;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:700;padding:.7rem 1.4rem;border-radius:12px;border:none;cursor:pointer;min-width:110px;transition:transform .18s ease;-webkit-tap-highlight-color:transparent;}
+.explore-ob-primary:active{transform:scale(.97);}
+.explore-ob-action-row{display:flex;gap:.6rem;}
+
 /* ── PROFILE ── */
 .profile-wrap{position:absolute;inset:0;padding:4rem 1.2rem 5rem;overflow-y:auto;display:flex;flex-direction:column;align-items:center;}
 .profile-avatar-lg{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--saffron),var(--violet));display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin-bottom:1rem;border:3px solid rgba(255,107,0,.4);box-shadow:0 0 30px rgba(255,107,0,.3);}
@@ -531,6 +554,7 @@ html,body{height:100%;width:100%;background:var(--deep);color:var(--white);font-
   <!-- DISCOVER LAYER -->
   <div id="layer-discover" style="display:none;position:absolute;inset:0">
     <div class="discover-grid" id="discover-grid"></div>
+    <div id="explore-onboarding" class="explore-ob" style="display:none"></div>
   </div>
 
   <!-- ═══════════════════════════════════════════════════
@@ -1977,9 +2001,101 @@ function updateXP(v){
 }
 
 // ════════════════════════════════════════════════════════════════
+// EXPLORE ONBOARDING
+// ════════════════════════════════════════════════════════════════
+const EXPLORE_OB_KEY = 'viaExploreOnboardingV1';
+let _obStep = 0;
+let _obPath = 'Explorer';
+
+const EXPLORE_OB_SCREENS = [
+  { id:'what-is-via',          emoji:'🌐', title:'What is VIA?',             sub:'A decision-first platform for discovering tools, creators, and games in one place.' },
+  { id:'choose-path',          emoji:'🛤️', title:'Choose your path',         sub:'Pick your default mode. You can change this later anytime.', choices:['Explorer','Creator','Gamer'] },
+  { id:'what-you-can-explore', emoji:'🔍', title:'What you can explore',     sub:'Tool stacks, creator insight posts, and interactive game surfaces.',
+    cards:[{title:'Trending Tools',desc:'Discover high-signal tools by role and use case.'},{title:'Creator Posts',desc:'Learn from practical frameworks and tactical playbooks.'},{title:'Game Teasers',desc:'Try strategic simulations and improve decision speed.'}]
+  },
+  { id:'how-vialogic-works',   emoji:'🧠', title:'How ViaLogic works',       sub:'Map concepts visually to see relationships, tradeoffs, and next-best moves. Build maps, branch options, and save outcomes.' },
+  { id:'first-feed',           emoji:'🚀', title:'Your feed is ready',       sub:'Jump in now, save anything useful, and unlock your first badge by exploring 5 tools.' },
+];
+
+function _obRender() {
+  const el = document.getElementById('explore-onboarding');
+  if (!el) return;
+  const screen = EXPLORE_OB_SCREENS[_obStep];
+  const pct = Math.round(((_obStep + 1) / EXPLORE_OB_SCREENS.length) * 100);
+  const isLast = _obStep === EXPLORE_OB_SCREENS.length - 1;
+  const choicesHTML = screen.choices
+    ? `<div class="explore-ob-choices">${screen.choices.map(c =>
+        `<button class="explore-ob-choice${_obPath===c?' selected':''}" onclick="_obSelectPath('${escapeHTML(c)}')" type="button">${escapeHTML(c)}</button>`
+      ).join('')}</div>` : '';
+  const cardsHTML = screen.cards
+    ? `<div class="explore-ob-mini-list">${screen.cards.map(c =>
+        `<div class="explore-ob-mini"><div class="explore-ob-mini-title">${escapeHTML(c.title)}</div><div class="explore-ob-mini-desc">${escapeHTML(c.desc)}</div></div>`
+      ).join('')}</div>` : '';
+  el.innerHTML = `
+    <div class="explore-ob-card stagger-enter">
+      <div>
+        <div class="explore-ob-step">Step ${_obStep + 1} / ${EXPLORE_OB_SCREENS.length}</div>
+        <div class="explore-ob-track"><div class="explore-ob-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="explore-ob-emoji">${screen.emoji}</div>
+      <div>
+        <div class="explore-ob-title">${escapeHTML(screen.title)}</div>
+        <div class="explore-ob-sub">${escapeHTML(screen.sub)}</div>
+      </div>
+      ${choicesHTML}${cardsHTML}
+      <div class="explore-ob-footer">
+        <button class="explore-ob-ghost" onclick="_obSkip()" type="button">Skip</button>
+        <div class="explore-ob-action-row">
+          <button class="explore-ob-ghost" onclick="_obBack()" type="button" ${_obStep===0?'disabled':''}>Back</button>
+          <button class="explore-ob-primary" onclick="_obNext()" type="button">${isLast?'Enter Explore':'Continue'}</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function _obSelectPath(p) { _obPath = p; _obRender(); }
+
+function _obNext() {
+  if (_obStep >= EXPLORE_OB_SCREENS.length - 1) { _obComplete(false); return; }
+  _obStep++;
+  _obRender();
+  addXP(5);
+}
+
+function _obBack() { if (_obStep > 0) { _obStep--; _obRender(); } }
+
+function _obSkip() { _obComplete(true); }
+
+function _obComplete(skipped) {
+  localStorage.setItem(EXPLORE_OB_KEY, JSON.stringify({
+    completed: !skipped, skipped, path: _obPath, completedAt: new Date().toISOString(), version: 1,
+  }));
+  if (!skipped) addXP(50);
+  const ob = document.getElementById('explore-onboarding');
+  if (ob) ob.style.display = 'none';
+  const grid = document.getElementById('discover-grid');
+  if (grid) grid.style.display = '';
+  _buildDiscoverGrid();
+}
+
+function showExploreOnboarding() {
+  _obStep = 0;
+  _obPath = 'Explorer';
+  const grid = document.getElementById('discover-grid');
+  if (grid) grid.style.display = 'none';
+  const ob = document.getElementById('explore-onboarding');
+  if (ob) { ob.style.display = 'flex'; _obRender(); }
+}
+
+// ════════════════════════════════════════════════════════════════
 // BENTO GRIDS
 // ════════════════════════════════════════════════════════════════
 function buildDiscover() {
+  if (!localStorage.getItem(EXPLORE_OB_KEY)) { showExploreOnboarding(); return; }
+  _buildDiscoverGrid();
+}
+
+function _buildDiscoverGrid() {
   const grid=document.getElementById('discover-grid');grid.innerHTML='';
   
   // Section: Featured Dives
