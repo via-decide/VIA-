@@ -1,15 +1,9 @@
-Branch: simba/fix-the-submodule-data-sync-blockade-cors-sessio
-Title: Fix the submodule data-sync blockade (CORS & Session passing). 1. In ...
+Branch: simba/implement-global-click-interception-for-subpage-
+Title: Implement global click interception for Subpage Cards to prevent defa...
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Allow Orchade to read the user's Google ID securely without requiring a second login prompt inside the submodule.
-Branch: simba/fix-the-404-on-refresh-bug-by-implementing-a-sov
-Title: Fix the '404 on Refresh' bug by implementing a Sovereign Reverse Prox...
-
-## Summary
-- Repo orchestration task for via-decide/VIA
-- Goal: Ensure deep-linking works. A user must be able to share the URL viadecide.com/mars and have it load perfectly on a fresh browser instance.
+- Goal: Take control of the routing process away from the browser's default behavior, forcing all card clicks to stay within your application's logic.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
