@@ -4,8 +4,7 @@ TARGET
 Validate and repair only the files touched by the previous implementation.
 
 TASK
-Fix the submodule data-sync blockade (CORS & Session passing). 1. In the main index.html, add a secure postMessage protocol to transmit the active Google ID JWT token down into the Mars and Orchade iframes the moment they load. 2. Update the backend API endpoints (/api/sync, /api/telemetry) to include strict CORS headers allowing requests ONLY from viadecide.com.
-Fix the '404 on Refresh' bug by implementing a Sovereign Reverse Proxy routing rule. 1. Create or update the nginx.conf (or vercel.json/netlify.toml depending on host). 2. Implement the Catch-All SPA fallback: All requests to /mars/* or /orchade/* must resolve back to the main index.html WITHOUT changing the URL in the browser. 3. Map the proxy routes explicitly so the main server knows exactly where the cloned submodule assets live.
+Fix Subpage Card routing on index.html: Convert absolute paths to relative/hash paths. 1. Open index.html and locate all the "Subpage Card" elements. 2. Inspect their href attributes or data-route attributes. 3. If they start with a forward slash (e.g., href="/pages/tool.html" or href="/subpage"), remove the leading slash or replace it with a dot (e.g., href="./pages/tool.html" or href="?page=subpage" or href="#/subpage" depending on the routing architecture). 4. If the cards use JavaScript onclick events featuring window.location.href = '/something', update those strings to be relative to the current path. 5. Apply this same fix to any navigation menus or headers present in index.html.
 
 RULES
 1. Audit touched files first and identify regressions.
