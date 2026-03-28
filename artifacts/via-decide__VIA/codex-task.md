@@ -1,14 +1,10 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
-Fix the submodule data-sync blockade (CORS & Session passing). 1. In the main index.html, add a secure postMessage protocol to transmit the active Google ID JWT token down into the Mars and Orchade iframes the moment they load. 2. Update the backend API endpoints (/api/sync, /api/telemetry) to include strict CORS headers allowing requests ONLY from viadecide.com.
+Fix the World Map routing bug: Implement a robust 404 / Deep Linking handler for GitHub Pages. 1. Because this is hosted on GitHub Pages, if a user refreshes the page while on a map subpage (e.g., via-decide.github.io/VIA/map/greece), GitHub will look for a physical folder named /map/greece/ and throw a 404, redirecting to the main platform. 2. Implement the standard SPA hash-routing fix OR the 404.html redirect hack for GitHub Pages. 3. Option A (Hash Routing): Refactor the router to use window.location.hash (e.g., #/map/greece). Update the hashchange event listener to trigger view updates. 4. Option B (404 Hack): Create a 404.html file in the root that captures the intended URL, saves it to sessionStorage, and redirects to index.html. Then, in index.html's init script, check sessionStorage for a saved redirect and force the router to load that subpage immediately.
 
 CONSTRAINTS
-Must use defense-grade token handling. Never expose the raw Google OAuth keys in the frontend URL parameters.
-Fix the '404 on Refresh' bug by implementing a Sovereign Reverse Proxy routing rule. 1. Create or update the nginx.conf (or vercel.json/netlify.toml depending on host). 2. Implement the Catch-All SPA fallback: All requests to /mars/* or /orchade/* must resolve back to the main index.html WITHOUT changing the URL in the browser. 3. Map the proxy routes explicitly so the main server knows exactly where the cloned submodule assets live.
-
-CONSTRAINTS
-Do not disrupt the /api/auth Google Login routes.
+Ensure deep linking works. A user should be able to copy the URL of a specific world map subpage, send it to a friend, and have it open directly to that subpage without forcing them through the main platform dashboard first.
 
 PROCESS (MANDATORY)
 1. Read README.md and AGENTS.md before editing.
