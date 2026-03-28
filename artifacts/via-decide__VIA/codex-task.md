@@ -5,6 +5,14 @@ Fix Subpage Card routing on index.html: Convert absolute paths to relative/hash 
 
 CONSTRAINTS
 Do not change the visual layout of the cards. Ensure the fix respects the current routing pattern (whether it's multi-page HTML or Single Page App hash routing).
+Implement global click interception for Subpage Cards to prevent default browser navigation. 1. Create or update the main JavaScript file loaded by index.html (e.g., app.js or router.js). 2. Add a global event listener to the document that listens for click events. 3. If the clicked element (or its parent) has a specific class like .subpage-card or an attribute like data-link, call event.preventDefault(). 4. Extract the target destination from the card's href or data-route attribute. 5. Pass this destination to your internal JavaScript router to dynamically load the content into the DOM, OR manually construct the correct GitHub Pages URL (appending the repo name) and set window.location.assign().
+
+CONSTRAINTS
+Pure Vanilla JS. Use event delegation (attaching one listener to the document) rather than attaching individual listeners to 50 different cards, to ensure it works for cards injected dynamically later.
+Build a URLResolver utility to permanently safeguard against GitHub Pages pathing errors. 1. Create a new utility file shared/url-resolver.js. 2. Implement a function resolvePath(targetPath) that detects the current environment. 3. Logic: Check window.location.hostname. If it includes github.io, detect the repository name from window.location.pathname (which will be /VIA/). 4. If the environment is GitHub Pages, the function must automatically prepend /VIA/ (or the detected repo name) to any path passed into it (e.g., resolvePath('subpage.html') returns /VIA/subpage.html). 5. If the environment is localhost, it just returns /subpage.html. 6. Refactor the index.html card rendering logic or the central router to wrap all destination URLs in this resolvePath() function before attempting navigation.
+
+CONSTRAINTS
+Pure Vanilla JS. The detection must be dynamic so that if the repository is ever renamed from "VIA" to something else, the routing doesn't break again.
 
 PROCESS (MANDATORY)
 1. Read README.md and AGENTS.md before editing.

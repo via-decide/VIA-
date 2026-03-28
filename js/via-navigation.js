@@ -165,7 +165,14 @@
   }
 
   function handleLegacyPathRedirect() {
-    var pathname = global.location.pathname || '';
+    var rawPathname = global.location.pathname || '';
+
+    // Strip the GitHub Pages base prefix (e.g. /VIA/) so LEGACY_PATHS keys
+    // like /creator-onboarding match even when served from /VIA/creator-onboarding.
+    var base = global.URLResolver ? global.URLResolver.getBase() : '/';
+    var baseStripped = base !== '/' ? rawPathname.replace(base.replace(/\/$/, ''), '') : rawPathname;
+    var pathname = baseStripped || '/';
+
     var redirectPath = LEGACY_PATHS[pathname];
     if (!redirectPath) return;
     var target = new URL(resolvePage(redirectPath), global.location.href);
