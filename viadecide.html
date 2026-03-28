@@ -3063,7 +3063,8 @@ document.querySelectorAll('.layer-tab').forEach(tab=>tab.addEventListener('click
         // If it's a tool path, try to parse it
         const url = new URL(redirectPath, window.location.origin);
         const segments = url.pathname.split('/').filter(Boolean);
-        if (segments[0] === 'tools' && segments[1]) {
+        // Handle both /tool (singular, from Vercel rewrite) and /tools (plural)
+        if ((segments[0] === 'tool' || segments[0] === 'tools') && segments[1]) {
            return openToolViewer(`./tools/${segments[1]}/index.html`, segments[1]);
         }
         // Fallback: use hash if path matches a layer
