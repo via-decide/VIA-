@@ -4,8 +4,7 @@ TARGET
 Validate and repair only the files touched by the previous implementation.
 
 TASK
-Fix the submodule data-sync blockade (CORS & Session passing). 1. In the main index.html, add a secure postMessage protocol to transmit the active Google ID JWT token down into the Mars and Orchade iframes the moment they load. 2. Update the backend API endpoints (/api/sync, /api/telemetry) to include strict CORS headers allowing requests ONLY from viadecide.com.
-Fix the '404 on Refresh' bug by implementing a Sovereign Reverse Proxy routing rule. 1. Create or update the nginx.conf (or vercel.json/netlify.toml depending on host). 2. Implement the Catch-All SPA fallback: All requests to /mars/* or /orchade/* must resolve back to the main index.html WITHOUT changing the URL in the browser. 3. Map the proxy routes explicitly so the main server knows exactly where the cloned submodule assets live.
+Fix the World Map routing bug: Update Map Link event listeners to prevent default redirects. 1. Locate the file containing the World Map UI (e.g., world-map.html, map.js, or the inline SVG map). 2. Inspect the clickable regions (anchors, <g> tags, or <path> elements representing the subpages). 3. If they use standard href="/subpage" links, they are triggering full page reloads which GitHub Pages routes back to the root platform. 4. Change these to use your SPA routing format (e.g., href="#/map/region-name" or data-route="region-name"). 5. Add a JavaScript event listener to the map container that intercepts clicks on these regions. Call event.preventDefault() to stop the browser from redirecting, and instead manually pass the target route to the internal SPA Router (e.g., Router.navigate('/map/region-name')).
 
 RULES
 1. Audit touched files first and identify regressions.
