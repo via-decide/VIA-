@@ -321,11 +321,10 @@
         }
       };
     } else {
-      if (config.claudeApiKey) headers['x-api-key'] = config.claudeApiKey;
-      headers['anthropic-version'] = '2023-06-01';
-      endpoint = 'https://api.anthropic.com/v1/messages';
+      // Route through server-side proxy — key never exposed to browser
+      endpoint = '/api/claude';
       body = {
-        model: input.model || 'claude-3-5-sonnet-latest',
+        model: input.model || 'claude-haiku-4-5-20251001',
         max_tokens: input.maxTokens || 1024,
         messages: [{ role: 'user', content: prompt }]
       };

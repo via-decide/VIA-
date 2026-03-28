@@ -1,22 +1,31 @@
 {
   "name": "VIA",
   "short_name": "VIA",
-  "start_url": "./index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#0b0b1a",
-  "theme_color": "#0b0b1a",
-  "description": "VIA multi-page social and creator surfaces.",
+  "theme_color": "#6366f1",
+  "description": "VIA — social platform, tools, and games for Bharat.",
+  "scope": "/",
+  "lang": "en",
   "icons": [
     {
-      "src": "https://via-decide.github.io/decide.engine/assets/via-logo-512.png",
-      "sizes": "512x512",
+      "src": "/assets/icon-192.png",
+      "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "https://via-decide.github.io/decide.engine/assets/via-logo-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
+  ],
+  "categories": ["social", "productivity", "games"],
+  "shortcuts": [
+    { "name": "Feed",     "url": "/feed",     "description": "Open social feed" },
+    { "name": "Explore",  "url": "/explore",  "description": "Discover tools" },
+    { "name": "Games",    "url": "/games",    "description": "Play games" }
   ]
 }
