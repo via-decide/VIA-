@@ -22,6 +22,10 @@
       "destination": "/viadecide.html"
     },
     {
+      "source": "/tools/:path*",
+      "destination": "/viadecide.html"
+    },
+    {
       "source": "/discover",
       "destination": "/viadecide.html"
     },
