@@ -464,7 +464,7 @@
     .logic-node-kinetic:hover { transform: translate(-50%, -50%) scale(1.15) translateY(-8px); filter: brightness(1.2); }
     .logic-path-line { fill: none; stroke: var(--saffron); stroke-width: 2; stroke-dasharray: 8 6; animation: dash 60s linear infinite; opacity: 0.3; }
     
-    .stack-container { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; perspective: 1200px; overflow: hidden; }
+    .stack-container { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; perspective: 1200px; overflow: hidden; touch-action: none; }
     .card-kinetic { position: relative; width: min(320px, 85vw); height: min(480px, 60vh); background: var(--card); border: 1px solid var(--border2); border-radius: 28px; padding: 32px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-shadow: 0 40px 80px rgba(0,0,0,0.8); will-change: transform; transform-style: preserve-3d; transition: transform 0.1s ease-out; }
     .card-text { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: #fff; line-height: 1.4; word-wrap: break-word; }
     .card-meta { margin-top: 30px; font-family: var(--font-mono); font-size: 0.65rem; color: var(--saffron); letter-spacing: 2px; text-transform: uppercase; padding: 6px 12px; border: 1px solid var(--saffron); border-radius: 4px; opacity: 0.6; }
@@ -1517,13 +1517,30 @@
     // TOOLS SECTION (with AI Integration)
     // ═══════════════════════════════════════════════════════════════
     const ROUTE_ALIASES = {
+      'student research': 'decide.engine-tools/tools/student-research/index.html',
+      'multi-source synthesizer': 'decide.engine-tools/tools/multi-source-research-explained/index.html',
+      'interview prep framework': 'decide.engine-tools/tools/interview-prep/index.html',
+      'workflow gallery': 'decide.engine-tools/tools/workflow-template-gallery/index.html',
+      'context packager': 'decide.engine-tools/tools/context-packager/index.html',
+      'color palette generator': 'decide.engine-tools/tools/color-palette/index.html',
+      'typography scale calculator': 'decide.engine-tools/tools/engine/typography-scale-calculator/index.html',
+      'json formatter': 'decide.engine-tools/tools/json-formatter/index.html',
+      'regex tester': 'decide.engine-tools/tools/regex-tester/index.html',
+      'revenue forecaster': 'decide.engine-tools/tools/revenue-forecaster/index.html',
+      'pomodoro timer': 'decide.engine-tools/tools/pomodoro/index.html',
+      'decision matrix': 'decide.engine-tools/tools/decision-matrix/index.html',
+      'logic mapper': 'decide.engine-tools/tools/logic-mapper/index.html',
+
+      // Core Apps & Games
+      'mars colony': 'apps/mars/index.html',
+      'app generator': 'apps/alchemist/index.html',
+      'hexwars': 'apps/skillhex/index.html',
+      'skillhex mission control': 'apps/skillhex/index.html',
+
+      // Root Engines
       'logichub': 'logichub.html',
-      'vibecoder engine': 'logichub.html',
-      'visual architecture': 'logichub.html',
-      'vialogic': 'https://github.com/via-decide/ViaLogic',
-      'cartography of minds': 'https://github.com/via-decide/ViaLogic',
-      'logic academy': 'https://github.com/via-decide/ViaLogic'
-      'visual architecture': 'logichub.html'
+      'vialogic': 'logichub.html',
+      'world map': 'world.html'
     };
 
     window.App = window.App || {};
@@ -2078,14 +2095,21 @@
         vp.addEventListener('pointerdown', (e) => {
           if (e.target.closest('.map-node') || e.target.closest('.hud-controls') || e.target.closest('#sheet') || currentSection !== 'world') return;
           this.isDragging = true;
-          this.dragStart = { x: e.clientX - this.state.x, y: e.clientY - this.state.y };
+          const rect = vp.getBoundingClientRect();
+          const mouseX = e.clientX - rect.left;
+          const mouseY = e.clientY - rect.top;
+          this.dragStart = { x: mouseX - this.state.x, y: mouseY - this.state.y };
           vp.style.cursor = 'grabbing';
         });
 
         window.addEventListener('pointermove', (e) => {
           if (!this.isDragging || currentSection !== 'world') return;
-          this.state.x = e.clientX - this.dragStart.x;
-          this.state.y = e.clientY - this.dragStart.y;
+          e.preventDefault();
+          const rect = vp.getBoundingClientRect();
+          const mouseX = e.clientX - rect.left;
+          const mouseY = e.clientY - rect.top;
+          this.state.x = mouseX - this.dragStart.x;
+          this.state.y = mouseY - this.dragStart.y;
           this.updateTransform();
         });
 

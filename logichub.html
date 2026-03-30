@@ -596,8 +596,11 @@
 
           el.addEventListener("pointerdown", (e) => {
             if (e.target.tagName === "INPUT" || e.target.classList.contains('block-edit') || e.target.classList.contains('port')) return;
+            const canvasRect = document.getElementById("canvas").getBoundingClientRect();
+            const mouseX = e.clientX - canvasRect.left;
+            const mouseY = e.clientY - canvasRect.top;
             this.isDragging = b;
-            this.dragOffset = { x: e.clientX - b.x, y: e.clientY - b.y };
+            this.dragOffset = { x: mouseX - b.x, y: mouseY - b.y };
             el.classList.add("selected");
           });
           

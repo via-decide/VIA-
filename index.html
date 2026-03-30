@@ -364,9 +364,11 @@
                 if (relativeZ > 600 || relativeZ < -4000) {
                     panel.style.opacity = '0';
                     panel.style.pointerEvents = 'none';
+                    panel.style.visibility = 'hidden';
                 } else {
                     panel.style.opacity = '1';
                     panel.style.pointerEvents = 'auto';
+                    panel.style.visibility = 'visible';
                 }
             });
 
