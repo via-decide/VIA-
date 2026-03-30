@@ -1,3 +1,15 @@
-export function mount(host) {
-  host.innerHTML = '<section><h2>Logic Academy</h2><p>Academy module loaded lazily with route-level isolation.</p></section>';
-}
+const academyModule = {
+  init() {
+    this.started = true;
+  },
+
+  mount(host) {
+    host.innerHTML = '<section><h2>Logic Academy</h2><p>Lessons loaded with module lifecycle isolation.</p></section>';
+  },
+
+  destroy() {
+    this.started = false;
+  }
+};
+
+export default academyModule;
