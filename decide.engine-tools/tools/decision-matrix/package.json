@@ -1,0 +1,8 @@
+{
+  "name": "decision-matrix",
+  "version": "1.0.0",
+  "description": "Multi-criteria decision analysis tool",
+  "author": "ViaDecide",
+  "keywords": ["decision", "analysis", "criteria"],
+  "main": "index.js"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "logic-mapper",
+  "version": "1.0.0",
+  "description": "Visual logic flow mapping and analysis",
+  "author": "ViaDecide",
+  "keywords": ["logic", "flow", "visualization"],
+  "main": "index.js"
+}
