@@ -1,17 +1,100 @@
-(function initVIACore(global) {
+(function initVIARuntime(global) {
   'use strict';
 
-  const root = global.VIA || {};
+  const VIA = global.VIA || {};
 
-  root.engine = root.engine || {};
-  root.world = root.world || {};
-  root.ui = root.ui || {};
-  root.storage = root.storage || {};
-  root.router = root.router || {};
+  VIA.core = VIA.core || {};
+  VIA.router = VIA.router || {};
+  VIA.state = VIA.state || {};
+  VIA.storage = VIA.storage || {};
+  VIA.modules = VIA.modules || {};
+  VIA.ui = VIA.ui || {};
+  VIA.gestures = VIA.gestures || {};
 
-  const boundaries = new Map();
+  const runtimeState = {
+    frameId: 0,
+    lastFrame: 0,
+    tasks: new Set()
+  };
 
-  root.engine.profile = function profile(label, fn) {
+  const store = {
+    currentRoute: '/',
+    activeModule: null,
+    flags: {}
+  };
+
+  VIA.state.get = function get(key, defaultValue) {
+    return Object.prototype.hasOwnProperty.call(store, key) ? store[key] : defaultValue;
+  };
+
+  VIA.state.set = function set(key, value) {
+    store[key] = value;
+    return value;
+  };
+
+  VIA.state.patch = function patch(nextValues) {
+    if (!nextValues || typeof nextValues !== 'object') {
+      return store;
+    }
+    Object.assign(store, nextValues);
+    return store;
+  };
+
+  VIA.core.withBoundary = function withBoundary(label, fn, fallback) {
+    try {
+      return fn();
+    } catch (error) {
+      console.error(`[VIA][boundary:${label}]`, error);
+      if (typeof fallback === 'function') {
+        return fallback(error);
+      }
+      return null;
+    }
+  };
+
+  VIA.core.addTask = function addTask(task) {
+    if (typeof task === 'function') {
+      runtimeState.tasks.add(task);
+    }
+    VIA.core.loop();
+  };
+
+  VIA.core.removeTask = function removeTask(task) {
+    runtimeState.tasks.delete(task);
+    if (!runtimeState.tasks.size && runtimeState.frameId) {
+      global.cancelAnimationFrame(runtimeState.frameId);
+      runtimeState.frameId = 0;
+    }
+  };
+
+  VIA.core.loop = function loop() {
+    if (runtimeState.frameId || !runtimeState.tasks.size) {
+      return;
+    }
+
+    runtimeState.lastFrame = global.performance.now();
+
+    function tick(now) {
+      const delta = now - runtimeState.lastFrame;
+      runtimeState.lastFrame = now;
+
+      runtimeState.tasks.forEach(function runTask(task) {
+        VIA.core.withBoundary('animation-task', function guardedTask() {
+          task(now, delta);
+        });
+      });
+
+      if (runtimeState.tasks.size) {
+        runtimeState.frameId = global.requestAnimationFrame(tick);
+      } else {
+        runtimeState.frameId = 0;
+      }
+    }
+
+    runtimeState.frameId = global.requestAnimationFrame(tick);
+  };
+
+  VIA.core.profile = function profile(label, fn) {
     const start = global.performance.now();
     const value = fn();
     const end = global.performance.now();
@@ -19,64 +102,5 @@
     return value;
   };
 
-  root.ui.withErrorBoundary = function withErrorBoundary(boundaryId, render) {
-    const host = document.querySelector(boundaryId);
-    if (!host) {
-      return;
-    }
-
-    try {
-      render(host);
-      boundaries.set(boundaryId, null);
-    } catch (error) {
-      boundaries.set(boundaryId, error);
-      console.error(`[VIA][boundary] ${boundaryId}`, error);
-      host.innerHTML = '<div class="via-boundary-error">Tool failed to render. Reload or open another module.</div>';
-    }
-  };
-
-  root.engine.loop = (function createLoop() {
-    const tasks = new Set();
-    let frameId = 0;
-    let previous = 0;
-
-    function tick(now) {
-      const delta = now - previous;
-      previous = now;
-      tasks.forEach((task) => {
-        try {
-          task(now, delta);
-        } catch (error) {
-          console.error('[VIA][loop] task error', error);
-        }
-      });
-      if (tasks.size > 0) {
-        frameId = global.requestAnimationFrame(tick);
-      } else {
-        frameId = 0;
-      }
-    }
-
-    return {
-      add(task) {
-        tasks.add(task);
-        if (!frameId) {
-          previous = global.performance.now();
-          frameId = global.requestAnimationFrame(tick);
-        }
-      },
-      remove(task) {
-        tasks.delete(task);
-        if (!tasks.size && frameId) {
-          global.cancelAnimationFrame(frameId);
-          frameId = 0;
-        }
-      },
-      size() {
-        return tasks.size;
-      }
-    };
-  }());
-
-  global.VIA = root;
+  global.VIA = VIA;
 }(window));
