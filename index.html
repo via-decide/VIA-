@@ -6,7 +6,6 @@
     <title>ViaDecide | 3.0 Kinetic OS Landing</title>
     <meta name="description" content="Zero-dependency visual orchestrator and spatial engine tools by Dharam Daxini.">
     
-    <!-- Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
@@ -41,7 +40,7 @@
             font-family: var(--font-display);
             overflow-x: hidden;
             scrollbar-width: none; 
-            cursor: none; /* Custom cursor */
+            cursor: none; 
         }
         body::-webkit-scrollbar { display: none; }
 
@@ -58,7 +57,6 @@
         #scroll-proxy {
             position: absolute;
             top: 0; left: 0; width: 1px;
-            /* Adjusted height to roughly match depth + padding */
             height: 6000px; 
             z-index: -1;
         }
@@ -91,13 +89,11 @@
         .panel {
             position: absolute;
             top: 50%; left: 50%;
-            /* Removed translateZ from CSS, it is set inline in HTML */
             transform: translate(-50%, -50%);
             width: 90vw; max-width: 1000px;
             text-align: center;
             pointer-events: auto;
             transform-style: preserve-3d;
-            /* Added will-change for performance */
             will-change: transform, opacity;
             transition: opacity 0.3s;
         }
@@ -124,7 +120,6 @@
         .gradient-text-saffron { background: linear-gradient(90deg, var(--saffron), #ffaa00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .gradient-text-neon { background: linear-gradient(90deg, var(--neon), var(--accent-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* Tactical Tags */
         .tag { 
             display: inline-block; padding: 6px 14px; border-radius: 99px; 
             font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 2px; 
@@ -134,7 +129,6 @@
         .tag-neon { background: rgba(0, 229, 204, 0.12); color: var(--neon); border: 1px solid rgba(0, 229, 204, 0.3); }
         .tag-green { background: rgba(74, 222, 128, 0.12); color: var(--accent-green); border: 1px solid rgba(74, 222, 128, 0.3); }
 
-        /* Tactile Buttons */
         .btn-group { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; align-items: center; }
         
         .btn-tactile {
@@ -168,13 +162,11 @@
         #cursor-dot { position: fixed; top: 0; left: 0; width: 6px; height: 6px; background: var(--text-main); border-radius: 50%; pointer-events: none; z-index: 99999; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s, background 0.2s; }
         #cursor-ring { position: fixed; top: 0; left: 0; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.4); border-radius: 50%; pointer-events: none; z-index: 99998; transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s, border-color 0.3s; will-change: transform; }
 
-        /* Social Grid */
         .social-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-top: 2rem; }
         .social-link { padding: 1.2rem; border: 1px solid var(--glass-border); border-radius: 18px; color: var(--text-muted); text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 0.5rem; background: rgba(15,15,26,0.4); }
         .social-link span { font-family: var(--font-display); font-weight: 800; color: var(--text-main); font-size: 1.1rem;}
         .social-link:hover { border-color: var(--saffron); background: rgba(255, 103, 31, 0.08); transform: translateY(-5px); }
 
-        /* Fixed HUD */
         .hud-nav { position: fixed; top: 1.5rem; left: 1.5rem; right: 1.5rem; display: flex; justify-content: space-between; align-items: center; z-index: 100; pointer-events: none; }
         .hud-nav > * { pointer-events: auto; }
         .hud-brand { font-family: var(--font-display); font-weight: 900; font-size: 1.8rem; letter-spacing: -0.05em; text-shadow: 0 4px 12px rgba(0,0,0,0.5); }
@@ -188,12 +180,8 @@
 
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         
-        /* Icon Emoji Sizing */
         .panel-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
 
-        /* ========================================================
-           MOBILE ADJUSTMENTS
-           ======================================================== */
         @media (max-width: 768px) {
             body { cursor: auto; }
             #cursor-dot, #cursor-ring { display: none; }
@@ -214,7 +202,6 @@
 </head>
 <body>
 
-    <!-- OS HUD -->
     <nav class="hud-nav">
         <div class="hud-brand">VIA<span style="color:var(--saffron)">.</span></div>
         <div class="hud-status">KINETIC OS ONLINE</div>
@@ -225,34 +212,27 @@
         <span id="depth-readout">0000</span>
     </div>
 
-    <!-- Custom Cursor -->
     <div id="cursor-dot"></div>
     <div id="cursor-ring"></div>
 
-    <!-- Hardware Accelerated Background -->
     <canvas id="warp-canvas"></canvas>
 
-    <!-- Scroll proxy creates the scrollbar -->
     <div id="scroll-proxy"></div>
 
-    <!-- The 3D Lens -->
     <main id="viewport">
         <div id="camera">
             
-            <!-- PANEL 0: HERO (Z = 0) -->
             <section class="panel" data-z="0">
                 <img src="1000221390.jpg" alt="DH Logo" class="brand-logo magnetic" onerror="this.style.display='none'">
                 <div class="tag tag-saffron">Sol 1 // Epoch 2026</div>
                 <h1 class="hero-title">Visual Logic.<br><span class="gradient-text-saffron">Autonomous Core.</span></h1>
                 <p class="hero-subtitle">Zero dependencies. Pure spatial execution. Architect, verify, and deploy using the browser's native physical engine.</p>
                 <div class="btn-group">
-                    <!-- Initializes Main OS via absolute GitHub URL -->
                     <a href="https://github.com/via-decide/VIA/blob/a959db382cf8e677bd8a85bbc410b044fb00f262/viadecide.html" class="btn-tactile primary magnetic">Initialize System</a>
                 </div>
                 <p class="scroll-hint">[ SCROLL TO DISCOVER SECTORS ]</p>
             </section>
 
-            <!-- PANEL 1: LOGICHUB (Z = -2500px) -->
             <section class="panel" data-z="-2500">
                 <div class="glass-card magnetic">
                     <span class="panel-icon">🧠</span>
@@ -265,7 +245,6 @@
                 </div>
             </section>
 
-            <!-- PANEL 2: WORLD MAP (Z = -5000px) -->
             <section class="panel" data-z="-5000">
                 <div class="glass-card magnetic" style="border-color: rgba(74, 222, 128, 0.2);">
                     <span class="panel-icon">🗺️</span>
@@ -278,7 +257,6 @@
                 </div>
             </section>
 
-            <!-- PANEL 3: FEED / KINETIC UI (Z = -7500px) -->
             <section class="panel" data-z="-7500">
                 <div class="glass-card magnetic" style="border-color: rgba(255, 103, 31, 0.2);">
                     <span class="panel-icon">📇</span>
@@ -291,7 +269,6 @@
                 </div>
             </section>
 
-            <!-- PANEL 4: UPDATES & AI TOOLS (Z = -10000px) -->
             <section class="panel" data-z="-10000">
                 <div class="glass-card magnetic" style="border-color: rgba(168, 85, 247, 0.2);">
                     <span class="panel-icon">⚡</span>
@@ -304,7 +281,6 @@
                 </div>
             </section>
 
-            <!-- PANEL 5: PROFILE & ORCHADE (Z = -12500px) -->
             <section class="panel" data-z="-12500">
                 <div class="glass-card magnetic" style="border-color: rgba(255, 215, 0, 0.2);">
                     <span class="panel-icon">👤</span>
@@ -317,13 +293,11 @@
                 </div>
             </section>
 
-            <!-- PANEL 6: CREATOR & SOCIALS (Z = -15000px) -->
             <section class="panel" data-z="-15000">
                 <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">The Architect.</h2>
                 <p class="hero-subtitle">Dharam Daxini // Engineered without a single node_modules folder. Commence Transmission.</p>
                 
                 <div class="btn-group" style="margin-bottom: 2rem;">
-                    <!-- PORTFOLIO LINK -->
                     <a href="#portfolio" target="_blank" class="btn-tactile primary magnetic">View Portfolio</a>
                     <a href="https://github.com/via-decide/decide.engine-tools" target="_blank" class="btn-tactile outline magnetic">GitHub Repo</a>
                 </div>
@@ -338,7 +312,6 @@
                         <span>decide.engine</span>
                     </a>
                     
-                    <!-- NEW SPOTIFY LINK -->
                     <a href="https://open.spotify.com/show/2okZ1WXMWXLrSwFzClUPPp?si=fbe27697d5e047a4" target="_blank" class="social-link magnetic">
                         <small style="font-family: var(--font-mono); font-size: 0.7rem;">SPOTIFY</small>
                         <span>Dharam Daxini</span>
@@ -365,42 +338,27 @@
         
         let currentScroll = 0;
         let targetScroll = 0;
-        
-        // Match scroll proxy height to total depth travel
         const scrollMultiplier = 2.5; 
 
-        // Set initial Z transforms on panels from data attribute
+        // Set initial Z transforms
         panels.forEach(panel => {
             const z = parseFloat(panel.getAttribute('data-z') || '0');
             panel.style.transform = `translate(-50%, -50%) translateZ(${z}px)`;
         });
 
-        window.addEventListener('scroll', () => {
-            targetScroll = window.scrollY;
-        });
+        window.addEventListener('scroll', () => { targetScroll = window.scrollY; });
 
         function update3DCamera() {
-            // Lerp formula for smooth camera tracking
             currentScroll += (targetScroll - currentScroll) * 0.08;
-            
-            // Calculate camera Z translation (moves "forward" into the scene)
             let zTranslation = currentScroll * scrollMultiplier;
-
             camera.style.transform = `translateZ(${zTranslation}px)`;
-            
-            // Format depth readout
             depthReadout.innerText = Math.round(zTranslation).toString().padStart(5, '0');
 
-            // IMPORTANT BUG FIX: Hide panels that pass behind the camera
-            // When panel Z + camera Z > threshold, fade it out to prevent clipping bugs
+            // Hide panels that pass behind camera to prevent bugs
             panels.forEach(panel => {
                 const pz = parseFloat(panel.getAttribute('data-z') || '0');
                 const relativeZ = pz + zTranslation;
-                
-                if (relativeZ > 600) {
-                    panel.style.opacity = '0';
-                    panel.style.pointerEvents = 'none';
-                } else if (relativeZ < -3000) {
+                if (relativeZ > 600 || relativeZ < -4000) {
                     panel.style.opacity = '0';
                     panel.style.pointerEvents = 'none';
                 } else {
@@ -415,63 +373,143 @@
 
 
         /* ========================================================
-           2. CUSTOM HTML5 CANVAS NEURAL PARTICLE ENGINE
+           2. HOLOGRAPHIC 3D PARTICLE & IMAGE ENGINE
            ======================================================== */
         const canvas = document.getElementById('warp-canvas');
         const ctx = canvas.getContext('2d');
         
         let width, height, cx, cy;
-        const particles = [];
+        let particles = [];
         const isMobile = window.innerWidth <= 768;
-        const numParticles = isMobile ? 250 : 500; // Reduced for scroll performance
+        const numParticles = isMobile ? 80 : 150; // Adjusted for complex rendering
         const fov = 800; 
 
+        // Preload User Image (Brand Logo) to use as floating 3D objects
+        const userImg = new Image();
+        userImg.src = '1000221390.jpg';
+        let imgLoaded = false;
+        userImg.onload = () => { imgLoaded = true; };
+
         function initCanvas() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
-            cx = width / 2;
-            cy = height / 2;
+            width = window.innerWidth; height = window.innerHeight;
+            canvas.width = width; canvas.height = height;
+            cx = width / 2; cy = height / 2;
         }
 
-        class Particle {
+        class HoloNode {
             constructor() {
                 this.reset();
-                this.z = Math.random() * 2000;
+                this.z = Math.random() * 8000; // Scatter initially throughout depth
             }
             reset() {
-                this.x = (Math.random() - 0.5) * 3000; 
-                this.y = (Math.random() - 0.5) * 3000;
-                this.z = 2000; 
-                this.speed = 1.5 + Math.random() * 4;
-            }
-            update(scrollVelocity) {
-                // Add warp speed effect when scrolling fast
-                this.z -= this.speed + (scrollVelocity * 0.6);
+                this.x = (Math.random() - 0.5) * 5000; 
+                this.y = (Math.random() - 0.5) * 4000;
+                this.z = 2000 + Math.random() * 2000; // Spawn deep
+                this.speed = 1.5 + Math.random() * 3;
                 
-                if (this.z <= 0) {
-                    this.reset();
-                }
+                // 3D Rendering Properties
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotSpeed = (Math.random() - 0.5) * 0.02;
+                
+                // Categorize Particle Types
+                // 0: Small Saffron Dot, 1: Cyan Wireframe Hex, 2: Floating Image/Card, 3: Crosshair
+                const rand = Math.random();
+                if (rand < 0.4) this.type = 0;
+                else if (rand < 0.6) this.type = 1;
+                else if (rand < 0.8) this.type = 2;
+                else this.type = 3;
+
+                this.color = Math.random() > 0.5 ? '255, 103, 31' : '0, 229, 204';
             }
+            
+            update(scrollVelocity) {
+                // Move towards camera, accelerate based on scroll speed
+                this.z -= this.speed + (scrollVelocity * 0.8);
+                this.rotation += this.rotSpeed;
+                if (this.z <= 0) this.reset();
+            }
+            
             draw() {
                 const scale = fov / (fov + this.z);
                 const x2d = cx + this.x * scale;
                 const y2d = cy + this.y * scale;
 
-                const opacity = Math.max(0, 1 - (this.z / 2000));
-                const size = Math.max(0.5, 3 * scale);
+                // Fade in from distance, fade out right before hitting camera
+                let opacity = Math.min(1, Math.max(0, 1 - (this.z / 3000)));
+                if (this.z < 200) opacity *= (this.z / 200); 
 
-                // Use the saffron accent color for the neural nodes
-                ctx.fillStyle = `rgba(255, 103, 31, ${opacity * 0.8})`; 
-                ctx.beginPath();
-                ctx.arc(x2d, y2d, size, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.save();
+                ctx.translate(x2d, y2d);
+                ctx.scale(scale, scale);
+                ctx.rotate(this.rotation);
+
+                ctx.strokeStyle = `rgba(${this.color}, ${opacity})`;
+                ctx.fillStyle = `rgba(${this.color}, ${opacity * 0.2})`;
+                ctx.lineWidth = 1.5;
+
+                switch(this.type) {
+                    case 0: // Glowing Dot (Ambient Dust)
+                        ctx.beginPath(); ctx.arc(0, 0, 3, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${this.color}, ${opacity * 0.8})`; ctx.fill();
+                        break;
+                        
+                    case 1: // Wireframe Hexagon
+                        ctx.beginPath();
+                        for(let i=0; i<6; i++) {
+                            ctx.lineTo(20 * Math.cos(i * Math.PI / 3), 20 * Math.sin(i * Math.PI / 3));
+                        }
+                        ctx.closePath(); ctx.stroke(); ctx.fill();
+                        // Inner dot
+                        ctx.beginPath(); ctx.arc(0,0, 2, 0, Math.PI*2); 
+                        ctx.fillStyle = `rgba(${this.color}, ${opacity})`; ctx.fill();
+                        break;
+                        
+                    case 2: // Floating Image or UI Card
+                        // Draw a high-tech glowing border
+                        ctx.strokeRect(-40, -40, 80, 80);
+                        
+                        if (imgLoaded) {
+                            // Draw actual user image, slightly faded by depth
+                            ctx.globalAlpha = opacity * 0.8;
+                            // Clip to rounded rect for modern look
+                            ctx.beginPath();
+                            ctx.roundRect ? ctx.roundRect(-38, -38, 76, 76, 8) : ctx.rect(-38, -38, 76, 76);
+                            ctx.clip();
+                            ctx.drawImage(userImg, -38, -38, 76, 76);
+                        } else {
+                            // Fallback: Draw simulated code/UI card
+                            ctx.fillStyle = `rgba(15, 15, 26, ${opacity * 0.9})`;
+                            ctx.fillRect(-38, -38, 76, 76);
+                            ctx.fillStyle = `rgba(${this.color}, ${opacity})`;
+                            ctx.fillRect(-30, -25, 40, 4);
+                            ctx.fillRect(-30, -15, 60, 4);
+                            ctx.fillRect(-30, -5, 50, 4);
+                        }
+                        
+                        // Draw corner brackets
+                        ctx.beginPath();
+                        ctx.moveTo(-45, -30); ctx.lineTo(-45, -45); ctx.lineTo(-30, -45);
+                        ctx.moveTo(45, -30); ctx.lineTo(45, -45); ctx.lineTo(30, -45);
+                        ctx.moveTo(-45, 30); ctx.lineTo(-45, 45); ctx.lineTo(-30, 45);
+                        ctx.moveTo(45, 30); ctx.lineTo(45, 45); ctx.lineTo(30, 45);
+                        ctx.stroke();
+                        break;
+                        
+                    case 3: // Crosshair / Data Node
+                        ctx.beginPath();
+                        ctx.moveTo(-15, 0); ctx.lineTo(15, 0);
+                        ctx.moveTo(0, -15); ctx.lineTo(0, 15);
+                        ctx.stroke();
+                        ctx.beginPath(); ctx.arc(0,0, 8, 0, Math.PI*2); ctx.stroke();
+                        break;
+                }
+
+                ctx.restore();
             }
         }
 
         initCanvas();
-        for (let i = 0; i < numParticles; i++) particles.push(new Particle());
+        for (let i = 0; i < numParticles; i++) particles.push(new HoloNode());
 
         window.addEventListener('resize', initCanvas);
 
@@ -482,6 +520,9 @@
 
             ctx.clearRect(0, 0, width, height);
             
+            // Depth Sorting (Z-Buffer): Sort particles so further ones are drawn first
+            particles.sort((a, b) => b.z - a.z);
+
             particles.forEach(p => {
                 p.update(velocity);
                 p.draw();
@@ -504,13 +545,11 @@
         let ringY = mouseY;
 
         window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
+            mouseX = e.clientX; mouseY = e.clientY;
             dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
         });
 
         function animateCursor() {
-            // Delayed lerp for the outer ring
             ringX += (mouseX - ringX) * 0.15;
             ringY += (mouseY - ringY) * 0.15;
             ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
@@ -524,33 +563,23 @@
                 const hx = rect.left + rect.width / 2;
                 const hy = rect.top + rect.height / 2;
                 
-                // Pull element towards mouse slightly
                 const dx = (e.clientX - hx) * 0.15; 
                 const dy = (e.clientY - hy) * 0.15; 
                 
-                // Keep the base translation intact for .glass-card layout logic if needed
                 if(btn.classList.contains('glass-card')) {
                    btn.style.transform = `translate(${dx}px, ${dy}px) scale(1.02)`;
                 } else {
                    btn.style.transform = `translate(${dx}px, ${dy}px) scale(1.05)`;
                 }
                 
-                // Cursor interaction states
-                ring.style.width = '50px';
-                ring.style.height = '50px';
-                ring.style.borderColor = 'var(--saffron)';
-                dot.style.background = 'var(--saffron)';
+                ring.style.width = '50px'; ring.style.height = '50px';
+                ring.style.borderColor = 'var(--saffron)'; dot.style.background = 'var(--saffron)';
             });
 
             btn.addEventListener('mouseleave', () => {
-                // Reset element
                 btn.style.transform = `translate(0px, 0px) scale(1)`;
-                
-                // Reset cursor
-                ring.style.width = '40px';
-                ring.style.height = '40px';
-                ring.style.borderColor = 'rgba(255,255,255,0.4)';
-                dot.style.background = 'var(--text-main)';
+                ring.style.width = '40px'; ring.style.height = '40px';
+                ring.style.borderColor = 'rgba(255,255,255,0.4)'; dot.style.background = 'var(--text-main)';
             });
         });
 
