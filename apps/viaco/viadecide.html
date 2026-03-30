@@ -273,6 +273,20 @@
     .map-controls { position: absolute; bottom: 16px; left: 16px; z-index: 500; display: flex; flex-direction: column; gap: 6px; }
     .z-btn { width: 36px; height: 36px; background: rgba(3,5,8,.88); border: 1px solid rgba(30,48,96,.8); border-radius: 8px; color: rgba(90,106,128,.8); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); transition: all .12s; font-family: monospace; line-height: 1; }
 
+
+    /* 🌍 NEW SPATIAL WORLD MAP */
+    #world-viewport { position: absolute; inset: 0; overflow: hidden; touch-action: none; background: radial-gradient(circle at center, #12151c 0%, var(--void) 100%); }
+    #world-canvas { position: absolute; width: 6000px; height: 6000px; transform-origin: 0 0; will-change: transform; z-index: 1; }
+    #map-paths { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+    .map-path-line { fill: none; stroke-width: 2; stroke-dasharray: 8 8; animation: dash 40s linear infinite; opacity: 0.3; }
+    .map-node { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: translate(-50%, -50%); cursor: pointer; z-index: 10; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .map-node:hover { transform: translate(-50%, -50%) scale(1.15) translateY(-5px); z-index: 20; }
+    .node-glow-map { position: absolute; width: 100px; height: 100px; border-radius: 50%; opacity: 0.1; animation: pulse-glow 3s infinite alternate; }
+    .node-icon-map { width: 54px; height: 54px; background: var(--panel); border: 2px solid; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); position: relative; z-index: 2; }
+    .node-label-map { margin-top: 10px; background: rgba(10,12,16,0.9); border: 1px solid var(--border); padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; color: var(--text); backdrop-filter: blur(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.4); white-space: nowrap; max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
+    .map-node.hub .node-icon-map { width: 72px; height: 72px; font-size: 32px; border-radius: 20px; box-shadow: 0 12px 30px rgba(0,0,0,0.8); border-width: 3px; }
+    .map-node.hub .node-label-map { font-size: 14px; font-family: var(--font-d); letter-spacing: 1px; text-transform: uppercase; border-color: inherit; }
+
     .tools-header { margin-bottom: 24px; text-align: left; }
     .tools-header h2 { font-family: var(--font-display); font-size: 2rem; color: var(--text-main); margin-bottom: 4px; }
     .tools-header p { font-size: 0.9rem; color: var(--text-muted); font-family: var(--font-mono); }
@@ -503,14 +517,18 @@
           </div>
         </div>
 
-        <!-- WORLD SECTION -->
+        <!-- NEW WORLD MAP SECTION -->
         <div id="world" class="section">
-          <div id="world-vp">
-            <div id="world-ww">
-              <canvas id="world-tc" width="3200" height="1800"></canvas>
-              <div id="world-dl"></div>
+          <div id="world-viewport">
+            <div id="world-canvas">
+              <svg id="map-paths"></svg>
+              <div id="map-nodes-layer"></div>
             </div>
-            <div id="mm"><canvas id="mm-c"></canvas><div id="mm-vp"></div></div>
+            <div class="hud-controls" style="position: absolute; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 50;">
+              <button class="btn-tactile active" onclick="MapEngine.zoom(0.2)" style="width: 44px; height: 44px; padding: 0;">+</button>
+              <button class="btn-tactile active" onclick="MapEngine.zoom(-0.2)" style="width: 44px; height: 44px; padding: 0;">-</button>
+              <button class="btn-tactile active" onclick="MapEngine.centerMap()" style="width: 44px; height: 44px; padding: 0;">🎯</button>
+            </div>
           </div>
         </div>
 
@@ -575,14 +593,18 @@
           </div>
         </div>
 
-        <!-- WORLD SECTION -->
+        <!-- NEW WORLD MAP SECTION -->
         <div id="world" class="section">
-          <div id="world-vp">
-            <div id="world-ww">
-              <canvas id="world-tc" width="3200" height="1800"></canvas>
-              <div id="world-dl"></div>
+          <div id="world-viewport">
+            <div id="world-canvas">
+              <svg id="map-paths"></svg>
+              <div id="map-nodes-layer"></div>
             </div>
-            <div id="mm"><canvas id="mm-c"></canvas><div id="mm-vp"></div></div>
+            <div class="hud-controls" style="position: absolute; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 50;">
+              <button class="btn-tactile active" onclick="MapEngine.zoom(0.2)" style="width: 44px; height: 44px; padding: 0;">+</button>
+              <button class="btn-tactile active" onclick="MapEngine.zoom(-0.2)" style="width: 44px; height: 44px; padding: 0;">-</button>
+              <button class="btn-tactile active" onclick="MapEngine.centerMap()" style="width: 44px; height: 44px; padding: 0;">🎯</button>
+            </div>
           </div>
         </div>
         <!-- UPDATES SECTION -->
@@ -1700,6 +1722,7 @@
       if (labelEl) labelEl.textContent = label;
       
       if (sectionId === 'vialogic') setTimeout(centerLogicMap, 100);
+      if (sectionId === 'world') setTimeout(() => MapEngine.updateTransform(), 50);
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -1900,6 +1923,210 @@
       });
     }
 
+
+    const WORLD_TOOLS_DB = [
+      { name: "Student Research", cat: "education", desc: "Define your question and organise sources.", icon: "📚", engine: false },
+      { name: "Multi-Source Synthesizer", cat: "researchers", desc: "Combine findings from multiple papers into one output.", icon: "🧩", engine: false },
+      { name: "Interview Prep Framework", cat: "education", desc: "Build STAR methodology answers for interviews.", icon: "🎯", engine: false },
+      { name: "Context Packager", cat: "system", desc: "Bundle project context for LLM handoffs.", icon: "📦", engine: true },
+      { name: "Workflow Gallery", cat: "system", desc: "Browse reusable SOPs and workflow templates.", icon: "🗂️", engine: true },
+      { name: "Color Palette Generator", cat: "creators", desc: "Extract and generate accessible UI palettes.", icon: "🎨", engine: false },
+      { name: "Typography Scale Calculator", cat: "creators", desc: "Generate fluid CSS typographic scales.", icon: "Aa", engine: false },
+      { name: "JSON Formatter", cat: "coders", desc: "Validate, format, and minify JSON payloads.", icon: "{ }", engine: false },
+      { name: "RegEx Tester", cat: "coders", desc: "Test regular expressions safely in the browser.", icon: "🔍", engine: false },
+      { name: "Revenue Forecaster", cat: "business", desc: "Model SaaS MRR growth and churn.", icon: "📈", engine: false },
+      { name: "Meeting Cost Calculator", cat: "business", desc: "Calculate the literal cost of meetings.", icon: "⏱️", engine: false },
+      { name: "Pomodoro Timer", cat: "misc", desc: "Classic focus timer with ambient noise.", icon: "🍅", engine: false },
+      { name: "Mars Colony", cat: "system", desc: "System dynamics survival simulation engine.", icon: "🚀", engine: true },
+      { name: "Orchard Sim", cat: "system", desc: "Ecological farming and resource simulator.", icon: "🌳", engine: true },
+      { name: "Grid Evolution", cat: "system", desc: "Cellular automata artificial life simulator.", icon: "🧬", engine: true },
+      { name: "Market Dynamics", cat: "business", desc: "Global economy supply and demand simulator.", icon: "📉", engine: true },
+      { name: "Traffic Router", cat: "system", desc: "City road network optimization puzzle.", icon: "🚦", engine: true },
+      { name: "Prompt Alchemy", cat: "creators", desc: "One prompt → platform-perfect versions for social media.", icon: "⚗️", engine: false },
+      { name: "Caption Generator", cat: "creators", desc: "Upload an image → AI reads it → captions with hashtags.", icon: "📸", engine: false },
+      { name: "Script Writer", cat: "creators", desc: "Turn a topic into a full YouTube script with notes.", icon: "🎬", engine: false },
+      { name: "Sales Dashboard", cat: "business", desc: "Track sales pipeline and revenue metrics.", icon: "📊", engine: false },
+      { name: "Agent Builder", cat: "coders", desc: "Design and configure AI agents and workflows.", icon: "🤖", engine: false },
+      { name: "App Generator", cat: "coders", desc: "Scaffold complete app templates from a description.", icon: "⚡", engine: false },
+      { name: "HexWars", cat: "games", desc: "Conquer the hex battlefield with your knowledge.", icon: "⬡", engine: false },
+      { name: "Decision Snake", cat: "games", desc: "Navigate the path of choices. Classic snake reborn.", icon: "🐍", engine: false },
+      { name: "SkillHex Mission Control", cat: "games", desc: "Mission-based skill progression hub.", icon: "🎯", engine: false }
+    ];
+
+    const CAT_STYLES = {
+      creators: { color: '#f59e0b', label: 'Creators' },
+      coders: { color: '#29B6F6', label: 'Builders' },
+      researchers: { color: '#4ade80', label: 'Research' },
+      business: { color: '#f472b6', label: 'Business' },
+      education: { color: '#a78bfa', label: 'Students' },
+      system: { color: '#94a3b8', label: 'Simulations' },
+      games: { color: '#FFCA28', label: 'Games' },
+      misc: { color: '#e2e8f0', label: 'Misc' }
+    };
+
+    const MapEngine = {
+      state: { x: -1000, y: -1000, scale: 0.6 },
+      isDragging: false,
+      dragStart: { x: 0, y: 0 },
+      nodes: [],
+      hubs: {},
+
+      clusterCenters: {
+        system:      { x: 3000, y: 3000, icon: '⚙️' },
+        business:    { x: 1500, y: 1500, icon: '💼' },
+        creators:    { x: 4500, y: 1500, icon: '🎨' },
+        coders:      { x: 1500, y: 4500, icon: '🛠️' },
+        games:       { x: 4500, y: 4500, icon: '🎮' },
+        education:   { x: 3000, y: 1000, icon: '📘' },
+        researchers: { x: 1000, y: 3000, icon: '🔬' },
+        misc:        { x: 5000, y: 3000, icon: '🧩' }
+      },
+
+      init() {
+        this.generateLayout();
+        this.render();
+        this.bindEvents();
+        this.centerMap();
+      },
+
+      generateLayout() {
+        let counters = {};
+        Object.keys(this.clusterCenters).forEach(cat => {
+          if (WORLD_TOOLS_DB.some(t => t.cat === cat)) {
+            this.hubs[cat] = {
+              isHub: true, cat: cat, name: CAT_STYLES[cat].label,
+              icon: this.clusterCenters[cat].icon,
+              x: this.clusterCenters[cat].x, y: this.clusterCenters[cat].y,
+              color: CAT_STYLES[cat].color
+            };
+          }
+        });
+
+        const PHI = 137.508;
+        this.nodes = WORLD_TOOLS_DB.map(tool => {
+          let cat = tool.cat || 'misc';
+          let center = this.clusterCenters[cat] || { x: 3000, y: 3000 };
+          counters[cat] = (counters[cat] || 0) + 1;
+          let i = counters[cat];
+          let radius = 220 + (i * 35);
+          let angle = i * PHI * (Math.PI / 180);
+          return {
+            ...tool,
+            x: center.x + Math.cos(angle) * radius,
+            y: center.y + Math.sin(angle) * radius,
+            color: CAT_STYLES[cat].color
+          };
+        });
+      },
+
+      render() {
+        const layer = document.getElementById('map-nodes-layer');
+        const svg = document.getElementById('map-paths');
+        if (!layer || !svg) return;
+        layer.innerHTML = '';
+        let svgHTML = '';
+
+        this.nodes.forEach(node => {
+          const hub = this.hubs[node.cat];
+          if (hub) svgHTML += `<path class="map-path-line" style="stroke: ${node.color};" d="M ${hub.x} ${hub.y} L ${node.x} ${node.y}" />`;
+        });
+
+        const centerHub = this.hubs['system'];
+        if (centerHub) {
+          Object.values(this.hubs).forEach(hub => {
+            if (hub.cat !== 'system') {
+              svgHTML += `<path class="map-path-line" style="stroke: #ffffff; opacity: 0.15;" d="M ${centerHub.x} ${centerHub.y} L ${hub.x} ${hub.y}" />`;
+            }
+          });
+        }
+        svg.innerHTML = svgHTML;
+
+        const renderNode = (n, isHub) => {
+          const el = document.createElement('div');
+          el.className = `map-node ${isHub ? 'hub' : ''}`;
+          el.style.left = n.x + 'px';
+          el.style.top = n.y + 'px';
+          el.innerHTML = `
+            <div class="node-glow-map" style="background: ${n.color};"></div>
+            <div class="node-icon-map" style="border-color: ${n.color}80; color: ${n.color};">${n.icon}</div>
+            <div class="node-label-map" style="${isHub ? `color: ${n.color}; border-color: ${n.color};` : ''}">${n.name}</div>
+          `;
+
+          if (!isHub) {
+            el.onclick = () => {
+              if (typeof openSheet === 'function') openSheet(n);
+              else console.log('Open:', n.name);
+            };
+          } else {
+            el.onclick = () => this.centerOn(n.x, n.y, 0.8);
+          }
+          layer.appendChild(el);
+        };
+
+        Object.values(this.hubs).forEach(h => renderNode(h, true));
+        this.nodes.forEach(n => renderNode(n, false));
+      },
+
+      updateTransform() {
+        const cvs = document.getElementById('world-canvas');
+        if (cvs) cvs.style.transform = `translate(${this.state.x}px, ${this.state.y}px) scale(${this.state.scale})`;
+      },
+
+      bindEvents() {
+        const vp = document.getElementById('world-viewport');
+        if (!vp) return;
+        vp.addEventListener('pointerdown', (e) => {
+          if (e.target.closest('.map-node') || e.target.closest('.hud-controls') || e.target.closest('#sheet') || currentSection !== 'world') return;
+          this.isDragging = true;
+          this.dragStart = { x: e.clientX - this.state.x, y: e.clientY - this.state.y };
+          vp.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('pointermove', (e) => {
+          if (!this.isDragging || currentSection !== 'world') return;
+          this.state.x = e.clientX - this.dragStart.x;
+          this.state.y = e.clientY - this.dragStart.y;
+          this.updateTransform();
+        });
+
+        window.addEventListener('pointerup', () => {
+          this.isDragging = false;
+          if (vp) vp.style.cursor = 'grab';
+        });
+
+        vp.addEventListener('wheel', (e) => {
+          if (currentSection !== 'world') return;
+          e.preventDefault();
+          const amount = e.deltaY > 0 ? -0.08 : 0.08;
+          this.zoom(amount, e.clientX, e.clientY);
+        }, { passive: false });
+      },
+
+      zoom(amount, fx = window.innerWidth / 2, fy = window.innerHeight / 2) {
+        let oldScale = this.state.scale;
+        this.state.scale = Math.min(Math.max(0.15, this.state.scale + amount), 2.5);
+        let ratio = this.state.scale / oldScale;
+        this.state.x = fx - (fx - this.state.x) * ratio;
+        this.state.y = fy - (fy - this.state.y) * ratio;
+        this.updateTransform();
+      },
+
+      centerOn(tx, ty, targetScale = 0.6) {
+        const cvs = document.getElementById('world-canvas');
+        if (!cvs) return;
+        cvs.style.transition = 'transform 0.6s cubic-bezier(0.19, 1, 0.22, 1)';
+        this.state.scale = targetScale;
+        this.state.x = window.innerWidth / 2 - (tx * this.state.scale);
+        this.state.y = window.innerHeight / 2 - (ty * this.state.scale);
+        this.updateTransform();
+        setTimeout(() => { cvs.style.transition = 'none'; }, 600);
+      },
+
+      centerMap() {
+        this.centerOn(3000, 3000, 0.35);
+      }
+    };
+
     // ═══════════════════════════════════════════════════════════════
     // INITIALIZATION
     // ═══════════════════════════════════════════════════════════════
@@ -1907,7 +2134,7 @@
       loadGameState();
       renderFeedStack();
       initLogicMap();
-      initWorldMap();
+      MapEngine.init();
       syncEconomyUI();
       
       document.querySelectorAll('.nav-btn').forEach(btn => {
