@@ -584,3 +584,27 @@
     "Planning"
   ]
 }
+}
+}
+[
+  {
+    "id": "decision-matrix",
+    "name": "Decision Matrix",
+    "description": "Multi-criteria decision analysis tool",
+    "category": "Analysis",
+    "version": "1.0.0",
+    "author": "ViaDecide",
+    "tags": ["decision", "analysis", "criteria"],
+    "sourceUrl": "https://github.com/via-decide/decide.engine-tools/tree/main/tools/decision-matrix"
+  },
+  {
+    "id": "logic-mapper",
+    "name": "Logic Mapper",
+    "description": "Visual logic flow mapping and analysis",
+    "category": "Mapping",
+    "version": "1.0.0",
+    "author": "ViaDecide",
+    "tags": ["logic", "flow", "visualization"],
+    "sourceUrl": "https://github.com/via-decide/decide.engine-tools/tree/main/tools/logic-mapper"
+  }
+]

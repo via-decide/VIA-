@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import ToolLoader from '@/public/tools/loader';
 import { marked } from 'marked';
+import { marked } from 'marked';
+import ToolLoader from '@/public/tools/loader';
 
 export default function ToolPage() {
   const router = useRouter();
@@ -10,6 +12,7 @@ export default function ToolPage() {
   const [tool, setTool] = useState(null);
   const [html, setHtml] = useState('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!id) return;
@@ -18,6 +21,11 @@ export default function ToolPage() {
     loader.loadTool(id)
       .then(async (loadedTool) => {
         if (!loadedTool) {
+
+    loader.loadTool(id)
+      .then((loadedTool) => {
+        if (!loadedTool) {
+          setError(`Tool "${id}" not found`);
           setLoading(false);
           return;
         }
@@ -53,6 +61,28 @@ export default function ToolPage() {
       </div>
 
       <div className="markdown-content" dangerouslySetInnerHTML={{ __html: html }} />
+        setHtml(marked.parse(loadedTool.markdown || ''));
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [id]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!tool) return <div>Tool not found</div>;
+
+  return (
+    <div className="tool-page">
+      <h1>{tool.name}</h1>
+      <p>{tool.description}</p>
+      <div className="meta">
+        <span>v{tool.version}</span>
+        <a href={tool.sourceUrl} target="_blank" rel="noreferrer">GitHub →</a>
+      </div>
+      <div dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
 }
