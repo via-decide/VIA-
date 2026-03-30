@@ -1,3 +1,589 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-04-01",
+  "totalTools": 44,
+  "tools": [
+    {
+      "id": "decision-matrix",
+      "name": "Decision Matrix",
+      "category": "Analysis",
+      "description": "Multi-criteria decision analysis tool",
+      "version": "1.0.0",
+      "tags": [
+        "analysis",
+        "decision"
+      ],
+      "difficulty": "beginner",
+      "featured": true
+    },
+    {
+      "id": "logic-mapper",
+      "name": "Logic Mapper",
+      "category": "Mapping",
+      "description": "Visual logic flow mapping and analysis",
+      "version": "1.0.0",
+      "tags": [
+        "mapping",
+        "decision"
+      ],
+      "difficulty": "beginner",
+      "featured": true
+    },
+    {
+      "id": "risk-calculator",
+      "name": "Risk Calculator",
+      "category": "Analysis",
+      "description": "Estimate and compare strategic risks",
+      "version": "1.0.0",
+      "tags": [
+        "analysis",
+        "decision"
+      ],
+      "difficulty": "beginner",
+      "featured": true
+    },
+    {
+      "id": "priority-grid",
+      "name": "Priority Grid",
+      "category": "Decision",
+      "description": "Prioritize initiatives by impact and effort",
+      "version": "1.0.0",
+      "tags": [
+        "decision",
+        "decision"
+      ],
+      "difficulty": "beginner",
+      "featured": true
+    },
+    {
+      "id": "scenario-planner",
+      "name": "Scenario Planner",
+      "category": "Planning",
+      "description": "Build and evaluate future scenarios",
+      "version": "1.0.0",
+      "tags": [
+        "planning",
+        "decision"
+      ],
+      "difficulty": "beginner",
+      "featured": true
+    },
+    {
+      "id": "tradeoff-analyzer",
+      "name": "Tradeoff Analyzer",
+      "category": "Decision",
+      "description": "Reveal tradeoffs between competing goals",
+      "version": "1.0.0",
+      "tags": [
+        "decision",
+        "decision"
+      ],
+      "difficulty": "beginner",
+      "featured": false
+    },
+    {
+      "id": "stakeholder-map",
+      "name": "Stakeholder Map",
+      "category": "Mapping",
+      "description": "Map influence and alignment across stakeholders",
+      "version": "1.0.0",
+      "tags": [
+        "mapping",
+        "decision"
+      ],
+      "difficulty": "beginner",
+      "featured": false
+    },
+    {
+      "id": "swot-designer",
+      "name": "SWOT Designer",
+      "category": "Analysis",
+      "description": "Structured SWOT modeling with weighted signals",
+      "version": "1.0.0",
+      "tags": [
+        "analysis",
+        "decision"
+      ],
+      "difficulty": "beginner",
+      "featured": false
+    },
+    {
+      "id": "timeline-architect",
+      "name": "Timeline Architect",
+      "category": "Planning",
+      "description": "Plan milestones and execution cadence",
+      "version": "1.0.0",
+      "tags": [
+        "planning",
+        "decision"
+      ],
+      "difficulty": "beginner",
+      "featured": false
+    },
+    {
+      "id": "options-scorer",
+      "name": "Options Scorer",
+      "category": "Decision",
+      "description": "Score and rank options with transparent criteria",
+      "version": "1.0.0",
+      "tags": [
+        "decision",
+        "decision"
+      ],
+      "difficulty": "beginner",
+      "featured": false
+    },
+    {
+      "id": "funnel-diagnoser",
+      "name": "Funnel Diagnoser",
+      "category": "Analysis",
+      "description": "Identify bottlenecks in conversion or process funnels",
+      "version": "1.0.0",
+      "tags": [
+        "analysis",
+        "decision"
+      ],
+      "difficulty": "beginner",
+      "featured": false
+    },
+    {
+      "id": "causal-loop",
+      "name": "Causal Loop Mapper",
+      "category": "Mapping",
+      "description": "Map reinforcing and balancing causal loops",
+      "version": "1.0.0",
+      "tags": [
+        "mapping",
+        "decision"
+      ],
+      "difficulty": "beginner",
+      "featured": false
+    },
+    {
+      "id": "roadmap-prioritizer",
+      "name": "Roadmap Prioritizer",
+      "category": "Planning",
+      "description": "Sequence roadmap items by value and dependency",
+      "version": "1.0.0",
+      "tags": [
+        "planning",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "constraint-solver",
+      "name": "Constraint Solver",
+      "category": "Decision",
+      "description": "Evaluate feasible plans under constraints",
+      "version": "1.0.0",
+      "tags": [
+        "decision",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "signal-dashboard",
+      "name": "Signal Dashboard",
+      "category": "Visualization",
+      "description": "Track weak signals and trend confidence",
+      "version": "1.0.0",
+      "tags": [
+        "visualization",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "assumption-auditor",
+      "name": "Assumption Auditor",
+      "category": "Analysis",
+      "description": "Audit and stress-test core assumptions",
+      "version": "1.0.0",
+      "tags": [
+        "analysis",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "dependency-web",
+      "name": "Dependency Web",
+      "category": "Mapping",
+      "description": "Visualize interconnected dependencies",
+      "version": "1.0.0",
+      "tags": [
+        "mapping",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "budget-splitter",
+      "name": "Budget Splitter",
+      "category": "Planning",
+      "description": "Allocate budget across initiatives",
+      "version": "1.0.0",
+      "tags": [
+        "planning",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "pathfinder",
+      "name": "Pathfinder",
+      "category": "Decision",
+      "description": "Compare alternate decision pathways",
+      "version": "1.0.0",
+      "tags": [
+        "decision",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "impact-map",
+      "name": "Impact Map",
+      "category": "Visualization",
+      "description": "Map intended outcomes to actions",
+      "version": "1.0.0",
+      "tags": [
+        "visualization",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "evidence-weigher",
+      "name": "Evidence Weigher",
+      "category": "Analysis",
+      "description": "Weigh evidence quality and relevance",
+      "version": "1.0.0",
+      "tags": [
+        "analysis",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "objective-tree",
+      "name": "Objective Tree",
+      "category": "Planning",
+      "description": "Break strategic goals into measurable objectives",
+      "version": "1.0.0",
+      "tags": [
+        "planning",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "alignment-checker",
+      "name": "Alignment Checker",
+      "category": "Decision",
+      "description": "Check strategic alignment across teams",
+      "version": "1.0.0",
+      "tags": [
+        "decision",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "flow-simulator",
+      "name": "Flow Simulator",
+      "category": "Visualization",
+      "description": "Simulate flow through process stages",
+      "version": "1.0.0",
+      "tags": [
+        "visualization",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "option-portfolio",
+      "name": "Option Portfolio",
+      "category": "Planning",
+      "description": "Balance a portfolio of strategic options",
+      "version": "1.0.0",
+      "tags": [
+        "planning",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "bias-detector",
+      "name": "Bias Detector",
+      "category": "Analysis",
+      "description": "Detect common reasoning and sampling biases",
+      "version": "1.0.0",
+      "tags": [
+        "analysis",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "network-cluster",
+      "name": "Network Cluster",
+      "category": "Mapping",
+      "description": "Cluster entities by relationship strength",
+      "version": "1.0.0",
+      "tags": [
+        "mapping",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "goal-balancer",
+      "name": "Goal Balancer",
+      "category": "Decision",
+      "description": "Balance short-term and long-term goals",
+      "version": "1.0.0",
+      "tags": [
+        "decision",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "insight-canvas",
+      "name": "Insight Canvas",
+      "category": "Visualization",
+      "description": "Capture findings in a structured canvas",
+      "version": "1.0.0",
+      "tags": [
+        "visualization",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "milestone-forecaster",
+      "name": "Milestone Forecaster",
+      "category": "Planning",
+      "description": "Forecast delivery confidence by milestone",
+      "version": "1.0.0",
+      "tags": [
+        "planning",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "cost-benefit-pro",
+      "name": "Cost Benefit Pro",
+      "category": "Analysis",
+      "description": "Analyze costs, benefits, and sensitivity",
+      "version": "1.0.0",
+      "tags": [
+        "analysis",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "decision-tree-builder",
+      "name": "Decision Tree Builder",
+      "category": "Decision",
+      "description": "Build probabilistic decision trees",
+      "version": "1.0.0",
+      "tags": [
+        "decision",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "system-map",
+      "name": "System Map",
+      "category": "Mapping",
+      "description": "Visualize systems, actors, and interactions",
+      "version": "1.0.0",
+      "tags": [
+        "mapping",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "priority-heatmap",
+      "name": "Priority Heatmap",
+      "category": "Visualization",
+      "description": "Visual heatmap of priorities and urgency",
+      "version": "1.0.0",
+      "tags": [
+        "visualization",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "resource-planner",
+      "name": "Resource Planner",
+      "category": "Planning",
+      "description": "Plan staffing and resource utilization",
+      "version": "1.0.0",
+      "tags": [
+        "planning",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "root-cause-lab",
+      "name": "Root Cause Lab",
+      "category": "Analysis",
+      "description": "Structured root-cause exploration",
+      "version": "1.0.0",
+      "tags": [
+        "analysis",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "influence-orbit",
+      "name": "Influence Orbit",
+      "category": "Mapping",
+      "description": "Map centers of influence and orbiting factors",
+      "version": "1.0.0",
+      "tags": [
+        "mapping",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "value-stack",
+      "name": "Value Stack",
+      "category": "Decision",
+      "description": "Compare value layers across alternatives",
+      "version": "1.0.0",
+      "tags": [
+        "decision",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "signal-radar",
+      "name": "Signal Radar",
+      "category": "Visualization",
+      "description": "Radar view of trend and signal strength",
+      "version": "1.0.0",
+      "tags": [
+        "visualization",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "execution-grid",
+      "name": "Execution Grid",
+      "category": "Planning",
+      "description": "Coordinate execution with ownership clarity",
+      "version": "1.0.0",
+      "tags": [
+        "planning",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "confidence-meter",
+      "name": "Confidence Meter",
+      "category": "Analysis",
+      "description": "Quantify confidence for each recommendation",
+      "version": "1.0.0",
+      "tags": [
+        "analysis",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "logic-paths",
+      "name": "Logic Paths",
+      "category": "Mapping",
+      "description": "Trace logical pathways and branch points",
+      "version": "1.0.0",
+      "tags": [
+        "mapping",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "policy-sandbox",
+      "name": "Policy Sandbox",
+      "category": "Decision",
+      "description": "Test policy options against constraints",
+      "version": "1.0.0",
+      "tags": [
+        "decision",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    },
+    {
+      "id": "strategy-atlas",
+      "name": "Strategy Atlas",
+      "category": "Visualization",
+      "description": "Navigate strategic choices in an atlas view",
+      "version": "1.0.0",
+      "tags": [
+        "visualization",
+        "decision"
+      ],
+      "difficulty": "intermediate",
+      "featured": false
+    }
+  ],
+  "categories": [
+    "Analysis",
+    "Mapping",
+    "Decision",
+    "Visualization",
+    "Planning"
+  ]
+}
 [
   {
     "id": "decision-matrix",
