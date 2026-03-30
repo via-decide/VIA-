@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>LOGICHUB v2 — Vibecoder Architecture</title>
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   
@@ -45,6 +45,7 @@
       height: 100vh;
       overflow: hidden;
       user-select: none;
+      -webkit-user-select: none;
     }
 
     /* === LAYOUT === */
@@ -54,7 +55,7 @@
       background: var(--bg-secondary); z-index: 100; flex-wrap: wrap; gap: 1rem;
     }
 
-    .header-left { display: flex; align-items: center; gap: 2rem; }
+    .header-left { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
     .header-title { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; letter-spacing: 1px;}
     .header-title span { color: var(--accent); font-family: var(--font-mono); font-size: 0.8rem; vertical-align: top;}
 
@@ -73,22 +74,22 @@
     .info-badge {
       font-family: var(--font-mono); font-size: 0.75rem; padding: 0.4rem 0.8rem;
       background: rgba(0, 229, 255, 0.1); border: 1px solid var(--accent);
-      border-radius: 4px; color: var(--accent); font-weight: 700;
+      border-radius: 4px; color: var(--accent); font-weight: 700; white-space: nowrap;
     }
 
     .logger {
-      padding: 0.8rem 2rem; background: var(--bg-primary); border-bottom: 1px solid var(--border-color);
-      font-family: var(--font-mono); font-size: 0.8rem; min-height: 60px; max-height: 80px;
+      padding: 0.5rem 2rem; background: var(--bg-primary); border-bottom: 1px solid var(--border-color);
+      font-family: var(--font-mono); font-size: 0.75rem; min-height: 50px; max-height: 70px;
       overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; z-index: 99;
     }
 
-    .log-line { margin: 3px 0; min-height: 1.1rem; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;}
+    .log-line { margin: 2px 0; min-height: 1.1rem; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;}
     .log-line.success { color: var(--success); }
     .log-line.error { color: var(--error); }
     .log-line.accent { color: var(--accent); text-shadow: 0 0 8px rgba(0, 229, 255, 0.4); }
     .log-line.info { color: var(--text-primary); }
 
-    .main-container { display: flex; flex: 1; overflow: hidden; }
+    .main-container { display: flex; flex: 1; overflow: hidden; position: relative; }
 
     .sidebar {
       width: 220px; padding: 1rem; border-right: 1px solid var(--border-color);
@@ -100,14 +101,17 @@
       margin: 0 0 0.8rem 0; font-size: 0.75rem; font-weight: 700;
       text-transform: uppercase; color: var(--text-secondary); letter-spacing: 1px;
     }
+    
+    .sidebar-grid { display: flex; flex-direction: column; gap: 0.5rem; }
 
     .palette-item {
-      padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;
-      text-align: center; cursor: grab; font-family: var(--font-mono); color: var(--text-primary);
-      background: var(--bg-primary); transition: all 0.2s; font-size: 0.8rem; font-weight: 500;
+      padding: 0.6rem; border: 1px solid var(--border-color); border-radius: 6px;
+      text-align: center; cursor: pointer; font-family: var(--font-mono); color: var(--text-primary);
+      background: var(--bg-primary); transition: all 0.2s; font-size: 0.75rem; font-weight: 500;
+      touch-action: manipulation; white-space: nowrap;
     }
     .palette-item:hover { border-color: var(--accent); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--accent); color: var(--accent);}
-    .palette-item:active { cursor: grabbing; transform: scale(0.98); }
+    .palette-item:active { transform: scale(0.98); background: rgba(0, 229, 255, 0.1); }
 
     .canvas {
       flex: 1; position: relative; background-color: var(--bg-secondary);
@@ -123,23 +127,23 @@
     /* === BLOCKS === */
     .block {
       position: absolute; width: 180px; padding: 0.75rem;
-      background: rgba(10, 12, 16, 0.95); backdrop-filter: blur(8px);
+      background: rgba(10, 12, 16, 0.95); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
       border: 2px solid var(--text-secondary); border-radius: 12px;
       font-family: var(--font-sans); cursor: grab; touch-action: none;
       display: flex; flex-direction: column; gap: 0.6rem;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6); transition: all 0.2s; font-size: 0.8rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6); transition: box-shadow 0.2s, border-color 0.2s, transform 0.1s; font-size: 0.8rem;
     }
 
     .block:hover { box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8); }
 
     .block.selected, .block:active {
       cursor: grabbing; box-shadow: 0 12px 40px rgba(0, 229, 255, 0.2), 0 0 0 1px var(--accent);
-      border-color: var(--accent); transform: scale(1.02); z-index: 1000;
+      border-color: var(--accent); transform: scale(1.02); z-index: 1000 !important;
     }
 
-    .block-header { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-secondary); }
+    .block-header { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-secondary); pointer-events: none;}
     .block-type { color: var(--accent); font-weight: 700; }
-    .block-edit { cursor: pointer; pointer-events: auto; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.05); transition: background 0.2s;}
+    .block-edit { cursor: pointer; pointer-events: auto; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.05); transition: background 0.2s;}
     .block-edit:hover { background: rgba(0, 229, 255, 0.2); color: var(--accent); }
 
     .block-label {
@@ -149,36 +153,41 @@
     }
     .block-label:focus { border-bottom-color: var(--accent); }
 
-    .block-file { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-secondary); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+    .block-file { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-secondary); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none;}
 
     .block-status {
-      font-family: var(--font-mono); font-size: 0.65rem; text-align: center; padding: 4px;
+      font-family: var(--font-mono); font-size: 0.65rem; text-align: center; padding: 6px 4px;
       border-radius: 4px; pointer-events: none; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
     }
 
-    .block-ports { position: relative; height: 0; }
-    .port {
-      position: absolute; width: 14px; height: 14px; background: var(--bg-primary);
-      border: 2px solid var(--text-secondary); border-radius: 50%; cursor: crosshair;
-      z-index: 10; transition: all 0.2s; touch-action: none;
+    /* Fat Touch Targets for Mobile */
+    .port-wrapper {
+      position: absolute; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+      cursor: crosshair; z-index: 10; touch-action: none;
     }
-    .port.in { left: -8px; top: calc(50% - 7px); }
-    .port.out { right: -8px; top: calc(50% - 7px); }
-    .port:hover { border-color: var(--accent); background: var(--accent); transform: scale(1.3); box-shadow: 0 0 12px rgba(0, 229, 255, 0.5); }
+    .port-wrapper.in { left: -22px; top: calc(50% - 22px); }
+    .port-wrapper.out { right: -22px; top: calc(50% - 22px); }
+    
+    .port {
+      width: 14px; height: 14px; background: var(--bg-primary);
+      border: 2px solid var(--text-secondary); border-radius: 50%; 
+      transition: all 0.2s; pointer-events: none;
+    }
+    .port-wrapper:hover .port, .port-wrapper.active .port { border-color: var(--accent); background: var(--accent); transform: scale(1.4); box-shadow: 0 0 12px rgba(0, 229, 255, 0.5); }
 
     .block-delete {
       position: absolute; top: -10px; right: -10px; background: var(--error); color: white;
-      width: 22px; height: 22px; border-radius: 50%; display: none; justify-content: center; align-items: center;
+      width: 26px; height: 26px; border-radius: 50%; display: none; justify-content: center; align-items: center;
       font-size: 12px; font-weight: bold; cursor: pointer; z-index: 20; transition: all 0.2s; border: 2px solid var(--bg-secondary);
     }
-    .block:hover .block-delete { display: flex; }
-    .block-delete:hover { background: #ff6666; transform: scale(1.2); }
+    .block:hover .block-delete, .block.selected .block-delete { display: flex; }
+    .block-delete:hover { background: #ff6666; transform: scale(1.15); }
 
     /* === BLOCK STATES === */
     .block.state-pending { border-color: var(--text-secondary); }
     .block.state-pending .block-status { background: var(--state-pending); color: var(--text-primary); }
 
-    .block.state-locked { border-color: var(--border-color); opacity: 0.5; }
+    .block.state-locked { border-color: var(--border-color); opacity: 0.6; }
     .block.state-locked .block-status { background: var(--state-locked); color: var(--text-secondary); }
 
     .block.state-generating {
@@ -208,12 +217,12 @@
       pointer-events: visibleStroke; cursor: pointer; transition: stroke 0.2s, stroke-width 0.2s;
       stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 6 4; animation: flow 20s linear infinite;
     }
-    .arrow-path:hover { stroke: var(--error); stroke-width: 5; stroke-dasharray: none; animation: none;}
+    .arrow-path:hover { stroke: var(--error); stroke-width: 6; stroke-dasharray: none; animation: none;}
     .arrow-path.verified { stroke: var(--state-verified); stroke-dasharray: none; animation: none;}
 
     @keyframes flow { to { stroke-dashoffset: -1000; } }
 
-    .drawing-path { fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 5 5; pointer-events: none; stroke-linecap: round; }
+    .drawing-path { fill: none; stroke: var(--accent); stroke-width: 3.5; stroke-dasharray: 5 5; pointer-events: none; stroke-linecap: round; }
 
     /* === FOOTER & BUTTONS === */
     .footer { display: flex; gap: 0.8rem; padding: 1rem 2rem; border-top: 1px solid var(--border-color); background: var(--bg-secondary); z-index: 50; flex-wrap: wrap; }
@@ -222,6 +231,7 @@
       padding: 0.8rem 1.6rem; font-family: var(--font-sans); font-weight: 700; font-size: 0.85rem;
       border: 1px solid var(--border-bright); background: var(--bg-primary); color: var(--text-primary);
       cursor: pointer; border-radius: 8px; transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px;
+      touch-action: manipulation;
     }
     button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px rgba(0, 229, 255, 0.2); }
     button:active:not(:disabled) { transform: scale(0.96); }
@@ -236,60 +246,106 @@
     /* === MODALS === */
     .modal {
       display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(4px); z-index: 2000;
-      align-items: center; justify-content: center;
+      background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 2000;
+      align-items: center; justify-content: center; padding: 1rem;
     }
     .modal.active { display: flex; }
     .modal-content {
       background: var(--bg-secondary); border: 1px solid var(--border-bright); border-radius: 16px;
-      padding: 2rem; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto;
+      padding: 1.5rem; width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto;
       box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9); position: relative;
     }
-    .modal-header { font-family: var(--font-mono); font-size: 1.2rem; font-weight: 700; color: var(--accent); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
-    .modal-close { position: absolute; top: 1.5rem; right: 1.5rem; background: transparent; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; padding: 0; }
-    .modal-close:hover { color: var(--error); box-shadow: none;}
+    .modal-header { font-family: var(--font-mono); font-size: 1.1rem; font-weight: 700; color: var(--accent); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; padding-right: 2rem;}
+    .modal-close { position: absolute; top: 1.2rem; right: 1.2rem; background: rgba(255,255,255,0.1); border: none; color: var(--text-primary); font-size: 1.2rem; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; transition: background 0.2s;}
+    .modal-close:hover { background: var(--error); color: white; box-shadow: none;}
 
-    .form-group { margin-bottom: 1.5rem; }
-    .form-label { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-family: var(--font-mono);}
-    .form-input { width: 100%; padding: 0.8rem; border: 1px solid var(--border-bright); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-mono); font-size: 0.9rem; outline: none; transition: all 0.2s; }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-label { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-family: var(--font-mono);}
+    .form-label span { font-size: 0.65rem; color: var(--text-secondary); text-transform: none; font-weight: 400;}
+    .form-input { width: 100%; padding: 0.8rem; border: 1px solid var(--border-bright); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-mono); font-size: 0.85rem; outline: none; transition: all 0.2s; }
     .form-input:focus { border-color: var(--accent); box-shadow: 0 0 12px rgba(0, 229, 255, 0.1); }
-    .form-textarea { resize: vertical; min-height: 120px; }
-    .code-textarea { min-height: 250px; font-size: 0.8rem; color: var(--success); white-space: pre; overflow-wrap: normal; overflow-x: auto;}
+    .form-textarea { resize: vertical; min-height: 100px; }
+    .code-textarea { min-height: 200px; color: var(--success); white-space: pre; overflow-wrap: normal; overflow-x: auto;}
+
+    /* ========================================================
+       ULTRA MOBILE CONGESTION FIXES
+       ======================================================== */
+    @media (max-width: 768px) {
+      .header { padding: 0.75rem 1rem; flex-direction: column; align-items: stretch; gap: 0.75rem; }
+      .header-left { justify-content: space-between; gap: 0.5rem; }
+      .header-title { font-size: 1.2rem; }
+      .api-input { width: 100%; padding: 0.75rem; }
+      .toolbar { width: 100%; }
+      
+      .logger { padding: 0.5rem 1rem; font-size: 0.7rem; min-height: 40px; max-height: 60px; }
+      
+      .main-container { flex-direction: column; }
+      
+      /* Sidebar becomes a horizontal scrolling tray */
+      .sidebar { 
+        width: 100%; height: auto; flex-direction: row; overflow-x: auto; 
+        padding: 0.75rem 1rem; border-right: none; border-bottom: 1px solid var(--border-color); 
+        gap: 1rem; align-items: center; 
+      }
+      .sidebar-section { display: flex; flex-direction: row; gap: 0.5rem; align-items: center; }
+      .sidebar-section h3 { display: none; /* Hide headers to save space */ }
+      .sidebar-grid { flex-direction: row; gap: 0.5rem; }
+      .palette-item { padding: 0.5rem 1rem; flex-shrink: 0; font-size: 0.7rem; }
+      
+      /* Footer becomes a 2x2 grid */
+      .footer { padding: 0.75rem 1rem; gap: 0.5rem; }
+      .footer button { flex: 1 1 calc(50% - 0.5rem); padding: 0.75rem 0.5rem; font-size: 0.75rem; white-space: nowrap; }
+      
+      /* Block UI fixes for touch */
+      .block { width: 160px; padding: 0.6rem; gap: 0.5rem;}
+      .block-delete { display: flex; /* Always show delete on mobile */ width: 28px; height: 28px; font-size: 14px; top: -12px; right: -12px;}
+      .block-label { font-size: 0.85rem; }
+      .block-edit { padding: 6px 10px; font-size: 0.7rem;} /* Bigger touch target */
+      
+      /* Modal fixes */
+      .modal-content { padding: 1.2rem; max-height: 95vh;}
+      .form-label { flex-direction: column; gap: 0.2rem;}
+    }
   </style>
 </head>
 <body>
 
   <div class="header">
     <div class="header-left">
-      <div class="header-title">LOGICHUB <span>VIBECODER ENGINE</span></div>
+      <div class="header-title">LOGICHUB <span>VIBECODER</span></div>
       <div class="map-status" id="map-status">● AWAITING SYNTHESIS</div>
       <div class="info-badge" id="block-count">0 nodes</div>
     </div>
     <div class="toolbar">
-      <input type="password" id="api-key" class="api-input" placeholder="Gemini API Key (Required for Synthesis)">
+      <input type="password" id="api-key" class="api-input" placeholder="Gemini API Key (Required for Code Gen)">
     </div>
   </div>
 
   <div class="logger">
-    <div class="log-line info" id="log-1">>> TERMINAL INITIALIZED</div>
+    <div class="log-line info" id="log-1">>> SYSTEM BOOTING...</div>
     <div class="log-line info" id="log-2">>> READY TO VIBECODE</div>
     <div class="log-line success" id="log-3">>> AWAITING ARCHITECTURE</div>
   </div>
 
   <div class="main-container">
+    <!-- Horizontal on Mobile, Vertical on Desktop -->
     <div class="sidebar">
       <div class="sidebar-section">
         <h3>Core Nodes</h3>
-        <div class="palette-item" data-type="ui" title="Frontend Component">UI COMPONENT</div>
-        <div class="palette-item" data-type="api" title="Backend Route / Logic">API ROUTE</div>
-        <div class="palette-item" data-type="database" title="Schema / DB Layer">DATABASE</div>
-        <div class="palette-item" data-type="auth" title="Security Layer">AUTH</div>
+        <div class="sidebar-grid">
+          <div class="palette-item" onclick="app.addBlockAtCenter('ui')">[UI] COMPONENT</div>
+          <div class="palette-item" onclick="app.addBlockAtCenter('api')">[API] ROUTE</div>
+          <div class="palette-item" onclick="app.addBlockAtCenter('database')">[DB] SCHEMA</div>
+          <div class="palette-item" onclick="app.addBlockAtCenter('auth')">[AUTH] LAYER</div>
+        </div>
       </div>
       <div class="sidebar-section">
         <h3>Utility Nodes</h3>
-        <div class="palette-item" data-type="util" title="Helper Functions">UTILITY</div>
-        <div class="palette-item" data-type="style" title="CSS / Styling">STYLES</div>
-        <div class="palette-item" data-type="config" title="Configuration Files">CONFIG</div>
+        <div class="sidebar-grid">
+          <div class="palette-item" onclick="app.addBlockAtCenter('util')">[UTIL] HELPER</div>
+          <div class="palette-item" onclick="app.addBlockAtCenter('style')">[CSS] STYLES</div>
+          <div class="palette-item" onclick="app.addBlockAtCenter('config')">[CFG] CONFIG</div>
+        </div>
       </div>
     </div>
 
@@ -304,7 +360,7 @@
 
   <div class="footer">
     <button onclick="app.addBlockAtCenter('ui')">[+ Add Node]</button>
-    <button id="btn-validate" class="compile-btn" onclick="app.synthesizeArchitecture()">[⚡ Synthesize Flow]</button>
+    <button id="btn-validate" class="compile-btn" onclick="app.synthesizeArchitecture()">[⚡ Synthesize]</button>
     <button id="btn-export" disabled onclick="app.exportZip()">[📦 Export .ZIP]</button>
     <button id="btn-clear" onclick="if(confirm('Wipe architecture?')) app.clearMap()">[Wipe Canvas]</button>
   </div>
@@ -332,13 +388,13 @@
         <textarea class="form-input code-textarea" id="node-modal-code" placeholder="// Code will appear here after synthesis, or you can write it manually."></textarea>
       </div>
 
-      <button style="width: 100%; background: var(--accent); color: #000; border: none;" onclick="app.saveNodeConfig()">Save Configuration</button>
+      <button style="width: 100%; background: var(--accent); color: #000; border: none; padding: 1rem; font-size: 1rem;" onclick="app.saveNodeConfig()">Save Configuration</button>
     </div>
   </div>
 
   <script>
     // ============================================
-    // LOGICHUB VIBECODER ENGINE
+    // LOGICHUB VIBECODER ENGINE (MOBILE OPTIMIZED)
     // ============================================
 
     class LogicMap {
@@ -386,8 +442,7 @@
 
       connect(fromId, toId) {
         if (fromId === toId) return false;
-        // Prevent cycles (basic check)
-        if (this.hasPath(toId, fromId)) return false; 
+        if (this.hasPath(toId, fromId)) return false; // Prevent cycles
         if (this.connections.some(c => c.from === fromId && c.to === toId)) return false;
         
         const fromBlock = this.blocks.find(b => b.id === fromId);
@@ -419,16 +474,12 @@
       }
 
       getTopologicalOrder() {
-        const visited = new Set();
-        const result = [];
+        const visited = new Set(), result = [];
         const visit = (id) => {
           if (visited.has(id)) return;
           visited.add(id);
           const block = this.blocks.find(b => b.id === id);
-          if (block) {
-            block.dependsOn.forEach(visit);
-            result.push(block);
-          }
+          if (block) { block.dependsOn.forEach(visit); result.push(block); }
         };
         this.blocks.forEach(b => visit(b.id));
         return result;
@@ -474,18 +525,8 @@
 
       setupEvents() {
         const canvas = document.getElementById("canvas");
-        
-        document.querySelectorAll(".palette-item").forEach(item => {
-          item.addEventListener("pointerdown", (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const x = Math.max(0, e.clientX - rect.left - 90);
-            const y = Math.max(0, e.clientY - rect.top - 40);
-            this.map.addBlock(e.target.dataset.type, x, y);
-            this.render();
-            this.log(`Instantiated ${e.target.dataset.type} node`, "info");
-          });
-        });
 
+        // Dragging & Wire Drawing Logic
         canvas.addEventListener("pointermove", (e) => {
           if (this.isDragging) {
             e.preventDefault();
@@ -493,9 +534,8 @@
             let x = e.clientX - rect.left - this.dragOffset.x;
             let y = e.clientY - rect.top - this.dragOffset.y;
             
-            // Snap to grid
-            x = Math.round(x / 24) * 24;
-            y = Math.round(y / 24) * 24;
+            x = Math.round(x / 12) * 12; // Smoother snap
+            y = Math.round(y / 12) * 12;
 
             this.isDragging.x = x;
             this.isDragging.y = y;
@@ -506,16 +546,11 @@
             const rect = canvas.getBoundingClientRect();
             const endX = e.clientX - rect.left;
             const endY = e.clientY - rect.top;
-            const srcEl = document.getElementById(this.sourceId);
-            if(!srcEl) return;
-            // Get literal current transform values for smooth dragging line
-            const transform = srcEl.style.transform;
-            let match = transform.match(/translate\(([^p]+)px,\s*([^p]+)px\)/);
-            if (!match) return;
-            const srcX = parseFloat(match[1]) + 180; // width
-            const srcY = parseFloat(match[2]) + 40;  // half height
             
-            document.getElementById("drawing-path").setAttribute("d", `M ${srcX} ${srcY} C ${srcX + 60} ${srcY}, ${endX - 60} ${endY}, ${endX} ${endY}`);
+            const srcPos = this.getPortCenter(this.sourceId, 'out');
+            if(!srcPos) return;
+            
+            document.getElementById("drawing-path").setAttribute("d", `M ${srcPos.x} ${srcPos.y} C ${srcPos.x + 60} ${srcPos.y}, ${endX - 60} ${endY}, ${endX} ${endY}`);
           }
         });
 
@@ -529,6 +564,8 @@
             this.isDrawing = false;
             this.sourceId = null;
             document.getElementById("drawing-path").setAttribute("d", "");
+            // Clear hover states on ports
+            document.querySelectorAll('.port-wrapper').forEach(el => el.classList.remove('active'));
           }
         });
 
@@ -538,10 +575,24 @@
         });
       },
 
+      // Helper to get exact DOM coordinates of a port for dynamic wire routing
+      getPortCenter(blockId, portType) {
+        const blockEl = document.getElementById(blockId);
+        if (!blockEl) return null;
+        const wrapper = blockEl.querySelector(`.port-wrapper.${portType}`);
+        if (!wrapper) return null;
+        const canvasRect = document.getElementById('canvas').getBoundingClientRect();
+        const r = wrapper.getBoundingClientRect();
+        return { 
+          x: r.left + r.width / 2 - canvasRect.left, 
+          y: r.top + r.height / 2 - canvasRect.top 
+        };
+      },
+
       addBlockAtCenter(type) {
         const canvas = document.getElementById("canvas");
-        const x = (canvas.offsetWidth / 2) - 90 + (Math.random()*40-20);
-        const y = (canvas.offsetHeight / 2) - 40 + (Math.random()*40-20);
+        const x = Math.max(20, (canvas.offsetWidth / 2) - 90 + (Math.random()*40-20));
+        const y = Math.max(20, (canvas.offsetHeight / 2) - 40 + (Math.random()*40-20));
         this.map.addBlock(type, x, y);
         this.render();
         this.log(`Node deployed to canvas`, "info");
@@ -549,8 +600,8 @@
 
       updateBlockStates() {
         this.map.blocks.forEach(b => {
-          if (b.status === "GENERATING") return; // Let it spin
-          if (b.code && b.status === "VERIFIED") return; // Already good
+          if (b.status === "GENERATING") return; 
+          if (b.code && b.status === "VERIFIED") return; 
           
           const isOrphaned = !this.map.connections.some(c => c.from === b.id || c.to === b.id);
           const depsSatisfied = b.dependsOn.every(depId => {
@@ -573,12 +624,12 @@
           const el = document.createElement("div");
           el.className = `block state-${b.status}`;
           el.id = b.id;
-          // Use transform instead of top/left for smoother dragging
           el.style.transform = `translate(${b.x}px, ${b.y}px)`;
           el.style.top = "0"; el.style.left = "0";
 
           const icon = { PENDING: "◯", LOCKED: "🔒", GENERATING: "⚡", VERIFIED: "✓", ERROR: "✗", ORPHANED: "⚠" }[b.status] || "◯";
 
+          // Fat Port Wrappers for Touch
           el.innerHTML = `
             <div class="block-delete" onclick="app.removeBlock('${b.id}')">✕</div>
             <div class="block-header">
@@ -588,14 +639,17 @@
             <input type="text" class="block-label" value="${b.label}" onchange="app.updateLabel('${b.id}', this.value)">
             <div class="block-file">${b.filename}</div>
             <div class="block-status">${icon} ${b.status}</div>
-            <div class="block-ports">
-              <div class="port in" onpointerdown="app.startWire(event, '${b.id}', 'in')" onpointerup="app.endWire(event, '${b.id}', 'in')"></div>
-              <div class="port out" onpointerdown="app.startWire(event, '${b.id}', 'out')" onpointerup="app.endWire(event, '${b.id}', 'out')"></div>
+            
+            <div class="port-wrapper in" onpointerdown="app.startWire(event, '${b.id}', 'in')" onpointerup="app.endWire(event, '${b.id}', 'in')">
+              <div class="port"></div>
+            </div>
+            <div class="port-wrapper out" onpointerdown="app.startWire(event, '${b.id}', 'out')" onpointerup="app.endWire(event, '${b.id}', 'out')">
+              <div class="port"></div>
             </div>
           `;
 
           el.addEventListener("pointerdown", (e) => {
-            if (e.target.tagName === "INPUT" || e.target.classList.contains('block-edit') || e.target.classList.contains('port')) return;
+            if (e.target.tagName === "INPUT" || e.target.classList.contains('block-edit') || e.target.closest('.port-wrapper')) return;
             const canvasRect = document.getElementById("canvas").getBoundingClientRect();
             const mouseX = e.clientX - canvasRect.left;
             const mouseY = e.clientY - canvasRect.top;
@@ -605,13 +659,14 @@
           });
           
           el.addEventListener("dblclick", (e) => {
-            if (e.target.tagName !== "INPUT") this.openNodeEditor(b.id);
+            if (e.target.tagName !== "INPUT" && !e.target.closest('.port-wrapper')) this.openNodeEditor(b.id);
           });
 
           container.appendChild(el);
         });
 
-        this.renderConnections();
+        // Use requestAnimationFrame to ensure DOM is painted before we measure port centers for wires
+        requestAnimationFrame(() => this.renderConnections());
         this.updateHeader();
         this.save();
       },
@@ -623,11 +678,15 @@
           const from = this.map.blocks.find(b => b.id === c.from);
           const to = this.map.blocks.find(b => b.id === c.to);
           if (!from || !to) return;
-          const fx = from.x + 180, fy = from.y + 40;
-          const tx = to.x, ty = to.y + 40;
+          
+          const srcPos = this.getPortCenter(c.from, 'out');
+          const tgtPos = this.getPortCenter(c.to, 'in');
+          if (!srcPos || !tgtPos) return;
+
           const cls = (from.status === "VERIFIED" && to.status === "VERIFIED") ? "arrow-path verified" : "arrow-path";
-          // Add click handler to delete wire
-          svg += `<path class="${cls}" d="M ${fx} ${fy} C ${fx+60} ${fy}, ${tx-60} ${ty}, ${tx} ${ty}" onclick="app.map.disconnect('${c.from}','${c.to}'); app.render(); app.log('Wire cut', 'info');"></path>`;
+          const cx = Math.abs(tgtPos.x - srcPos.x) * 0.5;
+          
+          svg += `<path class="${cls}" d="M ${srcPos.x} ${srcPos.y} C ${srcPos.x+cx} ${srcPos.y}, ${tgtPos.x-cx} ${tgtPos.y}, ${tgtPos.x} ${tgtPos.y}" onclick="app.map.disconnect('${c.from}','${c.to}'); app.render(); app.log('Wire cut', 'info');"></path>`;
         });
         group.innerHTML = svg;
       },
@@ -647,7 +706,13 @@
 
       startWire(e, id, type) {
         e.stopPropagation(); e.preventDefault();
-        if (type === "out") { this.isDrawing = true; this.sourceId = id; }
+        if (type === "out") { 
+          // Release pointer capture so we can drag over the canvas freely
+          e.target.releasePointerCapture(e.pointerId);
+          this.isDrawing = true; 
+          this.sourceId = id; 
+          e.target.closest('.port-wrapper').classList.add('active');
+        }
       },
       
       endWire(e, id, type) {
@@ -660,8 +725,10 @@
             this.log("Invalid connection or cycle detected", "error");
           }
         }
-        this.isDrawing = false; this.sourceId = null;
+        this.isDrawing = false; 
+        this.sourceId = null;
         document.getElementById("drawing-path").setAttribute("d", "");
+        document.querySelectorAll('.port-wrapper').forEach(el => el.classList.remove('active'));
       },
 
       removeBlock(id) { this.map.removeBlock(id); this.render(); },
@@ -688,7 +755,7 @@
           const newCode = document.getElementById("node-modal-code").value.trim();
           if (newCode !== b.code) {
             b.code = newCode;
-            b.status = b.code ? "VERIFIED" : "PENDING"; // Manual override verified
+            b.status = b.code ? "VERIFIED" : "PENDING"; 
           }
         }
         closeModal("node-modal");
@@ -704,7 +771,6 @@
         if(order.length === 0) return this.log("Architecture is empty.", "warning");
 
         for (const block of order) {
-          // If it already has code manually put in, skip generation unless they want to overwrite
           if (block.status === "VERIFIED" && block.code) continue;
           
           block.status = "GENERATING";
@@ -719,7 +785,7 @@
             block.status = "ERROR";
             block.errorMsg = err.message;
             this.log(`Fault in ${block.filename}: ${err.message}`, "error");
-            break; // Stop flow on error
+            break; 
           }
           this.render();
         }
@@ -750,7 +816,6 @@
 
         let code = data.candidates[0].content.parts[0].text.trim();
         
-        // Strip markdown if AI ignored prompt
         if (code.startsWith("```")) {
           const lines = code.split("\n");
           lines.shift();
@@ -816,3 +881,5 @@
   </script>
 </body>
 </html>
+
+
