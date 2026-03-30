@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ViaDecide Redirect</title>
+  </head>
+  <body>
+    <script>
+      (function redirectDeepLink() {
+        var basePath = '/decide.engine-tools';
+        var route = window.location.pathname.replace(basePath, '') + window.location.search + window.location.hash;
+        try {
+          window.localStorage.setItem('via:pendingRoute', JSON.stringify(route));
+        } catch (_error) {}
+        window.location.replace(basePath + '/?via_route=' + encodeURIComponent(route));
+      }());
+    </script>
+  </body>
+</html>
