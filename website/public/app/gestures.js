@@ -1,64 +1,71 @@
 (function attachGestures(global) {
   'use strict';
 
-  const namespace = global.VIA || (global.VIA = { engine: {}, world: {}, ui: {}, storage: {}, router: {} });
+  const VIA = global.VIA || (global.VIA = { core: {}, router: {}, state: {}, storage: {}, modules: {}, ui: {}, gestures: {} });
 
-  const state = {
+  const gestureState = {
     active: null,
     handlers: []
   };
 
   function dispatch(type, payload) {
-    state.handlers.forEach(function each(handler) {
+    gestureState.handlers.forEach(function each(handler) {
       if (typeof handler[type] === 'function') {
         handler[type](payload);
       }
     });
   }
 
-  namespace.ui.gestures = {
-    register(handler) {
-      state.handlers.push(handler);
-      return function unregister() {
-        state.handlers = state.handlers.filter((item) => item !== handler);
+  VIA.gestures.register = function register(handler) {
+    gestureState.handlers.push(handler);
+    return function unregister() {
+      gestureState.handlers = gestureState.handlers.filter(function notMatch(item) {
+        return item !== handler;
+      });
+    };
+  };
+
+  VIA.gestures.bind = function bind(element) {
+    element.addEventListener('pointerdown', function onPointerDown(event) {
+      if (gestureState.active) {
+        return;
+      }
+
+      gestureState.active = {
+        id: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        time: Date.now()
       };
-    },
 
-    bind(element) {
-      element.addEventListener('pointerdown', function onPointerDown(event) {
-        if (state.active) {
-          return;
-        }
-        state.active = {
-          id: event.pointerId,
-          startX: event.clientX,
-          startY: event.clientY,
-          time: Date.now()
-        };
-        dispatch('start', state.active);
+      dispatch('start', gestureState.active);
+    });
+
+    element.addEventListener('pointermove', function onPointerMove(event) {
+      if (!gestureState.active || gestureState.active.id !== event.pointerId) {
+        return;
+      }
+
+      dispatch('move', {
+        dx: event.clientX - gestureState.active.startX,
+        dy: event.clientY - gestureState.active.startY,
+        originalEvent: event
+      });
+    });
+
+    element.addEventListener('pointerup', function onPointerUp(event) {
+      if (!gestureState.active || gestureState.active.id !== event.pointerId) {
+        return;
+      }
+
+      dispatch('end', {
+        dx: event.clientX - gestureState.active.startX,
+        dy: event.clientY - gestureState.active.startY,
+        duration: Date.now() - gestureState.active.time,
+        originalEvent: event
       });
 
-      element.addEventListener('pointermove', function onPointerMove(event) {
-        if (!state.active || state.active.id !== event.pointerId) {
-          return;
-        }
-
-        const dx = event.clientX - state.active.startX;
-        const dy = event.clientY - state.active.startY;
-        dispatch('move', { dx, dy, originalEvent: event });
-      });
-
-      element.addEventListener('pointerup', function onPointerUp(event) {
-        if (!state.active || state.active.id !== event.pointerId) {
-          return;
-        }
-
-        const duration = Date.now() - state.active.time;
-        const dx = event.clientX - state.active.startX;
-        const dy = event.clientY - state.active.startY;
-        dispatch('end', { dx, dy, duration, originalEvent: event });
-        state.active = null;
-      });
-    }
+      gestureState.active = null;
+    });
   };
 }(window));

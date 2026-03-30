@@ -1,44 +1,61 @@
 (function attachRouter(global) {
   'use strict';
 
-  const namespace = global.VIA || (global.VIA = { engine: {}, world: {}, ui: {}, storage: {}, router: {} });
-  const routes = new Map();
+  const VIA = global.VIA || (global.VIA = { core: {}, router: {}, state: {}, storage: {}, modules: {}, ui: {}, gestures: {} });
   const basePath = '/decide.engine-tools';
 
-  function normalize(pathname) {
-    if (!pathname) {
+  const routeTable = {
+    '/': { module: 'feed' },
+    '/feed': { module: 'feed' },
+    '/tools': { module: 'tools' },
+    '/world': { module: 'world' },
+    '/academy': { module: 'academy' },
+    '/articles': { module: 'feed' }
+  };
+
+  function normalize(path) {
+    if (!path) {
       return '/';
     }
 
-    const noBase = pathname.startsWith(basePath)
-      ? pathname.slice(basePath.length) || '/'
-      : pathname;
-
-    return noBase.endsWith('/') && noBase !== '/' ? noBase.slice(0, -1) : noBase;
+    const noOrigin = path.replace(/^https?:\/\/[^/]+/i, '');
+    const noBase = noOrigin.startsWith(basePath) ? noOrigin.slice(basePath.length) || '/' : noOrigin;
+    const noQuery = noBase.split('?')[0].split('#')[0] || '/';
+    const collapsed = noQuery.replace(/\/{2,}/g, '/');
+    return collapsed.length > 1 && collapsed.endsWith('/') ? collapsed.slice(0, -1) : collapsed;
   }
 
-  function recoverDeepLink() {
-    const fromSearch = new URLSearchParams(global.location.search).get('via_route');
-    const fromStorage = namespace.storage.get('via:pendingRoute', null);
-    const pending = fromSearch || fromStorage;
+  function resolveCurrentPath() {
+    const search = new URLSearchParams(global.location.search);
+    const redirectedRoute = search.get('via_route');
 
-    if (!pending) {
-      return;
+    if (redirectedRoute) {
+      const recovered = normalize(redirectedRoute);
+      global.history.replaceState({}, '', `${basePath}${recovered}`);
+      return recovered;
     }
 
-    namespace.storage.set('via:pendingRoute', null);
-    global.history.replaceState({}, '', `${basePath}${pending}`);
+    if (global.location.hash && global.location.hash.startsWith('#/')) {
+      return normalize(global.location.hash.slice(1));
+    }
+
+    return normalize(global.location.pathname);
   }
 
-  function render(pathname) {
-    const canonical = normalize(pathname);
-    const handler = routes.get(canonical) || routes.get('/404');
-    if (!handler) {
-      return;
-    }
+  function render(path) {
+    const canonical = normalize(path);
+    const match = routeTable[canonical] || routeTable['/'];
 
-    namespace.engine.profile(`route:${canonical}`, function profileRoute() {
-      handler({ path: canonical, fullPath: pathname });
+    VIA.state.patch({ currentRoute: canonical });
+
+    VIA.core.withBoundary(`route:${canonical}`, function runRoute() {
+      return VIA.modules.load(match.module, '#via-app');
+    }, function routeFallback() {
+      const host = document.querySelector('#via-app');
+      if (host) {
+        host.innerHTML = '<section><h2>Route error</h2><p>Route failed to render safely.</p></section>';
+      }
+      return null;
     });
   }
 
@@ -49,25 +66,23 @@
     }
 
     event.preventDefault();
-    namespace.router.navigate(link.getAttribute('href'));
+    VIA.router.go(link.getAttribute('href'));
   }
 
-  namespace.router.register = function register(path, handler) {
-    routes.set(path, handler);
-  };
+  VIA.router.routes = routeTable;
 
-  namespace.router.navigate = function navigate(path) {
+  VIA.router.go = function go(path) {
     const canonical = normalize(path);
     global.history.pushState({}, '', `${basePath}${canonical}`);
-    render(global.location.pathname);
+    render(canonical);
   };
 
-  namespace.router.start = function start() {
-    recoverDeepLink();
+  VIA.router.start = function start() {
     document.addEventListener('click', onLinkClick);
     global.addEventListener('popstate', function onPopState() {
-      render(global.location.pathname);
+      render(resolveCurrentPath());
     });
-    render(global.location.pathname);
+
+    render(resolveCurrentPath());
   };
 }(window));
