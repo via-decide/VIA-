@@ -39,10 +39,14 @@
             color: var(--text-main);
             font-family: var(--font-display);
             overflow-x: hidden;
-            scrollbar-width: none; 
-            cursor: none; 
+            scrollbar-width: none;
         }
         body::-webkit-scrollbar { display: none; }
+
+        /* Desktop only: custom cursor */
+        @media (min-width: 769px) {
+            body { cursor: none; }
+        }
 
         /* Tactical Noise Layer */
         body::before {
@@ -110,15 +114,19 @@
             background: linear-gradient(165deg, rgba(255,255,255,0.04), transparent);
         }
 
-        .magnetic { transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1); }
+        .magnetic { 
+            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
 
         /* Typography */
         h1, h2, h3 { font-family: var(--font-display); font-weight: 900; line-height: 1.1; letter-spacing: -0.04em; }
         .hero-title { font-size: clamp(2.5rem, 8vw, 6rem); margin-bottom: 1rem; text-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .hero-subtitle { color: var(--text-muted); font-size: clamp(0.95rem, 2vw, 1.2rem); max-width: 600px; margin: 0 auto 2.5rem; font-weight: 500; line-height: 1.6; }
         
-        .gradient-text-saffron { background: linear-gradient(90deg, var(--saffron), #ffaa00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .gradient-text-neon { background: linear-gradient(90deg, var(--neon), var(--accent-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .gradient-text-saffron { background: linear-gradient(90deg, var(--saffron), #ffaa00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .gradient-text-neon { background: linear-gradient(90deg, var(--neon), var(--accent-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 
         .tag { 
             display: inline-block; padding: 6px 14px; border-radius: 99px; 
@@ -129,28 +137,85 @@
         .tag-neon { background: rgba(0, 229, 204, 0.12); color: var(--neon); border: 1px solid rgba(0, 229, 204, 0.3); }
         .tag-green { background: rgba(74, 222, 128, 0.12); color: var(--accent-green); border: 1px solid rgba(74, 222, 128, 0.3); }
 
-        .btn-group { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; align-items: center; }
+        .btn-group { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 1rem; 
+            justify-content: center; 
+            align-items: center;
+            width: 100%;
+        }
         
         .btn-tactile {
-            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-            padding: 1.2rem 2.5rem; border: none; border-radius: 18px; 
-            font-family: var(--font-display); font-size: 1rem; font-weight: 800; 
-            text-decoration: none; text-transform: uppercase; letter-spacing: 1px;
-            cursor: none; position: relative; overflow: hidden;
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 0.5rem;
+            padding: 1.2rem 2.5rem; 
+            border: none; 
+            border-radius: 18px; 
+            font-family: var(--font-display); 
+            font-size: 1rem; 
+            font-weight: 800; 
+            text-decoration: none; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+            position: relative; 
+            overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.15);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-tap-highlight-color: transparent;
         }
-        .btn-tactile.primary { background: var(--saffron); color: var(--deep); box-shadow: 0 10px 30px rgba(255, 103, 31, 0.4); }
-        .btn-tactile.primary:hover { background: #ff8c00; transform: scale(1.05) translateY(-2px); box-shadow: 0 15px 40px rgba(255, 103, 31, 0.6); }
+
+        .btn-tactile.primary { 
+            background: var(--saffron); 
+            color: var(--deep);
+            box-shadow: 0 10px 30px rgba(255, 103, 31, 0.4);
+            cursor: pointer;
+        }
+
+        @media (hover: hover) {
+            .btn-tactile.primary:hover { 
+                background: #ff8c00; 
+                transform: scale(1.05) translateY(-2px); 
+                box-shadow: 0 15px 40px rgba(255, 103, 31, 0.6); 
+            }
+        }
+
+        .btn-tactile.primary:active {
+            transform: scale(0.98);
+        }
         
-        .btn-tactile.outline { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); }
-        .btn-tactile.outline:hover { border-color: var(--neon); color: var(--neon); transform: scale(1.05) translateY(-2px); background: rgba(0, 229, 204, 0.08); }
+        .btn-tactile.outline { 
+            background: rgba(255,255,255,0.05); 
+            color: #fff; 
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+        }
+
+        @media (hover: hover) {
+            .btn-tactile.outline:hover { 
+                border-color: var(--neon); 
+                color: var(--neon); 
+                transform: scale(1.05) translateY(-2px); 
+                background: rgba(0, 229, 204, 0.08); 
+            }
+        }
+
+        .btn-tactile.outline:active {
+            transform: scale(0.98);
+        }
 
         .brand-logo {
             width: 120px; height: 120px; border-radius: 28px; object-fit: cover;
             margin: 0 auto 2rem; border: 2px solid rgba(255,255,255,0.1);
             box-shadow: 0 20px 50px rgba(255, 103, 31, 0.4);
             animation: pulse-glow 4s infinite alternate;
+            background: var(--panel);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
         }
 
         @keyframes pulse-glow {
@@ -158,45 +223,269 @@
             100% { box-shadow: 0 20px 60px rgba(255, 103, 31, 0.6); transform: translateZ(40px); }
         }
 
-        /* Custom OS Cursor */
-        #cursor-dot { position: fixed; top: 0; left: 0; width: 6px; height: 6px; background: var(--text-main); border-radius: 50%; pointer-events: none; z-index: 99999; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s, background 0.2s; }
-        #cursor-ring { position: fixed; top: 0; left: 0; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.4); border-radius: 50%; pointer-events: none; z-index: 99998; transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s, border-color 0.3s; will-change: transform; }
+        /* Custom OS Cursor - desktop only */
+        #cursor-dot { 
+            position: fixed; top: 0; left: 0; width: 6px; height: 6px; 
+            background: var(--text-main); border-radius: 50%; pointer-events: none; 
+            z-index: 99999; transform: translate(-50%, -50%); 
+            transition: width 0.2s, height 0.2s, background 0.2s;
+            display: none;
+        }
 
-        .social-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-top: 2rem; }
-        .social-link { padding: 1.2rem; border: 1px solid var(--glass-border); border-radius: 18px; color: var(--text-muted); text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 0.5rem; background: rgba(15,15,26,0.4); }
-        .social-link span { font-family: var(--font-display); font-weight: 800; color: var(--text-main); font-size: 1.1rem;}
-        .social-link:hover { border-color: var(--saffron); background: rgba(255, 103, 31, 0.08); transform: translateY(-5px); }
+        #cursor-ring { 
+            position: fixed; top: 0; left: 0; width: 40px; height: 40px; 
+            border: 1px solid rgba(255,255,255,0.4); border-radius: 50%; 
+            pointer-events: none; z-index: 99998; transform: translate(-50%, -50%); 
+            transition: width 0.3s, height 0.3s, border-color 0.3s; 
+            will-change: transform;
+            display: none;
+        }
 
-        .hud-nav { position: fixed; top: 1.5rem; left: 1.5rem; right: 1.5rem; display: flex; justify-content: space-between; align-items: center; z-index: 100; pointer-events: none; }
+        @media (min-width: 769px) {
+            #cursor-dot { display: block; }
+            #cursor-ring { display: block; }
+        }
+
+        .social-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
+            gap: 1rem; 
+            margin-top: 2rem;
+            width: 100%;
+        }
+
+        .social-link { 
+            padding: 1.2rem; 
+            border: 1px solid var(--glass-border); 
+            border-radius: 18px; 
+            color: var(--text-muted); 
+            text-decoration: none; 
+            transition: all 0.3s; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 0.5rem; 
+            background: rgba(15,15,26,0.4);
+            cursor: pointer;
+        }
+
+        .social-link span { 
+            font-family: var(--font-display); 
+            font-weight: 800; 
+            color: var(--text-main); 
+            font-size: 1.1rem;
+        }
+
+        @media (hover: hover) {
+            .social-link:hover { 
+                border-color: var(--saffron); 
+                background: rgba(255, 103, 31, 0.08); 
+                transform: translateY(-5px); 
+            }
+        }
+
+        .social-link:active {
+            transform: scale(0.98);
+        }
+
+        .hud-nav { 
+            position: fixed; 
+            top: 1.5rem; 
+            left: 1.5rem; 
+            right: 1.5rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            z-index: 100; 
+            pointer-events: none;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
         .hud-nav > * { pointer-events: auto; }
-        .hud-brand { font-family: var(--font-display); font-weight: 900; font-size: 1.8rem; letter-spacing: -0.05em; text-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-        .hud-status { font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-green); display: flex; align-items: center; gap: 0.6rem; letter-spacing: 0.1em; font-weight: 700; text-transform: uppercase; }
-        .hud-status::before { content: ''; width: 8px; height: 8px; background: var(--accent-green); border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 12px var(--accent-green); animation: blink 2s infinite; }
+
+        .hud-brand { 
+            font-family: var(--font-display); 
+            font-weight: 900; 
+            font-size: 1.8rem; 
+            letter-spacing: -0.05em; 
+            text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            white-space: nowrap;
+        }
+
+        .hud-status { 
+            font-family: var(--font-mono); 
+            font-size: 0.7rem; 
+            color: var(--accent-green); 
+            display: flex; 
+            align-items: center; 
+            gap: 0.6rem; 
+            letter-spacing: 0.1em; 
+            font-weight: 700; 
+            text-transform: uppercase;
+        }
+
+        .hud-status::before { 
+            content: ''; width: 8px; height: 8px; 
+            background: var(--accent-green); 
+            border-radius: 50%; 
+            flex-shrink: 0; 
+            box-shadow: 0 0 12px var(--accent-green); 
+            animation: blink 2s infinite; 
+        }
         
-        .hud-depth { position: fixed; bottom: 2rem; right: 2rem; font-size: 0.75rem; color: var(--text-muted); z-index: 100; text-align: right; font-family: var(--font-mono); letter-spacing: 1px;}
-        .hud-depth span { font-size: 1.8rem; font-family: var(--font-display); font-weight: 900; color: var(--text-main); display: block; line-height: 1; margin-top: 4px;}
+        .hud-depth { 
+            position: fixed; 
+            bottom: 2rem; 
+            right: 2rem; 
+            font-size: 0.75rem; 
+            color: var(--text-muted); 
+            z-index: 100; 
+            text-align: right; 
+            font-family: var(--font-mono); 
+            letter-spacing: 1px;
+            pointer-events: none;
+        }
 
-        .scroll-hint { margin-top: 3rem; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600;}
+        .hud-depth span { 
+            font-size: 1.8rem; 
+            font-family: var(--font-display); 
+            font-weight: 900; 
+            color: var(--text-main); 
+            display: block; 
+            line-height: 1; 
+            margin-top: 4px;
+        }
 
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .scroll-hint { 
+            margin-top: 3rem; 
+            font-family: var(--font-mono); 
+            font-size: 0.75rem; 
+            color: var(--text-muted); 
+            letter-spacing: 0.2em; 
+            text-transform: uppercase; 
+            font-weight: 600;
+        }
+
+        @keyframes blink { 
+            0%, 100% { opacity: 1; } 
+            50% { opacity: 0.3; } 
+        }
         
         .panel-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
 
         @media (max-width: 768px) {
-            body { cursor: auto; }
-            #cursor-dot, #cursor-ring { display: none; }
-            .glass-card { padding: 2rem 1.5rem; border-radius: 20px; }
-            .btn-tactile { padding: 1.2rem; cursor: pointer; width: 100%; }
-            .btn-group { flex-direction: column; width: 100%; }
-            .social-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-            .social-link { padding: 1rem; border-radius: 14px;}
-            .hud-nav { top: 1rem; left: 1rem; right: 1rem; }
+            .glass-card { 
+                padding: 2rem 1.5rem; 
+                border-radius: 20px;
+                margin: 0 auto;
+            }
+
+            .btn-tactile { 
+                padding: 1rem 1.8rem;
+                font-size: 0.95rem;
+                flex: 1;
+                min-width: 140px;
+            }
+
+            .btn-group { 
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .btn-group .btn-tactile {
+                flex: 1;
+                width: 100%;
+                min-width: unset;
+            }
+
+            .social-grid { 
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 0.75rem;
+            }
+
+            .social-link { 
+                padding: 1rem; 
+                border-radius: 14px;
+            }
+
+            .hud-nav { 
+                top: 1rem; 
+                left: 1rem; 
+                right: 1rem;
+                gap: 0.75rem;
+            }
+
             .hud-brand { font-size: 1.4rem; }
             .hud-status { font-size: 0.6rem; }
-            .hud-depth { bottom: 1.5rem; right: 1.5rem; }
+
+            .hud-depth { 
+                bottom: 1.5rem; 
+                right: 1.5rem;
+            }
+
             .hud-depth span { font-size: 1.4rem; }
-            .brand-logo { width: 90px; height: 90px; border-radius: 22px; margin-bottom: 1.5rem; }
+
+            .brand-logo { 
+                width: 90px; 
+                height: 90px; 
+                border-radius: 22px; 
+                margin-bottom: 1.5rem;
+                font-size: 2.5rem;
+            }
+
             #viewport { perspective: 900px; }
+
+            .panel {
+                width: 95vw;
+            }
+
+            .hero-title {
+                font-size: clamp(2rem, 7vw, 3rem);
+            }
+
+            .panel-icon {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hud-nav {
+                top: 0.75rem;
+                left: 0.75rem;
+                right: 0.75rem;
+            }
+
+            .hud-brand {
+                font-size: 1.2rem;
+            }
+
+            .hud-status {
+                font-size: 0.55rem;
+            }
+
+            .glass-card {
+                padding: 1.5rem 1rem;
+                border-radius: 18px;
+            }
+
+            .btn-tactile {
+                padding: 0.9rem 1.5rem;
+                font-size: 0.9rem;
+                border-radius: 14px;
+            }
+
+            .social-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .tag {
+                font-size: 0.65rem;
+                padding: 5px 12px;
+            }
         }
     </style>
 </head>
@@ -223,12 +512,12 @@
         <div id="camera">
             
             <section class="panel" data-z="0">
-                <img src="1000221390.jpg" alt="DH Logo" class="brand-logo magnetic" onerror="this.style.display='none'">
+                <div class="brand-logo magnetic">🚀</div>
                 <div class="tag tag-saffron">Sol 1 // Epoch 2026</div>
                 <h1 class="hero-title">Visual Logic.<br><span class="gradient-text-saffron">Autonomous Core.</span></h1>
                 <p class="hero-subtitle">Zero dependencies. Pure spatial execution. Architect, verify, and deploy using the browser's native physical engine.</p>
                 <div class="btn-group">
-                    <a href="https://github.com/via-decide/VIA/blob/a959db382cf8e677bd8a85bbc410b044fb00f262/viadecide.html" class="btn-tactile primary magnetic">Initialize System</a>
+                    <a href="./viadecide.html" class="btn-tactile primary magnetic">Initialize System</a>
                 </div>
                 <p class="scroll-hint">[ SCROLL TO DISCOVER SECTORS ]</p>
             </section>
@@ -240,8 +529,8 @@
                     <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">ViaLogic Hub</h2>
                     <p class="hero-subtitle">The ultimate node-based orchestrator. Engage with Philosophical nodes, synthesize logic, and map complex spatial cartographies.</p>
                     <div class="btn-group">
-                        <a href="./apps/viaco/viadecide.html#vialogic" class="btn-tactile outline magnetic">Open ViaLogic</a>
-                        <a href="https://github.com/via-decide/VIA/blob/a959db382cf8e677bd8a85bbc410b044fb00f262/logichub.html" class="btn-tactile outline magnetic">Mount LogicHub</a>
+                        <a href="./viadecide.html#vialogic" class="btn-tactile outline magnetic">Open ViaLogic</a>
+                        <a href="./logichub.html" class="btn-tactile outline magnetic">Mount LogicHub</a>
                     </div>
                 </div>
             </section>
@@ -253,8 +542,7 @@
                     <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">Spatial Engine</h2>
                     <p class="hero-subtitle">Dive into the macro-world view. Navigate territories using enhanced 3D zoom and touch-optimized panning physics.</p>
                     <div class="btn-group">
-                        <a href="./apps/viaco/viadecide.html#world" class="btn-tactile outline magnetic" style="border-color: var(--accent-green); color: var(--accent-green);">Explore World</a>
-                        <a href="https://github.com/via-decide/VIA/blob/a959db382cf8e677bd8a85bbc410b044fb00f262/viadecide.html#world" class="btn-tactile outline magnetic" style="border-color: var(--accent-green); color: var(--accent-green);">Explore World</a>
+                        <a href="./viadecide.html#world" class="btn-tactile outline magnetic" style="border-color: var(--accent-green); color: var(--accent-green);">Explore World</a>
                     </div>
                 </div>
             </section>
@@ -266,8 +554,7 @@
                     <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">Kinetic Feed</h2>
                     <p class="hero-subtitle">Tactile physical engine integration. Experience swipe-based discovery, physics-driven cards, and real-time pulse syncs.</p>
                     <div class="btn-group">
-                        <a href="./apps/viaco/viadecide.html#feed" class="btn-tactile outline magnetic" style="border-color: var(--saffron); color: var(--saffron);">Access Feed</a>
-                        <a href="https://github.com/via-decide/VIA/blob/a959db382cf8e677bd8a85bbc410b044fb00f262/viadecide.html#feed" class="btn-tactile outline magnetic" style="border-color: var(--saffron); color: var(--saffron);">Access Feed</a>
+                        <a href="./viadecide.html#feed" class="btn-tactile outline magnetic" style="border-color: var(--saffron); color: var(--saffron);">Access Feed</a>
                     </div>
                 </div>
             </section>
@@ -277,9 +564,9 @@
                     <span class="panel-icon">⚡</span>
                     <div class="tag" style="background: rgba(168, 85, 247, 0.12); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.3);">Sector 04</div>
                     <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">Ecosystem Tools</h2>
-                    <p class="hero-subtitle">Chronological releases, Idea Remixers, and AI-powered Decision Oracles utilizing embedded Gemini architectures.</p>
+                    <p class="hero-subtitle">Chronological releases, Idea Remixers, and AI-powered Decision Oracles utilizing embedded architectures.</p>
                     <div class="btn-group">
-                        <a href="https://github.com/via-decide/VIA/blob/a959db382cf8e677bd8a85bbc410b044fb00f262/viadecide.html#updates" class="btn-tactile outline magnetic" style="border-color: #a855f7; color: #a855f7;">View Updates</a>
+                        <a href="./viadecide.html#updates" class="btn-tactile outline magnetic" style="border-color: #a855f7; color: #a855f7;">View Updates</a>
                     </div>
                 </div>
             </section>
@@ -289,9 +576,9 @@
                     <span class="panel-icon">👤</span>
                     <div class="tag" style="background: rgba(255, 215, 0, 0.12); color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.3);">Sector 05</div>
                     <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">Orchade Profile</h2>
-                    <p class="hero-subtitle">Your personal architecture hub. Manage DataSeeds, track economy credits, and establish secure Firebase cloud persistence.</p>
+                    <p class="hero-subtitle">Your personal architecture hub. Manage DataSeeds, track economy credits, and establish secure cloud persistence.</p>
                     <div class="btn-group">
-                        <a href="https://github.com/via-decide/VIA/blob/a959db382cf8e677bd8a85bbc410b044fb00f262/viadecide.html#profile" class="btn-tactile outline magnetic" style="border-color: #ffd700; color: #ffd700;">View Profile</a>
+                        <a href="./viadecide.html#profile" class="btn-tactile outline magnetic" style="border-color: #ffd700; color: #ffd700;">View Profile</a>
                     </div>
                 </div>
             </section>
@@ -301,26 +588,26 @@
                 <p class="hero-subtitle">Dharam Daxini // Engineered without a single node_modules folder. Commence Transmission.</p>
                 
                 <div class="btn-group" style="margin-bottom: 2rem;">
-                    <a href="#portfolio" target="_blank" class="btn-tactile primary magnetic">View Portfolio</a>
-                    <a href="https://github.com/via-decide/decide.engine-tools" target="_blank" class="btn-tactile outline magnetic">GitHub Repo</a>
+                    <a href="#portfolio" class="btn-tactile primary magnetic">View Portfolio</a>
+                    <a href="https://github.com/via-decide" target="_blank" rel="noopener noreferrer" class="btn-tactile outline magnetic">GitHub Org</a>
                 </div>
 
                 <div class="social-grid">
-                    <a href="https://github.com/via-decide/VIA/blob/a959db382cf8e677bd8a85bbc410b044fb00f262/viadecide.html" class="social-link magnetic" style="border-color: var(--accent-green);">
+                    <a href="./viadecide.html" class="social-link magnetic" style="border-color: var(--accent-green);">
                         <small style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-green);">CORE HUB</small>
                         <span>ViaDecide</span>
                     </a>
-                    <a href="https://youtube.com/@decide.engine" target="_blank" class="social-link magnetic">
+                    <a href="https://youtube.com/@decide.engine" target="_blank" rel="noopener noreferrer" class="social-link magnetic">
                         <small style="font-family: var(--font-mono); font-size: 0.7rem;">YOUTUBE</small>
                         <span>decide.engine</span>
                     </a>
                     
-                    <a href="https://open.spotify.com/show/2okZ1WXMWXLrSwFzClUPPp?si=fbe27697d5e047a4" target="_blank" class="social-link magnetic">
+                    <a href="https://open.spotify.com/show/2okZ1WXMWXLrSwFzClUPPp" target="_blank" rel="noopener noreferrer" class="social-link magnetic">
                         <small style="font-family: var(--font-mono); font-size: 0.7rem;">SPOTIFY</small>
                         <span>Dharam Daxini</span>
                     </a>
                     
-                    <a href="https://instagram.com/dharamdaxini" target="_blank" class="social-link magnetic">
+                    <a href="https://instagram.com/dharamdaxini" target="_blank" rel="noopener noreferrer" class="social-link magnetic">
                         <small style="font-family: var(--font-mono); font-size: 0.7rem;">INSTAGRAM</small>
                         <span>@dharamdaxini</span>
                     </a>
@@ -332,6 +619,12 @@
     </main>
 
     <script>
+        /* ========================================================
+           DEVICE DETECTION
+           ======================================================== */
+        const isMobile = window.innerWidth <= 768;
+        const isTablet = window.innerWidth <= 1024;
+
         /* ========================================================
            1. PURE VANILLA 3D SCROLL INTERPOLATION
            ======================================================== */
@@ -385,39 +678,32 @@
         
         let width, height, cx, cy;
         let particles = [];
-        const isMobile = window.innerWidth <= 768;
-        const numParticles = isMobile ? 80 : 150; // Adjusted for complex rendering
+        const numParticles = isMobile ? 60 : (isTablet ? 100 : 150);
         const fov = 800; 
 
-        // Preload User Image (Brand Logo) to use as floating 3D objects
-        const userImg = new Image();
-        userImg.src = '1000221390.jpg';
-        let imgLoaded = false;
-        userImg.onload = () => { imgLoaded = true; };
-
         function initCanvas() {
-            width = window.innerWidth; height = window.innerHeight;
-            canvas.width = width; canvas.height = height;
-            cx = width / 2; cy = height / 2;
+            width = window.innerWidth; 
+            height = window.innerHeight;
+            canvas.width = width; 
+            canvas.height = height;
+            cx = width / 2; 
+            cy = height / 2;
         }
 
         class HoloNode {
             constructor() {
                 this.reset();
-                this.z = Math.random() * 8000; // Scatter initially throughout depth
+                this.z = Math.random() * 8000;
             }
+
             reset() {
                 this.x = (Math.random() - 0.5) * 5000; 
                 this.y = (Math.random() - 0.5) * 4000;
-                this.z = 2000 + Math.random() * 2000; // Spawn deep
+                this.z = 2000 + Math.random() * 2000;
                 this.speed = 1.5 + Math.random() * 3;
-                
-                // 3D Rendering Properties
                 this.rotation = Math.random() * Math.PI * 2;
                 this.rotSpeed = (Math.random() - 0.5) * 0.02;
                 
-                // Categorize Particle Types
-                // 0: Small Saffron Dot, 1: Cyan Wireframe Hex, 2: Floating Image/Card, 3: Crosshair
                 const rand = Math.random();
                 if (rand < 0.4) this.type = 0;
                 else if (rand < 0.6) this.type = 1;
@@ -428,7 +714,6 @@
             }
             
             update(scrollVelocity) {
-                // Move towards camera, accelerate based on scroll speed
                 this.z -= this.speed + (scrollVelocity * 0.8);
                 this.rotation += this.rotSpeed;
                 if (this.z <= 0) this.reset();
@@ -439,7 +724,6 @@
                 const x2d = cx + this.x * scale;
                 const y2d = cy + this.y * scale;
 
-                // Fade in from distance, fade out right before hitting camera
                 let opacity = Math.min(1, Math.max(0, 1 - (this.z / 3000)));
                 if (this.z < 200) opacity *= (this.z / 200); 
 
@@ -453,45 +737,35 @@
                 ctx.lineWidth = 1.5;
 
                 switch(this.type) {
-                    case 0: // Glowing Dot (Ambient Dust)
-                        ctx.beginPath(); ctx.arc(0, 0, 3, 0, Math.PI * 2);
-                        ctx.fillStyle = `rgba(${this.color}, ${opacity * 0.8})`; ctx.fill();
+                    case 0:
+                        ctx.beginPath(); 
+                        ctx.arc(0, 0, 3, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${this.color}, ${opacity * 0.8})`; 
+                        ctx.fill();
                         break;
                         
-                    case 1: // Wireframe Hexagon
+                    case 1:
                         ctx.beginPath();
                         for(let i=0; i<6; i++) {
                             ctx.lineTo(20 * Math.cos(i * Math.PI / 3), 20 * Math.sin(i * Math.PI / 3));
                         }
-                        ctx.closePath(); ctx.stroke(); ctx.fill();
-                        // Inner dot
-                        ctx.beginPath(); ctx.arc(0,0, 2, 0, Math.PI*2); 
-                        ctx.fillStyle = `rgba(${this.color}, ${opacity})`; ctx.fill();
+                        ctx.closePath(); 
+                        ctx.stroke(); 
+                        ctx.fill();
+                        ctx.beginPath(); 
+                        ctx.arc(0, 0, 2, 0, Math.PI*2); 
+                        ctx.fillStyle = `rgba(${this.color}, ${opacity})`; 
+                        ctx.fill();
                         break;
                         
-                    case 2: // Floating Image or UI Card
-                        // Draw a high-tech glowing border
+                    case 2:
                         ctx.strokeRect(-40, -40, 80, 80);
-                        
-                        if (imgLoaded) {
-                            // Draw actual user image, slightly faded by depth
-                            ctx.globalAlpha = opacity * 0.8;
-                            // Clip to rounded rect for modern look
-                            ctx.beginPath();
-                            ctx.roundRect ? ctx.roundRect(-38, -38, 76, 76, 8) : ctx.rect(-38, -38, 76, 76);
-                            ctx.clip();
-                            ctx.drawImage(userImg, -38, -38, 76, 76);
-                        } else {
-                            // Fallback: Draw simulated code/UI card
-                            ctx.fillStyle = `rgba(15, 15, 26, ${opacity * 0.9})`;
-                            ctx.fillRect(-38, -38, 76, 76);
-                            ctx.fillStyle = `rgba(${this.color}, ${opacity})`;
-                            ctx.fillRect(-30, -25, 40, 4);
-                            ctx.fillRect(-30, -15, 60, 4);
-                            ctx.fillRect(-30, -5, 50, 4);
-                        }
-                        
-                        // Draw corner brackets
+                        ctx.fillStyle = `rgba(15, 15, 26, ${opacity * 0.9})`;
+                        ctx.fillRect(-38, -38, 76, 76);
+                        ctx.fillStyle = `rgba(${this.color}, ${opacity})`;
+                        ctx.fillRect(-30, -25, 40, 4);
+                        ctx.fillRect(-30, -15, 60, 4);
+                        ctx.fillRect(-30, -5, 50, 4);
                         ctx.beginPath();
                         ctx.moveTo(-45, -30); ctx.lineTo(-45, -45); ctx.lineTo(-30, -45);
                         ctx.moveTo(45, -30); ctx.lineTo(45, -45); ctx.lineTo(30, -45);
@@ -500,12 +774,14 @@
                         ctx.stroke();
                         break;
                         
-                    case 3: // Crosshair / Data Node
+                    case 3:
                         ctx.beginPath();
                         ctx.moveTo(-15, 0); ctx.lineTo(15, 0);
                         ctx.moveTo(0, -15); ctx.lineTo(0, 15);
                         ctx.stroke();
-                        ctx.beginPath(); ctx.arc(0,0, 8, 0, Math.PI*2); ctx.stroke();
+                        ctx.beginPath(); 
+                        ctx.arc(0, 0, 8, 0, Math.PI*2); 
+                        ctx.stroke();
                         break;
                 }
 
@@ -525,7 +801,6 @@
 
             ctx.clearRect(0, 0, width, height);
             
-            // Depth Sorting (Z-Buffer): Sort particles so further ones are drawn first
             particles.sort((a, b) => b.z - a.z);
 
             particles.forEach(p => {
@@ -538,7 +813,7 @@
 
 
         /* ========================================================
-           3. MAGNETIC UI PHYSICS & CUSTOM CURSOR
+           3. MAGNETIC UI PHYSICS & CUSTOM CURSOR (Desktop Only)
            ======================================================== */
         const dot = document.getElementById('cursor-dot');
         const ring = document.getElementById('cursor-ring');
@@ -549,44 +824,73 @@
         let ringX = mouseX;
         let ringY = mouseY;
 
-        window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX; mouseY = e.clientY;
-            dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
-        });
+        // Only enable custom cursor on desktop
+        if (!isMobile) {
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX; 
+                mouseY = e.clientY;
+                dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+            });
 
-        function animateCursor() {
-            ringX += (mouseX - ringX) * 0.15;
-            ringY += (mouseY - ringY) * 0.15;
-            ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
-            requestAnimationFrame(animateCursor);
+            function animateCursor() {
+                ringX += (mouseX - ringX) * 0.15;
+                ringY += (mouseY - ringY) * 0.15;
+                ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            magnetics.forEach(btn => {
+                btn.addEventListener('mousemove', (e) => {
+                    const rect = btn.getBoundingClientRect();
+                    const hx = rect.left + rect.width / 2;
+                    const hy = rect.top + rect.height / 2;
+                    
+                    const dx = (e.clientX - hx) * 0.15; 
+                    const dy = (e.clientY - hy) * 0.15; 
+                    
+                    if(btn.classList.contains('glass-card')) {
+                       btn.style.transform = `translate(${dx}px, ${dy}px) scale(1.02)`;
+                    } else {
+                       btn.style.transform = `translate(${dx}px, ${dy}px) scale(1.05)`;
+                    }
+                    
+                    ring.style.width = '50px'; 
+                    ring.style.height = '50px';
+                    ring.style.borderColor = 'var(--saffron)'; 
+                    dot.style.background = 'var(--saffron)';
+                });
+
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.transform = `translate(0px, 0px) scale(1)`;
+                    ring.style.width = '40px'; 
+                    ring.style.height = '40px';
+                    ring.style.borderColor = 'rgba(255,255,255,0.4)'; 
+                    dot.style.background = 'var(--text-main)';
+                });
+            });
         }
-        if(window.innerWidth > 768) animateCursor(); 
 
-        magnetics.forEach(btn => {
-            btn.addEventListener('mousemove', (e) => {
-                const rect = btn.getBoundingClientRect();
-                const hx = rect.left + rect.width / 2;
-                const hy = rect.top + rect.height / 2;
-                
-                const dx = (e.clientX - hx) * 0.15; 
-                const dy = (e.clientY - hy) * 0.15; 
-                
-                if(btn.classList.contains('glass-card')) {
-                   btn.style.transform = `translate(${dx}px, ${dy}px) scale(1.02)`;
-                } else {
-                   btn.style.transform = `translate(${dx}px, ${dy}px) scale(1.05)`;
-                }
-                
-                ring.style.width = '50px'; ring.style.height = '50px';
-                ring.style.borderColor = 'var(--saffron)'; dot.style.background = 'var(--saffron)';
+        // Mobile touch feedback
+        if (isMobile) {
+            magnetics.forEach(btn => {
+                btn.addEventListener('touchstart', () => {
+                    btn.style.transform = 'scale(0.98)';
+                    btn.style.opacity = '0.8';
+                });
+                btn.addEventListener('touchend', () => {
+                    btn.style.transform = 'scale(1)';
+                    btn.style.opacity = '1';
+                });
             });
+        }
 
-            btn.addEventListener('mouseleave', () => {
-                btn.style.transform = `translate(0px, 0px) scale(1)`;
-                ring.style.width = '40px'; ring.style.height = '40px';
-                ring.style.borderColor = 'rgba(255,255,255,0.4)'; dot.style.background = 'var(--text-main)';
-            });
-        });
+        // Prevent context menu on long press on mobile
+        if (isMobile) {
+            document.addEventListener('touchmove', (e) => {
+                if (e.touches.length > 1) e.preventDefault();
+            }, { passive: false });
+        }
 
     </script>
 </body>
