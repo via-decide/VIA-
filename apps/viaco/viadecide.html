@@ -599,6 +599,12 @@
                 <div class="tool-name">LogicHub v2</div>
                 <div class="tool-desc">Visual node architecture. Synthesize code using Gemini and export directly to .zip.</div>
               </div>
+              <div class="tool-card" onclick="App.openTool('ViaLogic')">
+                <div class="tool-icon" style="background: linear-gradient(135deg, #fbbf24, #f59e0b); box-shadow: 0 4px 15px rgba(251,191,36,0.4); color: #000;">🏛️</div>
+                <div class="tool-tag" style="color: #fbbf24;">LORE ENGINE</div>
+                <div class="tool-name">ViaLogic Map</div>
+                <div class="tool-desc">Spatial cartography of minds. Upgrade philosophical nodes and unlock the wisdom of ancient architects.</div>
+              </div>
               <div class="tool-card">
                 <div class="tool-icon" style="background: var(--saffron); color: var(--void);">🚀</div>
                 <div class="tool-tag">SYSTEM UPDATE</div>
@@ -1491,6 +1497,10 @@
     const ROUTE_ALIASES = {
       'logichub': 'logichub.html',
       'vibecoder engine': 'logichub.html',
+      'visual architecture': 'logichub.html',
+      'vialogic': 'https://github.com/via-decide/ViaLogic',
+      'cartography of minds': 'https://github.com/via-decide/ViaLogic',
+      'logic academy': 'https://github.com/via-decide/ViaLogic'
       'visual architecture': 'logichub.html'
     };
 
@@ -1511,6 +1521,13 @@
     cat: "system", 
     desc: "Vibecoder engine. Visual node architecture with Gemini AI code synthesis and .zip export.", 
     icon: "🧠", 
+    engine: true 
+  },
+  { 
+    name: "ViaLogic", 
+    cat: "system", 
+    desc: "Cartography of Minds. Explore a spatial map of philosophical and mathematical entities, upgrade nodes, and synthesize wisdom.", 
+    icon: "🏛️", 
     engine: true 
   },
       { id: 'remixer', tag: 'AI', name: '✨ Idea Remixer', desc: 'Combine philosophies using Gemini AI.', color: '#ec4899', isAI: true },
