@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Orchade 3D Engine</title>
+  <link rel="stylesheet" href="./shared.css"/>
+  <style>
+    /* Scope-specific container overrides */
+    body { overflow: hidden; margin: 0; padding: 0; }
+    #canvas-container {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+    }
+    #ui-layer {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 10;
+      padding: 24px;
+    }
+    .hud-panel {
+      pointer-events: auto;
+      background: var(--card-bg, #1c1d21);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 16px;
+      color: var(--text-main);
+      width: 300px;
+    }
+    .btn {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      background: var(--color-leaf-dark);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-heading);
+      font-weight: bold;
+    }
+    .btn:hover { background: var(--color-leaf-green); }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+  
+  <div id="canvas-container"></div>
+  
+  <div id="ui-layer">
+    <div class="hud-panel anim-1" style="--i: 1;">
+      <h2>Orchade Visualizer (Vanilla Core)</h2>
+      <div id="status-terminal" class="hud-terminal" style="font-family: monospace; font-size:12px; margin-top:10px;"></div>
+      <div style="margin-top: 16px;">
+        <button class="btn live" id="btn-water">Water Plant</button>
+        <button class="btn" id="btn-next-stage">Force Evolution (+Stage)</button>
+        <button class="btn" id="btn-fire">Trigger Heatwave/Burn</button>
+        <button class="btn" id="btn-pest">Trigger Swarm</button>
+        <button class="btn" id="btn-weather" style="background:var(--color-water-blue)">Cycle Weather</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared Data Binders -->
+  <script src="./terminal-logger.js"></script>
+  <script src="./glass-modal.js"></script>
+  
+  <!-- Standalone WebGL Core -->
+  <script src="plant-visualizer.js"></script>
+  
+  <!-- Controller Logic -->
+  <script src="engine.js"></script>
+
+</body>
+</html>

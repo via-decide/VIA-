@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#ff671f">
+  <title>VIADECIDE // LOGICHUB</title>
+
+  <!-- PWA MANIFEST -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="./icon-512.png">
+
+  <!-- FONTS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Premium Sophisticated Index Styles */
+    header { height: 80px; padding: 0 8%; }
+    .hero-3d {
+      height: 85vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      perspective: 2000px; overflow: hidden; position: relative;
+    }
+    .hero-orb {
+      width: 300px; height: 300px; background: radial-gradient(circle at 30% 30%, var(--saffron), transparent 70%);
+      border-radius: 50%; filter: blur(60px); opacity: 0.4; position: absolute; z-index: -1;
+      animation: orbit 20s linear infinite;
+    }
+    @keyframes orbit { from { transform: rotate(0) translateX(100px) rotate(0); } to { transform: rotate(360deg) translateX(100px) rotate(-360deg); } }
+    
+    .hero-content {
+      text-align: center; transform-style: preserve-3d; animation: heroEntrance 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+    @keyframes heroEntrance { from { opacity: 0; transform: translateZ(-200px) rotateX(20deg); } to { opacity: 1; transform: translateZ(0) rotateX(0); } }
+    
+    .hero-title {
+      font-family: var(--font-display); font-size: 5rem; font-weight: 900; line-height: 0.9;
+      background: linear-gradient(to bottom, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: -0.05em; margin-bottom: 24px;
+    }
+    .hero-subtitle {
+      font-size: 1.2rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 40px; line-height: 1.6;
+    }
+    .btn-launch-3d {
+      padding: 20px 48px; font-size: 1.1rem; border-radius: 99px; background: #fff; color: #000;
+      font-weight: 900; text-decoration: none; display: inline-flex; align-items: center; gap: 12px;
+      box-shadow: 0 20px 40px rgba(255,103,31,0.3); transition: all 0.4s; transform-style: preserve-3d;
+    }
+    .btn-launch-3d:hover { transform: translateY(-5px) translateZ(20px); box-shadow: 0 30px 60px rgba(255,103,31,0.5); }
+    
+    .feature-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; padding: 80px 8%;
+      max-width: 1400px; margin: 0 auto;
+    }
+    .feat-card {
+      background: rgba(15,23,42,0.4); border: 1px solid rgba(255,255,255,0.05); padding: 40px;
+      border-radius: 32px; backdrop-filter: blur(12px); transition: all 0.3s;
+    }
+    .feat-card:hover { border-color: var(--saffron); background: rgba(15,23,42,0.6); }
+    .feat-icon { font-size: 2rem; margin-bottom: 20px; display: block; }
+    .feat-title { font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 12px; }
+    .feat-desc { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
+
+    @media (max-width: 900px) {
+      .hero-title { font-size: 3.5rem; }
+      .feature-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">VIA<span>DECIDE</span></div>
+    <div style="display: flex; gap: 16px; align-items: center;">
+      <a href="logichub.html" style="color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.9rem;">Intelligence</a>
+      <button id="btn-install-os" class="btn-saffron-glow" style="display: none; padding: 10px 20px; font-size: 0.75rem;">INSTALL VIA</button>
+      <a href="viadecide.html" class="btn-saffron-glow" style="text-decoration: none; padding: 12px 24px;">LAUNCH ENGINE</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-3d">
+      <div class="hero-orb"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">Sovereign<br>Kinetic OS</h1>
+        <p class="hero-subtitle">The Bharat-first digital ecosystem built for decision engineering, spatial mathematics, and tactile sovereign tools.</p>
+        <a href="viadecide.html" class="btn-launch-3d">ENTER THE MATRIX <span>→</span></a>
+      </div>
+    </section>
+
+    <div class="feature-grid">
+      <div class="feat-card">
+        <span class="feat-icon">🧬</span>
+        <h3 class="feat-title">Decision Logic</h3>
+        <p class="feat-desc">44 professional decision tools mapped onto an interactive 3D logic academy.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🗺️</span>
+        <h3 class="feat-title">Spatial World</h3>
+        <p class="feat-desc">Discover the ViaDecide ecosystem through a touch-optimized, high-fidelity spatial map.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🌾</span>
+        <h3 class="feat-title">Sovereign Data</h3>
+        <p class="feat-desc">Your profile, your seeds. A private, secure environment for your digital legacy.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2026 ViaDecide Spatial OS. License: Apache 2.0</p>
+    <div style="margin-top:10px;">
+      <a href="https://github.com/via-decide/via-OS">Repo: via-OS</a>
+      <a href="https://github.com/via-decide/decide.engine-tools">Repo: engine-tools</a>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>

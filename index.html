@@ -24,33 +24,49 @@
     <button id="btn-install-os" class="btn-saffron-glow">INSTALL VIA OS</button>
   </header>
 
-  <!-- LOGICHUB FEED -->
-  <main class="hub-feed" id="hub-feed">
-    <!-- MASONRY / BENTO CARDS -->
-    <article class="hub-card">
-      <div class="card-type">[KINETIC_UPDATE]</div>
-      <h2 class="card-title">Spatial Matrix V1.2 Loaded</h2>
-      <p class="card-body">The thumb-zone optimization is now live. Tracing sigils on the 3x3 grid is 80% faster on mobile hardware.</p>
-    </article>
+  <!-- VIEW TABS -->
+  <nav class="view-tabs">
+    <div class="tab-link active" data-view="logichub">LogicHub</div>
+    <div class="tab-link" data-view="world">World</div>
+  </nav>
 
-    <article class="hub-card">
-      <div class="card-type">[MISSION_LOG]</div>
-      <h2 class="card-title">Orchade Engine Sync</h2>
-      <p class="card-body">Deep-link registry verified. Native Android apps (WhatsApp, Spotify, YouTube) are now deployable via 8-dot macro sigils.</p>
-    </article>
-
-    <article class="hub-card">
-      <div class="card-type">[SYSTEM_INTEL]</div>
-      <h2 class="card-title">PWA Hardening Complete</h2>
-      <p class="card-body">Service Worker registration and standalone detection established. The install-trap is now invisible to verified endpoints.</p>
-    </article>
-    
-    <article class="hub-card">
-      <div class="card-type">[CREATOR_UPDATE]</div>
-      <h2 class="card-title">Code Nexus Expansion</h2>
-      <p class="card-body">Architecting the global decision framework. Logic Academy paths have been mapped for high-frequency trading simulations.</p>
-    </article>
+  <!-- LOGICHUB VIEW -->
+  <main class="hub-feed active" id="logichub-view">
+    <!-- Rendered by logichub.js -->
   </main>
+
+  <!-- WORLD VIEW (App Gateway) -->
+  <section id="world-view">
+    <div class="world-card" data-app="alchemist">
+      <span class="icon">🧪</span>
+      <h3>Alchemist</h3>
+      <p>Swipe-based chemistry learning crucible.</p>
+    </div>
+    <div class="world-card" data-app="skillhex">
+      <span class="icon">🎯</span>
+      <h3>SkillHex</h3>
+      <p>Interactive hiring and operations console.</p>
+    </div>
+    <div class="world-card" data-app="viaco">
+      <span class="icon">💼</span>
+      <h3>Viaco</h3>
+      <p>AI agent business hub and Kinetic OS.</p>
+    </div>
+    <div class="world-card" data-app="mars">
+      <span class="icon">🚀</span>
+      <h3>Mars Rover</h3>
+      <p>Cognitive assessment and simulator.</p>
+    </div>
+  </section>
+
+  <!-- IFRAME VIEWPORT OVERLAY -->
+  <div class="world-viewport-overlay" id="world-viewport-overlay">
+    <div class="viewport-header">
+      <div class="viewport-title" id="viewport-title">APP_NAME // LOADING...</div>
+      <button class="btn-close-viewport" id="btn-close-viewport">RETURN TO WORLD</button>
+    </div>
+    <iframe class="world-viewport" id="world-iframe" sandbox="allow-scripts allow-same-origin allow-forms" title="World Viewport"></iframe>
+  </div>
 
   <!-- FOOTER -->
   <footer>
@@ -61,6 +77,7 @@
     </div>
   </footer>
 
+  <script src="scripts/logichub.js"></script>
   <script src="main.js"></script>
 </body>
 </html>

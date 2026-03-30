@@ -1,0 +1,12 @@
+{
+  "id": "skillhex-mission-control",
+  "name": "SkillHex Mission Control",
+  "description": "Mission-based skill progression hub. Complete challenges to unlock new territory.",
+  "category": "games",
+  "audience": ["students", "creators"],
+  "inputs": ["mission_selection"],
+  "outputs": ["skill_progress"],
+  "relatedTools": ["hex-wars", "wings-of-fire-quiz"],
+  "entry": "tools/games/skillhex-mission-control/index.html",
+  "tags": ["game", "skills", "missions", "progression", "standalone"]
+}
