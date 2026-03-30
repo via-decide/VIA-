@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#08080a" />
+  <title>Book a Free Call · ViaDecide</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    *:focus:not(:focus-visible) { outline: none !important; }
+    body {
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    input, textarea, .allow-select {
+      -webkit-user-select: text !important;
+      user-select: text !important;
+    }
+    ::selection { background: rgba(232,184,75,0.3); color: #fff; }
+
+    :root {
+      --bg:       #08080a;
+      --bg2:      #0d0d10;
+      --card-bg:  rgba(16,16,20,0.82);
+      --border:   rgba(255,255,255,0.07);
+      --text:     #f0ede8;
+      --muted:    rgba(240,237,232,0.5);
+      --gold:     #e8b84b;
+      --gold2:    #f5d07a;
+      --gold-glow:rgba(232,184,75,0.14);
+      --green:    #22c55e;
+      --radius:   22px;
+      --shadow:   0 28px 80px rgba(0,0,0,0.65);
+      --maxw:     820px;
+      --safeTop:    env(safe-area-inset-top, 0px);
+      --safeBottom: env(safe-area-inset-bottom, 0px);
+      --safeLeft:   env(safe-area-inset-left, 0px);
+      --safeRight:  env(safe-area-inset-right, 0px);
+    }
+
+    html, body {
+      height: 100%; height: 100dvh; margin: 0;
+      background: var(--bg); color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      overflow: hidden; overscroll-behavior-y: none;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { background: none; border: none; padding: 0; font: inherit; color: inherit; cursor: pointer; }
+
+    /* ── BG GLOW ── */
+    .bg-glow {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(circle at 50% 0%, var(--gold-glow), transparent 55%),
+        radial-gradient(circle at 90% 90%, rgba(34,197,94,0.05), transparent 55%);
+    }
+
+    /* ── TOP BAR ── */
+    .top {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      padding: calc(14px + var(--safeTop)) calc(14px + var(--safeRight)) 12px calc(14px + var(--safeLeft));
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      background: linear-gradient(180deg, rgba(8,8,10,0.96) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    .top > * { pointer-events: auto; }
+    .nav-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 16px; border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(12,12,14,0.75);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted); white-space: nowrap;
+      transition: transform .18s;
+    }
+    .nav-pill:active { transform: scale(0.97); }
+    .nav-pill b { color: var(--text); font-weight: 700; }
+    .nav-logo {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px;
+      letter-spacing: .1em; color: var(--text);
+    }
+    .nav-logo span { color: var(--gold); }
+
+    /* ── SCROLL CONTAINER ── */
+    .scroll-container {
+      position: absolute; inset: 0;
+      overflow-y: auto; overflow-x: hidden;
+      scroll-snap-type: y mandatory; scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch; z-index: 10;
+    }
+    .scroll-container::-webkit-scrollbar { display: none; }
+
+    /* ── SECTION WRAPPER ── */
+    .section-wrapper {
+      height: 100%; width: 100%;
+      scroll-snap-align: start; scroll-snap-stop: always;
+      display: flex; align-items: center; justify-content: center;
+      padding: calc(80px + var(--safeTop)) calc(14px + var(--safeRight)) calc(88px + var(--safeBottom)) calc(14px + var(--safeLeft));
+      position: relative;
+    }
+
+    /* ── CARD ── */
+    .card {
+      width: 100%; max-width: var(--maxw);
+      height: 100%;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      opacity: .32; transform: scale(.93) translateY(28px);
+      transition: opacity .65s cubic-bezier(.16,1,.3,1), transform .65s cubic-bezier(.16,1,.3,1);
+      min-height: 0;
+    }
+    .section-wrapper.is-active .card {
+      opacity: 1; transform: scale(1) translateY(0);
+    }
+    .card-header {
+      padding: 22px 22px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      background: rgba(0,0,0,0.22);
+      flex-shrink: 0;
+    }
+    .kicker {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 8px; font-weight: 700;
+    }
+    .card-title {
+      margin: 0;
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(20px, 4.5vw, 28px);
+      line-height: 1.2; letter-spacing: -.02em;
+    }
+    .card-body {
+      padding: 22px; overflow: auto; -webkit-overflow-scrolling: touch;
+      flex: 1; min-height: 0;
+    }
+    .card-body::-webkit-scrollbar { width: 4px; }
+    .card-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 8px; }
+
+    /* ── TYPOGRAPHY ── */
+    .big {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(28px, 7vw, 48px);
+      line-height: 1.05; letter-spacing: -.03em; margin: 0 0 16px;
+    }
+    .gold-text {
+      background: linear-gradient(135deg, #f5d07a, #e8b84b);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; color: var(--gold);
+    }
+    .lead { font-size: 16px; line-height: 1.7; color: rgba(255,255,255,0.82); margin: 0 0 14px; font-weight: 300; }
+    .muted-text { color: var(--muted); }
+
+    /* ── STARS ── */
+    .stars {
+      display: flex; align-items: center; gap: 6px; margin-bottom: 20px;
+    }
+    .stars span { color: var(--gold); font-size: 16px; letter-spacing: 2px; }
+    .stars small { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; letter-spacing: .06em; }
+
+    /* ── STATS GRID ── */
+    .stats-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2px; background: var(--border);
+      border: 1px solid var(--border); border-radius: 16px;
+      overflow: hidden; margin: 20px 0;
+    }
+    .stat-cell {
+      background: rgba(0,0,0,0.4); padding: 18px 16px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .stat-cell .num {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: 2rem; line-height: 1; color: var(--gold);
+    }
+    .stat-cell .lbl {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--muted); line-height: 1.4;
+    }
+
+    /* ── QUOTE ── */
+    .quote {
+      margin: 18px 0; padding: 14px 18px;
+      border-left: 3px solid var(--gold);
+      background: linear-gradient(90deg, var(--gold-glow), transparent);
+      border-radius: 0 12px 12px 0;
+      font-size: 15px; font-style: italic; line-height: 1.65;
+      color: rgba(255,255,255,0.9);
+    }
+
+    /* ── SERVICE CARDS ── */
+    .service-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; margin: 16px 0;
+    }
+    .service-card {
+      background: rgba(0,0,0,0.35); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px;
+      transition: border-color .2s, background .2s;
+    }
+    .service-card:hover { border-color: rgba(232,184,75,0.3); background: rgba(232,184,75,0.05); }
+    .service-icon { font-size: 1.5rem; margin-bottom: 10px; display: block; }
+    .service-title {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 13px; letter-spacing: -.01em; margin-bottom: 6px;
+    }
+    .service-desc { font-size: 12px; color: var(--muted); line-height: 1.55; font-weight: 300; }
+    .service-tag {
+      display: inline-block; margin-top: 10px;
+      font-family: 'Space Mono', monospace; font-size: 9px;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--gold); border: 1px solid rgba(232,184,75,0.25);
+      padding: 3px 8px; border-radius: 4px;
+    }
+
+    /* ── PROCESS STEPS ── */
+    .process-steps { display: flex; flex-direction: column; gap: 0; margin: 16px 0; }
+    .process-step {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      transition: background .2s;
+    }
+    .process-step:last-child { border-bottom: none; }
+    .step-num {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: 1.6rem; color: rgba(232,184,75,0.2); line-height: 1; min-width: 36px;
+    }
+    .step-body {}
+    .step-title {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 14px; margin-bottom: 4px;
+    }
+    .step-desc { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.55; }
+
+    /* ── CTA BOX ── */
+    .cta-box {
+      margin: 16px 0;
+      border-radius: 16px;
+      border: 1px solid rgba(232,184,75,0.2);
+      background: linear-gradient(180deg, rgba(232,184,75,0.09), rgba(0,0,0,0.1));
+      padding: 16px;
+    }
+    .cta-box strong { font-size: 14px; display: block; margin-bottom: 6px; }
+    .cta-box p { font-size: 13px; color: var(--muted); line-height: 1.55; margin: 0; font-weight: 300; }
+
+    /* ── HONEST BLOCK ── */
+    .honest-block {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 16px; border: 1px solid var(--border);
+      border-radius: 14px; background: rgba(0,0,0,0.3); margin: 16px 0;
+    }
+    .honest-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
+    .honest-title { font-weight: 600; font-size: 14px; margin-bottom: 5px; }
+    .honest-text { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+
+    /* ── TAGS ROW ── */
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+    .tag {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: 6px 12px; border-radius: 6px;
+      border: 1px solid var(--border); background: rgba(0,0,0,0.3);
+      color: var(--muted);
+    }
+    .tag.highlight { color: var(--gold); border-color: rgba(232,184,75,0.3); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 15px 14px; border-radius: 12px;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: .02em;
+      border: 1px solid var(--border); background: rgba(0,0,0,0.3);
+      transition: transform .18s ease, filter .18s ease;
+      cursor: pointer;
+    }
+    .btn:active { transform: scale(0.985); filter: brightness(1.1); }
+    .btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(232,184,75,0.98), rgba(232,184,75,0.7));
+      border-color: rgba(232,184,75,0.3); color: #08080a;
+    }
+    .btn-ghost { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); color: #fff; }
+    .btn-green { background: rgba(34,197,94,0.9); border-color: rgba(34,197,94,0.3); color: #051a0d; font-weight: 900; }
+    .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+    @media(max-width:480px){ .btn-row { grid-template-columns: 1fr; } }
+    .btn-full { grid-column: 1 / -1; }
+
+    /* ── FORM FIELD ── */
+    .field { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+    .field label {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      text-transform: uppercase; letter-spacing: .14em; color: var(--muted); font-weight: 700;
+    }
+    .field input, .field textarea {
+      background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; padding: 13px 14px;
+      color: #fff; font-size: 15px; font-family: 'DM Sans', sans-serif;
+      outline: none; -webkit-user-select: text; user-select: text;
+      -webkit-touch-callout: default; resize: none;
+    }
+    .field input:focus, .field textarea:focus {
+      border-color: rgba(232,184,75,0.5);
+      box-shadow: 0 0 0 3px var(--gold-glow);
+    }
+    .field textarea { min-height: 72px; }
+
+    /* ── STICKY FOOTER ── */
+    .sticky-cta {
+      position: fixed;
+      left: calc(12px + var(--safeLeft)); right: calc(12px + var(--safeRight));
+      bottom: calc(12px + var(--safeBottom));
+      z-index: 60; max-width: var(--maxw); margin: 0 auto;
+      display: flex; gap: 10px;
+      padding: 10px; border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(8,8,10,0.78);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    }
+    .sticky-left { flex: 1; min-width: 0; padding: 4px 6px 4px 8px; display: flex; flex-direction: column; gap: 2px; }
+    .sticky-left b { font-size: 13px; }
+    .sticky-left span { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sticky-right { width: 180px; }
+    @media(max-width:480px){
+      .sticky-cta { flex-direction: column; }
+      .sticky-right { width: 100%; }
+      .sticky-left span { white-space: normal; }
+    }
+
+    /* ── SCROLL HINT ── */
+    .hint {
+      position: absolute; bottom: calc(14px + var(--safeBottom)); left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      color: rgba(255,255,255,0.28);
+      font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+      pointer-events: none; animation: bob 2s infinite; z-index: 100;
+    }
+    .hint svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+    @keyframes bob {
+      0%,100%{ transform: translateX(-50%) translateY(0); opacity:.45; }
+      50%{ transform: translateX(-50%) translateY(6px); opacity:.9; }
+    }
+    .section-wrapper:last-child .hint { display: none; }
+
+    /* ── PROGRESS DOTS ── */
+    .progress-dots {
+      position: fixed; right: calc(14px + var(--safeRight)); top: 50%; transform: translateY(-50%);
+      z-index: 50; display: flex; flex-direction: column; gap: 8px;
+      pointer-events: none;
+    }
+    .dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      transition: background .3s, transform .3s;
+    }
+    .dot.active { background: var(--gold); transform: scale(1.4); }
+
+  </style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+
+  <!-- TOP -->
+  <div class="top">
+    <a class="nav-logo" href="index.html"><span>//</span> VIADECIDE</a>
+    <div class="nav-pill" id="secPill"><b id="secLabel">01</b> / 6</div>
+  </div>
+
+  <!-- PROGRESS DOTS -->
+  <div class="progress-dots" id="progressDots"></div>
+
+  <!-- SCROLL CONTAINER -->
+  <main class="scroll-container" id="scrollContainer"></main>
+
+  <!-- STICKY CTA -->
+  <div class="sticky-cta">
+    <div class="sticky-left">
+      <b>30 minutes. No pitch. Just conversation.</b>
+      <span>Free call · English · Hindi · Gujarati</span>
+    </div>
+    <div class="sticky-right">
+      <button class="btn btn-primary" id="stickyBtn" onclick="jumpTo(5)">Book Free Call →</button>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    "use strict";
+    document.addEventListener("touchstart", function(){}, { passive: true });
+
+    const WA = "916351537770";
+    const container = document.getElementById("scrollContainer");
+    const secLabel = document.getElementById("secLabel");
+    const dotsWrap = document.getElementById("progressDots");
+
+    const SECTIONS = [
+      /* 0 — HERO */
+      {
+        kicker: "Kutch, India · 2025",
+        title: "I build AI systems that actually think.",
+        body: () => `
+          <div class="stars">
+            <span>★★★★★</span>
+            <small>Builder · Thinker · Non-dev founder</small>
+          </div>
+          <div class="big">From ₹10K<br/>to <span class="gold-text">$33K saved.</span></div>
+          <p class="lead">Started with free-tier AI, hit token limits every 3 responses, made a promise to myself — and built ViaDecide. No CS degree. No funding. Just pattern thinking and obsession.</p>
+          <div class="stats-grid">
+            <div class="stat-cell"><div class="num">58</div><div class="lbl">Tools Built</div></div>
+            <div class="stat-cell"><div class="num">81%</div><div class="lbl">Token Reduction</div></div>
+            <div class="stat-cell"><div class="num">3mo</div><div class="lbl">To First Ship</div></div>
+            <div class="stat-cell"><div class="num">30m</div><div class="lbl">Free Call</div></div>
+          </div>
+          <div class="tags">
+            <div class="tag highlight">LogicHub</div>
+            <div class="tag highlight">ViaDecide OS</div>
+            <div class="tag">Token Engineering</div>
+            <div class="tag">Metadata-first</div>
+            <div class="tag">Bharat-first</div>
+          </div>
+        `
+      },
+
+      /* 1 — WHAT I DO */
+      {
+        kicker: "What I work on",
+        title: "Not a developer. Something different.",
+        body: () => `
+          <p class="lead">I don't write backend APIs or debug deployment pipelines. I think in systems — how AI models process context, where token waste happens, how visual architecture maps to actual code output.</p>
+          <div class="service-grid">
+            <div class="service-card">
+              <span class="service-icon">🧩</span>
+              <div class="service-title">AI Architecture</div>
+              <div class="service-desc">Visual app architecture that compiles to Claude-ready PRDs. Drag nodes, skip the blank canvas.</div>
+              <div class="service-tag">LogicHub</div>
+            </div>
+            <div class="service-card">
+              <span class="service-icon">📉</span>
+              <div class="service-title">Token Engineering</div>
+              <div class="service-desc">Metadata strategies that cut AI costs 80%+ on complex, multi-session builds.</div>
+              <div class="service-tag">81% reduction</div>
+            </div>
+            <div class="service-card">
+              <span class="service-icon">🗺️</span>
+              <div class="service-title">Spatial Systems</div>
+              <div class="service-desc">Decision tools, world maps, interactive 3D logic — the ViaDecide ecosystem.</div>
+              <div class="service-tag">58 tools</div>
+            </div>
+            <div class="service-card">
+              <span class="service-icon">🧠</span>
+              <div class="service-title">Pattern Thinking</div>
+              <div class="service-desc">Finding the metadata layer that turns expensive AI exploration into rapid pattern application.</div>
+              <div class="service-tag">10x efficiency</div>
+            </div>
+          </div>
+          <div class="quote">The real AI multiplier isn't the model. It's the metadata you carry forward.</div>
+        `
+      },
+
+      /* 2 — HONEST STORY */
+      {
+        kicker: "The real story",
+        title: "I'm 3 months in. No portfolio. Just momentum.",
+        body: () => `
+          <p class="lead">Here's what I don't have: client testimonials, a case study deck, a LinkedIn with 10K followers, or a polished agency brand.</p>
+          <p class="lead">Here's what I do have:</p>
+          <div class="honest-block">
+            <div class="honest-icon">🔥</div>
+            <div>
+              <div class="honest-title">LogicHub — Live on Play Store</div>
+              <div class="honest-text">A tool that lets anyone build app architectures visually and export Claude-ready PRDs. Built without a single line of prior coding experience.</div>
+            </div>
+          </div>
+          <div class="honest-block">
+            <div class="honest-icon">💡</div>
+            <div>
+              <div class="honest-title">A genuinely novel insight</div>
+              <div class="honest-text">Metadata-first context management. 81% token reduction documented across a 58-tool platform build. Not theory — lived experience.</div>
+            </div>
+          </div>
+          <div class="honest-block">
+            <div class="honest-icon">📍</div>
+            <div>
+              <div class="honest-title">Built from Kutch, India</div>
+              <div class="honest-text">Not a tech hub. Not funded. ₹10,000 investment. 3 months. A working OS. That's the whole story — and it's actually a better story than most portfolios.</div>
+            </div>
+          </div>
+        `
+      },
+
+      /* 3 — HOW THE CALL WORKS */
+      {
+        kicker: "How it works",
+        title: "From first message to first clarity. Simple.",
+        body: () => `
+          <div class="big">No prep.<br/><span class="gold-text">No agenda.</span></div>
+          <p class="lead">The call is genuinely unstructured. You talk about what you're building or thinking about. I share what I've been learning. Something useful happens — or it doesn't, and we both move on without awkwardness.</p>
+          <div class="process-steps">
+            <div class="process-step">
+              <div class="step-num">01</div>
+              <div class="step-body">
+                <div class="step-title">You send a message</div>
+                <div class="step-desc">WhatsApp or email. One line is enough. Tell me roughly what you want to talk about — building something, AI workflows, or just curious.</div>
+              </div>
+            </div>
+            <div class="process-step">
+              <div class="step-num">02</div>
+              <div class="step-body">
+                <div class="step-title">I reply fast</div>
+                <div class="step-desc">Usually within a few hours. We pick a time that works — I'm flexible. No calendar tool yet, just a human conversation.</div>
+              </div>
+            </div>
+            <div class="process-step">
+              <div class="step-num">03</div>
+              <div class="step-body">
+                <div class="step-title">30 minutes, real talk</div>
+                <div class="step-desc">Video or voice. English, Hindi, or Gujarati. You'll leave with at least one idea worth keeping. I'll leave with better understanding of what people actually need.</div>
+              </div>
+            </div>
+            <div class="process-step">
+              <div class="step-num">04</div>
+              <div class="step-body">
+                <div class="step-title">Zero obligation</div>
+                <div class="step-desc">No invoice. No follow-up sales sequence. If something clicks for a collaboration — great. If not, still great.</div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+
+      /* 4 — WHO IS THIS FOR */
+      {
+        kicker: "Is this for you?",
+        title: "You'll get the most from this call if…",
+        body: () => `
+          <div class="honest-block">
+            <div class="honest-icon">✅</div>
+            <div>
+              <div class="honest-title">You're building something with AI</div>
+              <div class="honest-text">And keep hitting context limits, token costs, or the blank-canvas problem when trying to start.</div>
+            </div>
+          </div>
+          <div class="honest-block">
+            <div class="honest-icon">✅</div>
+            <div>
+              <div class="honest-title">You're a non-technical founder</div>
+              <div class="honest-text">Who knows what they want to build but feels lost between "vibe-coding" and actually shipping something real.</div>
+            </div>
+          </div>
+          <div class="honest-block">
+            <div class="honest-icon">✅</div>
+            <div>
+              <div class="honest-title">You're curious about the metadata insight</div>
+              <div class="honest-text">The 81% token reduction isn't magic — it's a method. If you want to understand how it works and whether it applies to your stack, let's talk.</div>
+            </div>
+          </div>
+          <div class="honest-block">
+            <div class="honest-icon">✅</div>
+            <div>
+              <div class="honest-title">You just want a different perspective</div>
+              <div class="honest-text">From someone who went from zero to shipping in 3 months from Kutch. Sometimes that's the most useful conversation.</div>
+            </div>
+          </div>
+          <div class="cta-box">
+            <strong>🇮🇳 Indian founders — especially welcome</strong>
+            <p>Building in tier-2/3 India with constraint-driven creativity is a superpower most people underestimate. I'd love to talk to more of you.</p>
+          </div>
+        `
+      },
+
+      /* 5 — BOOK */
+      {
+        kicker: "Book your call",
+        title: "Start with a simple message.",
+        body: () => `
+          <div class="big">Let's<br/><span class="gold-text">talk.</span></div>
+          <p class="lead">No form. No calendar tool. Just send me a message below — WhatsApp is fastest, email works too. Tell me one line about what you want to talk about.</p>
+          <div class="field">
+            <label>Your name</label>
+            <input id="f-name" type="text" placeholder="What should I call you?" autocomplete="given-name" />
+          </div>
+          <div class="field">
+            <label>What's on your mind? (optional)</label>
+            <textarea id="f-msg" placeholder="Building something with AI, stuck on token costs, curious about LogicHub, just want to chat…"></textarea>
+          </div>
+          <div class="btn-row" style="margin-top:18px;">
+            <button class="btn btn-primary btn-full" onclick="bookWA()">
+              Send on WhatsApp →
+            </button>
+            <button class="btn btn-ghost" onclick="bookEmail()">
+              Send by Email
+            </button>
+            <button class="btn btn-ghost" onclick="copyContact()">
+              Copy Contact
+            </button>
+          </div>
+          <div class="honest-block" style="margin-top:18px;">
+            <div class="honest-icon">☕</div>
+            <div>
+              <div class="honest-title">What to expect</div>
+              <div class="honest-text">30 min · Free always · No pitch · No invoice · English / Hindi / Gujarati · I reply the same day</div>
+            </div>
+          </div>
+          <div style="height:60px;"></div>
+        `
+      }
+    ];
+
+    /* ── RENDER ── */
+    function render(){
+      container.innerHTML = "";
+      dotsWrap.innerHTML = "";
+
+      SECTIONS.forEach((s, i) => {
+        // Section wrapper
+        const wrap = document.createElement("div");
+        wrap.className = "section-wrapper";
+        wrap.dataset.index = i;
+
+        wrap.innerHTML = `
+          <article class="card">
+            <header class="card-header">
+              <div class="kicker">${s.kicker}</div>
+              <h1 class="card-title">${s.title}</h1>
+            </header>
+            <div class="card-body">
+              ${s.body()}
+              <div style="height:70px;"></div>
+            </div>
+          </article>
+          <div class="hint">
+            <span>Scroll</span>
+            <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        `;
+        container.appendChild(wrap);
+
+        // Progress dot
+        const dot = document.createElement("div");
+        dot.className = "dot";
+        dot.dataset.index = i;
+        dotsWrap.appendChild(dot);
+      });
+
+      document.querySelectorAll(".section-wrapper").forEach(el => observer.observe(el));
+    }
+
+    /* ── INTERSECTION OBSERVER ── */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if(e.isIntersecting){
+          e.target.classList.add("is-active");
+          const i = parseInt(e.target.dataset.index, 10) || 0;
+          secLabel.textContent = String(i + 1).padStart(2, "0");
+          document.querySelectorAll(".dot").forEach((d, j) => {
+            d.classList.toggle("active", j === i);
+          });
+        } else {
+          e.target.classList.remove("is-active");
+        }
+      });
+    }, { root: container, threshold: 0.55 });
+
+    /* ── JUMP ── */
+    window.jumpTo = function(index){
+      const el = container.querySelectorAll(".section-wrapper")[index];
+      if(el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
+    /* ── BOOK ACTIONS ── */
+    window.bookWA = function(){
+      const name = (document.getElementById("f-name")?.value || "").trim();
+      const msg  = (document.getElementById("f-msg")?.value  || "").trim();
+      let text = "Hi! I'd like to book a free 30-minute call with ViaDecide.";
+      if(name) text += `\n\nName: ${name}`;
+      if(msg)  text += `\n\nWhat I want to talk about: ${msg}`;
+      window.open(`https://wa.me/${WA}?text=${encodeURIComponent(text)}`, "_blank");
+    };
+
+    window.bookEmail = function(){
+      const name = (document.getElementById("f-name")?.value || "").trim();
+      const msg  = (document.getElementById("f-msg")?.value  || "").trim();
+      const sub = encodeURIComponent("Free 30-min Call · ViaDecide");
+      let body = "Hi,\n\nI'd like to book a free 30-minute call.";
+      if(name) body += `\n\nName: ${name}`;
+      if(msg)  body += `\n\nWhat I want to talk about: ${msg}`;
+      window.open(`mailto:hello@viadecide.com?subject=${sub}&body=${encodeURIComponent(body)}`, "_blank");
+    };
+
+    window.copyContact = async function(){
+      const text = "WhatsApp: +91 63515 37770\nEmail: hello@viadecide.com\nViaDecide — Free 30-min Call";
+      try {
+        await navigator.clipboard.writeText(text);
+        const btn = document.querySelectorAll(".btn-ghost")[1];
+        if(btn){ const o = btn.textContent; btn.textContent = "✓ Copied!"; setTimeout(()=> btn.textContent = o, 1800); }
+      } catch(e) {
+        const ta = document.createElement("textarea");
+        ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
+      }
+    };
+
+    render();
+  })();
+  </script>
+</body>
+</html>
