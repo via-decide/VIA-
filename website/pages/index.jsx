@@ -1,66 +1,107 @@
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import ToolLoader from '@/public/tools/loader';
+import { useEffect } from 'react';
 
 export default function Home() {
-  const [featuredTools, setFeaturedTools] = useState([]);
-
   useEffect(() => {
-    const loader = new ToolLoader();
-    loader.getFeaturedTools().then(setFeaturedTools);
+    const camera = document.getElementById('camera');
+    const panels = document.querySelectorAll('.panel');
+    const depthReadout = document.getElementById('depth-readout');
+    const scrollProxy = document.getElementById('scroll-proxy');
+
+    if (!camera || !depthReadout || !scrollProxy) return;
+
+    let currentScroll = 0;
+    const scrollMultiplier = 2;
+
+    const onScroll = () => {
+      currentScroll = window.scrollY;
+    };
+
+    panels.forEach((panel) => {
+      const z = parseFloat(panel.getAttribute('data-z') || '0');
+      panel.style.transform = `translate(-50%, -50%) translateZ(${z}px)`;
+    });
+
+    function update3DCamera() {
+      const zTranslation = currentScroll * scrollMultiplier;
+      camera.style.transform = `translateZ(${zTranslation}px)`;
+      depthReadout.innerText = Math.round(zTranslation).toString().padStart(5, '0');
+
+      panels.forEach(panel => {
+        const pz = parseFloat(panel.getAttribute('data-z') || '0');
+        const relativeZ = pz + zTranslation;
+
+        if (relativeZ > 600 || relativeZ < -4000) {
+          panel.style.opacity = '0';
+          panel.style.pointerEvents = 'none';
+          panel.style.visibility = 'hidden';
+        } else {
+          panel.style.opacity = '1';
+          panel.style.pointerEvents = 'auto';
+          panel.style.visibility = 'visible';
+        }
+      });
+
+      requestAnimationFrame(update3DCamera);
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    update3DCamera();
+
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
-    <div className="home-page">
-      <section className="hero">
-        <h1>Sovereign Kinetic OS</h1>
-        <p>The Bharat-first digital ecosystem built for decision engineering, spatial mathematics, and tactile sovereign tools.</p>
+    <div style={{ background: '#030508', color: '#e2e8f0' }}>
+      <div id="scroll-proxy" style={{ height: '6000px' }} />
+      <div style={{ position: 'fixed', top: 16, right: 16, zIndex: 20, fontFamily: 'monospace' }}>
+        DEPTH <span id="depth-readout">00000</span>
+      </div>
 
-        <div className="hero-cta">
-          <Link href="/tools/" className="btn btn-primary btn-lg">
-            Explore 44 Tools →
-          </Link>
-          <Link href="/academy/" className="btn btn-secondary btn-lg">
-            Enter Academy
-          </Link>
-        </div>
-      </section>
-
-      <section className="features">
-        <div className="feature">
-          <h3>🧬 Decision Logic</h3>
-          <p>44 professional decision tools mapped into an interactive academy.</p>
-          <Link href="/academy/">Explore →</Link>
-        </div>
-
-        <div className="feature">
-          <h3>🗺️ Spatial World</h3>
-          <p>Discover the ViaDecide ecosystem through an interactive spatial map.</p>
-          <Link href="/spatial-map/">View Map →</Link>
-        </div>
-
-        <div className="feature">
-          <h3>🌾 Sovereign Data</h3>
-          <p>Your profile, your data. A private, secure personal environment.</p>
-          <Link href="/dashboard/">Dashboard →</Link>
-        </div>
-      </section>
-
-      <section className="featured-tools">
-        <h2>Featured Tools</h2>
-        <div className="tools-preview">
-          {featuredTools.map((tool) => (
-            <div key={tool.id} className="tool-preview">
-              <h4>{tool.name}</h4>
-              <p>{tool.description}</p>
-              <Link href={`/tools/${tool.id}`}>View →</Link>
+      <main id="viewport" style={{ position: 'fixed', inset: 0, perspective: '1200px', overflow: 'hidden' }}>
+        <div id="camera" style={{ position: 'absolute', inset: 0, transformStyle: 'preserve-3d' }}>
+          <section className="panel" data-z="0" style={panelStyle}>
+            <div style={cardStyle}>
+              <h1>Visual Logic. Autonomous Core.</h1>
+              <p>Next.js spatial landing with corrected 3D panel visibility and pointer boundaries.</p>
+              <Link href="/viadecide" className="btn btn-primary">Enter ViaDecide</Link>
             </div>
-          ))}
+          </section>
+          <section className="panel" data-z="-2500" style={panelStyle}>
+            <div style={cardStyle}>
+              <h2>Sector 01: ViaLogic Hub</h2>
+              <p>Unified route to Vibecoder mapping and architecture tools.</p>
+              <Link href="/logichub" className="btn btn-secondary">Open LogicHub</Link>
+            </div>
+          </section>
+          <section className="panel" data-z="-5000" style={panelStyle}>
+            <div style={cardStyle}>
+              <h2>Sector 02: World</h2>
+              <p>Spatial world entry point in the Next.js router.</p>
+              <Link href="/world" className="btn btn-secondary">Explore World</Link>
+            </div>
+          </section>
         </div>
-        <Link href="/tools/" className="btn btn-primary btn-lg">
-          View All Tools →
-        </Link>
-      </section>
+      </main>
     </div>
   );
 }
+
+const panelStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  width: '90vw',
+  maxWidth: 900,
+  transform: 'translate(-50%, -50%)',
+  transition: 'opacity 0.3s',
+  textAlign: 'center'
+};
+
+const cardStyle = {
+  border: '1px solid rgba(255,255,255,0.15)',
+  borderRadius: 24,
+  padding: '2rem',
+  background: 'rgba(18,21,28,0.8)',
+  backdropFilter: 'blur(12px)'
+};
