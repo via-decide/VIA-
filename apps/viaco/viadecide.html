@@ -593,6 +593,12 @@
               <p>Ecosystem news & releases</p>
             </div>
             <div class="tools-grid">
+              <div class="tool-card" onclick="App.openTool('LogicHub')">
+                <div class="tool-icon" style="background: linear-gradient(135deg, #00e5ff, #0088ff); box-shadow: 0 4px 15px rgba(0,229,255,0.4); color: #000;">🧠</div>
+                <div class="tool-tag" style="color: #00e5ff;">FLAGSHIP ENGINE</div>
+                <div class="tool-name">LogicHub v2</div>
+                <div class="tool-desc">Visual node architecture. Synthesize code using Gemini and export directly to .zip.</div>
+              </div>
               <div class="tool-card">
                 <div class="tool-icon" style="background: var(--saffron); color: var(--void);">🚀</div>
                 <div class="tool-tag">SYSTEM UPDATE</div>
@@ -1482,7 +1488,31 @@
     // ═══════════════════════════════════════════════════════════════
     // TOOLS SECTION (with AI Integration)
     // ═══════════════════════════════════════════════════════════════
-    const allTools = [
+    const ROUTE_ALIASES = {
+      'logichub': 'logichub.html',
+      'vibecoder engine': 'logichub.html',
+      'visual architecture': 'logichub.html'
+    };
+
+    window.App = window.App || {};
+    window.App.openTool = function(toolName) {
+      const key = String(toolName || '').trim().toLowerCase();
+      const route = ROUTE_ALIASES[key] || ROUTE_ALIASES[key.replace(/\s+/g, ' ')];
+      if (route) {
+        window.location.href = route;
+        return;
+      }
+      showToast(`Launching ${toolName}...`);
+    };
+
+    const TOOLS_DB = [
+  { 
+    name: "LogicHub", 
+    cat: "system", 
+    desc: "Vibecoder engine. Visual node architecture with Gemini AI code synthesis and .zip export.", 
+    icon: "🧠", 
+    engine: true 
+  },
       { id: 'remixer', tag: 'AI', name: '✨ Idea Remixer', desc: 'Combine philosophies using Gemini AI.', color: '#ec4899', isAI: true },
       { id: 'oracle', tag: 'AI', name: '✨ Decision Oracle', desc: 'LLM-powered pros/cons analysis.', color: '#a855f7', isAI: true },
       { tag: 'EVAL', name: 'Decision Matrix', desc: 'Weighted scoring for complex choices.' },
@@ -1491,6 +1521,7 @@
       { tag: 'RESEARCH', name: 'Multi-Source Synthesizer', desc: 'Aggregate insights in parallel.' }
     ];
 
+    const allTools = TOOLS_DB;
     let currentAITool = null;
 
     function renderTools() {
@@ -1503,8 +1534,8 @@
         const bgStyle = tool.isAI ? `background: ${tool.color};` : `background: linear-gradient(135deg, ${bgColor}, ${bgColor}80);`;
 
         card.innerHTML = `
-          <div class="tool-icon" style="${bgStyle} box-shadow: 0 4px 15px ${tool.color ? tool.color + '40' : 'rgba(255,103,31,0.3)'};">${tool.isAI ? '⚡' : '⚙️'}</div>
-          <div class="tool-tag" style="${tool.color ? `color: ${tool.color};` : ''}">${tool.tag || 'TOOL'}</div>
+          <div class="tool-icon" style="${bgStyle} box-shadow: 0 4px 15px ${tool.color ? tool.color + '40' : 'rgba(255,103,31,0.3)'};">${tool.icon || (tool.isAI ? '⚡' : '⚙️')}</div>
+          <div class="tool-tag" style="${tool.color ? `color: ${tool.color};` : ''}">${tool.tag || (tool.engine ? 'FLAGSHIP ENGINE' : 'TOOL')}</div>
           <div class="tool-name">${tool.name}</div>
           <div class="tool-desc">${tool.desc}</div>
         `;
@@ -1513,7 +1544,7 @@
           if (tool.isAI) {
             openAITool(tool);
           } else {
-            showToast(`Launching ${tool.name}...`);
+            window.App.openTool(tool.name);
           }
         });
 
