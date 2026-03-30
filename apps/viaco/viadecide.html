@@ -2141,6 +2141,20 @@
         btn.onclick = () => showSection(btn.dataset.section);
       });
 
+      const routeSection = (window.location.hash || '').replace('#', '').toLowerCase();
+      const validSections = ['feed', 'world', 'updates', 'profile', 'vialogic'];
+      if (validSections.includes(routeSection)) {
+        showSection(routeSection);
+      }
+
+      if (!window._viaHashRouteBound) {
+        window.addEventListener('hashchange', () => {
+          const nextSection = (window.location.hash || '').replace('#', '').toLowerCase();
+          if (validSections.includes(nextSection)) showSection(nextSection);
+        });
+        window._viaHashRouteBound = true;
+      }
+
       // Periodic Sync
       setInterval(() => {
         syncEconomyUI();
