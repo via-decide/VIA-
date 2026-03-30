@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#030508">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>ViaDecide | Kinetic OS 3.0</title>
-
+    <title>ViaDecide | 3.0 Kinetic OS Landing</title>
+    <meta name="description" content="Zero-dependency visual orchestrator and spatial engine tools by Dharam Daxini.">
+    
+    <!-- Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
+        /* ========================================================
+           CORE VARIABLES & STANDARD VISUALS
+           ======================================================== */
         :root {
             --void: #030508;
             --deep: #080a0f;
@@ -24,33 +26,40 @@
             --text-muted: #64748b;
             --glass-bg: rgba(15, 15, 26, 0.6);
             --glass-border: rgba(255, 255, 255, 0.15);
+            
             --font-display: 'Outfit', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
+            
             --shadow-3d: 0 20px 60px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.08);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        html, body {
+        
+        body {
             background-color: var(--void);
             color: var(--text-main);
             font-family: var(--font-display);
             overflow-x: hidden;
-            scrollbar-width: none;
+            scrollbar-width: none; 
+            cursor: none; /* Custom cursor */
         }
-
         body::-webkit-scrollbar { display: none; }
 
+        /* Tactical Noise Layer */
         body::before {
             content: ''; position: fixed; inset: 0; z-index: 9999;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
             pointer-events: none; opacity: 0.5;
         }
 
+        /* ========================================================
+           THE 3D SCROLL STAGE
+           ======================================================== */
         #scroll-proxy {
             position: absolute;
             top: 0; left: 0; width: 1px;
-            height: 1500vh;
+            /* Adjusted height to roughly match depth + padding */
+            height: 6000px; 
             z-index: -1;
         }
 
@@ -76,14 +85,21 @@
             background: radial-gradient(circle at center, #0a0b10 0%, var(--void) 100%);
         }
 
+        /* ========================================================
+           SPATIAL PANELS & GLASS CARDS
+           ======================================================== */
         .panel {
             position: absolute;
             top: 50%; left: 50%;
+            /* Removed translateZ from CSS, it is set inline in HTML */
             transform: translate(-50%, -50%);
             width: 90vw; max-width: 1000px;
             text-align: center;
             pointer-events: auto;
             transform-style: preserve-3d;
+            /* Added will-change for performance */
+            will-change: transform, opacity;
+            transition: opacity 0.3s;
         }
 
         .glass-card {
@@ -94,437 +110,321 @@
             border-radius: 28px;
             padding: 3.5rem;
             box-shadow: var(--shadow-3d);
-            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.4s ease;
             background: linear-gradient(165deg, rgba(255,255,255,0.04), transparent);
         }
 
         .magnetic { transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1); }
 
-        h1, h2, h3 {
-            font-family: var(--font-display);
-            font-weight: 900;
-            line-height: 1.1;
-            letter-spacing: -0.04em;
-        }
+        /* Typography */
+        h1, h2, h3 { font-family: var(--font-display); font-weight: 900; line-height: 1.1; letter-spacing: -0.04em; }
+        .hero-title { font-size: clamp(2.5rem, 8vw, 6rem); margin-bottom: 1rem; text-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .hero-subtitle { color: var(--text-muted); font-size: clamp(0.95rem, 2vw, 1.2rem); max-width: 600px; margin: 0 auto 2.5rem; font-weight: 500; line-height: 1.6; }
+        
+        .gradient-text-saffron { background: linear-gradient(90deg, var(--saffron), #ffaa00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .gradient-text-neon { background: linear-gradient(90deg, var(--neon), var(--accent-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .hero-title {
-            font-size: clamp(2.5rem, 8vw, 6rem);
-            margin-bottom: 1rem;
-            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        /* Tactical Tags */
+        .tag { 
+            display: inline-block; padding: 6px 14px; border-radius: 99px; 
+            font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 2px; 
+            text-transform: uppercase; margin-bottom: 1.5rem; font-weight: 800; 
         }
+        .tag-saffron { background: rgba(255, 103, 31, 0.12); color: var(--saffron); border: 1px solid rgba(255, 103, 31, 0.3); }
+        .tag-neon { background: rgba(0, 229, 204, 0.12); color: var(--neon); border: 1px solid rgba(0, 229, 204, 0.3); }
+        .tag-green { background: rgba(74, 222, 128, 0.12); color: var(--accent-green); border: 1px solid rgba(74, 222, 128, 0.3); }
 
-        .hero-subtitle {
-            color: var(--text-muted);
-            font-size: clamp(0.95rem, 2vw, 1.2rem);
-            max-width: 600px;
-            margin: 0 auto 2.5rem;
-            font-weight: 500;
-            line-height: 1.6;
-        }
-
-        .gradient-text-saffron {
-            background: linear-gradient(90deg, var(--saffron), #ffaa00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .tag {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 99px;
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 1.5rem;
-            font-weight: 800;
-        }
-
-        .tag-saffron {
-            background: rgba(255, 103, 31, 0.12);
-            color: var(--saffron);
-            border: 1px solid rgba(255, 103, 31, 0.3);
-        }
-
-        .tag-neon {
-            background: rgba(0, 229, 204, 0.12);
-            color: var(--neon);
-            border: 1px solid rgba(0, 229, 204, 0.3);
-        }
-
-        .tag-green {
-            background: rgba(74, 222, 128, 0.12);
-            color: var(--accent-green);
-            border: 1px solid rgba(74, 222, 128, 0.3);
-        }
-
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-            align-items: center;
-        }
-
+        /* Tactile Buttons */
+        .btn-group { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; align-items: center; }
+        
         .btn-tactile {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 1.2rem 2.5rem;
-            border: none;
-            border-radius: 18px;
-            font-family: var(--font-display);
-            font-size: 1rem;
-            font-weight: 800;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+            padding: 1.2rem 2.5rem; border: none; border-radius: 18px; 
+            font-family: var(--font-display); font-size: 1rem; font-weight: 800; 
+            text-decoration: none; text-transform: uppercase; letter-spacing: 1px;
+            cursor: none; position: relative; overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.15);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        .btn-tactile.primary { background: var(--saffron); color: var(--deep); box-shadow: 0 10px 30px rgba(255, 103, 31, 0.4); }
+        .btn-tactile.primary:hover { background: #ff8c00; transform: scale(1.05) translateY(-2px); box-shadow: 0 15px 40px rgba(255, 103, 31, 0.6); }
+        
+        .btn-tactile.outline { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); }
+        .btn-tactile.outline:hover { border-color: var(--neon); color: var(--neon); transform: scale(1.05) translateY(-2px); background: rgba(0, 229, 204, 0.08); }
 
-        .btn-tactile.primary {
-            background: var(--saffron);
-            color: var(--deep);
-            box-shadow: 0 10px 30px rgba(255, 103, 31, 0.4);
+        .brand-logo {
+            width: 120px; height: 120px; border-radius: 28px; object-fit: cover;
+            margin: 0 auto 2rem; border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 50px rgba(255, 103, 31, 0.4);
+            animation: pulse-glow 4s infinite alternate;
         }
 
-        .btn-tactile.primary:hover {
-            background: #ff8c00;
-            transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 15px 40px rgba(255, 103, 31, 0.6);
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 20px 40px rgba(255, 103, 31, 0.2); transform: translateZ(20px); }
+            100% { box-shadow: 0 20px 60px rgba(255, 103, 31, 0.6); transform: translateZ(40px); }
         }
 
-        .btn-tactile.outline {
-            background: rgba(255,255,255,0.05);
-            color: #fff;
-            border: 1px solid var(--glass-border);
-        }
+        /* Custom OS Cursor */
+        #cursor-dot { position: fixed; top: 0; left: 0; width: 6px; height: 6px; background: var(--text-main); border-radius: 50%; pointer-events: none; z-index: 99999; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s, background 0.2s; }
+        #cursor-ring { position: fixed; top: 0; left: 0; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.4); border-radius: 50%; pointer-events: none; z-index: 99998; transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s, border-color 0.3s; will-change: transform; }
 
-        .btn-tactile.outline:hover {
-            border-color: var(--neon);
-            color: var(--neon);
-            transform: scale(1.05) translateY(-2px);
-            background: rgba(0, 229, 204, 0.08);
-        }
+        /* Social Grid */
+        .social-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-top: 2rem; }
+        .social-link { padding: 1.2rem; border: 1px solid var(--glass-border); border-radius: 18px; color: var(--text-muted); text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 0.5rem; background: rgba(15,15,26,0.4); }
+        .social-link span { font-family: var(--font-display); font-weight: 800; color: var(--text-main); font-size: 1.1rem;}
+        .social-link:hover { border-color: var(--saffron); background: rgba(255, 103, 31, 0.08); transform: translateY(-5px); }
 
-        #cursor-dot {
-            position: fixed;
-            top: 0; left: 0;
-            width: 6px; height: 6px;
-            background: var(--text-main);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 99999;
-            transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s, background 0.2s;
-        }
-
-        #cursor-ring {
-            position: fixed;
-            top: 0; left: 0;
-            width: 40px; height: 40px;
-            border: 1px solid rgba(255,255,255,0.4);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 99998;
-            transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s, border-color 0.3s;
-            will-change: transform;
-        }
-
-        .social-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .social-link {
-            padding: 1.2rem;
-            border: 1px solid var(--glass-border);
-            border-radius: 18px;
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            background: rgba(15,15,26,0.4);
-        }
-
-        .social-link span {
-            font-family: var(--font-display);
-            font-weight: 800;
-            color: var(--text-main);
-            font-size: 1.1rem;
-        }
-
-        .social-link:hover {
-            border-color: var(--saffron);
-            background: rgba(255, 103, 31, 0.08);
-            transform: translateY(-5px);
-        }
-
-        .hud-nav {
-            position: fixed;
-            top: 1.5rem; left: 1.5rem; right: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
-            pointer-events: none;
-        }
-
+        /* Fixed HUD */
+        .hud-nav { position: fixed; top: 1.5rem; left: 1.5rem; right: 1.5rem; display: flex; justify-content: space-between; align-items: center; z-index: 100; pointer-events: none; }
         .hud-nav > * { pointer-events: auto; }
+        .hud-brand { font-family: var(--font-display); font-weight: 900; font-size: 1.8rem; letter-spacing: -0.05em; text-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .hud-status { font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-green); display: flex; align-items: center; gap: 0.6rem; letter-spacing: 0.1em; font-weight: 700; text-transform: uppercase; }
+        .hud-status::before { content: ''; width: 8px; height: 8px; background: var(--accent-green); border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 12px var(--accent-green); animation: blink 2s infinite; }
+        
+        .hud-depth { position: fixed; bottom: 2rem; right: 2rem; font-size: 0.75rem; color: var(--text-muted); z-index: 100; text-align: right; font-family: var(--font-mono); letter-spacing: 1px;}
+        .hud-depth span { font-size: 1.8rem; font-family: var(--font-display); font-weight: 900; color: var(--text-main); display: block; line-height: 1; margin-top: 4px;}
 
-        .hud-brand {
-            font-family: var(--font-display);
-            font-weight: 900;
-            font-size: 1.8rem;
-            letter-spacing: -0.05em;
-        }
+        .scroll-hint { margin-top: 3rem; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600;}
 
-        .hud-status {
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            color: var(--accent-green);
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            letter-spacing: 0.1em;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .hud-status::before {
-            content: '';
-            width: 8px; height: 8px;
-            background: var(--accent-green);
-            border-radius: 50%;
-            box-shadow: 0 0 12px var(--accent-green);
-            animation: blink 2s infinite;
-        }
-
-        .hud-depth {
-            position: fixed;
-            bottom: 2rem; right: 2rem;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            z-index: 100;
-            text-align: right;
-            font-family: var(--font-mono);
-            letter-spacing: 1px;
-        }
-
-        .hud-depth span {
-            font-size: 1.8rem;
-            font-family: var(--font-display);
-            font-weight: 900;
-            color: var(--text-main);
-            display: block;
-            line-height: 1;
-            margin-top: 4px;
-        }
-
-        .scroll-hint {
-            margin-top: 3rem;
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        
+        /* Icon Emoji Sizing */
         .panel-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
 
+        /* ========================================================
+           MOBILE ADJUSTMENTS
+           ======================================================== */
         @media (max-width: 768px) {
             body { cursor: auto; }
             #cursor-dot, #cursor-ring { display: none; }
             .glass-card { padding: 2rem 1.5rem; border-radius: 20px; }
-            .btn-tactile { padding: 1.2rem; width: 100%; }
+            .btn-tactile { padding: 1.2rem; cursor: pointer; width: 100%; }
             .btn-group { flex-direction: column; width: 100%; }
             .social-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-            .social-link { padding: 1rem; border-radius: 14px; }
+            .social-link { padding: 1rem; border-radius: 14px;}
             .hud-nav { top: 1rem; left: 1rem; right: 1rem; }
             .hud-brand { font-size: 1.4rem; }
             .hud-status { font-size: 0.6rem; }
             .hud-depth { bottom: 1.5rem; right: 1.5rem; }
             .hud-depth span { font-size: 1.4rem; }
+            .brand-logo { width: 90px; height: 90px; border-radius: 22px; margin-bottom: 1.5rem; }
             #viewport { perspective: 900px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- OS HUD -->
     <nav class="hud-nav">
         <div class="hud-brand">VIA<span style="color:var(--saffron)">.</span></div>
         <div class="hud-status">KINETIC OS ONLINE</div>
     </nav>
-
+    
     <div class="hud-depth">
         Z-AXIS DEPTH
         <span id="depth-readout">0000</span>
     </div>
 
+    <!-- Custom Cursor -->
     <div id="cursor-dot"></div>
     <div id="cursor-ring"></div>
 
+    <!-- Hardware Accelerated Background -->
     <canvas id="warp-canvas"></canvas>
+
+    <!-- Scroll proxy creates the scrollbar -->
     <div id="scroll-proxy"></div>
 
+    <!-- The 3D Lens -->
     <main id="viewport">
         <div id="camera">
-            <section class="panel" style="transform: translate(-50%, -50%) translateZ(0px);">
+            
+            <!-- PANEL 0: HERO (Z = 0) -->
+            <section class="panel" data-z="0">
+                <img src="1000221390.jpg" alt="DH Logo" class="brand-logo magnetic" onerror="this.style.display='none'">
                 <div class="tag tag-saffron">Sol 1 // Epoch 2026</div>
                 <h1 class="hero-title">Visual Logic.<br><span class="gradient-text-saffron">Autonomous Core.</span></h1>
-                <p class="hero-subtitle">Zero dependencies. Pure spatial execution. Architect, verify, and deploy decision intelligence using native browser physics.</p>
+                <p class="hero-subtitle">Zero dependencies. Pure spatial execution. Architect, verify, and deploy using the browser's native physical engine.</p>
                 <div class="btn-group">
-                    <a href="./apps/viaco/viadecide.html" class="btn-tactile primary magnetic">→ Enter VIA</a>
-                    <a href="https://github.com/via-decide/decide.engine-tools" target="_blank" rel="noreferrer" class="btn-tactile outline magnetic">Documentation</a>
+                    <!-- Initializes Main OS via absolute GitHub URL -->
+                    <a href="https://github.com/via-decide/VIA/blob/a959db382cf8e677bd8a85bbc410b044fb00f262/viadecide.html" class="btn-tactile primary magnetic">Initialize System</a>
                 </div>
                 <p class="scroll-hint">[ SCROLL TO DISCOVER SECTORS ]</p>
             </section>
 
-            <section class="panel" style="transform: translate(-50%, -50%) translateZ(-2500px);">
+            <!-- PANEL 1: LOGICHUB (Z = -2500px) -->
+            <section class="panel" data-z="-2500">
                 <div class="glass-card magnetic">
                     <span class="panel-icon">🧠</span>
                     <div class="tag tag-neon">Sector 01</div>
                     <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">ViaLogic Hub</h2>
-                    <p class="hero-subtitle">The ultimate node-based orchestrator. Engage with philosophical entities, synthesize wisdom, and map complex decision topologies.</p>
+                    <p class="hero-subtitle">The ultimate node-based orchestrator. Engage with Philosophical nodes, synthesize logic, and map complex spatial cartographies.</p>
                     <div class="btn-group">
-                        <a href="./apps/viaco/logichub.html" class="btn-tactile outline magnetic">Mount LogicHub</a>
+                        <a href="https://github.com/via-decide/VIA/blob/a959db382cf8e677bd8a85bbc410b044fb00f262/logichub.html" class="btn-tactile outline magnetic">Mount LogicHub</a>
                     </div>
                 </div>
             </section>
 
-            <section class="panel" style="transform: translate(-50%, -50%) translateZ(-5000px);">
+            <!-- PANEL 2: WORLD MAP (Z = -5000px) -->
+            <section class="panel" data-z="-5000">
                 <div class="glass-card magnetic" style="border-color: rgba(74, 222, 128, 0.2);">
                     <span class="panel-icon">🗺️</span>
                     <div class="tag tag-green">Sector 02</div>
                     <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">Spatial Engine</h2>
-                    <p class="hero-subtitle">Navigate territories of tools and systems. Explore an interactive ecosystem optimized for discovery and spatial reasoning.</p>
+                    <p class="hero-subtitle">Dive into the macro-world view. Navigate territories using enhanced 3D zoom and touch-optimized panning physics.</p>
                     <div class="btn-group">
-                        <a href="./apps/viaco/world.html" class="btn-tactile outline magnetic" style="border-color: var(--accent-green); color: var(--accent-green);">Explore World</a>
+                        <a href="https://github.com/via-decide/VIA/blob/a959db382cf8e677bd8a85bbc410b044fb00f262/viadecide.html#world" class="btn-tactile outline magnetic" style="border-color: var(--accent-green); color: var(--accent-green);">Explore World</a>
                     </div>
                 </div>
             </section>
 
-            <section class="panel" style="transform: translate(-50%, -50%) translateZ(-7500px);">
+            <!-- PANEL 3: FEED / KINETIC UI (Z = -7500px) -->
+            <section class="panel" data-z="-7500">
                 <div class="glass-card magnetic" style="border-color: rgba(255, 103, 31, 0.2);">
                     <span class="panel-icon">📇</span>
                     <div class="tag tag-saffron">Sector 03</div>
                     <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">Kinetic Feed</h2>
-                    <p class="hero-subtitle">Tactile physical engine integration. Experience swipe-based discovery, physics-driven interactions, and real-time data synchronization.</p>
+                    <p class="hero-subtitle">Tactile physical engine integration. Experience swipe-based discovery, physics-driven cards, and real-time pulse syncs.</p>
                     <div class="btn-group">
-                        <a href="./apps/viaco/feed-component.html" class="btn-tactile outline magnetic" style="border-color: var(--saffron); color: var(--saffron);">Access Feed</a>
+                        <a href="https://github.com/via-decide/VIA/blob/a959db382cf8e677bd8a85bbc410b044fb00f262/viadecide.html#feed" class="btn-tactile outline magnetic" style="border-color: var(--saffron); color: var(--saffron);">Access Feed</a>
                     </div>
                 </div>
             </section>
 
-            <section class="panel" style="transform: translate(-50%, -50%) translateZ(-10000px);">
+            <!-- PANEL 4: UPDATES & AI TOOLS (Z = -10000px) -->
+            <section class="panel" data-z="-10000">
                 <div class="glass-card magnetic" style="border-color: rgba(168, 85, 247, 0.2);">
                     <span class="panel-icon">⚡</span>
                     <div class="tag" style="background: rgba(168, 85, 247, 0.12); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.3);">Sector 04</div>
                     <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">Ecosystem Tools</h2>
-                    <p class="hero-subtitle">Chronological releases, Idea Remixers, and AI-powered Decision Oracles utilizing embedded synthesis architectures.</p>
+                    <p class="hero-subtitle">Chronological releases, Idea Remixers, and AI-powered Decision Oracles utilizing embedded Gemini architectures.</p>
                     <div class="btn-group">
-                        <a href="./apps/viaco/viadecide.html#updates" class="btn-tactile outline magnetic" style="border-color: #a855f7; color: #a855f7;">View Tools</a>
+                        <a href="https://github.com/via-decide/VIA/blob/a959db382cf8e677bd8a85bbc410b044fb00f262/viadecide.html#updates" class="btn-tactile outline magnetic" style="border-color: #a855f7; color: #a855f7;">View Updates</a>
                     </div>
                 </div>
             </section>
 
-            <section class="panel" style="transform: translate(-50%, -50%) translateZ(-12500px);">
+            <!-- PANEL 5: PROFILE & ORCHADE (Z = -12500px) -->
+            <section class="panel" data-z="-12500">
                 <div class="glass-card magnetic" style="border-color: rgba(255, 215, 0, 0.2);">
                     <span class="panel-icon">👤</span>
                     <div class="tag" style="background: rgba(255, 215, 0, 0.12); color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.3);">Sector 05</div>
-                    <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">Your Profile</h2>
-                    <p class="hero-subtitle">Manage your identity, sovereignty tokens, and persistent data. Secure cloud backup with optional Firebase persistence.</p>
+                    <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">Orchade Profile</h2>
+                    <p class="hero-subtitle">Your personal architecture hub. Manage DataSeeds, track economy credits, and establish secure Firebase cloud persistence.</p>
                     <div class="btn-group">
-                        <a href="./apps/viaco/viadecide.html#profile" class="btn-tactile outline magnetic" style="border-color: #ffd700; color: #ffd700;">View Profile</a>
+                        <a href="https://github.com/via-decide/VIA/blob/a959db382cf8e677bd8a85bbc410b044fb00f262/viadecide.html#profile" class="btn-tactile outline magnetic" style="border-color: #ffd700; color: #ffd700;">View Profile</a>
                     </div>
                 </div>
             </section>
 
-            <section class="panel" style="transform: translate(-50%, -50%) translateZ(-15000px);">
+            <!-- PANEL 6: CREATOR & SOCIALS (Z = -15000px) -->
+            <section class="panel" data-z="-15000">
                 <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">The Architect.</h2>
-                <p class="hero-subtitle">Designed and engineered without node_modules by Dharam Daxini. Commence transmission.</p>
-
+                <p class="hero-subtitle">Dharam Daxini // Engineered without a single node_modules folder. Commence Transmission.</p>
+                
                 <div class="btn-group" style="margin-bottom: 2rem;">
-                    <a href="./apps/viaco/viadecide.html" class="btn-tactile primary magnetic">→ Launch VIA</a>
-                    <a href="https://github.com/via-decide/decide.engine-tools" target="_blank" rel="noreferrer" class="btn-tactile outline magnetic">GitHub</a>
+                    <!-- PORTFOLIO LINK -->
+                    <a href="#portfolio" target="_blank" class="btn-tactile primary magnetic">View Portfolio</a>
+                    <a href="https://github.com/via-decide/decide.engine-tools" target="_blank" class="btn-tactile outline magnetic">GitHub Repo</a>
                 </div>
 
                 <div class="social-grid">
-                    <a href="./apps/viaco/viadecide.html" class="social-link magnetic" style="border-color: var(--accent-green);">
+                    <a href="https://github.com/via-decide/VIA/blob/a959db382cf8e677bd8a85bbc410b044fb00f262/viadecide.html" class="social-link magnetic" style="border-color: var(--accent-green);">
                         <small style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-green);">CORE HUB</small>
                         <span>ViaDecide</span>
                     </a>
-                    <a href="https://youtube.com/@decide.engine" target="_blank" rel="noreferrer" class="social-link magnetic">
+                    <a href="https://youtube.com/@decide.engine" target="_blank" class="social-link magnetic">
                         <small style="font-family: var(--font-mono); font-size: 0.7rem;">YOUTUBE</small>
                         <span>decide.engine</span>
                     </a>
-                    <a href="https://open.spotify.com/show/2okZ1WXMWXLrSwFzClUPPp" target="_blank" rel="noreferrer" class="social-link magnetic">
+                    
+                    <!-- NEW SPOTIFY LINK -->
+                    <a href="https://open.spotify.com/show/2okZ1WXMWXLrSwFzClUPPp?si=fbe27697d5e047a4" target="_blank" class="social-link magnetic">
                         <small style="font-family: var(--font-mono); font-size: 0.7rem;">SPOTIFY</small>
                         <span>Dharam Daxini</span>
                     </a>
-                    <a href="https://instagram.com/dharamdaxini" target="_blank" rel="noreferrer" class="social-link magnetic">
+                    
+                    <a href="https://instagram.com/dharamdaxini" target="_blank" class="social-link magnetic">
                         <small style="font-family: var(--font-mono); font-size: 0.7rem;">INSTAGRAM</small>
                         <span>@dharamdaxini</span>
                     </a>
                 </div>
                 <div style="margin-top: 4rem; opacity: 0.4; font-size: 0.75rem; font-family: var(--font-mono); letter-spacing: 2px;">END OF TRANSMISSION</div>
             </section>
+
         </div>
     </main>
 
     <script>
+        /* ========================================================
+           1. PURE VANILLA 3D SCROLL INTERPOLATION
+           ======================================================== */
         const camera = document.getElementById('camera');
         const depthReadout = document.getElementById('depth-readout');
-
+        const panels = document.querySelectorAll('.panel');
+        
         let currentScroll = 0;
         let targetScroll = 0;
+        
+        // Match scroll proxy height to total depth travel
+        const scrollMultiplier = 2.5; 
 
-        const scrollMultiplier = 3.5;
-        const maxDepth = 15500;
+        // Set initial Z transforms on panels from data attribute
+        panels.forEach(panel => {
+            const z = parseFloat(panel.getAttribute('data-z') || '0');
+            panel.style.transform = `translate(-50%, -50%) translateZ(${z}px)`;
+        });
 
         window.addEventListener('scroll', () => {
             targetScroll = window.scrollY;
         });
 
         function update3DCamera() {
+            // Lerp formula for smooth camera tracking
             currentScroll += (targetScroll - currentScroll) * 0.08;
-
+            
+            // Calculate camera Z translation (moves "forward" into the scene)
             let zTranslation = currentScroll * scrollMultiplier;
-            if (zTranslation > maxDepth) zTranslation = maxDepth;
 
             camera.style.transform = `translateZ(${zTranslation}px)`;
+            
+            // Format depth readout
             depthReadout.innerText = Math.round(zTranslation).toString().padStart(5, '0');
+
+            // IMPORTANT BUG FIX: Hide panels that pass behind the camera
+            // When panel Z + camera Z > threshold, fade it out to prevent clipping bugs
+            panels.forEach(panel => {
+                const pz = parseFloat(panel.getAttribute('data-z') || '0');
+                const relativeZ = pz + zTranslation;
+                
+                if (relativeZ > 600) {
+                    panel.style.opacity = '0';
+                    panel.style.pointerEvents = 'none';
+                } else if (relativeZ < -3000) {
+                    panel.style.opacity = '0';
+                    panel.style.pointerEvents = 'none';
+                } else {
+                    panel.style.opacity = '1';
+                    panel.style.pointerEvents = 'auto';
+                }
+            });
 
             requestAnimationFrame(update3DCamera);
         }
         update3DCamera();
 
-        const canvas = document.getElementById('warp-canvas');
-        const ctx = canvas.getContext('2d', { alpha: false });
 
-        let width;
-        let height;
-        let cx;
-        let cy;
+        /* ========================================================
+           2. CUSTOM HTML5 CANVAS NEURAL PARTICLE ENGINE
+           ======================================================== */
+        const canvas = document.getElementById('warp-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height, cx, cy;
         const particles = [];
         const isMobile = window.innerWidth <= 768;
-        const numParticles = isMobile ? 200 : 600;
-        const fov = 800;
+        const numParticles = isMobile ? 250 : 500; // Reduced for scroll performance
+        const fov = 800; 
 
         function initCanvas() {
             width = window.innerWidth;
@@ -541,23 +441,29 @@
                 this.z = Math.random() * 2000;
             }
             reset() {
-                this.x = (Math.random() - 0.5) * 3000;
+                this.x = (Math.random() - 0.5) * 3000; 
                 this.y = (Math.random() - 0.5) * 3000;
-                this.z = 2000;
+                this.z = 2000; 
                 this.speed = 1.5 + Math.random() * 4;
             }
             update(scrollVelocity) {
+                // Add warp speed effect when scrolling fast
                 this.z -= this.speed + (scrollVelocity * 0.6);
-                if (this.z <= 0) this.reset();
+                
+                if (this.z <= 0) {
+                    this.reset();
+                }
             }
             draw() {
                 const scale = fov / (fov + this.z);
                 const x2d = cx + this.x * scale;
                 const y2d = cy + this.y * scale;
+
                 const opacity = Math.max(0, 1 - (this.z / 2000));
                 const size = Math.max(0.5, 3 * scale);
 
-                ctx.fillStyle = `rgba(255, 103, 31, ${opacity * 0.8})`;
+                // Use the saffron accent color for the neural nodes
+                ctx.fillStyle = `rgba(255, 103, 31, ${opacity * 0.8})`; 
                 ctx.beginPath();
                 ctx.arc(x2d, y2d, size, 0, Math.PI * 2);
                 ctx.fill();
@@ -565,7 +471,7 @@
         }
 
         initCanvas();
-        for (let i = 0; i < numParticles; i += 1) particles.push(new Particle());
+        for (let i = 0; i < numParticles; i++) particles.push(new Particle());
 
         window.addEventListener('resize', initCanvas);
 
@@ -574,10 +480,9 @@
             const velocity = Math.abs(currentScroll - lastScroll);
             lastScroll = currentScroll;
 
-            ctx.fillStyle = 'rgb(3, 5, 8)';
-            ctx.fillRect(0, 0, width, height);
-
-            particles.forEach((p) => {
+            ctx.clearRect(0, 0, width, height);
+            
+            particles.forEach(p => {
                 p.update(velocity);
                 p.draw();
             });
@@ -585,6 +490,10 @@
         }
         animateCanvas();
 
+
+        /* ========================================================
+           3. MAGNETIC UI PHYSICS & CUSTOM CURSOR
+           ======================================================== */
         const dot = document.getElementById('cursor-dot');
         const ring = document.getElementById('cursor-ring');
         const magnetics = document.querySelectorAll('.magnetic');
@@ -601,27 +510,32 @@
         });
 
         function animateCursor() {
+            // Delayed lerp for the outer ring
             ringX += (mouseX - ringX) * 0.15;
             ringY += (mouseY - ringY) * 0.15;
             ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
             requestAnimationFrame(animateCursor);
         }
-        if (window.innerWidth > 768) animateCursor();
+        if(window.innerWidth > 768) animateCursor(); 
 
-        magnetics.forEach((btn) => {
+        magnetics.forEach(btn => {
             btn.addEventListener('mousemove', (e) => {
                 const rect = btn.getBoundingClientRect();
                 const hx = rect.left + rect.width / 2;
                 const hy = rect.top + rect.height / 2;
-                const dx = (e.clientX - hx) * 0.15;
-                const dy = (e.clientY - hy) * 0.15;
-
-                if (btn.classList.contains('glass-card')) {
-                    btn.style.transform = `translate(${dx}px, ${dy}px) scale(1.02)`;
+                
+                // Pull element towards mouse slightly
+                const dx = (e.clientX - hx) * 0.15; 
+                const dy = (e.clientY - hy) * 0.15; 
+                
+                // Keep the base translation intact for .glass-card layout logic if needed
+                if(btn.classList.contains('glass-card')) {
+                   btn.style.transform = `translate(${dx}px, ${dy}px) scale(1.02)`;
                 } else {
-                    btn.style.transform = `translate(${dx}px, ${dy}px) scale(1.05)`;
+                   btn.style.transform = `translate(${dx}px, ${dy}px) scale(1.05)`;
                 }
-
+                
+                // Cursor interaction states
                 ring.style.width = '50px';
                 ring.style.height = '50px';
                 ring.style.borderColor = 'var(--saffron)';
@@ -629,13 +543,17 @@
             });
 
             btn.addEventListener('mouseleave', () => {
-                btn.style.transform = 'translate(0px, 0px) scale(1)';
+                // Reset element
+                btn.style.transform = `translate(0px, 0px) scale(1)`;
+                
+                // Reset cursor
                 ring.style.width = '40px';
                 ring.style.height = '40px';
                 ring.style.borderColor = 'rgba(255,255,255,0.4)';
                 dot.style.background = 'var(--text-main)';
             });
         });
+
     </script>
 </body>
 </html>
