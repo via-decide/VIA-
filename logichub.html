@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOGICHUB v2 — Vibecoder Architecture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- JSZip for exporting actual codebases -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <style>
+    :root {
+      --bg-primary: #030508;
+      --bg-secondary: #0a0c10;
+      --border-color: #222222;
+      --border-bright: rgba(255, 255, 255, 0.15);
+      --accent: #00e5ff;
+      --saffron: #ff671f;
+      --success: #2ecc71;
+      --error: #ff4444;
+      --warning: #ffcc00;
+      --text-primary: #ffffff;
+      --text-secondary: #888899;
+      --font-serif: 'Crimson Text', serif;
+      --font-sans: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --state-verified: #2ecc71;
+      --state-pending: #444444;
+      --state-generating: #00e5ff;
+      --state-error: #ff4444;
+      --state-orphaned: #ff671f;
+      --state-locked: #1a1a24;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* === LAYOUT === */
+    .header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 2rem; border-bottom: 1px solid var(--border-color);
+      background: var(--bg-secondary); z-index: 100; flex-wrap: wrap; gap: 1rem;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 2rem; }
+    .header-title { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; letter-spacing: 1px;}
+    .header-title span { color: var(--accent); font-family: var(--font-mono); font-size: 0.8rem; vertical-align: top;}
+
+    .map-status { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-secondary); font-weight: 700;}
+    .map-status.confirmed { color: var(--success); text-shadow: 0 0 10px rgba(46, 204, 113, 0.4);}
+
+    .api-input {
+      padding: 0.6rem 1rem; border: 1px solid var(--border-color); border-radius: 6px;
+      background: var(--bg-primary); color: var(--accent); font-family: var(--font-mono);
+      font-size: 0.85rem; width: 340px; transition: all 0.2s; outline: none;
+    }
+    .api-input:focus { border-color: var(--accent); box-shadow: 0 0 12px rgba(0, 229, 255, 0.2); }
+
+    .toolbar { display: flex; gap: 1rem; align-items: center; }
+
+    .info-badge {
+      font-family: var(--font-mono); font-size: 0.75rem; padding: 0.4rem 0.8rem;
+      background: rgba(0, 229, 255, 0.1); border: 1px solid var(--accent);
+      border-radius: 4px; color: var(--accent); font-weight: 700;
+    }
+
+    .logger {
+      padding: 0.8rem 2rem; background: var(--bg-primary); border-bottom: 1px solid var(--border-color);
+      font-family: var(--font-mono); font-size: 0.8rem; min-height: 60px; max-height: 80px;
+      overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; z-index: 99;
+    }
+
+    .log-line { margin: 3px 0; min-height: 1.1rem; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;}
+    .log-line.success { color: var(--success); }
+    .log-line.error { color: var(--error); }
+    .log-line.accent { color: var(--accent); text-shadow: 0 0 8px rgba(0, 229, 255, 0.4); }
+    .log-line.info { color: var(--text-primary); }
+
+    .main-container { display: flex; flex: 1; overflow: hidden; }
+
+    .sidebar {
+      width: 220px; padding: 1rem; border-right: 1px solid var(--border-color);
+      background: var(--bg-secondary); overflow-y: auto; z-index: 50;
+      display: flex; flex-direction: column; gap: 1.5rem;
+    }
+
+    .sidebar-section h3 {
+      margin: 0 0 0.8rem 0; font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; color: var(--text-secondary); letter-spacing: 1px;
+    }
+
+    .palette-item {
+      padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;
+      text-align: center; cursor: grab; font-family: var(--font-mono); color: var(--text-primary);
+      background: var(--bg-primary); transition: all 0.2s; font-size: 0.8rem; font-weight: 500;
+    }
+    .palette-item:hover { border-color: var(--accent); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--accent); color: var(--accent);}
+    .palette-item:active { cursor: grabbing; transform: scale(0.98); }
+
+    .canvas {
+      flex: 1; position: relative; background-color: var(--bg-secondary);
+      background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+      background-size: 24px 24px; background-position: -12px -12px;
+      overflow: hidden; border-left: 1px solid var(--border-color);
+      box-shadow: inset 0 2px 20px rgba(0, 0, 0, 0.5); touch-action: none;
+    }
+
+    #arrows-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+    #blocks-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; }
+
+    /* === BLOCKS === */
+    .block {
+      position: absolute; width: 180px; padding: 0.75rem;
+      background: rgba(10, 12, 16, 0.95); backdrop-filter: blur(8px);
+      border: 2px solid var(--text-secondary); border-radius: 12px;
+      font-family: var(--font-sans); cursor: grab; touch-action: none;
+      display: flex; flex-direction: column; gap: 0.6rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6); transition: all 0.2s; font-size: 0.8rem;
+    }
+
+    .block:hover { box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8); }
+
+    .block.selected, .block:active {
+      cursor: grabbing; box-shadow: 0 12px 40px rgba(0, 229, 255, 0.2), 0 0 0 1px var(--accent);
+      border-color: var(--accent); transform: scale(1.02); z-index: 1000;
+    }
+
+    .block-header { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-secondary); }
+    .block-type { color: var(--accent); font-weight: 700; }
+    .block-edit { cursor: pointer; pointer-events: auto; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.05); transition: background 0.2s;}
+    .block-edit:hover { background: rgba(0, 229, 255, 0.2); color: var(--accent); }
+
+    .block-label {
+      background: transparent; border: none; color: var(--text-primary); font-weight: 700;
+      font-size: 0.95rem; text-align: center; width: 100%; outline: none;
+      border-bottom: 1px solid transparent; padding: 2px 0; font-family: var(--font-mono);
+    }
+    .block-label:focus { border-bottom-color: var(--accent); }
+
+    .block-file { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-secondary); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+
+    .block-status {
+      font-family: var(--font-mono); font-size: 0.65rem; text-align: center; padding: 4px;
+      border-radius: 4px; pointer-events: none; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    }
+
+    .block-ports { position: relative; height: 0; }
+    .port {
+      position: absolute; width: 14px; height: 14px; background: var(--bg-primary);
+      border: 2px solid var(--text-secondary); border-radius: 50%; cursor: crosshair;
+      z-index: 10; transition: all 0.2s; touch-action: none;
+    }
+    .port.in { left: -8px; top: calc(50% - 7px); }
+    .port.out { right: -8px; top: calc(50% - 7px); }
+    .port:hover { border-color: var(--accent); background: var(--accent); transform: scale(1.3); box-shadow: 0 0 12px rgba(0, 229, 255, 0.5); }
+
+    .block-delete {
+      position: absolute; top: -10px; right: -10px; background: var(--error); color: white;
+      width: 22px; height: 22px; border-radius: 50%; display: none; justify-content: center; align-items: center;
+      font-size: 12px; font-weight: bold; cursor: pointer; z-index: 20; transition: all 0.2s; border: 2px solid var(--bg-secondary);
+    }
+    .block:hover .block-delete { display: flex; }
+    .block-delete:hover { background: #ff6666; transform: scale(1.2); }
+
+    /* === BLOCK STATES === */
+    .block.state-pending { border-color: var(--text-secondary); }
+    .block.state-pending .block-status { background: var(--state-pending); color: var(--text-primary); }
+
+    .block.state-locked { border-color: var(--border-color); opacity: 0.5; }
+    .block.state-locked .block-status { background: var(--state-locked); color: var(--text-secondary); }
+
+    .block.state-generating {
+      border-color: var(--state-generating);
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.4), inset 0 0 10px rgba(0, 229, 255, 0.2);
+      animation: pulse-cyber 1.5s infinite;
+    }
+    .block.state-generating .block-status { background: var(--state-generating); color: var(--bg-primary); }
+
+    .block.state-verified { border-color: var(--state-verified); box-shadow: 0 4px 12px rgba(46, 204, 113, 0.1); }
+    .block.state-verified .block-status { background: var(--state-verified); color: var(--bg-primary); }
+
+    .block.state-error { border-color: var(--state-error); box-shadow: 0 0 12px rgba(255, 68, 68, 0.2); }
+    .block.state-error .block-status { background: var(--state-error); color: white; }
+
+    .block.state-orphaned { border-color: var(--state-orphaned); border-style: dashed; }
+    .block.state-orphaned .block-status { background: var(--state-orphaned); color: var(--bg-primary); }
+
+    @keyframes pulse-cyber {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.4); }
+      50% { box-shadow: 0 0 0 10px rgba(0, 229, 255, 0); }
+    }
+
+    /* === CONNECTIONS === */
+    .arrow-path {
+      fill: none; stroke: var(--state-pending); stroke-width: 3;
+      pointer-events: visibleStroke; cursor: pointer; transition: stroke 0.2s, stroke-width 0.2s;
+      stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 6 4; animation: flow 20s linear infinite;
+    }
+    .arrow-path:hover { stroke: var(--error); stroke-width: 5; stroke-dasharray: none; animation: none;}
+    .arrow-path.verified { stroke: var(--state-verified); stroke-dasharray: none; animation: none;}
+
+    @keyframes flow { to { stroke-dashoffset: -1000; } }
+
+    .drawing-path { fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 5 5; pointer-events: none; stroke-linecap: round; }
+
+    /* === FOOTER & BUTTONS === */
+    .footer { display: flex; gap: 0.8rem; padding: 1rem 2rem; border-top: 1px solid var(--border-color); background: var(--bg-secondary); z-index: 50; flex-wrap: wrap; }
+
+    button {
+      padding: 0.8rem 1.6rem; font-family: var(--font-sans); font-weight: 700; font-size: 0.85rem;
+      border: 1px solid var(--border-bright); background: var(--bg-primary); color: var(--text-primary);
+      cursor: pointer; border-radius: 8px; transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px;
+    }
+    button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px rgba(0, 229, 255, 0.2); }
+    button:active:not(:disabled) { transform: scale(0.96); }
+    button:disabled { color: var(--text-secondary); border-color: var(--border-color); cursor: not-allowed; opacity: 0.5; }
+    
+    button.success { background: rgba(46, 204, 113, 0.1); border-color: var(--success); color: var(--success); }
+    button.success:hover:not(:disabled) { background: rgba(46, 204, 113, 0.2); box-shadow: 0 0 15px rgba(46, 204, 113, 0.3); }
+
+    button.compile-btn { background: rgba(0, 229, 255, 0.1); border-color: var(--accent); color: var(--accent); }
+    button.compile-btn:hover { background: rgba(0, 229, 255, 0.2); }
+
+    /* === MODALS === */
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(4px); z-index: 2000;
+      align-items: center; justify-content: center;
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+      background: var(--bg-secondary); border: 1px solid var(--border-bright); border-radius: 16px;
+      padding: 2rem; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9); position: relative;
+    }
+    .modal-header { font-family: var(--font-mono); font-size: 1.2rem; font-weight: 700; color: var(--accent); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
+    .modal-close { position: absolute; top: 1.5rem; right: 1.5rem; background: transparent; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; padding: 0; }
+    .modal-close:hover { color: var(--error); box-shadow: none;}
+
+    .form-group { margin-bottom: 1.5rem; }
+    .form-label { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-family: var(--font-mono);}
+    .form-input { width: 100%; padding: 0.8rem; border: 1px solid var(--border-bright); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-mono); font-size: 0.9rem; outline: none; transition: all 0.2s; }
+    .form-input:focus { border-color: var(--accent); box-shadow: 0 0 12px rgba(0, 229, 255, 0.1); }
+    .form-textarea { resize: vertical; min-height: 120px; }
+    .code-textarea { min-height: 250px; font-size: 0.8rem; color: var(--success); white-space: pre; overflow-wrap: normal; overflow-x: auto;}
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-left">
+      <div class="header-title">LOGICHUB <span>VIBECODER ENGINE</span></div>
+      <div class="map-status" id="map-status">● AWAITING SYNTHESIS</div>
+      <div class="info-badge" id="block-count">0 nodes</div>
+    </div>
+    <div class="toolbar">
+      <input type="password" id="api-key" class="api-input" placeholder="Gemini API Key (Required for Synthesis)">
+    </div>
+  </div>
+
+  <div class="logger">
+    <div class="log-line info" id="log-1">>> TERMINAL INITIALIZED</div>
+    <div class="log-line info" id="log-2">>> READY TO VIBECODE</div>
+    <div class="log-line success" id="log-3">>> AWAITING ARCHITECTURE</div>
+  </div>
+
+  <div class="main-container">
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <h3>Core Nodes</h3>
+        <div class="palette-item" data-type="ui" title="Frontend Component">UI COMPONENT</div>
+        <div class="palette-item" data-type="api" title="Backend Route / Logic">API ROUTE</div>
+        <div class="palette-item" data-type="database" title="Schema / DB Layer">DATABASE</div>
+        <div class="palette-item" data-type="auth" title="Security Layer">AUTH</div>
+      </div>
+      <div class="sidebar-section">
+        <h3>Utility Nodes</h3>
+        <div class="palette-item" data-type="util" title="Helper Functions">UTILITY</div>
+        <div class="palette-item" data-type="style" title="CSS / Styling">STYLES</div>
+        <div class="palette-item" data-type="config" title="Configuration Files">CONFIG</div>
+      </div>
+    </div>
+
+    <div class="canvas" id="canvas">
+      <svg id="arrows-svg">
+        <path id="drawing-path" class="drawing-path"></path>
+        <g id="connections-group"></g>
+      </svg>
+      <div id="blocks-container"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button onclick="app.addBlockAtCenter('ui')">[+ Add Node]</button>
+    <button id="btn-validate" class="compile-btn" onclick="app.synthesizeArchitecture()">[⚡ Synthesize Flow]</button>
+    <button id="btn-export" disabled onclick="app.exportZip()">[📦 Export .ZIP]</button>
+    <button id="btn-clear" onclick="if(confirm('Wipe architecture?')) app.clearMap()">[Wipe Canvas]</button>
+  </div>
+
+  <!-- NODE EDITOR MODAL -->
+  <div class="modal" id="node-modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('node-modal')">✕</button>
+      <div class="modal-header" id="node-modal-header">Configure Node</div>
+      
+      <input type="hidden" id="node-modal-id">
+      
+      <div class="form-group">
+        <label class="form-label">Target Filename</label>
+        <input type="text" class="form-input" id="node-modal-filename" placeholder="e.g., App.jsx, schema.sql, utils.js">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">AI Instructions (Prompt) <span>Context from connected inputs will be appended automatically.</span></label>
+        <textarea class="form-input form-textarea" id="node-modal-prompt" placeholder="Describe exactly what this file should do. e.g., 'Write a React component that renders a pricing table.'"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">File Content (Code) <span>You can manually edit the AI's output here.</span></label>
+        <textarea class="form-input code-textarea" id="node-modal-code" placeholder="// Code will appear here after synthesis, or you can write it manually."></textarea>
+      </div>
+
+      <button style="width: 100%; background: var(--accent); color: #000; border: none;" onclick="app.saveNodeConfig()">Save Configuration</button>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // LOGICHUB VIBECODER ENGINE
+    // ============================================
+
+    class LogicMap {
+      constructor() {
+        this.id = "VIBE_" + Math.random().toString(36).substring(2, 8).toUpperCase();
+        this.blocks = [];
+        this.connections = [];
+      }
+
+      addBlock(type, x, y) {
+        const block = {
+          id: "NODE_" + Math.random().toString(36).substring(2, 8).toUpperCase(),
+          type: type,
+          label: type.toUpperCase() + " NODE",
+          filename: this.getDefaultFilename(type),
+          prompt: "",
+          code: "",
+          x: x,
+          y: y,
+          status: "PENDING",
+          dependsOn: [],
+          connectedTo: [],
+          errorMsg: ""
+        };
+        this.blocks.push(block);
+        return block;
+      }
+
+      getDefaultFilename(type) {
+        const map = {
+          ui: "Component.jsx", api: "route.js", database: "schema.sql",
+          auth: "authMiddleware.js", util: "helpers.js", style: "styles.css", config: "config.json"
+        };
+        return map[type] || `file_${Math.floor(Math.random()*100)}.js`;
+      }
+
+      removeBlock(id) {
+        this.blocks = this.blocks.filter(b => b.id !== id);
+        this.connections = this.connections.filter(c => c.from !== id && c.to !== id);
+        this.blocks.forEach(b => {
+          b.dependsOn = b.dependsOn.filter(d => d !== id);
+          b.connectedTo = b.connectedTo.filter(c => c !== id);
+        });
+      }
+
+      connect(fromId, toId) {
+        if (fromId === toId) return false;
+        // Prevent cycles (basic check)
+        if (this.hasPath(toId, fromId)) return false; 
+        if (this.connections.some(c => c.from === fromId && c.to === toId)) return false;
+        
+        const fromBlock = this.blocks.find(b => b.id === fromId);
+        const toBlock = this.blocks.find(b => b.id === toId);
+        
+        this.connections.push({ from: fromId, to: toId });
+        fromBlock.connectedTo.push(toId);
+        toBlock.dependsOn.push(fromId);
+        return true;
+      }
+
+      disconnect(fromId, toId) {
+        this.connections = this.connections.filter(c => !(c.from === fromId && c.to === toId));
+        const fromBlock = this.blocks.find(b => b.id === fromId);
+        const toBlock = this.blocks.find(b => b.id === toId);
+        if (fromBlock) fromBlock.connectedTo = fromBlock.connectedTo.filter(c => c !== toId);
+        if (toBlock) toBlock.dependsOn = toBlock.dependsOn.filter(d => d !== fromId);
+      }
+
+      hasPath(startId, targetId, visited = new Set()) {
+        if (startId === targetId) return true;
+        visited.add(startId);
+        const block = this.blocks.find(b => b.id === startId);
+        if (!block) return false;
+        for (let nextId of block.connectedTo) {
+          if (!visited.has(nextId) && this.hasPath(nextId, targetId, visited)) return true;
+        }
+        return false;
+      }
+
+      getTopologicalOrder() {
+        const visited = new Set();
+        const result = [];
+        const visit = (id) => {
+          if (visited.has(id)) return;
+          visited.add(id);
+          const block = this.blocks.find(b => b.id === id);
+          if (block) {
+            block.dependsOn.forEach(visit);
+            result.push(block);
+          }
+        };
+        this.blocks.forEach(b => visit(b.id));
+        return result;
+      }
+
+      isReadyForExport() {
+        const minBlocks = this.blocks.length > 0;
+        const allVerified = this.blocks.every(b => b.status === "VERIFIED");
+        return minBlocks && allVerified;
+      }
+    }
+
+    // ============================================
+    // APPLICATION CORE
+    // ============================================
+    const app = {
+      map: new LogicMap(),
+      isDragging: null,
+      dragOffset: { x: 0, y: 0 },
+      isDrawing: false,
+      sourceId: null,
+      apiKey: "",
+
+      init() {
+        const savedKey = sessionStorage.getItem("LH_GEMINI_KEY");
+        if (savedKey) {
+          this.apiKey = savedKey;
+          document.getElementById("api-key").value = savedKey;
+        }
+        
+        const savedMap = sessionStorage.getItem("LH_MAP_V2");
+        if (savedMap) {
+          const data = JSON.parse(savedMap);
+          this.map.blocks = data.blocks;
+          this.map.connections = data.connections;
+          this.map.id = data.id || this.map.id;
+        }
+
+        this.setupEvents();
+        this.render();
+        this.log("Vibecoder Engine Booted", "success");
+      },
+
+      setupEvents() {
+        const canvas = document.getElementById("canvas");
+        
+        document.querySelectorAll(".palette-item").forEach(item => {
+          item.addEventListener("pointerdown", (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.max(0, e.clientX - rect.left - 90);
+            const y = Math.max(0, e.clientY - rect.top - 40);
+            this.map.addBlock(e.target.dataset.type, x, y);
+            this.render();
+            this.log(`Instantiated ${e.target.dataset.type} node`, "info");
+          });
+        });
+
+        canvas.addEventListener("pointermove", (e) => {
+          if (this.isDragging) {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            let x = e.clientX - rect.left - this.dragOffset.x;
+            let y = e.clientY - rect.top - this.dragOffset.y;
+            
+            // Snap to grid
+            x = Math.round(x / 24) * 24;
+            y = Math.round(y / 24) * 24;
+
+            this.isDragging.x = x;
+            this.isDragging.y = y;
+            document.getElementById(this.isDragging.id).style.transform = `translate(${x}px, ${y}px)`;
+            this.renderConnections();
+          } else if (this.isDrawing) {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const endX = e.clientX - rect.left;
+            const endY = e.clientY - rect.top;
+            const srcEl = document.getElementById(this.sourceId);
+            if(!srcEl) return;
+            // Get literal current transform values for smooth dragging line
+            const transform = srcEl.style.transform;
+            let match = transform.match(/translate\(([^p]+)px,\s*([^p]+)px\)/);
+            if (!match) return;
+            const srcX = parseFloat(match[1]) + 180; // width
+            const srcY = parseFloat(match[2]) + 40;  // half height
+            
+            document.getElementById("drawing-path").setAttribute("d", `M ${srcX} ${srcY} C ${srcX + 60} ${srcY}, ${endX - 60} ${endY}, ${endX} ${endY}`);
+          }
+        });
+
+        canvas.addEventListener("pointerup", () => {
+          if (this.isDragging) {
+            document.getElementById(this.isDragging.id).classList.remove("selected");
+            this.isDragging = null;
+            this.save();
+          }
+          if (this.isDrawing) {
+            this.isDrawing = false;
+            this.sourceId = null;
+            document.getElementById("drawing-path").setAttribute("d", "");
+          }
+        });
+
+        document.getElementById("api-key").addEventListener("change", (e) => {
+          this.apiKey = e.target.value.trim();
+          sessionStorage.setItem("LH_GEMINI_KEY", this.apiKey);
+        });
+      },
+
+      addBlockAtCenter(type) {
+        const canvas = document.getElementById("canvas");
+        const x = (canvas.offsetWidth / 2) - 90 + (Math.random()*40-20);
+        const y = (canvas.offsetHeight / 2) - 40 + (Math.random()*40-20);
+        this.map.addBlock(type, x, y);
+        this.render();
+        this.log(`Node deployed to canvas`, "info");
+      },
+
+      updateBlockStates() {
+        this.map.blocks.forEach(b => {
+          if (b.status === "GENERATING") return; // Let it spin
+          if (b.code && b.status === "VERIFIED") return; // Already good
+          
+          const isOrphaned = !this.map.connections.some(c => c.from === b.id || c.to === b.id);
+          const depsSatisfied = b.dependsOn.every(depId => {
+            const dep = this.map.blocks.find(x => x.id === depId);
+            return dep && dep.status === "VERIFIED";
+          });
+
+          if (b.dependsOn.length > 0 && !depsSatisfied) b.status = "LOCKED";
+          else if (isOrphaned && !b.code) b.status = "ORPHANED";
+          else b.status = "PENDING";
+        });
+      },
+
+      render() {
+        this.updateBlockStates();
+        const container = document.getElementById("blocks-container");
+        container.innerHTML = "";
+
+        this.map.blocks.forEach(b => {
+          const el = document.createElement("div");
+          el.className = `block state-${b.status}`;
+          el.id = b.id;
+          // Use transform instead of top/left for smoother dragging
+          el.style.transform = `translate(${b.x}px, ${b.y}px)`;
+          el.style.top = "0"; el.style.left = "0";
+
+          const icon = { PENDING: "◯", LOCKED: "🔒", GENERATING: "⚡", VERIFIED: "✓", ERROR: "✗", ORPHANED: "⚠" }[b.status] || "◯";
+
+          el.innerHTML = `
+            <div class="block-delete" onclick="app.removeBlock('${b.id}')">✕</div>
+            <div class="block-header">
+              <span class="block-type">[${b.type.toUpperCase()}]</span>
+              <span class="block-edit" onclick="app.openNodeEditor('${b.id}')">⚙️ Config</span>
+            </div>
+            <input type="text" class="block-label" value="${b.label}" onchange="app.updateLabel('${b.id}', this.value)">
+            <div class="block-file">${b.filename}</div>
+            <div class="block-status">${icon} ${b.status}</div>
+            <div class="block-ports">
+              <div class="port in" onpointerdown="app.startWire(event, '${b.id}', 'in')" onpointerup="app.endWire(event, '${b.id}', 'in')"></div>
+              <div class="port out" onpointerdown="app.startWire(event, '${b.id}', 'out')" onpointerup="app.endWire(event, '${b.id}', 'out')"></div>
+            </div>
+          `;
+
+          el.addEventListener("pointerdown", (e) => {
+            if (e.target.tagName === "INPUT" || e.target.classList.contains('block-edit') || e.target.classList.contains('port')) return;
+            this.isDragging = b;
+            this.dragOffset = { x: e.clientX - b.x, y: e.clientY - b.y };
+            el.classList.add("selected");
+          });
+          
+          el.addEventListener("dblclick", (e) => {
+            if (e.target.tagName !== "INPUT") this.openNodeEditor(b.id);
+          });
+
+          container.appendChild(el);
+        });
+
+        this.renderConnections();
+        this.updateHeader();
+        this.save();
+      },
+
+      renderConnections() {
+        const group = document.getElementById("connections-group");
+        let svg = "";
+        this.map.connections.forEach(c => {
+          const from = this.map.blocks.find(b => b.id === c.from);
+          const to = this.map.blocks.find(b => b.id === c.to);
+          if (!from || !to) return;
+          const fx = from.x + 180, fy = from.y + 40;
+          const tx = to.x, ty = to.y + 40;
+          const cls = (from.status === "VERIFIED" && to.status === "VERIFIED") ? "arrow-path verified" : "arrow-path";
+          // Add click handler to delete wire
+          svg += `<path class="${cls}" d="M ${fx} ${fy} C ${fx+60} ${fy}, ${tx-60} ${ty}, ${tx} ${ty}" onclick="app.map.disconnect('${c.from}','${c.to}'); app.render(); app.log('Wire cut', 'info');"></path>`;
+        });
+        group.innerHTML = svg;
+      },
+
+      updateHeader() {
+        document.getElementById("block-count").textContent = `${this.map.blocks.length} nodes`;
+        const st = document.getElementById("map-status");
+        const exp = document.getElementById("btn-export");
+        if (this.map.isReadyForExport()) {
+          st.textContent = "⚡ SYNTHESIS COMPLETE"; st.className = "map-status confirmed";
+          exp.disabled = false; exp.className = "success";
+        } else {
+          st.textContent = "● ARCHITECTURE DRAFT"; st.className = "map-status";
+          exp.disabled = true; exp.className = "";
+        }
+      },
+
+      startWire(e, id, type) {
+        e.stopPropagation(); e.preventDefault();
+        if (type === "out") { this.isDrawing = true; this.sourceId = id; }
+      },
+      
+      endWire(e, id, type) {
+        e.stopPropagation(); e.preventDefault();
+        if (this.isDrawing && type === "in" && this.sourceId && this.sourceId !== id) {
+          if (this.map.connect(this.sourceId, id)) {
+            this.log("Nodes wired successfully", "success");
+            this.render();
+          } else {
+            this.log("Invalid connection or cycle detected", "error");
+          }
+        }
+        this.isDrawing = false; this.sourceId = null;
+        document.getElementById("drawing-path").setAttribute("d", "");
+      },
+
+      removeBlock(id) { this.map.removeBlock(id); this.render(); },
+      updateLabel(id, val) { const b = this.map.blocks.find(x=>x.id===id); if(b) b.label = val; this.save(); },
+
+      // --- NODE EDITOR ---
+      openNodeEditor(id) {
+        const b = this.map.blocks.find(x => x.id === id);
+        if(!b) return;
+        document.getElementById("node-modal-id").value = b.id;
+        document.getElementById("node-modal-header").innerHTML = `Configure <span style="color:#fff">${b.label}</span>`;
+        document.getElementById("node-modal-filename").value = b.filename;
+        document.getElementById("node-modal-prompt").value = b.prompt || "";
+        document.getElementById("node-modal-code").value = b.code || "";
+        document.getElementById("node-modal").classList.add("active");
+      },
+
+      saveNodeConfig() {
+        const id = document.getElementById("node-modal-id").value;
+        const b = this.map.blocks.find(x => x.id === id);
+        if(b) {
+          b.filename = document.getElementById("node-modal-filename").value.trim();
+          b.prompt = document.getElementById("node-modal-prompt").value.trim();
+          const newCode = document.getElementById("node-modal-code").value.trim();
+          if (newCode !== b.code) {
+            b.code = newCode;
+            b.status = b.code ? "VERIFIED" : "PENDING"; // Manual override verified
+          }
+        }
+        closeModal("node-modal");
+        this.render();
+        this.log("Node config saved", "info");
+      },
+
+      // --- AI SYNTHESIS (GEMINI) ---
+      async synthesizeArchitecture() {
+        if (!this.apiKey) return this.log("Gemini API Key required to synthesize.", "error");
+        
+        const order = this.map.getTopologicalOrder();
+        if(order.length === 0) return this.log("Architecture is empty.", "warning");
+
+        for (const block of order) {
+          // If it already has code manually put in, skip generation unless they want to overwrite
+          if (block.status === "VERIFIED" && block.code) continue;
+          
+          block.status = "GENERATING";
+          this.render();
+          this.log(`Synthesizing: ${block.filename}...`, "accent");
+
+          try {
+            await this.generateNodeCode(block);
+            block.status = "VERIFIED";
+            this.log(`Verified: ${block.filename}`, "success");
+          } catch (err) {
+            block.status = "ERROR";
+            block.errorMsg = err.message;
+            this.log(`Fault in ${block.filename}: ${err.message}`, "error");
+            break; // Stop flow on error
+          }
+          this.render();
+        }
+        this.log("Synthesis run finished.", "info");
+      },
+
+      async generateNodeCode(block) {
+        const deps = block.dependsOn.map(id => this.map.blocks.find(b => b.id === id)).filter(Boolean);
+        const contextStr = deps.map(d => `--- ${d.filename} ---\n${d.code}`).join("\n\n");
+
+        let prompt = `You are an expert software architect building a file named: ${block.filename}\n`;
+        prompt += `Role/Type: ${block.type}\n\n`;
+        if (block.prompt) prompt += `Specific Instructions:\n${block.prompt}\n\n`;
+        if (contextStr) prompt += `Context from connected files:\n${contextStr}\n\n`;
+        prompt += `Output ONLY the raw, valid code for ${block.filename}. Do not use markdown code blocks (\`\`\`). Do not add explanations. Output the pure text file content.`;
+
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${this.apiKey}`;
+        
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+        });
+
+        const data = await res.json();
+        if (data.error) throw new Error(data.error.message);
+        if (!data.candidates || !data.candidates[0]) throw new Error("No code generated by API.");
+
+        let code = data.candidates[0].content.parts[0].text.trim();
+        
+        // Strip markdown if AI ignored prompt
+        if (code.startsWith("```")) {
+          const lines = code.split("\n");
+          lines.shift();
+          if (lines[lines.length - 1].startsWith("```")) lines.pop();
+          code = lines.join("\n").trim();
+        }
+
+        block.code = code;
+      },
+
+      // --- ZIP EXPORT ---
+      exportZip() {
+        if (!this.map.isReadyForExport()) return this.log("Synthesis incomplete.", "error");
+        
+        this.log("Compiling .ZIP...", "accent");
+        try {
+          const zip = new JSZip();
+          this.map.blocks.forEach(b => {
+            if (b.code) zip.file(b.filename, b.code);
+          });
+          
+          zip.generateAsync({ type: "blob" }).then(content => {
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(content);
+            a.download = `VibeProject_${this.map.id}.zip`;
+            a.click();
+            this.log("Download initiated successfully", "success");
+          });
+        } catch(e) {
+          this.log("Export failed: " + e.message, "error");
+        }
+      },
+
+      clearMap() {
+        this.map = new LogicMap();
+        this.render();
+        this.log("Canvas wiped clean", "warning");
+      },
+
+      log(msg, type = "info") {
+        const ids = ["log-1", "log-2", "log-3"];
+        for(let i=0; i<2; i++) {
+          const el = document.getElementById(ids[i]);
+          const nxt = document.getElementById(ids[i+1]);
+          el.textContent = nxt.textContent;
+          el.className = nxt.className;
+        }
+        const last = document.getElementById("log-3");
+        last.textContent = `>>> ${msg}`;
+        last.className = `log-line ${type}`;
+      },
+
+      save() {
+        sessionStorage.setItem("LH_MAP_V2", JSON.stringify({
+          id: this.map.id, blocks: this.map.blocks, connections: this.map.connections
+        }));
+      }
+    };
+
+    function closeModal(id) { document.getElementById(id).classList.remove("active"); }
+
+    window.addEventListener("DOMContentLoaded", () => app.init());
+  </script>
+</body>
+</html>
