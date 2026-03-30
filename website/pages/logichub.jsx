@@ -1,12 +1,11 @@
-export async function getServerSideProps() {
-  return {
-    redirect: {
-      destination: 'https://logichub.viadecide.com',
-      permanent: false
-    }
-  };
-}
-
 export default function LogicHub() {
-  return <div>Redirecting...</div>;
+  return (
+    <main style={{ height: '100vh', background: '#030508' }}>
+      <iframe
+        src="/legacy/logichub.html"
+        title="LogicHub Vibecoder Engine"
+        style={{ width: '100%', height: '100%', border: 'none' }}
+      />
+    </main>
+  );
 }
