@@ -1047,34 +1047,31 @@ function toggleThread(){threadOpen=!threadOpen;document.getElementById('thread-p
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&threadOpen)toggleThread();});
 
 /* ============================================================
-   MODAL — routes through VDRouter.openOverlay when available.
-   Falls back gracefully to direct iframe if router absent.
-   ============================================================ */
-let currentFile = '';
+   MODAL — FIXED iframe logic (matches daxini.space pattern)
 
+   REPLACE everything between:
+     "MODAL — routes through VDRouter.openOverlay"
+   and the end of the closeModal + Escape keydown listener
+   ============================================================ */
+
+let currentFile = '';
+let _modalLoadTimer = null;
+
+/* ── openModal ─────────────────────────────────────────────
+   External URLs → new tab. Everything else → iframe modal.
+   VDRouter dependency removed — modal is self-contained.
+   ─────────────────────────────────────────────────────────── */
 function openModal(file, icon, name) {
-  // External URLs → new tab
   if (/^https?:\/\//i.test(file)) {
     window.open(file, '_blank', 'noopener,noreferrer');
     return;
   }
-
-  // ── VDRouter path (preferred — router v2 always has openOverlay) ──
-  if (window.VDRouter && typeof window.VDRouter.openOverlay === 'function') {
-    // Derive the resolved file; pass icon+name via opts so META in router
-    // can also fill the header if caller didn't supply them.
-    const slug = file.replace(/\.html?$/i, '').replace(/^\.?\//, '');
-    const resolvedFile = (window.VDRouter.resolve ? window.VDRouter.resolve(slug) : null) || file;
-    window.VDRouter.openOverlay(resolvedFile, { title: (icon ? icon + '\u2009' : '') + (name || '') });
-    return;
-  }
-
-  // ── Iframe fallback (router not loaded) ────────────────────────────
   _modalSetup(file, icon, name);
 }
 
 function _modalSetup(file, icon, name) {
   currentFile = file;
+
   const mIcon = document.getElementById('m-icon');
   const mName = document.getElementById('m-name');
   const mTab  = document.getElementById('m-tab');
@@ -1088,63 +1085,144 @@ function _modalSetup(file, icon, name) {
   if (mTab)  mTab.href = file;
   if (errLk) errLk.href = file;
   if (mErr)  mErr.classList.remove('show');
+  if (frame) frame.style.display = 'block';
   if (mLoad) mLoad.classList.add('active');
 
-  if (frame) {
-    frame.style.display = 'block';
-    frame.src = '';
-    setTimeout(() => { frame.src = file; }, 10);
-  }
   document.getElementById('modal').classList.add('open');
   document.body.style.overflow = 'hidden';
+
+  // Clear any stale timer from a previous open
+  if (_modalLoadTimer) { clearTimeout(_modalLoadTimer); _modalLoadTimer = null; }
+
+  if (frame) {
+    // Reset to blank first, then navigate — avoids stale-page flicker
+    frame.src = 'about:blank';
+    requestAnimationFrame(() => { frame.src = file; });
+  }
+
+  // Safety net: if the frame never fires 'load' (silent X-Frame-Options block),
+  // surface the error state after 12 s rather than spinning forever.
+  _modalLoadTimer = setTimeout(() => {
+    if (mLoad && mLoad.classList.contains('active')) {
+      showModalError(file);
+    }
+  }, 12000);
 }
 
-/* iframe load / error detection */
-(function(){
+/* ── iframe load / error detection ────────────────────────
+   Three cases:
+     1. Same-origin, loaded OK   → clear loader, doc accessible ✓
+     2. Cross-origin, loaded OK  → SecurityError caught → assume OK ✓
+     3. Blocked (X-Frame/CSP)   → doc.body === null OR empty body ✗
+   ─────────────────────────────────────────────────────────── */
+(function () {
   const frame = document.getElementById('modal-frame');
   if (!frame) return;
-  frame.addEventListener('load', function() {
+
+  frame.addEventListener('load', function () {
+    // Cancel the safety-net timer
+    if (_modalLoadTimer) { clearTimeout(_modalLoadTimer); _modalLoadTimer = null; }
+
     const mLoad = document.getElementById('modal-loading');
     if (mLoad) mLoad.classList.remove('active');
+
     const src = this.src;
-    if (!src || src === 'about:blank' || src === '' || src === window.location.href) return;
+    // Ignore the intentional blank reset
+    if (!src || src === 'about:blank' || src === location.href) return;
+
     try {
-      const d = this.contentDocument || this.contentWindow.document;
-      if (!d || d.body === null) { showModalError(); return; }
-      if (d.body.innerHTML.trim() === '') {
-        const f = this;
+      const doc = this.contentDocument || (this.contentWindow && this.contentWindow.document);
+
+      // doc missing → blocked
+      if (!doc) { showModalError(src); return; }
+
+      // body null is the definitive sign of an X-Frame-Options / CSP block
+      if (doc.body === null) { showModalError(src); return; }
+
+      // Empty body with no title = error/block page (Chromium behaviour)
+      if (!doc.title && doc.body.innerHTML.trim() === '') {
+        // Give the frame one extra tick — some SPAs render after load
         setTimeout(() => {
           try {
-            const d2 = f.contentDocument || f.contentWindow.document;
-            if (!d2 || d2.body === null || d2.body.innerHTML.trim() === '') showModalError();
-          } catch(e2) { showModalError(); }
+            const d2 = frame.contentDocument || (frame.contentWindow && frame.contentWindow.document);
+            if (!d2 || d2.body === null || (!d2.title && d2.body.innerHTML.trim() === '')) {
+              showModalError(src);
+            }
+          } catch (e2) { /* cross-origin on retry → assume OK */ }
         }, 800);
       }
-    } catch(e) { /* cross-origin — assume loaded OK */ }
+    } catch (e) {
+      // SecurityError = cross-origin page loaded correctly — do nothing
+    }
   });
 })();
 
-function showModalError() {
+function showModalError(file) {
+  if (_modalLoadTimer) { clearTimeout(_modalLoadTimer); _modalLoadTimer = null; }
+
   const mLoad = document.getElementById('modal-loading');
+  const frame = document.getElementById('modal-frame');
+  const mErr  = document.getElementById('modal-err');
+  const errLk = document.getElementById('err-open-link');
+
   if (mLoad) mLoad.classList.remove('active');
-  document.getElementById('modal-frame').style.display = 'none';
-  document.getElementById('modal-err').classList.add('show');
+  if (frame) frame.style.display = 'none';
+  if (mErr)  mErr.classList.add('show');
+  if (errLk && (file || currentFile)) errLk.href = file || currentFile;
 }
 
 function closeModal() {
+  if (_modalLoadTimer) { clearTimeout(_modalLoadTimer); _modalLoadTimer = null; }
+
   document.getElementById('modal').classList.remove('open');
   document.body.style.overflow = '';
+
   const mLoad = document.getElementById('modal-loading');
   if (mLoad) mLoad.classList.remove('active');
+
   setTimeout(() => {
     const frame = document.getElementById('modal-frame');
-    frame.src = 'about:blank';
-    frame.style.display = 'block';
-    document.getElementById('modal-err').classList.remove('show');
+    const mErr  = document.getElementById('modal-err');
+    if (frame) { frame.src = 'about:blank'; frame.style.display = 'block'; }
+    if (mErr)  mErr.classList.remove('show');
   }, 400);
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && !threadOpen) closeModal(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !threadOpen) closeModal();
+});
+
+/* ── VDRouter prefetch/integration (optional — keep if router loads) ──
+   Prefetch on hover for faster opens; no hard dependency on router.
+   ─────────────────────────────────────────────────────────── */
+(function () {
+  if (!window.VDRouter) return;
+
+  VDRouter.on && VDRouter.on('routechange', function () {
+    if (typeof VDRouter.bindLinks === 'function') VDRouter.bindLinks();
+  });
+
+  function prefetchFromEl(el) {
+    const oc = el.getAttribute('onclick') || '';
+    const m1 = oc.match(/openModal\('([^']+)'/);
+    if (m1) VDRouter.prefetch && VDRouter.prefetch(m1[1].replace(/\.html?$/i, '').replace(/^\.?\//, ''));
+    const m2 = oc.match(/VDRouter\.go\('([^']+)'/);
+    if (m2) VDRouter.prefetch && VDRouter.prefetch(m2[1]);
+    const href = el.getAttribute('href') || '';
+    if (href && !href.startsWith('#') && !href.startsWith('http')) {
+      VDRouter.prefetch && VDRouter.prefetch(href.replace(/^\/+/, '').replace(/\.html?$/i, ''));
+    }
+  }
+
+  document.querySelectorAll('.tc[onclick],.pt-card[onclick],.build-card[onclick],.nav-chip,.orb-chip[onclick]').forEach(el => {
+    el.addEventListener('mouseenter',  () => prefetchFromEl(el), { once: true, passive: true });
+    el.addEventListener('touchstart',  () => prefetchFromEl(el), { once: true, passive: true });
+  });
+
+  try {
+    console.info('[ViaDecide] VDRouter ready — ' + Object.keys(VDRouter.routes()).length + ' routes');
+  } catch (e) {}
+})();
 
 /* ORB SEARCH */
 (function(){
