@@ -1208,6 +1208,463 @@
       </div>
     </div>
 
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+
+    <canvas id="warp-canvas"></canvas>
+
+    <div id="scroll-proxy"></div>
+
+    <main id="viewport">
+        <div id="camera">
+            
+            <section class="panel" data-z="0">
+                <img src="1000221390.jpg" alt="DH Logo" class="brand-logo magnetic" onerror="this.style.display='none'">
+                <div class="tag tag-saffron">Sol 1 // Epoch 2026</div>
+                <h1 class="hero-title">Visual Logic.<br><span class="gradient-text-saffron">Autonomous Core.</span></h1>
+                <p class="hero-subtitle">Zero dependencies. Pure spatial execution. Architect, verify, and deploy using the browser's native physical engine.</p>
+                <div class="btn-group">
+                    <a href="#vialogic" class="btn-tactile primary magnetic route-link" data-route="vialogic">Initialize System</a>
+                </div>
+                <p class="scroll-hint">[ SCROLL TO DISCOVER SECTORS ]</p>
+            </section>
+
+            <section class="panel" data-z="-2500">
+                <div class="glass-card magnetic">
+                    <span class="panel-icon">🧠</span>
+                    <div class="tag tag-neon">Sector 01</div>
+                    <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">ViaLogic Hub</h2>
+                    <p class="hero-subtitle">The ultimate node-based orchestrator. Engage with Philosophical nodes, synthesize logic, and map complex spatial cartographies.</p>
+                    <div class="btn-group">
+                        <a href="#vialogic" class="btn-tactile outline magnetic route-link" data-route="vialogic">Open ViaLogic</a>
+                        <a href="#logichub" class="btn-tactile outline magnetic route-link" data-route="logichub">Mount LogicHub</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel" data-z="-5000">
+                <div class="glass-card magnetic" style="border-color: rgba(74, 222, 128, 0.2);">
+                    <span class="panel-icon">🗺️</span>
+                    <div class="tag tag-green">Sector 02</div>
+                    <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">Spatial Engine</h2>
+                    <p class="hero-subtitle">Dive into the macro-world view. Navigate territories using enhanced 3D zoom and touch-optimized panning physics.</p>
+                    <div class="btn-group">
+                        <a href="#world" class="btn-tactile outline magnetic route-link" data-route="world" style="border-color: var(--accent-green); color: var(--accent-green);">Explore World</a>
+                        <a href="#world" class="btn-tactile outline magnetic route-link" data-route="world" style="border-color: var(--accent-green); color: var(--accent-green);">Explore World</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel" data-z="-7500">
+                <div class="glass-card magnetic" style="border-color: rgba(255, 103, 31, 0.2);">
+                    <span class="panel-icon">📇</span>
+                    <div class="tag tag-saffron">Sector 03</div>
+                    <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">Kinetic Feed</h2>
+                    <p class="hero-subtitle">Tactile physical engine integration. Experience swipe-based discovery, physics-driven cards, and real-time pulse syncs.</p>
+                    <div class="btn-group">
+                        <a href="#feed" class="btn-tactile outline magnetic route-link" data-route="feed" style="border-color: var(--saffron); color: var(--saffron);">Access Feed</a>
+                        <a href="#feed" class="btn-tactile outline magnetic route-link" data-route="feed" style="border-color: var(--saffron); color: var(--saffron);">Access Feed</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel" data-z="-10000">
+                <div class="glass-card magnetic" style="border-color: rgba(168, 85, 247, 0.2);">
+                    <span class="panel-icon">⚡</span>
+                    <div class="tag" style="background: rgba(168, 85, 247, 0.12); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.3);">Sector 04</div>
+                    <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">Ecosystem Tools</h2>
+                    <p class="hero-subtitle">Chronological releases, Idea Remixers, and AI-powered Decision Oracles utilizing embedded Gemini architectures.</p>
+                    <div class="btn-group">
+                        <a href="#updates" class="btn-tactile outline magnetic route-link" data-route="updates" style="border-color: #a855f7; color: #a855f7;">View Updates</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel" data-z="-12500">
+                <div class="glass-card magnetic" style="border-color: rgba(255, 215, 0, 0.2);">
+                    <span class="panel-icon">👤</span>
+                    <div class="tag" style="background: rgba(255, 215, 0, 0.12); color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.3);">Sector 05</div>
+                    <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">Orchade Profile</h2>
+                    <p class="hero-subtitle">Your personal architecture hub. Manage DataSeeds, track economy credits, and establish secure Firebase cloud persistence.</p>
+                    <div class="btn-group">
+                        <a href="#profile" class="btn-tactile outline magnetic route-link" data-route="profile" style="border-color: #ffd700; color: #ffd700;">View Profile</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel" data-z="-15000">
+                <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">The Architect.</h2>
+                <p class="hero-subtitle">Dharam Daxini // Engineered without a single node_modules folder. Commence Transmission.</p>
+                
+                <div class="btn-group" style="margin-bottom: 2rem;">
+                    <a href="#portfolio" target="_blank" class="btn-tactile primary magnetic">View Portfolio</a>
+                    <a href="https://github.com/via-decide/decide.engine-tools" target="_blank" class="btn-tactile outline magnetic">GitHub Repo</a>
+                </div>
+
+                <div class="social-grid">
+                    <a href="#vialogic" class="social-link magnetic route-link" data-route="vialogic" style="border-color: var(--accent-green);">
+                        <small style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-green);">CORE HUB</small>
+                        <span>ViaDecide</span>
+                    </a>
+                    <a href="https://youtube.com/@decide.engine" target="_blank" class="social-link magnetic">
+                        <small style="font-family: var(--font-mono); font-size: 0.7rem;">YOUTUBE</small>
+                        <span>decide.engine</span>
+                    </a>
+                    
+                    <a href="https://open.spotify.com/show/2okZ1WXMWXLrSwFzClUPPp?si=fbe27697d5e047a4" target="_blank" class="social-link magnetic">
+                        <small style="font-family: var(--font-mono); font-size: 0.7rem;">SPOTIFY</small>
+                        <span>Dharam Daxini</span>
+                    </a>
+                    
+                    <a href="https://instagram.com/dharamdaxini" target="_blank" class="social-link magnetic">
+                        <small style="font-family: var(--font-mono); font-size: 0.7rem;">INSTAGRAM</small>
+                        <span>@dharamdaxini</span>
+                    </a>
+                </div>
+                <div style="margin-top: 4rem; opacity: 0.4; font-size: 0.75rem; font-family: var(--font-mono); letter-spacing: 2px;">END OF TRANSMISSION</div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        /* ========================================================
+           ROUTE RESOLVER & 404 HANDLER
+           ======================================================== */
+        const ROUTES = {
+            vialogic: { file: './index.html#vialogic', hash: true },
+            feed: { file: './index.html#feed', hash: true },
+            world: { file: './index.html#world', hash: true },
+            profile: { file: './index.html#profile', hash: true },
+            updates: { file: './index.html#updates', hash: true },
+            logichub: { file: './logichub.html', hash: false },
+            studiosos: { file: './logichub.html', hash: false },
+            'decide-engine': { file: './logichub.html', hash: false }
+        };
+
+        function resolveRoute(path) {
+            const cleanPath = String(path || '')
+                .split('?')[0]
+                .split('#')[0]
+                .replace(/^\//, '');
+            const routeName = cleanPath || 'vialogic';
+            const route = ROUTES[routeName];
+
+            if (!route) {
+                handle404(routeName);
+                return false;
+            }
+
+            if (route.hash) {
+                handleHashRoute(routeName);
+                return true;
+            }
+
+            if (route.file) {
+                window.location.href = route.file;
+                return false;
+            }
+
+            handle404(routeName);
+            return false;
+        }
+
+        function handleHashRoute(sectionName) {
+            window.history.replaceState(null, '', `#${sectionName}`);
+            window.VIA_ROUTE_DEBUG.log(`hash route resolved: ${sectionName}`);
+        }
+
+        function handle404(attemptedPath) {
+            window.VIA_ROUTE_DEBUG.error(`Path not found: ${attemptedPath}`);
+            setTimeout(() => {
+                window.location.href = './index.html';
+            }, 300);
+        }
+
+        window.VIA_ROUTE_DEBUG = {
+            log: (msg) => console.log(`[VIA:ROUTE] ${msg}`),
+            error: (msg) => console.error(`[VIA:ROUTE:ERROR] ${msg}`),
+            listRoutes: () => console.table(ROUTES)
+        };
+
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash.slice(1);
+            if (hash) {
+                resolveRoute(hash);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.route-link').forEach((link) => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    resolveRoute(link.dataset.route || '');
+                });
+            });
+
+            const initialHash = window.location.hash.slice(1);
+            if (initialHash) {
+                resolveRoute(initialHash);
+            }
+        });
+
+        /* ========================================================
+           1. PURE VANILLA 3D SCROLL INTERPOLATION
+           ======================================================== */
+        const camera = document.getElementById('camera');
+        const depthReadout = document.getElementById('depth-readout');
+        const panels = document.querySelectorAll('.panel');
+        
+        let currentScroll = 0;
+        let targetScroll = 0;
+        const scrollMultiplier = 2.5; 
+
+        // Set initial Z transforms
+        panels.forEach(panel => {
+            const z = parseFloat(panel.getAttribute('data-z') || '0');
+            panel.style.transform = `translate(-50%, -50%) translateZ(${z}px)`;
+        });
+
+        window.addEventListener('scroll', () => { targetScroll = window.scrollY; });
+
+        function update3DCamera() {
+            currentScroll += (targetScroll - currentScroll) * 0.08;
+            let zTranslation = currentScroll * scrollMultiplier;
+            camera.style.transform = `translateZ(${zTranslation}px)`;
+            depthReadout.innerText = Math.round(zTranslation).toString().padStart(5, '0');
+
+            // Hide panels that pass behind camera to prevent bugs
+            panels.forEach(panel => {
+                const pz = parseFloat(panel.getAttribute('data-z') || '0');
+                const relativeZ = pz + zTranslation;
+                if (relativeZ > 600 || relativeZ < -4000) {
+                    panel.style.opacity = '0';
+                    panel.style.pointerEvents = 'none';
+                    panel.style.visibility = 'hidden';
+                } else {
+                    panel.style.opacity = '1';
+                    panel.style.pointerEvents = 'auto';
+                    panel.style.visibility = 'visible';
+                }
+            });
+
+            requestAnimationFrame(update3DCamera);
+        }
+        update3DCamera();
+
+
+        /* ========================================================
+           2. HOLOGRAPHIC 3D PARTICLE & IMAGE ENGINE
+           ======================================================== */
+        const canvas = document.getElementById('warp-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height, cx, cy;
+        let particles = [];
+        const isMobile = window.innerWidth <= 768;
+        const numParticles = isMobile ? 80 : 150; // Adjusted for complex rendering
+        const fov = 800; 
+
+        // Preload User Image (Brand Logo) to use as floating 3D objects
+        const userImg = new Image();
+        userImg.src = '1000221390.jpg';
+        let imgLoaded = false;
+        userImg.onload = () => { imgLoaded = true; };
+
+        function initCanvas() {
+            width = window.innerWidth; height = window.innerHeight;
+            canvas.width = width; canvas.height = height;
+            cx = width / 2; cy = height / 2;
+        }
+
+        class HoloNode {
+            constructor() {
+                this.reset();
+                this.z = Math.random() * 8000; // Scatter initially throughout depth
+            }
+            reset() {
+                this.x = (Math.random() - 0.5) * 5000; 
+                this.y = (Math.random() - 0.5) * 4000;
+                this.z = 2000 + Math.random() * 2000; // Spawn deep
+                this.speed = 1.5 + Math.random() * 3;
+                
+                // 3D Rendering Properties
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotSpeed = (Math.random() - 0.5) * 0.02;
+                
+                // Categorize Particle Types
+                // 0: Small Saffron Dot, 1: Cyan Wireframe Hex, 2: Floating Image/Card, 3: Crosshair
+                const rand = Math.random();
+                if (rand < 0.4) this.type = 0;
+                else if (rand < 0.6) this.type = 1;
+                else if (rand < 0.8) this.type = 2;
+                else this.type = 3;
+
+                this.color = Math.random() > 0.5 ? '255, 103, 31' : '0, 229, 204';
+            }
+            
+            update(scrollVelocity) {
+                // Move towards camera, accelerate based on scroll speed
+                this.z -= this.speed + (scrollVelocity * 0.8);
+                this.rotation += this.rotSpeed;
+                if (this.z <= 0) this.reset();
+            }
+            
+            draw() {
+                const scale = fov / (fov + this.z);
+                const x2d = cx + this.x * scale;
+                const y2d = cy + this.y * scale;
+
+                // Fade in from distance, fade out right before hitting camera
+                let opacity = Math.min(1, Math.max(0, 1 - (this.z / 3000)));
+                if (this.z < 200) opacity *= (this.z / 200); 
+
+                ctx.save();
+                ctx.translate(x2d, y2d);
+                ctx.scale(scale, scale);
+                ctx.rotate(this.rotation);
+
+                ctx.strokeStyle = `rgba(${this.color}, ${opacity})`;
+                ctx.fillStyle = `rgba(${this.color}, ${opacity * 0.2})`;
+                ctx.lineWidth = 1.5;
+
+                switch(this.type) {
+                    case 0: // Glowing Dot (Ambient Dust)
+                        ctx.beginPath(); ctx.arc(0, 0, 3, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${this.color}, ${opacity * 0.8})`; ctx.fill();
+                        break;
+                        
+                    case 1: // Wireframe Hexagon
+                        ctx.beginPath();
+                        for(let i=0; i<6; i++) {
+                            ctx.lineTo(20 * Math.cos(i * Math.PI / 3), 20 * Math.sin(i * Math.PI / 3));
+                        }
+                        ctx.closePath(); ctx.stroke(); ctx.fill();
+                        // Inner dot
+                        ctx.beginPath(); ctx.arc(0,0, 2, 0, Math.PI*2); 
+                        ctx.fillStyle = `rgba(${this.color}, ${opacity})`; ctx.fill();
+                        break;
+                        
+                    case 2: // Floating Image or UI Card
+                        // Draw a high-tech glowing border
+                        ctx.strokeRect(-40, -40, 80, 80);
+                        
+                        if (imgLoaded) {
+                            // Draw actual user image, slightly faded by depth
+                            ctx.globalAlpha = opacity * 0.8;
+                            // Clip to rounded rect for modern look
+                            ctx.beginPath();
+                            ctx.roundRect ? ctx.roundRect(-38, -38, 76, 76, 8) : ctx.rect(-38, -38, 76, 76);
+                            ctx.clip();
+                            ctx.drawImage(userImg, -38, -38, 76, 76);
+                        } else {
+                            // Fallback: Draw simulated code/UI card
+                            ctx.fillStyle = `rgba(15, 15, 26, ${opacity * 0.9})`;
+                            ctx.fillRect(-38, -38, 76, 76);
+                            ctx.fillStyle = `rgba(${this.color}, ${opacity})`;
+                            ctx.fillRect(-30, -25, 40, 4);
+                            ctx.fillRect(-30, -15, 60, 4);
+                            ctx.fillRect(-30, -5, 50, 4);
+                        }
+                        
+                        // Draw corner brackets
+                        ctx.beginPath();
+                        ctx.moveTo(-45, -30); ctx.lineTo(-45, -45); ctx.lineTo(-30, -45);
+                        ctx.moveTo(45, -30); ctx.lineTo(45, -45); ctx.lineTo(30, -45);
+                        ctx.moveTo(-45, 30); ctx.lineTo(-45, 45); ctx.lineTo(-30, 45);
+                        ctx.moveTo(45, 30); ctx.lineTo(45, 45); ctx.lineTo(30, 45);
+                        ctx.stroke();
+                        break;
+                        
+                    case 3: // Crosshair / Data Node
+                        ctx.beginPath();
+                        ctx.moveTo(-15, 0); ctx.lineTo(15, 0);
+                        ctx.moveTo(0, -15); ctx.lineTo(0, 15);
+                        ctx.stroke();
+                        ctx.beginPath(); ctx.arc(0,0, 8, 0, Math.PI*2); ctx.stroke();
+                        break;
+                }
+
+                ctx.restore();
+            }
+        }
+
+        initCanvas();
+        for (let i = 0; i < numParticles; i++) particles.push(new HoloNode());
+
+        window.addEventListener('resize', initCanvas);
+
+        let lastScroll = 0;
+        function animateCanvas() {
+            const velocity = Math.abs(currentScroll - lastScroll);
+            lastScroll = currentScroll;
+
+            ctx.clearRect(0, 0, width, height);
+            
+            // Depth Sorting (Z-Buffer): Sort particles so further ones are drawn first
+            particles.sort((a, b) => b.z - a.z);
+
+            particles.forEach(p => {
+                p.update(velocity);
+                p.draw();
+            });
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+
+
+        /* ========================================================
+           3. MAGNETIC UI PHYSICS & CUSTOM CURSOR
+           ======================================================== */
+        const dot = document.getElementById('cursor-dot');
+        const ring = document.getElementById('cursor-ring');
+        const magnetics = document.querySelectorAll('.magnetic');
+
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let ringX = mouseX;
+        let ringY = mouseY;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX; mouseY = e.clientY;
+            dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+        });
+
+        function animateCursor() {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+            requestAnimationFrame(animateCursor);
+        }
+        if(window.innerWidth > 768) animateCursor(); 
+
+        magnetics.forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const hx = rect.left + rect.width / 2;
+                const hy = rect.top + rect.height / 2;
+                
+                const dx = (e.clientX - hx) * 0.15; 
+                const dy = (e.clientY - hy) * 0.15; 
+                
+                if(btn.classList.contains('glass-card')) {
+                   btn.style.transform = `translate(${dx}px, ${dy}px) scale(1.02)`;
+                } else {
+                   btn.style.transform = `translate(${dx}px, ${dy}px) scale(1.05)`;
+                }
+                
+                ring.style.width = '50px'; ring.style.height = '50px';
+                ring.style.borderColor = 'var(--saffron)'; dot.style.background = 'var(--saffron)';
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = `translate(0px, 0px) scale(1)`;
+                ring.style.width = '40px'; ring.style.height = '40px';
+                ring.style.borderColor = 'rgba(255,255,255,0.4)'; dot.style.background = 'var(--text-main)';
+            });
+        });
+
+    </script>
     <div class="call-card reveal">
       <div class="call-avatar">🧠</div>
       <div class="call-card-label">Free · No obligation</div>
