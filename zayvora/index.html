@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zayvora — AI Engineering Agent | Automated GitHub PR & Code Generation</title>
+  <meta name="description" content="Zayvora is an autonomous AI engineering agent that automates GitHub repository analysis, PR creation, bug fixes, and feature generation. Powered by Ollama and Claude.">
+  <meta name="keywords" content="AI engineering, automated PR creation, code generation, GitHub automation, AI agent, software development, open source">
+  <meta name="author" content="Via Decide">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://daxini.xyz/zayvora">
+  <meta property="og:title" content="Zayvora — AI Engineering Agent">
+  <meta property="og:description" content="Automate your GitHub workflow with AI-powered repository analysis, PR creation, and code generation.">
+  <meta property="og:image" content="https://daxini.xyz/zayvora/og-image.png">
+
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://daxini.xyz/zayvora">
+  <meta name="twitter:title" content="Zayvora — AI Engineering Agent">
+  <meta name="twitter:description" content="Automate your GitHub workflow with AI-powered repository analysis, PR creation, and code generation.">
+  <meta name="twitter:image" content="https://daxini.xyz/zayvora/og-image.png">
+
+  <!-- Structured Data (Schema.org) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Zayvora",
+    "description": "AI Engineering Agent for automated GitHub workflows",
+    "url": "https://daxini.xyz/zayvora",
+    "applicationCategory": "DeveloperApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0"
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "Via Decide",
+      "url": "https://viadecide.com"
+    }
+  }
+  </script>
+
+  <!-- Favicon & Branding -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' fill='%2364c8ff'>⚡</text></svg>">
+  <meta name="theme-color" content="#1a1a2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Zayvora">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* HERO SECTION */
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+      background: linear-gradient(135deg, rgba(100, 200, 255, 0.1) 0%, rgba(200, 100, 255, 0.1) 100%);
+      border-radius: 16px;
+      margin-bottom: 40px;
+      border: 1px solid rgba(100, 200, 255, 0.2);
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #64c8ff, #c864ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.3rem;
+      color: #a0a0a0;
+      margin-bottom: 30px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #64c8ff, #6495ff);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(100, 150, 255, 0.4);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 2px solid #64c8ff;
+      color: #64c8ff;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(100, 200, 255, 0.1);
+    }
+
+    /* AGENT CONSOLE */
+    .console-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .console {
+      background: #0f0f1e;
+      border: 1px solid rgba(100, 200, 255, 0.2);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      height: 500px;
+    }
+
+    .console-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+    }
+
+    .console-status {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #64c8ff;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .console-title {
+      font-weight: 600;
+      color: #64c8ff;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .input-group input {
+      flex: 1;
+      background: #1a1a2e;
+      border: 1px solid rgba(100, 200, 255, 0.2);
+      border-radius: 6px;
+      padding: 10px 12px;
+      color: #e0e0e0;
+      font-size: 0.9rem;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: #64c8ff;
+      box-shadow: 0 0 12px rgba(100, 200, 255, 0.2);
+    }
+
+    .input-group button {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #64c8ff, #6495ff);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .input-group button:hover {
+      box-shadow: 0 4px 12px rgba(100, 200, 255, 0.3);
+    }
+
+    .output-area {
+      flex: 1;
+      background: #1a1a2e;
+      border: 1px solid rgba(100, 200, 255, 0.1);
+      border-radius: 6px;
+      padding: 15px;
+      overflow-y: auto;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: #64c8ff;
+    }
+
+    .output-line {
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .output-line.success {
+      color: #4ade80;
+    }
+
+    .output-line.error {
+      color: #ff6b6b;
+    }
+
+    .output-line.info {
+      color: #64c8ff;
+    }
+
+    /* AUTH STATE */
+    .auth-container {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+
+    .auth-badge {
+      padding: 10px 20px;
+      background: rgba(100, 200, 255, 0.1);
+      border: 1px solid rgba(100, 200, 255, 0.3);
+      border-radius: 20px;
+      font-size: 0.9rem;
+      color: #64c8ff;
+    }
+
+    .auth-badge.logged-out {
+      color: #ff6b6b;
+      border-color: rgba(255, 107, 107, 0.3);
+      background: rgba(255, 107, 107, 0.05);
+    }
+
+    /* EXAMPLES SECTION */
+    .examples {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .example-card {
+      background: #0f0f1e;
+      border: 1px solid rgba(100, 200, 255, 0.2);
+      border-radius: 8px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .example-card:hover {
+      border-color: #64c8ff;
+      box-shadow: 0 4px 12px rgba(100, 200, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .example-title {
+      font-weight: 600;
+      color: #64c8ff;
+      margin-bottom: 10px;
+    }
+
+    .example-desc {
+      color: #a0a0a0;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    /* ARCHITECTURE SECTION */
+    .architecture {
+      background: #0f0f1e;
+      border: 1px solid rgba(100, 200, 255, 0.2);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 40px;
+    }
+
+    .architecture h2 {
+      font-size: 1.8rem;
+      margin-bottom: 30px;
+      color: #64c8ff;
+    }
+
+    .arch-flow {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .arch-step {
+      background: #1a1a2e;
+      border: 1px solid rgba(100, 200, 255, 0.3);
+      border-radius: 6px;
+      padding: 15px 20px;
+      flex: 1;
+      min-width: 150px;
+      text-align: center;
+    }
+
+    .arch-step strong {
+      color: #64c8ff;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .arch-arrow {
+      color: #64c8ff;
+      font-size: 1.5rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .console-section {
+        grid-template-columns: 1fr;
+      }
+
+      .arch-flow {
+        flex-direction: column;
+      }
+
+      .arch-arrow {
+        transform: rotate(90deg);
+      }
+    }
+
+    .login-prompt {
+      text-align: center;
+      padding: 40px;
+      background: rgba(255, 107, 107, 0.05);
+      border: 2px dashed rgba(255, 107, 107, 0.3);
+      border-radius: 12px;
+      margin-top: 30px;
+    }
+
+    .login-prompt p {
+      font-size: 1.2rem;
+      color: #ff6b6b;
+      margin-bottom: 20px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- AUTH BADGE -->
+    <div class="auth-container">
+      <div class="auth-badge logged-out" id="authBadge">
+        🔒 Not logged in
+      </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <div class="hero">
+      <h1>⚡ Zayvora</h1>
+      <p>India's most advanced AI Engineering Agent — Automate GitHub workflows, analyze repositories, create PRs, and generate features with zero friction</p>
+      <p style="font-size: 0.95rem; color: #7a7a7a; margin-top: 10px;">Built by <strong style="color: #64c8ff;">Via Decide</strong> • Powered by Ollama & Claude</p>
+      <div class="hero-buttons">
+        <button class="btn btn-primary" id="launchBtn">Launch Agent Console</button>
+        <button class="btn btn-secondary" onclick="window.open('https://github.com/via-decide/zayvora', '_blank')">
+          View on GitHub
+        </button>
+      </div>
+    </div>
+
+    <!-- LOGIN PROMPT -->
+    <div class="login-prompt hidden" id="loginPrompt">
+      <p>🔐 Please log in to use Zayvora</p>
+      <button class="btn btn-primary" onclick="window.location.href='https://via-decide.github.io/zayvora-login/'">Login</button>
+    </div>
+
+    <!-- AGENT CONSOLE -->
+    <div class="console-section hidden" id="consoleSection">
+      <!-- INPUT CONSOLE -->
+      <div class="console">
+        <div class="console-header">
+          <div class="console-status"></div>
+          <div class="console-title">Agent Input</div>
+        </div>
+        <div class="input-group">
+          <input
+            type="text"
+            id="promptInput"
+            placeholder="Example: Analyze my GitHub repo via-decide/zayvora"
+            spellcheck="false"
+          >
+          <button id="runBtn">Run</button>
+        </div>
+        <div style="margin-bottom: 10px; color: #a0a0a0; font-size: 0.85rem;">
+          Example commands:
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+          <div style="padding: 8px; background: #1a1a2e; border-radius: 4px; cursor: pointer; color: #a0a0a0; font-size: 0.85rem;" onclick="document.getElementById('promptInput').value = this.textContent.substring(3); document.getElementById('promptInput').focus();">
+            → Analyze my GitHub repo
+          </div>
+          <div style="padding: 8px; background: #1a1a2e; border-radius: 4px; cursor: pointer; color: #a0a0a0; font-size: 0.85rem;" onclick="document.getElementById('promptInput').value = this.textContent.substring(3); document.getElementById('promptInput').focus();">
+            → Fix authentication bug in my repo
+          </div>
+          <div style="padding: 8px; background: #1a1a2e; border-radius: 4px; cursor: pointer; color: #a0a0a0; font-size: 0.85rem;" onclick="document.getElementById('promptInput').value = this.textContent.substring(3); document.getElementById('promptInput').focus();">
+            → Generate PR for feature
+          </div>
+          <div style="padding: 8px; background: #1a1a2e; border-radius: 4px; cursor: pointer; color: #a0a0a0; font-size: 0.85rem;" onclick="document.getElementById('promptInput').value = this.textContent.substring(3); document.getElementById('promptInput').focus();">
+            → Audit codebase for security
+          </div>
+        </div>
+      </div>
+
+      <!-- OUTPUT CONSOLE -->
+      <div class="console">
+        <div class="console-header">
+          <div class="console-status"></div>
+          <div class="console-title">Agent Output</div>
+        </div>
+        <div class="output-area" id="outputArea">
+          <div class="output-line info">→ Zayvora Agent Ready</div>
+          <div class="output-line info">→ Waiting for input...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXAMPLES SECTION -->
+    <div class="examples hidden" id="examplesSection">
+      <div class="example-card">
+        <div class="example-title">📊 Analyze Repository</div>
+        <div class="example-desc">Deep dive analysis of your codebase structure, dependencies, and code quality metrics</div>
+      </div>
+      <div class="example-card">
+        <div class="example-title">🐛 Fix Bugs</div>
+        <div class="example-desc">Identify issues and automatically create pull requests with fixes</div>
+      </div>
+      <div class="example-card">
+        <div class="example-title">✨ Generate Features</div>
+        <div class="example-desc">Create new features based on descriptions and open PRs</div>
+      </div>
+      <div class="example-card">
+        <div class="example-title">🔐 Security Audit</div>
+        <div class="example-desc">Scan for vulnerabilities and generate security recommendations</div>
+      </div>
+    </div>
+
+    <!-- ARCHITECTURE SECTION -->
+    <div class="architecture hidden" id="architectureSection">
+      <h2>System Architecture</h2>
+      <div style="margin-bottom: 20px;">
+        <strong style="color: #64c8ff;">Zayvora Agent Pipeline:</strong>
+      </div>
+      <div class="arch-flow">
+        <div class="arch-step">
+          <strong>1. User Prompt</strong>
+          <div>Natural language request</div>
+        </div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-step">
+          <strong>2. Intent Analysis</strong>
+          <div>LLM determines task type</div>
+        </div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-step">
+          <strong>3. Tool Execution</strong>
+          <div>GitHub API, git operations</div>
+        </div>
+      </div>
+      <div class="arch-flow">
+        <div class="arch-step">
+          <strong>4. Repository Analysis</strong>
+          <div>Code review, testing</div>
+        </div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-step">
+          <strong>5. PR Generation</strong>
+          <div>Structured changes</div>
+        </div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-step">
+          <strong>6. Output Report</strong>
+          <div>Results & PR links</div>
+        </div>
+      </div>
+      <div style="margin-top: 20px; padding: 15px; background: #1a1a2e; border-radius: 6px; border-left: 3px solid #64c8ff;">
+        <strong style="color: #64c8ff;">Backend:</strong> Zayvora (Node.js + Ollama) running locally or on Mac Mini M4
+        <br>
+        <strong style="color: #64c8ff;">Auth:</strong> zayvora-login gateway with session management
+        <br>
+        <strong style="color: #64c8ff;">GitHub:</strong> PyGithub API integration with automated PR workflows
+      </div>
+    </div>
+  </div>
+
+  <script src="zayvora-ui.js"></script>
+</body>
+</html>
