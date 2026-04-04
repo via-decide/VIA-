@@ -1,27 +1,14 @@
 {
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/"
   "buildCommand": "echo 'Static site - no build required'",
   "outputDirectory": ".",
-  "public": true,
-  "redirects": [
-    {
-      "source": "/daxini.xyz",
-      "destination": "/",
-      "permanent": false
-    }
-  ],
+  "cleanUrls": true,
+  "trailingSlash": false,
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "public, max-age=3600, must-revalidate"
-        }
-      ]
           "value": "public, max-age=0, must-revalidate"
         },
         {
