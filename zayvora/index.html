@@ -3,7 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zayvora — AI Engineering Agent</title>
+  <title>Zayvora — AI Engineering Agent | Automated GitHub PR & Code Generation</title>
+  <meta name="description" content="Zayvora is an autonomous AI engineering agent that automates GitHub repository analysis, PR creation, bug fixes, and feature generation. Powered by Ollama and Claude.">
+  <meta name="keywords" content="AI engineering, automated PR creation, code generation, GitHub automation, AI agent, software development, open source">
+  <meta name="author" content="Via Decide">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://daxini.xyz/zayvora">
+  <meta property="og:title" content="Zayvora — AI Engineering Agent">
+  <meta property="og:description" content="Automate your GitHub workflow with AI-powered repository analysis, PR creation, and code generation.">
+  <meta property="og:image" content="https://daxini.xyz/zayvora/og-image.png">
+
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://daxini.xyz/zayvora">
+  <meta name="twitter:title" content="Zayvora — AI Engineering Agent">
+  <meta name="twitter:description" content="Automate your GitHub workflow with AI-powered repository analysis, PR creation, and code generation.">
+  <meta name="twitter:image" content="https://daxini.xyz/zayvora/og-image.png">
+
+  <!-- Structured Data (Schema.org) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Zayvora",
+    "description": "AI Engineering Agent for automated GitHub workflows",
+    "url": "https://daxini.xyz/zayvora",
+    "applicationCategory": "DeveloperApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0"
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "Via Decide",
+      "url": "https://viadecide.com"
+    }
+  }
+  </script>
+
+  <!-- Favicon & Branding -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' fill='%2364c8ff'>⚡</text></svg>">
+  <meta name="theme-color" content="#1a1a2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Zayvora">
+
   <style>
     * {
       margin: 0;
@@ -355,7 +402,8 @@
     <!-- HERO SECTION -->
     <div class="hero">
       <h1>⚡ Zayvora</h1>
-      <p>India's AI Engineering Agent — Automate repository analysis, PR creation, and infrastructure development</p>
+      <p>India's most advanced AI Engineering Agent — Automate GitHub workflows, analyze repositories, create PRs, and generate features with zero friction</p>
+      <p style="font-size: 0.95rem; color: #7a7a7a; margin-top: 10px;">Built by <strong style="color: #64c8ff;">Via Decide</strong> • Powered by Ollama & Claude</p>
       <div class="hero-buttons">
         <button class="btn btn-primary" id="launchBtn">Launch Agent Console</button>
         <button class="btn btn-secondary" onclick="window.open('https://github.com/via-decide/zayvora', '_blank')">
@@ -367,7 +415,7 @@
     <!-- LOGIN PROMPT -->
     <div class="login-prompt hidden" id="loginPrompt">
       <p>🔐 Please log in to use Zayvora</p>
-      <button class="btn btn-primary" onclick="window.location.href='/login'">Login</button>
+      <button class="btn btn-primary" onclick="window.location.href='https://via-decide.github.io/zayvora-login/'">Login</button>
     </div>
 
     <!-- AGENT CONSOLE -->
