@@ -1,0 +1,9 @@
+{
+  "routes": [
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/logic", "dest": "/logic/index.html" },
+    { "src": "/feed", "dest": "/feed/index.html" },
+    { "src": "/profile", "dest": "/profile/index.html" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
