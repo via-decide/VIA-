@@ -1,9 +1,9 @@
-Branch: simba/create-dynamic-decision-matrix-engine
-Title: Create dynamic decision matrix engine.
+Branch: simba/integrate-zayvora-axiom-for-decision-support
+Title: Integrate Zayvora Axiom for decision support.
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Create dynamic decision matrix engine.
+- Goal: Integrate Zayvora Axiom for decision support.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
