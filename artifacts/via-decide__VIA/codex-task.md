@@ -1,7 +1,7 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
-Create dynamic decision matrix engine.
+Integrate Zayvora Axiom for decision support.
 
 CONSTRAINTS
 Preserve existing code; prefer additive changes.
