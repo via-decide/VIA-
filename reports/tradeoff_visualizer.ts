@@ -1,6 +1,7 @@
 export interface TradeoffBar {
   label: string;
   value: number;
+  detail?: string;
 }
 
 export function buildTradeoffVisualization(data: TradeoffBar[]) {

@@ -1,23 +1,24 @@
-import { buildContext, type UserIntent } from './context_builder';
-import { transformPrompt } from './prompt_transformer';
-import { structureResponse, type RawAiResponse } from './response_structurer';
+import { buildStructuredContext, type ReasoningIntent } from './context_engine';
+import { compilePrompt } from './prompt_compiler';
+import { formatResponse, type RawModelResponse } from './response_formatter';
 
-export interface ReasoningResult {
-  context: ReturnType<typeof buildContext>;
-  prompt: string;
-  response: ReturnType<typeof structureResponse>;
+export interface ReasoningPipelineResult {
+  context: ReturnType<typeof buildStructuredContext>;
+  prompt: ReturnType<typeof compilePrompt>;
+  response: ReturnType<typeof formatResponse>;
 }
 
-export function runReasoningPipeline(
-  intent: UserIntent,
-  modelExecutor: (prompt: string) => Promise<RawAiResponse>
-): Promise<ReasoningResult> {
-  const context = buildContext(intent);
-  const prompt = transformPrompt(context);
+export async function runReasoningPipeline(
+  intent: ReasoningIntent,
+  modelExecutor: (prompt: string) => Promise<RawModelResponse>
+): Promise<ReasoningPipelineResult> {
+  const context = buildStructuredContext(intent);
+  const prompt = compilePrompt(context);
+  const raw = await modelExecutor(prompt.fullPrompt);
 
-  return modelExecutor(prompt).then((rawResponse) => ({
+  return {
     context,
     prompt,
-    response: structureResponse(rawResponse),
-  }));
+    response: formatResponse(raw),
+  };
 }

@@ -1,9 +1,8 @@
 import { ToolRegistry, type ViaTool } from './tool_registry';
 
-export async function loadTools(
-  factories: Array<() => Promise<ViaTool> | ViaTool>,
-  registry: ToolRegistry
-): Promise<ViaTool[]> {
+export type ToolFactory = () => Promise<ViaTool> | ViaTool;
+
+export async function loadTools(factories: ToolFactory[], registry: ToolRegistry): Promise<ViaTool[]> {
   const loaded: ViaTool[] = [];
 
   for (const factory of factories) {
