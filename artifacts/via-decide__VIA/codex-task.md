@@ -1,7 +1,7 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
-Integrate Zayvora Axiom for decision support.
+Create outcome calibration tracker.
 
 CONSTRAINTS
 Preserve existing code; prefer additive changes.
