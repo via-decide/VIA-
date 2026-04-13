@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="theme-color" content="#080a0f"/>
+<title>Articles — Zayvora × ViaDecide</title>
+<meta name="description" content="Browse all articles, essays, and guides in the ViaDecide knowledge network. Powered by Zayvora."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#080a0f;--bg1:#0c0e15;--bg2:#10131c;--bg3:#161923;
+  --sf:rgba(255,255,255,0.04);--sf2:rgba(255,255,255,0.07);
+  --bd:rgba(255,255,255,0.07);--bd2:rgba(255,255,255,0.12);
+  --tx:#f0ede6;--tx2:#8a8fa8;--tx3:#454860;
+  --gold:#c8932a;--gold2:#e8a830;--gold3:rgba(200,147,42,0.14);
+  --teal:#1a8c7d;--teal2:#22b4a0;--teal3:rgba(34,180,160,0.12);
+  --violet:#9b6dff;--violet3:rgba(155,109,255,0.12);
+  --acc:#ff671f;--r:1.5rem;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',system-ui,sans-serif;background:var(--bg);color:var(--tx);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;border:none;background:none;cursor:pointer}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.85rem 2.5rem;background:rgba(8,10,15,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd)}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;display:flex;align-items:center;gap:.5rem}
+.brand-dot{width:7px;height:7px;background:var(--violet);border-radius:50%;animation:pd 2s infinite;flex-shrink:0}
+@keyframes pd{0%,100%{box-shadow:0 0 0 0 rgba(155,109,255,.4)}50%{box-shadow:0 0 0 7px rgba(155,109,255,0)}}
+.nav-links{display:flex;gap:1.5rem;list-style:none}
+.nav-links a{font-size:.78rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--tx2);transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--violet)}
+.nav-back{display:inline-flex;align-items:center;gap:.45rem;font-size:.76rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.42rem 1rem;border-radius:99px;background:var(--sf2);border:1px solid var(--bd2);color:var(--tx2);transition:all .2s}
+.nav-back:hover{color:var(--tx);background:rgba(255,255,255,.1)}
+
+/* HERO */
+.hero{padding:5rem 2.5rem 3.5rem;max-width:1280px;margin:0 auto;position:relative}
+.hero::before{content:'RESEARCH';position:absolute;top:2rem;right:2rem;font-family:'Cormorant Garamond',serif;font-size:clamp(5rem,12vw,12rem);font-weight:700;letter-spacing:-.04em;color:rgba(255,255,255,.015);pointer-events:none;user-select:none;line-height:1}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:.55rem;font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:1rem}
+.hero-eyebrow::before{content:'';display:block;width:20px;height:1px;background:var(--tx3)}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.6rem,6vw,5.5rem);font-weight:300;line-height:.95;letter-spacing:-.03em;margin-bottom:.9rem}
+.hero h1 em{font-style:italic;color:var(--violet)}
+.hero-sub{font-size:.95rem;color:var(--tx2);line-height:1.7;max-width:520px;margin-bottom:2.5rem}
+
+/* SEARCH */
+.search-wrap{max-width:640px;margin-bottom:1rem;position:relative}
+.search-input{width:100%;padding:.9rem 1.2rem .9rem 2.8rem;border-radius:14px;border:1px solid var(--bd2);background:var(--bg2);color:var(--tx);font-size:.95rem;font-family:'Outfit',sans-serif;outline:none;transition:border-color .2s,box-shadow .2s}
+.search-input:focus{border-color:var(--violet);box-shadow:0 0 0 4px rgba(155,109,255,.1)}
+.search-icon{position:absolute;left:1rem;top:50%;transform:translateY(-50%);font-size:1rem;color:var(--tx3);pointer-events:none}
+.search-results{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg2);border:1px solid var(--bd2);border-radius:14px;max-height:400px;overflow-y:auto;z-index:100;display:none;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.search-results.show{display:block}
+.sr-item{padding:1rem 1.2rem;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .15s}
+.sr-item:hover{background:var(--sf2)}
+.sr-item:last-child{border-bottom:none}
+.sr-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;margin-bottom:.2rem}
+.sr-meta{font-size:.72rem;color:var(--tx3);font-family:'JetBrains Mono',monospace}
+.sr-score{display:inline-block;padding:.15rem .5rem;border-radius:99px;font-size:.6rem;font-weight:700;background:var(--violet3);color:var(--violet);margin-left:.5rem}
+
+/* STATS BAR */
+.stats-bar{display:flex;align-items:center;gap:2rem;padding:1.5rem 2.5rem;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);background:var(--bg1);max-width:1280px;margin:0 auto 0}
+.stat{display:flex;align-items:center;gap:.6rem}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;line-height:1;color:var(--tx)}
+.stat-label{font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--tx3)}
+
+/* SECTION */
+.section{max-width:1280px;margin:0 auto;padding:3rem 2.5rem 5rem}
+.section-header{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;margin-bottom:2rem;padding-top:2rem;border-top:1px solid var(--bd);flex-wrap:wrap}
+.section-eyebrow{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;color:var(--violet)}
+.section-eyebrow::before{content:'';width:18px;height:1px;background:var(--violet)}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:300;line-height:1.1;letter-spacing:-.02em}
+.section-title em{font-style:italic;color:var(--violet)}
+
+/* CONCEPT CHIPS */
+.concept-chips{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem}
+.chip{font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.4rem .9rem;border-radius:99px;border:1px solid var(--bd);background:var(--sf);color:var(--tx3);cursor:pointer;transition:all .2s}
+.chip:hover,.chip.active{color:var(--violet);background:var(--violet3);border-color:rgba(155,109,255,.3)}
+
+/* ARTICLE GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem}
+.card{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--bd);background:var(--bg2);cursor:pointer;transition:transform .35s cubic-bezier(.34,1.56,.64,1),border-color .25s,box-shadow .25s;display:flex;flex-direction:column;min-height:220px}
+.card:hover{transform:translateY(-5px);box-shadow:0 20px 50px rgba(0,0,0,.5);border-color:rgba(155,109,255,.25)}
+.card-top{padding:1.5rem 1.5rem 0;flex:1}
+.card-cat{display:inline-flex;align-items:center;gap:.35rem;font-size:.58rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:.2rem .65rem;border-radius:99px;background:var(--sf2);border:1px solid var(--bd2);color:var(--tx2);margin-bottom:.8rem}
+.card-cat-dot{width:5px;height:5px;border-radius:50%;background:var(--violet)}
+.card h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;line-height:1.15;letter-spacing:-.01em;color:var(--tx);margin-bottom:.5rem}
+.card-summary{font-size:.78rem;color:var(--tx2);line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);padding:.8rem 1.5rem;margin-top:auto}
+.card-meta{font-size:.68rem;color:var(--tx3);font-family:'JetBrains Mono',monospace}
+.card-concepts{display:flex;gap:.3rem;flex-wrap:wrap}
+.card-concept{font-size:.55rem;padding:.15rem .45rem;border-radius:4px;background:var(--violet3);color:var(--violet);font-weight:700;letter-spacing:.03em}
+.card-arr{position:absolute;top:1rem;right:1rem;font-size:.85rem;color:var(--tx3);opacity:0;transition:all .25s}
+.card:hover .card-arr{opacity:1;transform:translate(2px,-2px)}
+
+/* GRAPH VIZ */
+.graph-container{border:1px solid var(--bd);border-radius:18px;background:var(--bg2);padding:2rem;min-height:400px;position:relative;overflow:hidden}
+.graph-canvas{width:100%;height:400px}
+.graph-legend{display:flex;gap:1.5rem;margin-top:1rem;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--tx2)}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+.legend-dot.article{background:var(--violet)}
+.legend-dot.concept{background:var(--gold2)}
+.legend-dot.topic{background:var(--teal2)}
+
+/* FOOTER */
+.footer{padding:3rem 2.5rem;text-align:center;border-top:1px solid var(--bd)}
+.footer p{font-size:.82rem;color:var(--tx3)}
+.footer a{color:var(--violet);transition:color .2s}
+.footer a:hover{color:var(--gold2)}
+
+/* NOISE */
+.noise{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+@media(max-width:640px){
+  .nav{padding:.75rem 1rem}
+  .hero{padding:3rem 1rem 2rem}.hero::before{display:none}
+  .section{padding:2rem 1rem 3rem}
+  .stats-bar{padding:1rem;gap:1rem;flex-wrap:wrap}
+  .grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+
+<nav class="nav">
+  <a href="/" class="nav-brand"><div class="brand-dot"></div>Zayvora Research</a>
+  <ul class="nav-links">
+    <li><a href="/research/">Research</a></li>
+    <li><a href="/articles/" class="active">Articles</a></li>
+    <li><a href="/concepts/">Concepts</a></li>
+    <li><a href="/Viadecide-blogs/">Blog</a></li>
+  </ul>
+  <a href="/" class="nav-back">← Home</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Zayvora · Article Library</div>
+  <h1>Every article,<br><em>connected.</em></h1>
+  <p class="hero-sub">Browse all essays, guides, and interactive experiences in the ViaDecide research network.</p>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" id="searchInput" placeholder="Search articles, concepts, topics..." autocomplete="off"/>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+
+<div class="stats-bar" id="statsBar">
+  <div class="stat"><span class="stat-num" id="statArticles">—</span><span class="stat-label">Articles</span></div>
+  <div class="stat"><span class="stat-num" id="statConcepts">—</span><span class="stat-label">Concepts</span></div>
+  <div class="stat"><span class="stat-num" id="statNodes">—</span><span class="stat-label">Graph Nodes</span></div>
+  <div class="stat"><span class="stat-num" id="statEdges">—</span><span class="stat-label">Connections</span></div>
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow">✦ Concept Clusters</div>
+      <h2 class="section-title">Filter by <em>concept</em></h2>
+    </div>
+  </div>
+  <div class="concept-chips" id="conceptChips"></div>
+
+  <div class="section-header" style="margin-top:1rem">
+    <div>
+      <div class="section-eyebrow">📄 Article Network</div>
+      <h2 class="section-title">All research <em>articles</em></h2>
+    </div>
+  </div>
+  <div class="grid" id="articleGrid"></div>
+
+  <div class="section-header" style="margin-top:3rem">
+    <div>
+      <div class="section-eyebrow">🧠 Knowledge Graph</div>
+      <h2 class="section-title">Concept <em>connections</em></h2>
+    </div>
+  </div>
+  <div class="graph-container">
+    <canvas class="graph-canvas" id="graphCanvas"></canvas>
+    <div class="graph-legend">
+      <div class="legend-item"><div class="legend-dot article"></div>Articles</div>
+      <div class="legend-item"><div class="legend-dot concept"></div>Concepts</div>
+      <div class="legend-item"><div class="legend-dot topic"></div>Topics</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Zayvora Research Engine · <a href="/">ViaDecide</a> · <a href="/Viadecide-blogs/">Blog</a></p>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // ── Load Data ──
+  let articles = [];
+  let graph = {};
+
+  Promise.all([
+    fetch('/zayvora/data/articles.json').then(r => r.json()),
+    fetch('/zayvora/data/knowledge_graph.json').then(r => r.json())
+  ]).then(([artData, graphData]) => {
+    articles = artData.articles || [];
+    graph = graphData;
+    renderStats(artData, graphData);
+    renderConcepts(artData);
+    renderArticles(articles);
+    renderGraph(graphData);
+  }).catch(err => {
+    console.error('Zayvora data load error:', err);
+    document.getElementById('articleGrid').innerHTML = '<p style="color:var(--tx3);padding:2rem">Loading from local data…</p>';
+  });
+
+  // ── Stats ──
+  function renderStats(artData, graphData) {
+    document.getElementById('statArticles').textContent = artData.totalArticles;
+    const concepts = new Set();
+    artData.articles.forEach(a => a.concepts.forEach(c => concepts.add(c)));
+    document.getElementById('statConcepts').textContent = concepts.size;
+    document.getElementById('statNodes').textContent = graphData.stats.totalNodes;
+    document.getElementById('statEdges').textContent = graphData.stats.totalEdges;
+  }
+
+  // ── Concepts ──
+  let activeConcept = null;
+  function renderConcepts(artData) {
+    const concepts = new Set();
+    artData.articles.forEach(a => a.concepts.forEach(c => concepts.add(c)));
+    const wrap = document.getElementById('conceptChips');
+    wrap.innerHTML = '<button class="chip active" data-concept="all">All</button>';
+    [...concepts].sort().forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.dataset.concept = c;
+      btn.textContent = c;
+      btn.onclick = () => filterByConcept(c);
+      wrap.appendChild(btn);
+    });
+    wrap.querySelector('[data-concept="all"]').onclick = () => filterByConcept(null);
+  }
+
+  function filterByConcept(concept) {
+    activeConcept = concept;
+    document.querySelectorAll('.chip').forEach(c => {
+      c.classList.toggle('active', concept === null ? c.dataset.concept === 'all' : c.dataset.concept === concept);
+    });
+    const filtered = concept ? articles.filter(a => a.concepts.includes(concept)) : articles;
+    renderArticles(filtered);
+  }
+
+  // ── Articles ──
+  function renderArticles(list) {
+    const grid = document.getElementById('articleGrid');
+    grid.innerHTML = '';
+    list.forEach(a => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.onclick = () => window.location.href = a.path;
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="card-cat"><span class="card-cat-dot"></span>${a.category}</div>
+          <h3>${a.title}</h3>
+          <p class="card-summary">${a.summary}</p>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">${a.date} · ${a.readTime}</span>
+          <div class="card-concepts">${a.concepts.slice(0,3).map(c => `<span class="card-concept">${c}</span>`).join('')}</div>
+        </div>
+        <span class="card-arr">↗</span>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  // ── Search ──
+  const searchInput = document.getElementById('searchInput');
+  const searchResults = document.getElementById('searchResults');
+  let debounceTimer;
+
+  searchInput.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => runSearch(searchInput.value.trim()), 200);
+  });
+
+  searchInput.addEventListener('blur', () => {
+    setTimeout(() => searchResults.classList.remove('show'), 200);
+  });
+
+  searchInput.addEventListener('focus', () => {
+    if (searchInput.value.trim().length > 0) runSearch(searchInput.value.trim());
+  });
+
+  function runSearch(query) {
+    if (query.length < 2) { searchResults.classList.remove('show'); return; }
+    const q = query.toLowerCase();
+    const results = articles.map(a => {
+      let score = 0;
+      if (a.title.toLowerCase().includes(q)) score += 10;
+      if (a.concepts.some(c => c.toLowerCase().includes(q))) score += 7;
+      if (a.tags.some(t => t.includes(q))) score += 5;
+      if (a.category.includes(q)) score += 3;
+      if (a.summary.toLowerCase().includes(q)) score += 2;
+      a.slug.split('-').forEach(w => { if (q.includes(w) || w.includes(q)) score += 1; });
+      return { article: a, score };
+    }).filter(r => r.score > 0).sort((a,b) => b.score - a.score).slice(0,8);
+
+    searchResults.innerHTML = '';
+    if (results.length === 0) {
+      searchResults.innerHTML = '<div class="sr-item"><span class="sr-title" style="color:var(--tx3)">No results found</span></div>';
+    } else {
+      results.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'sr-item';
+        div.onclick = () => window.location.href = r.article.path;
+        div.innerHTML = `<div class="sr-title">${r.article.title}<span class="sr-score">${Math.round(r.score * 10)}%</span></div><div class="sr-meta">${r.article.category} · ${r.article.readTime}</div>`;
+        searchResults.appendChild(div);
+      });
+    }
+    searchResults.classList.add('show');
+  }
+
+  // ── Graph Visualization ──
+  function renderGraph(graphData) {
+    const canvas = document.getElementById('graphCanvas');
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width - 64;
+    canvas.height = 400;
+    const W = canvas.width, H = canvas.height;
+
+    const colors = { article: '#9b6dff', concept: '#e8a830', topic: '#22b4a0' };
+    const sizes = { article: 6, concept: 10, topic: 8 };
+
+    // Position nodes using force-directed-like layout (simple version)
+    const positioned = graphData.nodes.map((n, i) => {
+      const angle = (i / graphData.nodes.length) * Math.PI * 2;
+      const radius = n.type === 'concept' ? 100 : n.type === 'topic' ? 160 : 130 + Math.random() * 40;
+      return {
+        ...n,
+        x: W/2 + Math.cos(angle) * radius + (Math.random() - 0.5) * 60,
+        y: H/2 + Math.sin(angle) * radius + (Math.random() - 0.5) * 40,
+      };
+    });
+
+    const nodeMap = {};
+    positioned.forEach(n => nodeMap[n.id] = n);
+
+    // Draw edges
+    ctx.lineWidth = 0.5;
+    graphData.edges.forEach(e => {
+      const s = nodeMap[e.source], t = nodeMap[e.target];
+      if (!s || !t) return;
+      ctx.beginPath();
+      ctx.strokeStyle = e.type === 'related_to' ? 'rgba(155,109,255,0.15)' : e.type === 'mentions' ? 'rgba(232,168,48,0.12)' : 'rgba(34,180,160,0.12)';
+      ctx.moveTo(s.x, s.y);
+      ctx.lineTo(t.x, t.y);
+      ctx.stroke();
+    });
+
+    // Draw nodes
+    positioned.forEach(n => {
+      const r = sizes[n.type] || 5;
+      const color = colors[n.type] || '#fff';
+
+      // Glow
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, r + 4, 0, Math.PI * 2);
+      ctx.fillStyle = color.replace(')', ',0.15)').replace('rgb', 'rgba');
+      ctx.fill();
+
+      // Node
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+
+      // Label for concepts and topics
+      if (n.type !== 'article') {
+        ctx.font = '10px "JetBrains Mono", monospace';
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.textAlign = 'center';
+        ctx.fillText(n.label, n.x, n.y + r + 14);
+      }
+    });
+  }
+
+  window.addEventListener('resize', () => {
+    if (graph.nodes) renderGraph(graph);
+  });
+})();
+</script>
+</body>
+</html>
