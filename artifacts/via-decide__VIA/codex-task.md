@@ -1,7 +1,7 @@
 You are working in repository via-decide/VIA on branch main.
 
 MISSION
-Create outcome calibration tracker.
+Create portable knowledge base exporter.
 
 CONSTRAINTS
 Preserve existing code; prefer additive changes.
