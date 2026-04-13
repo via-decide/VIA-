@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#090a0d">
+<title>Opportunity Radar · ViaDecide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── UX PATCH ─────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+}
+
+body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+input, textarea, select,
+[contenteditable="true"],
+.allow-select, pre, code {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible),
+[role="button"]:focus:not(:focus-visible),
+[tabindex]:focus:not(:focus-visible) { outline: none; }
+
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid rgba(255,153,51,.5);
+  outline-offset: 3px;
+}
+
+::selection { background: rgba(255,153,51,.18); color: inherit; }
+
+/* ── TOKENS ───────────────────────────────────────────────── */
+:root {
+  --bg:         #090a0d;
+  --surface:    #0d0f14;
+  --card:       #111318;
+  --card2:      #15181f;
+  --border:     rgba(255,255,255,.055);
+  --border2:    rgba(255,255,255,.095);
+  --saffron:    #ff9933;
+  --saffron-d:  rgba(255,153,51,.10);
+  --saffron-g:  rgba(255,153,51,.28);
+  --amber:      #ffba55;
+  --green:      #1fbe85;
+  --green-d:    rgba(31,190,133,.10);
+  --green-b:    rgba(31,190,133,.22);
+  --orange:     #f07840;
+  --orange-d:   rgba(240,120,64,.10);
+  --orange-b:   rgba(240,120,64,.22);
+  --purple:     #9b6ef3;
+  --purple-d:   rgba(155,110,243,.10);
+  --purple-b:   rgba(155,110,243,.22);
+  --text:       #eceef6;
+  --text-2:     #858aaa;
+  --text-3:     #3c4060;
+  --font:       'Sora', sans-serif;
+  --mono:       'JetBrains Mono', monospace;
+  --r-sm:       8px;
+  --r-md:       14px;
+  --r-lg:       20px;
+  --r-xl:       28px;
+}
+
+/* ── SCROLLBAR ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ── BASE ─────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* ── RADAR AMBIENT ────────────────────────────────────────── */
+.radar-ambient {
+  position: fixed;
+  top: -160px; right: -160px;
+  width: 520px; height: 520px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(255,153,51,.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── PAGE ─────────────────────────────────────────────────── */
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 18px 100px;
+}
+
+/* ── HEADER ───────────────────────────────────────────────── */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26px 0 0;
+  gap: 12px;
+}
+
+.logo {
+  display: flex; align-items: center; gap: 9px;
+  text-decoration: none;
+}
+
+.logo-mark {
+  width: 29px; height: 29px;
+  background: linear-gradient(135deg, var(--saffron), var(--amber));
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #090a0d;
+  letter-spacing: -.3px; flex-shrink: 0;
+}
+
+.logo-name { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -.3px; }
+.logo-name span { color: var(--saffron); }
+
+.hdr-actions { display: flex; gap: 8px; }
+
+/* ── ORB BAR ──────────────────────────────────────────────── */
+.orb-wrap { margin: 22px 0 0; }
+
+.orb-bar {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-xl);
+  padding: 9px 14px;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.orb-bar:focus-within {
+  border-color: var(--saffron);
+  box-shadow: 0 0 0 3px var(--saffron-d);
+}
+
+.orb-icon { color: var(--text-3); flex-shrink: 0; }
+
+.orb-input {
+  flex: 1; background: none; border: none; outline: none;
+  font-family: var(--mono); font-size: 12px;
+  color: var(--text); letter-spacing: .02em; min-width: 0;
+}
+.orb-input::placeholder { color: var(--text-3); }
+
+.orb-btn {
+  background: none;
+  border: 1px solid var(--border2);
+  border-radius: 20px; padding: 4px 11px;
+  font-size: 11px; font-family: var(--font); font-weight: 500;
+  color: var(--text-2); cursor: pointer; white-space: nowrap;
+  transition: all .15s;
+}
+.orb-btn:hover { border-color: var(--saffron); color: var(--saffron); }
+
+/* ── HERO ─────────────────────────────────────────────────── */
+.hero {
+  padding: 52px 0 40px;
+  text-align: center;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--saffron-d);
+  border: 1px solid rgba(255,153,51,.18);
+  border-radius: 20px; padding: 5px 13px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--saffron); margin-bottom: 24px;
+}
+
+/* RADAR RING VISUAL */
+.radar-ring-wrap {
+  position: relative;
+  width: 130px; height: 130px;
+  margin: 0 auto 28px;
+}
+
+.radar-ring {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255,153,51,.12);
+  animation: ringPulse 3s ease-in-out infinite;
+}
+.radar-ring:nth-child(2) { inset: 18px; border-color: rgba(255,153,51,.18); animation-delay: .4s; }
+.radar-ring:nth-child(3) { inset: 36px; border-color: rgba(255,153,51,.28); animation-delay: .8s; }
+
+.radar-dot {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 32px; height: 32px;
+  background: var(--saffron-d);
+  border: 1px solid var(--saffron-g);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+
+.radar-sweep {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0%, rgba(255,153,51,.08) 20%, transparent 25%);
+  animation: sweep 4s linear infinite;
+}
+
+@keyframes sweep { to { transform: rotate(360deg); } }
+@keyframes ringPulse {
+  0%, 100% { opacity: .6; transform: scale(1); }
+  50%       { opacity: 1; transform: scale(1.03); }
+}
+
+.hero h1 {
+  font-size: clamp(26px, 6vw, 40px);
+  font-weight: 700; letter-spacing: -.8px;
+  line-height: 1.15; color: var(--text);
+  margin-bottom: 14px;
+}
+
+.hero h1 em {
+  font-style: normal;
+  background: linear-gradient(90deg, var(--saffron), var(--amber));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: 15px; color: var(--text-2);
+  max-width: 360px; margin: 0 auto; line-height: 1.75;
+}
+
+/* ── CARD ─────────────────────────────────────────────────── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 22px;
+  margin-bottom: 12px;
+  transition: border-color .2s;
+}
+
+.card:hover { border-color: var(--border2); }
+
+.card-lbl {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text-3); margin-bottom: 18px;
+}
+
+/* ── FIELDS ───────────────────────────────────────────────── */
+.fields-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 420px) { .fields-2col { grid-template-columns: 1fr; } }
+
+.field { display: flex; flex-direction: column; gap: 7px; }
+
+.field-lbl {
+  font-size: 12px; font-weight: 500;
+  color: var(--text-2);
+  display: flex; align-items: center; gap: 6px;
+}
+
+.field-lbl .ficon { font-size: 13px; }
+
+input[type="text"] {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 11px 13px;
+  font-family: var(--font); font-size: 14px;
+  color: var(--text); outline: none;
+  transition: border-color .15s, box-shadow .15s;
+  -webkit-appearance: none; appearance: none;
+  width: 100%;
+}
+
+input[type="text"]:focus {
+  border-color: var(--saffron);
+  box-shadow: 0 0 0 3px var(--saffron-d);
+}
+
+input::placeholder { color: var(--text-3); font-size: 13px; }
+
+/* ── BUTTONS ──────────────────────────────────────────────── */
+button { cursor: pointer; font-family: var(--font); border: none; outline: none; transition: all .15s; }
+
+.btn {
+  display: inline-flex; align-items: center;
+  justify-content: center; gap: 7px;
+  border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 600;
+}
+
+.btn-scan {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--saffron), #e07800);
+  color: #090a0d;
+  font-size: 14px;
+  box-shadow: 0 3px 20px rgba(255,153,51,.25);
+  border-radius: var(--r-md);
+  margin-top: 16px;
+  letter-spacing: .01em;
+}
+
+.btn-scan:hover { filter: brightness(1.08); transform: translateY(-1px); box-shadow: 0 6px 28px rgba(255,153,51,.32); }
+.btn-scan:active { transform: translateY(0); filter: brightness(.95); }
+
+.btn-scan.scanning {
+  background: var(--card2);
+  color: var(--text-2);
+  box-shadow: none;
+  cursor: not-allowed;
+  filter: none !important;
+  transform: none !important;
+}
+
+.btn-ghost {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  color: var(--text-2);
+  padding: 7px 14px; font-size: 12px;
+  border-radius: 7px;
+}
+.btn-ghost:hover { border-color: var(--text-2); color: var(--text); }
+
+/* ── SCANNING ANIMATION ───────────────────────────────────── */
+.scan-dots { display: inline-flex; gap: 3px; align-items: center; }
+.scan-dots span {
+  width: 4px; height: 4px;
+  background: var(--text-2);
+  border-radius: 50%;
+  animation: dotBlink 1.2s ease infinite;
+}
+.scan-dots span:nth-child(2) { animation-delay: .2s; }
+.scan-dots span:nth-child(3) { animation-delay: .4s; }
+
+@keyframes dotBlink {
+  0%, 80%, 100% { opacity: .2; transform: scale(.8); }
+  40% { opacity: 1; transform: scale(1); }
+}
+
+/* ── RESULTS SECTION ──────────────────────────────────────── */
+#results { display: none; }
+#results.show { display: block; }
+
+.results-header {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin: 28px 0 16px;
+  gap: 12px;
+}
+
+.results-title {
+  font-size: 12px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--text-3);
+  display: flex; align-items: center; gap: 8px;
+}
+
+.results-title::before {
+  content: '';
+  width: 20px; height: 1px;
+  background: var(--text-3);
+}
+
+.results-actions { display: flex; gap: 8px; }
+
+/* ── SECTION LABELS ───────────────────────────────────────── */
+.sec-label {
+  display: flex; align-items: center; gap: 10px;
+  margin: 20px 0 10px;
+}
+
+.sec-label-line {
+  flex: 1; height: 1px;
+  background: var(--border);
+}
+
+.sec-label-text {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  white-space: nowrap;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+}
+
+.sec-label-text.green  { color: var(--green);  border-color: var(--green-b);  background: var(--green-d); }
+.sec-label-text.orange { color: var(--orange); border-color: var(--orange-b); background: var(--orange-d); }
+.sec-label-text.purple { color: var(--purple); border-color: var(--purple-b); background: var(--purple-d); }
+
+/* ── OPPORTUNITY CARD ─────────────────────────────────────── */
+.opp-card {
+  border-radius: var(--r-md);
+  padding: 18px 18px 16px;
+  margin-bottom: 10px;
+  border: 1px solid;
+  position: relative;
+  overflow: hidden;
+  animation: oppIn .45s cubic-bezier(.16,1,.3,1) both;
+  cursor: default;
+  transition: transform .2s, border-color .2s;
+}
+
+.opp-card:last-child { margin-bottom: 0; }
+
+.opp-card:hover { transform: translateY(-2px); }
+
+.opp-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+}
+
+.opp-card.green  { background: var(--green-d);  border-color: var(--green-b);  }
+.opp-card.green::before  { background: var(--green); }
+
+.opp-card.orange { background: var(--orange-d); border-color: var(--orange-b); }
+.opp-card.orange::before { background: var(--orange); }
+
+.opp-card.purple { background: var(--purple-d); border-color: var(--purple-b); }
+.opp-card.purple::before { background: var(--purple); }
+
+@keyframes oppIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.opp-card:nth-child(1) { animation-delay: .04s; }
+.opp-card:nth-child(2) { animation-delay: .10s; }
+.opp-card:nth-child(3) { animation-delay: .16s; }
+
+.opp-top {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 10px;
+  margin-bottom: 8px;
+}
+
+.opp-title {
+  font-size: 14px; font-weight: 700;
+  letter-spacing: -.2px; line-height: 1.3;
+}
+
+.opp-card.green  .opp-title { color: var(--green); }
+.opp-card.orange .opp-title { color: var(--orange); }
+.opp-card.purple .opp-title { color: var(--purple); }
+
+.opp-tag {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 20px;
+  border: 1px solid; flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.opp-card.green  .opp-tag { color: var(--green);  border-color: var(--green-b);  background: rgba(31,190,133,.06); }
+.opp-card.orange .opp-tag { color: var(--orange); border-color: var(--orange-b); background: rgba(240,120,64,.06); }
+.opp-card.purple .opp-tag { color: var(--purple); border-color: var(--purple-b); background: rgba(155,110,243,.06); }
+
+.opp-desc {
+  font-size: 13px; color: var(--text-2); line-height: 1.7;
+}
+
+.opp-meta {
+  display: flex; gap: 8px;
+  flex-wrap: wrap; margin-top: 12px;
+}
+
+.opp-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; font-family: var(--mono);
+  color: var(--text-3); background: rgba(255,255,255,.04);
+  border: 1px solid var(--border); border-radius: 5px;
+  padding: 3px 8px;
+}
+
+/* ── SUMMARY BAR ──────────────────────────────────────────── */
+.summary-bar {
+  display: flex; align-items: center;
+  gap: 12px; flex-wrap: wrap;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 14px 18px;
+  margin-bottom: 14px;
+  animation: oppIn .4s ease both;
+}
+
+.sb-item { display: flex; align-items: center; gap: 6px; }
+.sb-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.sb-dot.green  { background: var(--green); }
+.sb-dot.orange { background: var(--orange); }
+.sb-dot.purple { background: var(--purple); }
+.sb-label { font-size: 11px; color: var(--text-2); }
+.sb-val   { font-family: var(--mono); font-size: 11px; color: var(--text); font-weight: 600; }
+.sb-sep   { width: 1px; height: 18px; background: var(--border); }
+
+/* ── DIVIDER ──────────────────────────────────────────────── */
+.div { height: 1px; background: var(--border); margin: 18px 0; }
+
+/* ── TOAST ────────────────────────────────────────────────── */
+.toast-layer {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%); z-index: 999;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 8px; pointer-events: none;
+}
+
+.toast {
+  background: var(--card2); border: 1px solid var(--border2);
+  border-radius: 12px; padding: 10px 18px;
+  font-size: 13px; font-weight: 500; color: var(--text);
+  white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,.55);
+  animation: tIn .2s ease;
+}
+
+.toast.out { animation: tOut .18s ease forwards; }
+
+@keyframes tIn  { from { opacity:0; transform:translateY(6px) scale(.96); } to { opacity:1; transform:none; } }
+@keyframes tOut { to   { opacity:0; transform:translateY(-4px) scale(.96); } }
+
+/* ── EMPTY STATE ──────────────────────────────────────────── */
+.empty-state {
+  text-align: center; padding: 40px 20px;
+  color: var(--text-3); font-size: 13px;
+}
+.empty-state .em { font-size: 26px; margin-bottom: 10px; }
+
+/* ── FOOTER ───────────────────────────────────────────────── */
+footer {
+  text-align: center; padding: 32px 0 12px;
+  color: var(--text-3); font-size: 12px;
+}
+footer a { color: var(--saffron); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* ── ENTRANCE ─────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:none; }
+}
+
+.hero   { animation: fadeUp .4s ease; }
+.card   { animation: fadeUp .4s ease both; }
+.card:nth-of-type(1) { animation-delay: .05s; }
+
+/* ── MOBILE ───────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .page { padding: 0 14px 80px; }
+  .card { padding: 18px; }
+  .summary-bar { gap: 8px; }
+  .sb-sep { display: none; }
+}
+</style>
+</head>
+<body>
+<main id="app">
+<div class="radar-ambient"></div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <header>
+    <a href="https://viadecide.com" class="logo">
+      <div class="logo-mark">Vd</div>
+      <span class="logo-name">Via<span>Decide</span></span>
+    </a>
+    <div class="hdr-actions">
+      <button class="btn btn-ghost" onclick="doReset()">↺ Reset</button>
+    </div>
+  </header>
+
+  <!-- ORB -->
+  <div class="orb-wrap">
+    <div class="orb-bar">
+      <svg class="orb-icon" width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4">
+        <circle cx="6" cy="6" r="4.5"/><path d="M10 10L13.5 13.5"/>
+      </svg>
+      <input type="text" class="orb-input" id="orbInput"
+             placeholder="Type command: scan, export, reset…"
+             autocomplete="off" autocorrect="off" spellcheck="false">
+      <button class="orb-btn" onclick="runOrb()">⏎ Run</button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">◉ Opportunity Radar</div>
+
+    <div class="radar-ring-wrap">
+      <div class="radar-ring"></div>
+      <div class="radar-ring"></div>
+      <div class="radar-ring"></div>
+      <div class="radar-sweep"></div>
+      <div class="radar-dot">◎</div>
+    </div>
+
+    <h1>Discover <em>hidden<br>opportunities</em></h1>
+    <p class="hero-sub">Map overlooked paths, risks, and asymmetric bets around your situation.</p>
+  </div>
+
+  <!-- INPUTS -->
+  <div class="card" id="inputCard">
+    <div class="card-lbl">Your Context</div>
+
+    <div class="fields-2col">
+      <div class="field">
+        <label class="field-lbl" for="fIndustry">
+          <span class="ficon">🏭</span> Industry
+        </label>
+        <input type="text" id="fIndustry" class="allow-select"
+               placeholder="e.g. Food & Beverage" maxlength="60">
+      </div>
+
+      <div class="field">
+        <label class="field-lbl" for="fCity">
+          <span class="ficon">🏙</span> City
+        </label>
+        <input type="text" id="fCity" class="allow-select"
+               placeholder="e.g. Austin, TX" maxlength="60">
+      </div>
+
+      <div class="field">
+        <label class="field-lbl" for="fSkill">
+          <span class="ficon">⚡</span> Primary Skill
+        </label>
+        <input type="text" id="fSkill" class="allow-select"
+               placeholder="e.g. Web Development" maxlength="60">
+      </div>
+
+      <div class="field">
+        <label class="field-lbl" for="fCapital">
+          <span class="ficon">💰</span> Capital Available
+        </label>
+        <input type="text" id="fCapital" class="allow-select"
+               placeholder="e.g. $500 or Low" maxlength="40">
+      </div>
+    </div>
+
+    <button class="btn btn-scan" id="scanBtn" onclick="runScan()">
+      ◉ Scan Opportunities
+    </button>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results">
+
+    <div class="results-header">
+      <div class="results-title">Radar Output</div>
+      <div class="results-actions">
+        <button class="btn btn-ghost" onclick="exportTXT()">⬇ Export</button>
+        <button class="btn btn-ghost" onclick="doReset()">↺ Rescan</button>
+      </div>
+    </div>
+
+    <!-- SUMMARY BAR -->
+    <div class="summary-bar" id="summaryBar">
+      <div class="sb-item">
+        <div class="sb-dot green"></div>
+        <span class="sb-label">Opportunities</span>
+        <span class="sb-val">3</span>
+      </div>
+      <div class="sb-sep"></div>
+      <div class="sb-item">
+        <div class="sb-dot orange"></div>
+        <span class="sb-label">Risky Paths</span>
+        <span class="sb-val">2</span>
+      </div>
+      <div class="sb-sep"></div>
+      <div class="sb-item">
+        <div class="sb-dot purple"></div>
+        <span class="sb-label">Asymmetric Bet</span>
+        <span class="sb-val">1</span>
+      </div>
+    </div>
+
+    <!-- OPPORTUNITIES -->
+    <div class="sec-label">
+      <div class="sec-label-line"></div>
+      <div class="sec-label-text green">✦ Overlooked Opportunities</div>
+      <div class="sec-label-line"></div>
+    </div>
+    <div id="oppList"></div>
+
+    <!-- RISKS -->
+    <div class="sec-label" style="margin-top:22px;">
+      <div class="sec-label-line"></div>
+      <div class="sec-label-text orange">⚡ Risky Paths</div>
+      <div class="sec-label-line"></div>
+    </div>
+    <div id="riskList"></div>
+
+    <!-- ASYMMETRIC BET -->
+    <div class="sec-label" style="margin-top:22px;">
+      <div class="sec-label-line"></div>
+      <div class="sec-label-text purple">◈ Asymmetric Bet</div>
+      <div class="sec-label-line"></div>
+    </div>
+    <div id="betCard"></div>
+
+  </div>
+
+</div>
+
+<footer>
+  <p>Built with <a href="https://viadecide.com">ViaDecide</a> · Opportunity Radar</p>
+</footer>
+
+<div class="toast-layer" id="toastLayer"></div>
+
+<script>
+/* ── STORAGE ────────────────────────────────────────────────── */
+const SK = 'vd:opportunity-radar:v1';
+let lastOutput = null;
+
+/* ── INIT ───────────────────────────────────────────────────── */
+(function() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SK) || 'null');
+    if (!s) return;
+    if (s.industry) document.getElementById('fIndustry').value = s.industry;
+    if (s.city)     document.getElementById('fCity').value     = s.city;
+    if (s.skill)    document.getElementById('fSkill').value    = s.skill;
+    if (s.capital)  document.getElementById('fCapital').value  = s.capital;
+  } catch(e) {}
+})();
+
+function saveInputs() {
+  try {
+    localStorage.setItem(SK, JSON.stringify({
+      industry: v('fIndustry'), city: v('fCity'),
+      skill: v('fSkill'),       capital: v('fCapital')
+    }));
+  } catch(e) {}
+}
+
+['fIndustry','fCity','fSkill','fCapital'].forEach(id => {
+  document.getElementById(id).addEventListener('input', saveInputs);
+});
+
+function v(id) { return document.getElementById(id).value.trim(); }
+
+/* ── LOGIC ENGINE ───────────────────────────────────────────── */
+function generateOpportunities(industry, city, skill, capital) {
+  const ind   = industry.toLowerCase();
+  const cty   = city.toLowerCase();
+  const skl   = skill.toLowerCase();
+  const cap   = capital.toLowerCase();
+
+  /* helpers */
+  const isLowCap   = /low|none|zero|0|broke|minimal|\$0|\$[1-9]\d{0,2}(?!\d)/.test(cap);
+  const isTech     = /tech|dev|code|program|software|web|data|ai|ml|design|digital|engineer|app/.test(skl);
+  const isMed      = /medic|health|nurs|doctor|therapy|dental|pharma|clinic/.test(ind + skl);
+  const isFood     = /food|restaurant|cafe|bake|catering|beverage|cook/.test(ind);
+  const isFinance  = /financ|invest|account|tax|bank|wealth/.test(ind + skl);
+  const isLargeCty = /new york|los angeles|chicago|houston|london|dubai|toronto|sydney|berlin|paris|nyc|la/.test(cty);
+  const isMedCty   = /austin|miami|seattle|denver|boston|portland|atlanta|nashville/.test(cty);
+  const isCreative = /design|market|content|video|photo|art|music|brand|write|copy/.test(skl);
+  const isLocal    = !isLargeCty && cty.length > 0;
+  const hasCap     = !isLowCap && /\$[1-9]|\d{4,}|high|good|solid|medium/.test(cap);
+  const industryLabel = industry || 'your industry';
+  const cityLabel     = city     || 'your city';
+  const skillLabel    = skill    || 'your skill';
+
+  /* ── OPPORTUNITIES ─────────────────────────────────────────── */
+  const opps = [];
+
+  if (isLowCap || true) {
+    // always include a service play
+    if (isTech) {
+      opps.push({
+        title: `${skillLabel} Micro-Agency`,
+        desc: `Offer a single high-value service (audits, fixes, builds) to SMBs in ${industryLabel}. One client at a time, zero overhead. Most devs ignore this because it feels small — that's why there's room.`,
+        chips: ['🏃 Low capital', '⚡ Fast to start', '📍 Remote-friendly']
+      });
+    } else if (isCreative) {
+      opps.push({
+        title: `Productized ${skillLabel} Service`,
+        desc: `Package your skill into a fixed-scope, fixed-price offer for ${industryLabel} businesses. Productized services convert 3× better than open-ended consulting and require no upfront capital.`,
+        chips: ['💡 No inventory', '⚡ Scalable', '📍 Any city']
+      });
+    } else if (isMed) {
+      opps.push({
+        title: `Healthcare Ops Consulting`,
+        desc: `Independent clinics and practices in ${cityLabel} are chronically understaffed on operations. A single consultant who improves scheduling or billing can charge $80–$150/hr without any capital.`,
+        chips: ['💰 High margin', '🏃 Low barrier', '📍 Local first']
+      });
+    } else {
+      opps.push({
+        title: `Niche ${industryLabel} Consultancy`,
+        desc: `Small businesses in ${cityLabel}'s ${industryLabel} sector rarely access expert guidance. A lean one-person advisory practice with a focused niche can command premium rates from day one.`,
+        chips: ['🏃 No capital needed', '⚡ High leverage', '📍 ' + (city || 'Location-flexible')]
+      });
+    }
+  }
+
+  if (isLocal || isMedCty) {
+    opps.push({
+      title: `Local ${industryLabel} Marketplace`,
+      desc: `${cityLabel} likely lacks a curated directory or marketplace for ${industryLabel}. Aggregating local providers and monetizing via listings or leads is a capital-light, community-driven play most outsiders miss.`,
+      chips: ['🌐 Digital asset', '📍 Local moat', '💡 Compound value']
+    });
+  } else if (isLargeCty) {
+    opps.push({
+      title: `Hyper-local ${industryLabel} Niche Platform`,
+      desc: `In a large market like ${cityLabel}, dominant platforms serve the masses. A focused vertical platform for a specific ${industryLabel} sub-niche can capture high-intent users that generalists ignore.`,
+      chips: ['🏙 City-scale', '🎯 Niche moat', '📈 Organic SEO']
+    });
+  } else {
+    opps.push({
+      title: `Online ${industryLabel} Niche Community`,
+      desc: `A paid community or newsletter targeting a specific sub-niche in ${industryLabel} has near-zero startup cost and builds a compounding audience asset. Geographic limits don't apply.`,
+      chips: ['🌐 Remote', '💡 Recurring revenue', '📍 Location-free']
+    });
+  }
+
+  if (isTech && isFood) {
+    opps.push({
+      title: `Restaurant Automation Consulting`,
+      desc: `Most food businesses in ${cityLabel} still run on manual processes. A tech-literate consultant who automates ordering, inventory, or staffing scheduling can charge $1,500–$5,000 per engagement with zero inventory.`,
+      chips: ['🤖 Tech + food', '💰 Premium pricing', '📍 City-wide']
+    });
+  } else if (isFinance) {
+    opps.push({
+      title: `Tax Strategy for ${industryLabel} SMBs`,
+      desc: `Most small ${industryLabel} businesses in ${cityLabel} overpay taxes due to generic advice. A specialist offering industry-specific tax planning stands out immediately and justifies 2–4× standard rates.`,
+      chips: ['💰 High value', '🎯 Defensible niche', '📈 Recurring']
+    });
+  } else if (isTech) {
+    opps.push({
+      title: `AI Workflow Automation for ${industryLabel}`,
+      desc: `${industryLabel} businesses are overwhelmed with repetitive tasks but don't know where to start with AI. You can productize a simple automation implementation — most competitors are still pitching theory, not delivery.`,
+      chips: ['🤖 AI-adjacent', '🏃 Low overhead', '📈 Growing demand']
+    });
+  } else {
+    opps.push({
+      title: `${industryLabel} Training & Certification Program`,
+      desc: `Professionals in ${industryLabel} pay for credentialing and upskilling, especially in ${cityLabel}'s job market. An online cohort or live workshop can be validated with a waitlist before any content is built.`,
+      chips: ['📚 Knowledge asset', '💡 Scalable', '🌐 Online-first']
+    });
+  }
+
+  /* ── RISKS ─────────────────────────────────────────────────── */
+  const risks = [];
+
+  if (hasCap) {
+    risks.push({
+      title: `Capital-Heavy ${industryLabel} Startup`,
+      desc: `Raising or deploying large capital in ${industryLabel} before proving unit economics is the classic trap. Most businesses in this space that fail do so at the scaling stage — after committing resources they can't recover.`,
+      chips: ['⚠️ High burn risk', '🕐 Long payback', '📉 Fragile model']
+    });
+  } else {
+    risks.push({
+      title: `Undercapitalized Scaling Attempt`,
+      desc: `Trying to grow a capital-intensive model in ${industryLabel} without adequate runway is a common mistake. It forces premature monetization, erodes quality, and often leads to collapse just before product-market fit.`,
+      chips: ['⚠️ Cash crunch risk', '📉 Growth ceiling', '🕐 Timing sensitivity']
+    });
+  }
+
+  risks.push({
+    title: `Late Entry into ${isLargeCty ? cityLabel + "'s" : 'a'} Saturated ${industryLabel} Market`,
+    desc: `Entering established ${industryLabel} categories without a clear distribution advantage or unique angle means competing on price. This compresses margins before you've built brand equity or customer loyalty.`,
+    chips: ['🔴 Low differentiation', '💸 Margin pressure', '🏁 Late mover']
+  });
+
+  /* ── ASYMMETRIC BET ─────────────────────────────────────────── */
+  let bet;
+
+  if (isTech && isLargeCty) {
+    bet = {
+      title: `Build a ${industryLabel} Intelligence Layer`,
+      desc: `Create a SaaS tool or dataset that indexes, tracks, or surfaces real-time intelligence specific to ${industryLabel} in ${cityLabel}. Niche data products are ignored by large players, yet serve high-paying buyers — funds, enterprises, researchers — who can't get this anywhere else. Downside: months of validation. Upside: defensible, recurring, acquirable.`,
+      chips: ['◈ High asymmetry', '🌐 Global reach', '💡 Data moat', '📈 Acquirable']
+    };
+  } else if (isCreative) {
+    bet = {
+      title: `${industryLabel} Media Brand as Distribution`,
+      desc: `Launch a niche content brand (newsletter, podcast, YouTube) targeting a specific micro-segment of ${industryLabel}. Boring to most — but a media brand that owns an audience becomes the highest-leverage distribution asset you can build. Monetize via sponsorships, courses, and eventually consulting or product. Compounding returns over 18–24 months.`,
+      chips: ['◈ High asymmetry', '📈 Compounding asset', '🌐 Remote', '💡 Audience moat']
+    };
+  } else if (isLocal) {
+    bet = {
+      title: `Become the Dominant ${industryLabel} Operator in ${cityLabel}`,
+      desc: `Most local markets have fragmented, low-quality operators. By systematizing quality in ${industryLabel} — through ops, marketing, and customer experience — you can become the default choice in ${cityLabel} within 12–18 months. Local dominance is durable, defensible, and harder for remote competitors to replicate. The upside is a sellable business.`,
+      chips: ['◈ High asymmetry', '📍 Local moat', '💰 Acquirable', '🏆 Winner-take-most']
+    };
+  } else {
+    bet = {
+      title: `Create the Defining Resource for ${industryLabel}`,
+      desc: `There is no canonical reference — newsletter, database, or community — that ${industryLabel} professionals trust globally. Being first to build that resource with ${skillLabel} gives you an audience-before-product advantage. Once you own attention in a vertical, every monetization path (courses, SaaS, consulting, sponsorships) becomes available.`,
+      chips: ['◈ High asymmetry', '🌐 Global TAM', '📈 Compounding', '💡 Category-defining']
+    };
+  }
+
+  return { opps, risks, bet };
+}
+
+/* ── SCAN ───────────────────────────────────────────────────── */
+let scanning = false;
+
+function runScan() {
+  if (scanning) return;
+
+  const industry = v('fIndustry');
+  const city     = v('fCity');
+  const skill    = v('fSkill');
+  const capital  = v('fCapital');
+
+  if (!industry && !skill) {
+    toast('Enter at least Industry or Skill to scan.', '⚠️'); return;
+  }
+
+  saveInputs();
+  scanning = true;
+  const btn = document.getElementById('scanBtn');
+  btn.innerHTML = `<span class="scan-dots"><span></span><span></span><span></span></span> Scanning…`;
+  btn.classList.add('scanning');
+  btn.disabled = true;
+
+  setTimeout(() => {
+    const out = generateOpportunities(industry, city, skill, capital);
+    lastOutput = { industry, city, skill, capital, ...out };
+    renderResults(out, { industry, city, skill, capital });
+
+    scanning = false;
+    btn.innerHTML = '◉ Scan Opportunities';
+    btn.classList.remove('scanning');
+    btn.disabled = false;
+
+    document.getElementById('results').classList.add('show');
+    setTimeout(() => {
+      document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+  }, 1100);
+}
+
+/* ── RENDER ─────────────────────────────────────────────────── */
+function renderResults(out, ctx) {
+  // Opportunities
+  document.getElementById('oppList').innerHTML =
+    out.opps.map((o, i) => oppCardHTML(o, 'green', 'Opportunity', i)).join('');
+
+  // Risks
+  document.getElementById('riskList').innerHTML =
+    out.risks.map((r, i) => oppCardHTML(r, 'orange', 'Risk', i)).join('');
+
+  // Bet
+  document.getElementById('betCard').innerHTML =
+    oppCardHTML(out.bet, 'purple', 'Asymmetric Bet', 0);
+}
+
+function oppCardHTML(item, color, tag, idx) {
+  const chips = item.chips.map(c => `<div class="opp-chip">${esc(c)}</div>`).join('');
+  return `
+    <div class="opp-card ${color}" style="animation-delay:${.04 + idx * .07}s">
+      <div class="opp-top">
+        <div class="opp-title">${esc(item.title)}</div>
+        <div class="opp-tag">${esc(tag)}</div>
+      </div>
+      <div class="opp-desc">${esc(item.desc)}</div>
+      <div class="opp-meta">${chips}</div>
+    </div>`;
+}
+
+/* ── EXPORT ─────────────────────────────────────────────────── */
+function exportTXT() {
+  if (!lastOutput) { toast('Run a scan first.', '⚠️'); return; }
+  const r = lastOutput;
+  let txt = `OPPORTUNITY RADAR REPORT\n${'─'.repeat(40)}\n`;
+  txt += `Date     : ${new Date().toLocaleDateString()}\n`;
+  txt += `Industry : ${r.industry || '—'}\n`;
+  txt += `City     : ${r.city || '—'}\n`;
+  txt += `Skill    : ${r.skill || '—'}\n`;
+  txt += `Capital  : ${r.capital || '—'}\n\n`;
+  txt += `OVERLOOKED OPPORTUNITIES\n${'─'.repeat(40)}\n`;
+  r.opps.forEach((o,i) => { txt += `${i+1}. ${o.title}\n   ${o.desc}\n\n`; });
+  txt += `RISKY PATHS\n${'─'.repeat(40)}\n`;
+  r.risks.forEach((r2,i) => { txt += `${i+1}. ${r2.title}\n   ${r2.desc}\n\n`; });
+  txt += `ASYMMETRIC BET\n${'─'.repeat(40)}\n`;
+  txt += `${r.bet.title}\n${r.bet.desc}\n`;
+
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' }));
+  a.download = 'opportunity-radar.txt';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  toast('Report exported!', '⬇');
+}
+
+/* ── RESET ──────────────────────────────────────────────────── */
+function doReset() {
+  ['fIndustry','fCity','fSkill','fCapital'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('results').classList.remove('show');
+  lastOutput = null;
+  try { localStorage.removeItem(SK); } catch(e) {}
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  toast('Reset. Ready for a new scan.', '↺');
+}
+
+/* ── ORB ────────────────────────────────────────────────────── */
+document.getElementById('orbInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); runOrb(); }
+  if (e.key === 'Escape') e.target.blur();
+});
+
+function runOrb() {
+  const raw = document.getElementById('orbInput').value.trim().toLowerCase();
+  document.getElementById('orbInput').value = '';
+  if (!raw) return;
+  if (/^scan|^run|^go/.test(raw))   { runScan();   return; }
+  if (/^reset|^clear|^new/.test(raw)) { doReset(); return; }
+  if (/^export/.test(raw))           { exportTXT(); return; }
+  if (/^help/.test(raw)) { toast('Commands: scan, reset, export', '💡'); return; }
+  toast(`Unknown command: "${raw}". Try "help".`, '⚠️');
+}
+
+/* ── TOAST ──────────────────────────────────────────────────── */
+function toast(msg, icon) {
+  const c = document.getElementById('toastLayer');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = (icon ? icon + '  ' : '') + msg;
+  c.appendChild(t);
+  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 200); }, 2600);
+}
+
+/* ── UTILS ──────────────────────────────────────────────────── */
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── KEYBOARD ───────────────────────────────────────────────── */
+document.addEventListener('keydown', e => {
+  if ((e.key==='Enter'||e.key===' ') && document.activeElement?.getAttribute('role')==='button') {
+    e.preventDefault(); document.activeElement.click();
+  }
+});
+
+/* ── TAP POLISH ─────────────────────────────────────────────── */
+(function() {
+  let touch = false;
+  document.addEventListener('touchstart', () => { touch = true; }, { passive: true });
+  document.addEventListener('mousedown',  () => { touch = false; }, { passive: true });
+  document.addEventListener('focusin', e => {
+    if (!touch) return;
+    const tag = e.target.tagName;
+    if (!['INPUT','TEXTAREA','SELECT'].includes(tag) && !e.target.isContentEditable)
+      e.target.style.outline = 'none';
+  }, true);
+  let lastTap = 0;
+  document.addEventListener('touchend', e => {
+    const now = Date.now();
+    if (now - lastTap < 300 && e.target.closest('button,[role="button"]')) e.preventDefault();
+    lastTap = now;
+  }, { passive: false });
+})();
+</script>
+</main>
+</body>
+</html>

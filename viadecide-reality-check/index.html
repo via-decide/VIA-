@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0b0e">
+<title>Reality Check Calculator · ViaDecide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── RESET + UX PATCH ─────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0; padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+}
+
+body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+input, textarea, select,
+[contenteditable="true"],
+.allow-select, pre, code {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible),
+[role="button"]:focus:not(:focus-visible),
+[tabindex]:focus:not(:focus-visible) { outline: none; }
+
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid rgba(255,153,51,.5);
+  outline-offset: 3px;
+}
+
+::selection { background: rgba(255,153,51,.18); color: inherit; }
+
+/* ── TOKENS ───────────────────────────────────────────────── */
+:root {
+  --bg:         #0a0b0e;
+  --surface:    #0f1015;
+  --card:       #141519;
+  --card2:      #191c23;
+  --border:     rgba(255,255,255,.06);
+  --border2:    rgba(255,255,255,.10);
+  --saffron:    #ff9933;
+  --saffron-d:  rgba(255,153,51,.12);
+  --saffron-g:  rgba(255,153,51,.30);
+  --amber:      #ffb347;
+  --teal:       #1fc8b0;
+  --teal-d:     rgba(31,200,176,.10);
+  --red:        #e05252;
+  --red-d:      rgba(224,82,82,.10);
+  --text:       #eceef5;
+  --text-2:     #878ca8;
+  --text-3:     #3e4260;
+  --font:       'Sora', sans-serif;
+  --mono:       'JetBrains Mono', monospace;
+  --r-sm:       8px;
+  --r-md:       14px;
+  --r-lg:       20px;
+  --r-xl:       28px;
+  --shadow:     0 8px 40px rgba(0,0,0,.55);
+}
+
+/* ── SCROLLBAR ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ── BASE ─────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* ── NOISE OVERLAY ────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  background-size: 180px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: .4;
+}
+
+/* ── LAYOUT ───────────────────────────────────────────────── */
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 18px 100px;
+}
+
+/* ── HEADER ───────────────────────────────────────────────── */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 0 0;
+  gap: 12px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.logo-mark {
+  width: 30px; height: 30px;
+  background: linear-gradient(135deg, var(--saffron), var(--amber));
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  color: #0a0b0e;
+  letter-spacing: -.3px;
+  flex-shrink: 0;
+}
+
+.logo-name {
+  font-size: 15px; font-weight: 600;
+  color: var(--text); letter-spacing: -.3px;
+}
+
+.logo-name span { color: var(--saffron); }
+
+.header-right { display: flex; gap: 8px; }
+
+/* ── ORB BAR ──────────────────────────────────────────────── */
+.orb-wrap { margin: 22px 0 0; }
+
+.orb-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-xl);
+  padding: 9px 14px;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.orb-bar:focus-within {
+  border-color: var(--saffron);
+  box-shadow: 0 0 0 3px var(--saffron-d);
+}
+
+.orb-svg { color: var(--text-3); flex-shrink: 0; }
+
+.orb-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+  letter-spacing: .02em;
+  min-width: 0;
+}
+
+.orb-input::placeholder { color: var(--text-3); }
+
+.orb-run {
+  background: none;
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 4px 11px;
+  font-size: 11px;
+  font-family: var(--font);
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .15s;
+}
+
+.orb-run:hover { border-color: var(--saffron); color: var(--saffron); }
+
+/* ── HERO ─────────────────────────────────────────────────── */
+.hero {
+  padding: 48px 0 36px;
+  text-align: center;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--saffron-d);
+  border: 1px solid rgba(255,153,51,.2);
+  border-radius: 20px;
+  padding: 5px 13px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--saffron);
+  margin-bottom: 22px;
+}
+
+.hero h1 {
+  font-size: clamp(26px, 6vw, 42px);
+  font-weight: 700;
+  letter-spacing: -.8px;
+  line-height: 1.15;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+
+.hero h1 em {
+  font-style: normal;
+  background: linear-gradient(90deg, var(--saffron) 0%, var(--amber) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: 15px;
+  color: var(--text-2);
+  max-width: 380px;
+  margin: 0 auto;
+  line-height: 1.75;
+}
+
+/* ── CARD ─────────────────────────────────────────────────── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 22px;
+  margin-bottom: 14px;
+  transition: border-color .2s;
+}
+
+.card:hover { border-color: var(--border2); }
+
+.card-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 18px;
+}
+
+/* ── FORM FIELDS ──────────────────────────────────────────── */
+.field { margin-bottom: 16px; }
+.field:last-child { margin-bottom: 0; }
+
+.field-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  margin-bottom: 7px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.field-hint {
+  font-size: 10px;
+  color: var(--text-3);
+  font-family: var(--mono);
+  margin-left: auto;
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 11px 14px;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+  border-color: var(--saffron);
+  box-shadow: 0 0 0 3px var(--saffron-d);
+}
+
+input::placeholder { color: var(--text-3); font-size: 13px; }
+
+/* Number fields row */
+.fields-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 400px) { .fields-row { grid-template-columns: 1fr; } }
+
+/* ── CHIP SELECT ──────────────────────────────────────────── */
+.chip-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip-opt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all .15s;
+  gap: 5px;
+}
+
+.chip-opt:hover { border-color: var(--saffron); color: var(--text); }
+
+.chip-opt.selected {
+  background: var(--saffron-d);
+  border-color: rgba(255,153,51,.45);
+  color: var(--saffron);
+}
+
+.chip-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity .15s;
+  flex-shrink: 0;
+}
+
+.chip-opt.selected .chip-dot { opacity: 1; }
+
+/* ── BUTTONS ──────────────────────────────────────────────── */
+button { cursor: pointer; font-family: var(--font); border: none; outline: none; transition: all .15s; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 22px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .01em;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--saffron) 0%, #e8880a 100%);
+  color: #0a0b0e;
+  box-shadow: 0 3px 16px rgba(255,153,51,.28);
+  width: 100%;
+  justify-content: center;
+  padding: 14px;
+  font-size: 14px;
+}
+
+.btn-primary:hover { filter: brightness(1.07); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(255,153,51,.35); }
+.btn-primary:active { transform: translateY(0); filter: brightness(.95); }
+
+.btn-ghost {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  color: var(--text-2);
+}
+
+.btn-ghost:hover { border-color: var(--text-2); color: var(--text); }
+
+.btn-sm { padding: 7px 14px; font-size: 12px; border-radius: 7px; }
+.btn-xs { padding: 5px 11px; font-size: 11px; border-radius: 6px; }
+
+/* ── DIVIDER ──────────────────────────────────────────────── */
+.div { height: 1px; background: var(--border); margin: 20px 0; }
+
+/* ── RESULTS ──────────────────────────────────────────────── */
+#resultSection { display: none; }
+#resultSection.show { display: block; }
+
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 500px) { .result-grid { grid-template-columns: 1fr; } }
+
+.result-card {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 18px 16px;
+  text-align: center;
+  transition: border-color .2s, transform .2s;
+  animation: cardPop .4s cubic-bezier(.16,1,.3,1) both;
+}
+
+.result-card:nth-child(1) { animation-delay: .05s; }
+.result-card:nth-child(2) { animation-delay: .12s; }
+.result-card:nth-child(3) { animation-delay: .19s; }
+
+@keyframes cardPop {
+  from { opacity: 0; transform: translateY(14px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.result-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+
+.result-card.cost-card   { border-color: rgba(255,153,51,.2); }
+.result-card.time-card   { border-color: rgba(31,200,176,.2); }
+.result-card.effort-card { border-color: rgba(224,82,82,.2); }
+
+.rc-icon {
+  font-size: 22px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.rc-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+
+.rc-value {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.cost-card .rc-value   { color: var(--saffron); }
+.time-card .rc-value   { color: var(--teal); }
+.effort-card .rc-value { color: var(--red); }
+
+.rc-sub {
+  font-size: 11px;
+  color: var(--text-3);
+  font-family: var(--mono);
+}
+
+/* ── EFFORT GAUGE ─────────────────────────────────────────── */
+.effort-gauge-wrap {
+  margin: 4px 0 0;
+}
+
+.gauge-track {
+  height: 4px;
+  background: var(--border2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.gauge-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width .7s cubic-bezier(.16,1,.3,1);
+}
+
+/* ── REALITY SUMMARY ──────────────────────────────────────── */
+.summary-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 22px;
+  margin-bottom: 14px;
+  animation: cardPop .4s .28s cubic-bezier(.16,1,.3,1) both;
+}
+
+.summary-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 12px;
+}
+
+.summary-verdict {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.verdict-icon {
+  font-size: 30px;
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.verdict-text h3 {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -.3px;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.verdict-text p {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+/* ── COMMITMENT METER ─────────────────────────────────────── */
+.meter-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.meter-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.meter-name {
+  font-size: 11px;
+  color: var(--text-3);
+  width: 96px;
+  flex-shrink: 0;
+}
+
+.meter-bar-bg {
+  flex: 1;
+  height: 5px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.meter-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width .7s cubic-bezier(.16,1,.3,1);
+}
+
+.meter-val {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-2);
+  width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── EXPORT / ACTIONS ─────────────────────────────────────── */
+.actions-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+/* ── TOAST ────────────────────────────────────────────────── */
+.toast-layer {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--card2);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+  animation: toastIn .2s ease;
+}
+
+.toast.out { animation: toastOut .18s ease forwards; }
+
+@keyframes toastIn { from { opacity:0; transform:translateY(6px) scale(.96); } to { opacity:1; transform:none; } }
+@keyframes toastOut { from { opacity:1; } to { opacity:0; transform:translateY(-4px) scale(.96); } }
+
+/* ── SEPARATOR LINE ───────────────────────────────────────── */
+.sep {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 24px 0;
+  color: var(--text-3);
+  font-size: 11px;
+}
+.sep::before, .sep::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* ── FOOTER ───────────────────────────────────────────────── */
+footer {
+  text-align: center;
+  padding: 32px 0 12px;
+  color: var(--text-3);
+  font-size: 12px;
+}
+
+footer a { color: var(--saffron); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* ── FADE-UP ENTRANCE ─────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card, .orb-wrap { animation: fadeUp .35s ease both; }
+.card:nth-of-type(1) { animation-delay: .05s; }
+.card:nth-of-type(2) { animation-delay: .1s; }
+.card:nth-of-type(3) { animation-delay: .15s; }
+</style>
+</head>
+<body>
+<main id="app">
+<div class="page">
+
+  <!-- HEADER -->
+  <header>
+    <a href="https://viadecide.com" class="logo">
+      <div class="logo-mark">Vd</div>
+      <span class="logo-name">Via<span>Decide</span></span>
+    </a>
+    <div class="header-right">
+      <button class="btn btn-ghost btn-sm" onclick="loadSample()">✦ Sample</button>
+      <button class="btn btn-ghost btn-sm" onclick="doReset()">↺ Reset</button>
+    </div>
+  </header>
+
+  <!-- ORB BAR -->
+  <div class="orb-wrap">
+    <div class="orb-bar">
+      <svg class="orb-svg" width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4">
+        <circle cx="6" cy="6" r="4.5"/><path d="M10 10L13.5 13.5"/>
+      </svg>
+      <input type="text" class="orb-input" id="orbInput"
+             placeholder="Type command: calculate, reset, export…"
+             autocomplete="off" autocorrect="off" spellcheck="false">
+      <button class="orb-run" onclick="runOrb()">⏎ Run</button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">
+      <span>◈</span> Reality Check Tool
+    </div>
+    <h1>The <em>True Cost</em><br>of your idea</h1>
+    <p class="hero-sub">Estimate real money, time, and effort before you commit to your next project.</p>
+  </div>
+
+  <!-- INPUT: PROJECT -->
+  <div class="card" id="inputCard">
+    <div class="card-label">Your Project</div>
+
+    <div class="field">
+      <div class="field-label">Project name</div>
+      <input type="text" id="projectName" class="allow-select"
+             placeholder="e.g. Starting a YouTube channel"
+             maxlength="80">
+    </div>
+
+    <div class="div"></div>
+
+    <div class="card-label">Financials &amp; Time</div>
+
+    <div class="fields-row">
+      <div class="field">
+        <div class="field-label">
+          Monthly budget
+          <span class="field-hint">$/mo</span>
+        </div>
+        <input type="number" id="monthlyMoney" class="allow-select"
+               placeholder="200" min="0" max="999999">
+      </div>
+      <div class="field">
+        <div class="field-label">
+          Hours per week
+          <span class="field-hint">hrs</span>
+        </div>
+        <input type="number" id="hoursPerWeek" class="allow-select"
+               placeholder="10" min="0" max="168">
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        Expected timeline
+        <span class="field-hint">months</span>
+      </div>
+      <input type="number" id="timeline" class="allow-select"
+             placeholder="6" min="1" max="120">
+    </div>
+  </div>
+
+  <!-- INPUT: DIFFICULTY -->
+  <div class="card">
+    <div class="card-label">Skill Difficulty</div>
+    <div class="chip-group" id="difficultyGroup" role="group" aria-label="Skill difficulty">
+      <div class="chip-opt" role="button" tabindex="0" data-val="1" onclick="selectChip('difficulty',this)">
+        <span class="chip-dot"></span> Easy
+      </div>
+      <div class="chip-opt selected" role="button" tabindex="0" data-val="1.5" onclick="selectChip('difficulty',this)">
+        <span class="chip-dot"></span> Medium
+      </div>
+      <div class="chip-opt" role="button" tabindex="0" data-val="2" onclick="selectChip('difficulty',this)">
+        <span class="chip-dot"></span> Hard
+      </div>
+    </div>
+
+    <div class="div"></div>
+
+    <div class="card-label">Consistency Required</div>
+    <div class="chip-group" id="consistencyGroup" role="group" aria-label="Consistency level">
+      <div class="chip-opt" role="button" tabindex="0" data-val="1" onclick="selectChip('consistency',this)">
+        <span class="chip-dot"></span> Low
+      </div>
+      <div class="chip-opt selected" role="button" tabindex="0" data-val="1.4" onclick="selectChip('consistency',this)">
+        <span class="chip-dot"></span> Medium
+      </div>
+      <div class="chip-opt" role="button" tabindex="0" data-val="1.8" onclick="selectChip('consistency',this)">
+        <span class="chip-dot"></span> High
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <button class="btn btn-primary" id="calcBtn" onclick="calculate()">
+    ◈ Run Reality Check
+  </button>
+
+  <!-- RESULTS -->
+  <div id="resultSection">
+
+    <div class="sep">Results</div>
+
+    <!-- 3-METRIC GRID -->
+    <div class="result-grid">
+
+      <div class="result-card cost-card">
+        <span class="rc-icon">💸</span>
+        <div class="rc-label">True Cost</div>
+        <div class="rc-value" id="rCost">—</div>
+        <div class="rc-sub" id="rCostSub">total spend</div>
+      </div>
+
+      <div class="result-card time-card">
+        <span class="rc-icon">⏳</span>
+        <div class="rc-label">Time Commitment</div>
+        <div class="rc-value" id="rTime">—</div>
+        <div class="rc-sub">hours total</div>
+      </div>
+
+      <div class="result-card effort-card">
+        <span class="rc-icon">🔥</span>
+        <div class="rc-label">Effort Score</div>
+        <div class="rc-value" id="rEffort">—</div>
+        <div class="rc-sub" id="rEffortLabel">out of 100</div>
+        <div class="effort-gauge-wrap">
+          <div class="gauge-track">
+            <div class="gauge-fill" id="effortGauge" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SUMMARY CARD -->
+    <div class="summary-card">
+      <div class="summary-eyebrow">Reality Summary</div>
+
+      <div class="summary-verdict">
+        <div class="verdict-icon" id="verdictIcon">🧩</div>
+        <div class="verdict-text">
+          <h3 id="verdictTitle">—</h3>
+          <p id="verdictBody">—</p>
+        </div>
+      </div>
+
+      <div class="div" style="margin: 16px 0 14px;"></div>
+
+      <div class="meter-row">
+        <div class="meter-item">
+          <div class="meter-name">Financial load</div>
+          <div class="meter-bar-bg">
+            <div class="meter-bar-fill" id="mFinance" style="width:0%; background:var(--saffron);"></div>
+          </div>
+          <div class="meter-val" id="mFinanceVal">—</div>
+        </div>
+        <div class="meter-item">
+          <div class="meter-name">Time load</div>
+          <div class="meter-bar-bg">
+            <div class="meter-bar-fill" id="mTime" style="width:0%; background:var(--teal);"></div>
+          </div>
+          <div class="meter-val" id="mTimeVal">—</div>
+        </div>
+        <div class="meter-item">
+          <div class="meter-name">Effort load</div>
+          <div class="meter-bar-bg">
+            <div class="meter-bar-fill" id="mEffort" style="width:0%; background:var(--red);"></div>
+          </div>
+          <div class="meter-val" id="mEffortVal">—</div>
+        </div>
+      </div>
+
+      <div class="actions-row">
+        <button class="btn btn-ghost btn-xs" onclick="exportTXT()">⬇ Export TXT</button>
+        <button class="btn btn-ghost btn-xs" onclick="exportJSON()">⬇ Export JSON</button>
+        <button class="btn btn-ghost btn-xs" onclick="doReset()">↺ Start Over</button>
+      </div>
+    </div>
+
+  </div><!-- /resultSection -->
+
+</div><!-- /page -->
+
+<footer>
+  <p>Built with <a href="https://viadecide.com">ViaDecide</a> · Reality Check Calculator</p>
+</footer>
+
+<div class="toast-layer" id="toastLayer"></div>
+
+<script>
+/* ── STATE ──────────────────────────────────────────────────── */
+const SK = 'vd:reality-check:v1';
+let chips = { difficulty: 1.5, consistency: 1.4 };
+let lastResult = null;
+
+/* ── INIT ───────────────────────────────────────────────────── */
+(function init() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SK) || 'null');
+    if (!s) return;
+    if (s.projectName)  document.getElementById('projectName').value  = s.projectName;
+    if (s.monthlyMoney) document.getElementById('monthlyMoney').value = s.monthlyMoney;
+    if (s.hoursPerWeek) document.getElementById('hoursPerWeek').value = s.hoursPerWeek;
+    if (s.timeline)     document.getElementById('timeline').value     = s.timeline;
+    if (s.difficulty)   { chips.difficulty   = s.difficulty;   syncChipUI('difficulty',   s.difficulty);   }
+    if (s.consistency)  { chips.consistency  = s.consistency;  syncChipUI('consistency',  s.consistency);  }
+  } catch(e) {}
+})();
+
+function syncChipUI(group, val) {
+  const id = group === 'difficulty' ? 'difficultyGroup' : 'consistencyGroup';
+  document.querySelectorAll(`#${id} .chip-opt`).forEach(c => {
+    c.classList.toggle('selected', parseFloat(c.dataset.val) === val);
+  });
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(SK, JSON.stringify({
+      projectName:  document.getElementById('projectName').value,
+      monthlyMoney: document.getElementById('monthlyMoney').value,
+      hoursPerWeek: document.getElementById('hoursPerWeek').value,
+      timeline:     document.getElementById('timeline').value,
+      difficulty:   chips.difficulty,
+      consistency:  chips.consistency
+    }));
+  } catch(e) {}
+}
+
+/* ── CHIP SELECTION ─────────────────────────────────────────── */
+function selectChip(group, el) {
+  const parent = el.parentElement;
+  parent.querySelectorAll('.chip-opt').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  chips[group] = parseFloat(el.dataset.val);
+  saveState();
+}
+
+/* ── CALCULATE ──────────────────────────────────────────────── */
+function calculate() {
+  const money    = parseFloat(document.getElementById('monthlyMoney').value) || 0;
+  const hours    = parseFloat(document.getElementById('hoursPerWeek').value) || 0;
+  const timeline = parseFloat(document.getElementById('timeline').value)     || 0;
+
+  if (!hours && !money && !timeline) {
+    toast('Fill in at least one field to continue.', '⚠️'); return;
+  }
+
+  if (timeline < 1) {
+    toast('Timeline must be at least 1 month.', '⚠️'); return;
+  }
+
+  saveState();
+
+  const trueCost    = money * timeline;
+  const timeTotal   = hours * timeline * 4;
+  const effortRaw   = hours * chips.difficulty * chips.consistency;
+  const effortScore = Math.min(Math.round(effortRaw * 2.2), 100);
+
+  lastResult = { trueCost, timeTotal, effortScore,
+    money, hours, timeline,
+    difficulty: chips.difficulty, consistency: chips.consistency,
+    project: document.getElementById('projectName').value.trim() };
+
+  renderResults(lastResult);
+  document.getElementById('resultSection').classList.add('show');
+
+  setTimeout(() => {
+    document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 80);
+}
+
+/* ── RENDER ─────────────────────────────────────────────────── */
+function renderResults(r) {
+  // Metric values
+  document.getElementById('rCost').textContent    = r.trueCost  ? '$' + fmt(r.trueCost)  : '$0';
+  document.getElementById('rCostSub').textContent = r.trueCost  ? 'over ' + r.timeline + ' months' : 'no spend';
+  document.getElementById('rTime').textContent    = r.timeTotal ? fmt(r.timeTotal)        : '0';
+  document.getElementById('rEffort').textContent  = r.effortScore;
+
+  // Effort gauge color
+  const gc = r.effortScore >= 70 ? 'var(--red)' : r.effortScore >= 40 ? 'var(--saffron)' : 'var(--teal)';
+  const gauge = document.getElementById('effortGauge');
+  gauge.style.background = gc;
+  setTimeout(() => { gauge.style.width = r.effortScore + '%'; }, 50);
+
+  // Verdict
+  const v = getVerdict(r);
+  document.getElementById('verdictIcon').textContent  = v.icon;
+  document.getElementById('verdictTitle').textContent = v.title;
+  document.getElementById('verdictBody').textContent  = v.body;
+
+  // Meters
+  const finPct    = Math.min((r.trueCost  / 20000) * 100, 100);
+  const timePct   = Math.min((r.timeTotal / 1000)  * 100, 100);
+  const effortPct = r.effortScore;
+
+  setTimeout(() => {
+    document.getElementById('mFinance').style.width  = finPct    + '%';
+    document.getElementById('mTime').style.width     = timePct   + '%';
+    document.getElementById('mEffort').style.width   = effortPct + '%';
+  }, 80);
+
+  document.getElementById('mFinanceVal').textContent = r.trueCost ? '$' + shortFmt(r.trueCost) : '$0';
+  document.getElementById('mTimeVal').textContent    = r.timeTotal ? shortFmt(r.timeTotal) + 'h' : '0h';
+  document.getElementById('mEffortVal').textContent  = r.effortScore + '/100';
+}
+
+function getVerdict(r) {
+  const e = r.effortScore;
+  const name = r.project || 'this project';
+
+  if (e >= 75) return {
+    icon: '🚨',
+    title: 'This is a serious commitment.',
+    body: `"${name}" demands high effort and consistent execution. The numbers suggest ${
+      r.trueCost > 0 ? 'a $' + fmt(r.trueCost) + ' financial commitment and ' : ''
+    }${r.timeTotal > 0 ? fmt(r.timeTotal) + ' hours of your life. ' : ''}Before you start, make sure this aligns with your actual capacity.`
+  };
+
+  if (e >= 45) return {
+    icon: '⚡',
+    title: 'Moderate but real effort required.',
+    body: `"${name}" is manageable — but don't underestimate it. ${
+      r.timeTotal > 0 ? fmt(r.timeTotal) + ' hours over ' + r.timeline + ' months ' : ''
+    }requires steady focus. Most people quit here. Build systems, not willpower.`
+  };
+
+  return {
+    icon: '✅',
+    title: 'This is approachable.',
+    body: `"${name}" has a reasonable effort profile. The effort score of ${e}/100 suggests you can start lean. ${
+      r.trueCost > 0 ? 'Budget $' + fmt(r.trueCost) + ' total and pace yourself.' : 'Low financial risk — just stay consistent.'
+    }`
+  };
+}
+
+/* ── SAMPLE ─────────────────────────────────────────────────── */
+function loadSample() {
+  document.getElementById('projectName').value  = 'Starting a YouTube channel';
+  document.getElementById('monthlyMoney').value = '150';
+  document.getElementById('hoursPerWeek').value = '12';
+  document.getElementById('timeline').value     = '8';
+
+  chips = { difficulty: 1.5, consistency: 1.8 };
+  syncChipUI('difficulty',  1.5);
+  syncChipUI('consistency', 1.8);
+  saveState();
+  toast('Sample loaded — hit Calculate!', '✦');
+}
+
+/* ── RESET ──────────────────────────────────────────────────── */
+function doReset() {
+  ['projectName','monthlyMoney','hoursPerWeek','timeline'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  chips = { difficulty: 1.5, consistency: 1.4 };
+  syncChipUI('difficulty',  1.5);
+  syncChipUI('consistency', 1.4);
+  document.getElementById('resultSection').classList.remove('show');
+  lastResult = null;
+  try { localStorage.removeItem(SK); } catch(e) {}
+  toast('Reset complete.', '↺');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── EXPORT ─────────────────────────────────────────────────── */
+function exportTXT() {
+  if (!lastResult) { toast('Run the check first.', '⚠️'); return; }
+  const r = lastResult;
+  const v = getVerdict(r);
+  const d = diffLabel(r.difficulty);
+  const c = consLabel(r.consistency);
+
+  let txt = `REALITY CHECK REPORT\n`;
+  txt += `${'─'.repeat(38)}\n`;
+  txt += `Project : ${r.project || 'Untitled'}\n`;
+  txt += `Date    : ${new Date().toLocaleDateString()}\n\n`;
+  txt += `INPUTS\n`;
+  txt += `Monthly Budget  : $${r.money}\n`;
+  txt += `Hours / Week    : ${r.hours}\n`;
+  txt += `Timeline        : ${r.timeline} months\n`;
+  txt += `Difficulty      : ${d}\n`;
+  txt += `Consistency     : ${c}\n\n`;
+  txt += `RESULTS\n`;
+  txt += `True Cost       : $${fmt(r.trueCost)}\n`;
+  txt += `Time Commitment : ${fmt(r.timeTotal)} hours\n`;
+  txt += `Effort Score    : ${r.effortScore}/100\n\n`;
+  txt += `VERDICT\n`;
+  txt += `${v.title}\n${v.body}\n`;
+
+  download('reality-check.txt', txt, 'text/plain');
+  toast('TXT exported!', '⬇');
+}
+
+function exportJSON() {
+  if (!lastResult) { toast('Run the check first.', '⚠️'); return; }
+  const r = lastResult;
+  const data = {
+    project: r.project || 'Untitled',
+    date: new Date().toISOString(),
+    inputs: {
+      monthlyBudget: r.money,
+      hoursPerWeek: r.hours,
+      timelineMonths: r.timeline,
+      difficulty: diffLabel(r.difficulty),
+      consistency: consLabel(r.consistency)
+    },
+    results: {
+      trueCost: r.trueCost,
+      totalHours: r.timeTotal,
+      effortScore: r.effortScore
+    },
+    verdict: getVerdict(r).title
+  };
+  download('reality-check.json', JSON.stringify(data, null, 2), 'application/json');
+  toast('JSON exported!', '⬇');
+}
+
+function download(name, content, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], { type }));
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+
+/* ── ORB ────────────────────────────────────────────────────── */
+document.getElementById('orbInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); runOrb(); }
+  if (e.key === 'Escape') e.target.blur();
+});
+
+function runOrb() {
+  const raw = document.getElementById('orbInput').value.trim().toLowerCase();
+  document.getElementById('orbInput').value = '';
+  if (!raw) return;
+
+  if (/^calc|^run|^check/.test(raw)) { calculate(); return; }
+  if (/^reset|^clear|^new/.test(raw)) { doReset(); return; }
+  if (/^export.*json/.test(raw)) { exportJSON(); return; }
+  if (/^export/.test(raw)) { exportTXT(); return; }
+  if (/^sample|^demo/.test(raw)) { loadSample(); return; }
+  if (/^help/.test(raw)) {
+    toast('Commands: calculate, reset, export, export json, sample', '💡'); return;
+  }
+  toast(`Unknown: "${raw}". Try "help".`, '⚠️');
+}
+
+/* ── HELPERS ────────────────────────────────────────────────── */
+function fmt(n) {
+  if (!n) return '0';
+  return n >= 1000 ? n.toLocaleString() : n.toString();
+}
+
+function shortFmt(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000)    return (n/1000).toFixed(1) + 'k';
+  return Math.round(n).toString();
+}
+
+function diffLabel(v) { return v===1?'Easy':v===2?'Hard':'Medium'; }
+function consLabel(v) { return v===1?'Low':v===1.8?'High':'Medium'; }
+
+/* ── TOAST ──────────────────────────────────────────────────── */
+function toast(msg, icon) {
+  const c = document.getElementById('toastLayer');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = (icon ? icon + '  ' : '') + msg;
+  c.appendChild(t);
+  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 200); }, 2600);
+}
+
+/* ── KEYBOARD SUPPORT ───────────────────────────────────────── */
+document.addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ' ') &&
+       document.activeElement?.getAttribute('role') === 'button') {
+    e.preventDefault();
+    document.activeElement.click();
+  }
+});
+
+/* ── TAP POLISH ─────────────────────────────────────────────── */
+(function() {
+  let touch = false;
+  document.addEventListener('touchstart', () => { touch = true; }, { passive: true });
+  document.addEventListener('mousedown',  () => { touch = false; }, { passive: true });
+  document.addEventListener('focusin', e => {
+    if (!touch) return;
+    const t = e.target.tagName;
+    if (!['INPUT','TEXTAREA','SELECT'].includes(t) && !e.target.isContentEditable) {
+      e.target.style.outline = 'none';
+    }
+  }, true);
+  let lastTap = 0;
+  document.addEventListener('touchend', e => {
+    const now = Date.now();
+    if (now - lastTap < 300 && e.target.closest('button,[role="button"]')) {
+      e.preventDefault();
+    }
+    lastTap = now;
+  }, { passive: false });
+})();
+
+/* ── AUTO-SAVE on input ─────────────────────────────────────── */
+['projectName','monthlyMoney','hoursPerWeek','timeline'].forEach(id => {
+  document.getElementById(id).addEventListener('input', saveState);
+});
+</script>
+</main>
+</body>
+</html>
