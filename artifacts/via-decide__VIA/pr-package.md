@@ -1,9 +1,9 @@
-Branch: simba/integrate-zayvora-axiom-for-decision-support
-Title: Integrate Zayvora Axiom for decision support.
+Branch: simba/create-outcome-calibration-tracker
+Title: Create outcome calibration tracker.
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Integrate Zayvora Axiom for decision support.
+- Goal: Create outcome calibration tracker.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
