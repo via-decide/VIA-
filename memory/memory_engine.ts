@@ -1,28 +1,35 @@
 import { ContextIndex } from './context_index';
-import { getRelevantDecisions } from './decision_memory';
-import { HistoryStore, type HistoryEntry } from './history_store';
+import { DecisionHistory, type DecisionRecord } from './decision_history';
+import { KnowledgeStore } from './knowledge_store';
 
 export class MemoryEngine {
-  private store = new HistoryStore();
-  private index = new ContextIndex();
+  private historyStore = new DecisionHistory();
+  private contextIndex = new ContextIndex();
+  private knowledgeStore = new KnowledgeStore();
 
-  remember(entry: Omit<HistoryEntry, 'createdAt'>): HistoryEntry {
-    const stored = this.store.add(entry);
-    this.index.index(stored);
+  remember(entry: Omit<DecisionRecord, 'createdAt'>): DecisionRecord {
+    const stored = this.historyStore.add(entry);
+    this.contextIndex.index(stored.id, stored.tags ?? []);
     return stored;
   }
 
-  recall(query: string, tag?: string): HistoryEntry[] {
-    const entries = this.store.list();
-    const relevant = getRelevantDecisions(entries, query);
+  recall(query: string, tag?: string): DecisionRecord[] {
+    const matches = this.historyStore.search(query);
+    if (!tag) return matches;
 
-    if (!tag) return relevant;
-
-    const taggedIds = new Set(this.index.findByTag(tag));
-    return relevant.filter((entry) => taggedIds.has(entry.id));
+    const ids = new Set(this.contextIndex.find(tag));
+    return matches.filter((record) => ids.has(record.id));
   }
 
-  history(): HistoryEntry[] {
-    return this.store.list();
+  history(): DecisionRecord[] {
+    return this.historyStore.list();
+  }
+
+  rememberKnowledge(key: string, value: string, source?: string) {
+    return this.knowledgeStore.put(key, value, source);
+  }
+
+  readKnowledge(key: string) {
+    return this.knowledgeStore.get(key);
   }
 }

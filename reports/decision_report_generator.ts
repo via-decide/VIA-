@@ -3,6 +3,8 @@ import { buildTradeoffVisualization, type TradeoffBar } from './tradeoff_visuali
 
 export interface DecisionReportInput {
   title: string;
+  problem: string;
+  options: string[];
   recommendation: string;
   reasoningSteps: string[];
   tradeoffs: TradeoffBar[];
@@ -11,6 +13,8 @@ export interface DecisionReportInput {
 export function generateDecisionReport(input: DecisionReportInput) {
   return {
     title: input.title,
+    problem: input.problem,
+    evaluatedOptions: input.options,
     recommendation: input.recommendation,
     reasoningSummary: buildReasoningSummary(input.reasoningSteps),
     tradeoffVisualization: buildTradeoffVisualization(input.tradeoffs),

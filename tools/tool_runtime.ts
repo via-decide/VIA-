@@ -16,4 +16,15 @@ export class ToolRuntime {
       await tool.activate();
     }
   }
+
+  async run(toolId: string, input?: unknown): Promise<unknown> {
+    const tool = this.registry.get(toolId);
+    if (!tool) {
+      throw new Error(`Tool not registered: ${toolId}`);
+    }
+    if (!tool.execute) {
+      throw new Error(`Tool has no runtime executor: ${toolId}`);
+    }
+    return await tool.execute(input);
+  }
 }

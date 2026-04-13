@@ -1,18 +1,22 @@
-import type { HistoryEntry } from './history_store';
-
 export class ContextIndex {
-  private byTag = new Map<string, Set<string>>();
+  private tags = new Map<string, Set<string>>();
 
-  index(entry: HistoryEntry): void {
-    for (const tag of entry.tags ?? []) {
-      if (!this.byTag.has(tag)) {
-        this.byTag.set(tag, new Set());
+  index(id: string, tags: string[]): void {
+    for (const tag of tags) {
+      if (!this.tags.has(tag)) {
+        this.tags.set(tag, new Set());
       }
-      this.byTag.get(tag)?.add(entry.id);
+      this.tags.get(tag)?.add(id);
     }
   }
 
-  findByTag(tag: string): string[] {
-    return [...(this.byTag.get(tag) ?? new Set())];
+  find(tag: string): string[] {
+    return [...(this.tags.get(tag) ?? new Set())];
+  }
+
+  remove(id: string): void {
+    for (const values of this.tags.values()) {
+      values.delete(id);
+    }
   }
 }
