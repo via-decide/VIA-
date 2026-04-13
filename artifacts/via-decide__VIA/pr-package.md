@@ -1,9 +1,9 @@
-Branch: simba/create-outcome-calibration-tracker
-Title: Create outcome calibration tracker.
+Branch: simba/create-portable-knowledge-base-exporter
+Title: Create portable knowledge base exporter.
 
 ## Summary
 - Repo orchestration task for via-decide/VIA
-- Goal: Create outcome calibration tracker.
+- Goal: Create portable knowledge base exporter.
 
 ## Testing Checklist
 - [ ] Run unit/integration tests
