@@ -3,4 +3,63 @@
 
 # Dev/test artifacts
 test-deployment.txt
+
+# Duplicate flat HTML aliases
+# These are byte-for-byte copies of folder/index.html files.
+# With cleanUrls:true in vercel.json, the folder version already
+# serves the same clean URL — these root files are never reached.
+#
+# Kept (no folder equivalent): index.html, 404.html, memory.html,
+# logichub.html, decide-service.html, SwipeOS-gandhidham.html,
+# viadecide.html, viaplatform.html, why-smbs-dont-need-saas.html
+AshokVerma.html
+CustomSwipeEngineForm.html
+DharamDaxini.html
+Engine Activation Request.html
+HexWars.html
+HivaLand.html
+Jalaram-food-court-rajkot.html
+ONDC-demo.html
+StudyOS.html
+SwipeOS.html
+The Decision Stack.html
+ViaGuide.html
+Viadecide-blogs.html
+alchemist.html
+app-generator.html
+brief.html
+cashback-claim.html
+cashback-rules.html
+cohort-apply-here.html
+contact.html
+decide-foodrajkot.html
+decision-brief-guide.html
+decision-brief.html
+decision-infrastructure-india.html
+discounts.html
+engine-activation-request.html
+engine-deals.html
+engine-license.html
+finance-dashboard-msme.html
+founder.html
 index-from-source.html
+indiaai-mission-2025.html
+interview-prep.html
+laptops-under-50000.html
+mars-rover-simulator-game.html
+memory-tool.html
+multi-source-research-explained.html
+ondc-for-bharat.html
+payment-register.html
+pricing.html
+privacy.html
+prompt-alchemy.html
+sales-dashboard.html
+student-research.html
+terms.html
+the-decision-stack.html
+viadecide-decision-matrix.html
+viadecide-opportunity-radar.html
+viadecide-public-beta.html
+viadecide-reality-check.html
+why-small-businesses-dont-need-saas.html
