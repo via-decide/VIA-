@@ -1,0 +1,6 @@
+# Backup files
+*.backup
+
+# Dev/test artifacts
+test-deployment.txt
+index-from-source.html

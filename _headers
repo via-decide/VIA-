@@ -8,16 +8,16 @@
   Cache-Control: no-store
 
 /*.html
-  Cache-Control: public, max-age=3600
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
 /assets/*
-  Cache-Control: public, max-age=86400
+  Cache-Control: public, max-age=2592000, immutable
 
 /js/*
-  Cache-Control: public, max-age=86400
+  Cache-Control: public, max-age=2592000, immutable
 
 /icons/*
-  Cache-Control: public, max-age=604800
+  Cache-Control: public, max-age=31536000, immutable
 
 /printbydd-store/*
   X-Frame-Options: SAMEORIGIN
