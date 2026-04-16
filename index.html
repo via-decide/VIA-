@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ViaDecide — Sovereign Kinetic OS</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
 <style>
   :root {
@@ -101,6 +102,7 @@
     text-transform: uppercase;
   }
   .nav-links a:hover { color: var(--gold); }
+  .mobile-menu-btn { display: none; background: transparent; border: none; font-size: 1.5rem; color: var(--gold); cursor: pointer; }
   .nav-cta {
     font-family: 'Space Mono', monospace;
     font-size: 0.72rem;
@@ -973,7 +975,14 @@
 
   @media (max-width: 900px) {
     nav { padding: 16px 24px; }
-    .nav-links { display: none; }
+    .nav-links { 
+      display: flex; margin:0; padding:0; flex-direction: column; position: absolute; top: 100%; right: 0; 
+      background: var(--surface); width: 220px; padding: 20px; text-align: left; 
+      transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+      border-left: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .nav-links.open { transform: translateX(0); }
+    .mobile-menu-btn { display: block; }
     section { padding: 72px 24px; }
     .hero { padding: 120px 24px 80px; }
     .hero-stats { display: none; }
@@ -1002,14 +1011,17 @@ Loading ViaDecide Engine...
 
 <nav>
   <a class="nav-logo" href="./index.html"><span>//</span> VIADECIDE</a>
-  <ul class="nav-links">
-    <li><a href="/zayvora">⚡ Zayvora</a></li>
-    <li><a href="#features">Tools</a></li>
-    <li><a href="#logichub">LogicHub</a></li>
-    <li><a href="#origin">Origin</a></li>
-    <li><a href="https://github.com/via-decide" target="_blank">GitHub</a></li>
-  </ul>
-  <a class="nav-cta" href="./contact.html">Contact</a>
+  <div style="display:flex; align-items:center; gap: 16px;">
+    <ul class="nav-links" id="navLinks">
+      <li><a href="/zayvora">⚡ Zayvora</a></li>
+      <li><a href="#features">Tools</a></li>
+      <li><a href="#logichub">LogicHub</a></li>
+      <li><a href="#origin">Origin</a></li>
+      <li><a href="https://github.com/via-decide" target="_blank">GitHub</a></li>
+    </ul>
+    <a class="nav-cta" href="./contact.html">Contact</a>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">≡</button>
+  </div>
 </nav>
 
 <section class="hero">
@@ -1223,7 +1235,7 @@ Loading ViaDecide Engine...
         <div id="camera">
             
             <section class="panel" data-z="0">
-                <img src="1000221390.jpg" alt="DH Logo" class="brand-logo magnetic" onerror="this.style.display='none'">
+                <img src="icon-192.png" alt="DH Logo" class="brand-logo magnetic" onerror="this.style.display='none'">
                 <div class="tag tag-saffron">Sol 1 // Epoch 2026</div>
                 <h1 class="hero-title">Visual Logic.<br><span class="gradient-text-saffron">Autonomous Core.</span></h1>
                 <p class="hero-subtitle">Zero dependencies. Pure spatial execution. Architect, verify, and deploy using the browser's native physical engine.</p>
@@ -1434,8 +1446,8 @@ Loading ViaDecide Engine...
         function update3DCamera() {
             currentScroll += (targetScroll - currentScroll) * 0.08;
             let zTranslation = currentScroll * scrollMultiplier;
-            camera.style.transform = `translateZ(${zTranslation}px)`;
-            depthReadout.innerText = Math.round(zTranslation).toString().padStart(5, '0');
+            if(camera) camera.style.transform = `translateZ(${zTranslation}px)`;
+            if(depthReadout) depthReadout.innerText = Math.round(zTranslation).toString().padStart(5, '0');
 
             // Hide panels that pass behind camera to prevent bugs
             panels.forEach(panel => {
@@ -1740,30 +1752,31 @@ Loading ViaDecide Engine...
 <script src="./scripts/bootstrap.js"></script>
 
 <script>
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
+(() => {
+  const cursorElem = document.getElementById('cursor');
+  const ringElem = document.getElementById('cursorRing');
   let mx = 0, my = 0, rx = 0, ry = 0;
   document.addEventListener('mousemove', e => {
     mx = e.clientX; my = e.clientY;
-    cursor.style.left = mx + 'px';
-    cursor.style.top = my + 'px';
+    cursorElem.style.left = mx + 'px';
+    cursorElem.style.top = my + 'px';
   });
   function animRing() {
     rx += (mx - rx) * 0.12;
     ry += (my - ry) * 0.12;
-    ring.style.left = rx + 'px';
-    ring.style.top = ry + 'px';
+    ringElem.style.left = rx + 'px';
+    ringElem.style.top = ry + 'px';
     requestAnimationFrame(animRing);
   }
   animRing();
   document.querySelectorAll('a, button, .node, .feature-card, .step, .metric').forEach(el => {
     el.addEventListener('mouseenter', () => {
-      ring.style.width = '54px'; ring.style.height = '54px';
-      ring.style.borderColor = 'rgba(232,184,75,0.8)';
+      ringElem.style.width = '54px'; ringElem.style.height = '54px';
+      ringElem.style.borderColor = 'rgba(232,184,75,0.8)';
     });
     el.addEventListener('mouseleave', () => {
-      ring.style.width = '36px'; ring.style.height = '36px';
-      ring.style.borderColor = 'rgba(232,184,75,0.5)';
+      ringElem.style.width = '36px'; ringElem.style.height = '36px';
+      ringElem.style.borderColor = 'rgba(232,184,75,0.5)';
     });
   });
 
@@ -1775,8 +1788,18 @@ Loading ViaDecide Engine...
         obs.unobserve(e.target);
       }
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.05, rootMargin: '50px' });
   reveals.forEach(r => obs.observe(r));
+
+  // Mobile menu toggle
+  const mobileBtn = document.getElementById('mobileMenuBtn');
+  const navLinks = document.getElementById('navLinks');
+  if (mobileBtn && navLinks) {
+    mobileBtn.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+    });
+  }
+})();
 </script>
 </body>
 </html>

@@ -1,11 +1,11 @@
-const CACHE = "viadecide-pwa-v3";
+const CACHE = "viadecide-pwa-v4";
 const CORE = [
   "/",
   "/index.html",
   "/manifest.json",
   "/router.js",
-  "/icons/icon-192.png",
-  "/icons/icon-512.png"
+  "/icon-192.png",
+  "/icon-512.png"
 ];
 
 // Install: cache core
