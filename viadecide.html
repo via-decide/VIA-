@@ -186,6 +186,32 @@ section{position:relative;z-index:10}
 
 /* ORB SUGGEST */
 #orb-suggest{position:absolute;left:0;right:0;top:100%;margin-top:10px;background:var(--bg2);border:1px solid var(--bd2);border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6);display:none;z-index:50}
+
+.hero-actions{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;margin-top:1.6rem;opacity:0;animation:riseUp .9s 1s forwards}
+.hero-action{display:inline-flex;align-items:center;gap:.45rem;padding:.55rem 1rem;border-radius:999px;border:1px solid var(--bd2);background:var(--sf);font-size:.74rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;transition:all .2s}
+.hero-action:hover{transform:translateY(-1px);border-color:rgba(34,180,160,.35);color:var(--teal2);background:rgba(34,180,160,.12)}
+
+#featured-path{padding:2.4rem 0 3rem;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);background:var(--bg1)}
+.featured-inner{max-width:1280px;margin:0 auto;padding:0 2.5rem;display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:1rem}
+.featured-card{background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:1.2rem}
+.featured-card h3{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:600;line-height:1.1;margin-bottom:.5rem}
+.featured-card p{font-size:.82rem;color:var(--tx2);line-height:1.7}
+.featured-chip{display:inline-flex;font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--teal2);margin-bottom:.5rem}
+.path-steps{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.8rem}
+.path-step{font-size:.64rem;color:var(--tx2);border:1px solid var(--bd);padding:.25rem .55rem;border-radius:999px}
+
+#onboarding-strip{padding:3.5rem 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);background:var(--bg1)}
+.onboarding-inner{max-width:1280px;margin:0 auto;padding:0 2.5rem;display:grid;grid-template-columns:1.2fr 1fr;gap:1.4rem;align-items:start}
+.onboarding-card{background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:1.25rem}
+.onboarding-card h3{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:500;line-height:1.08;margin-bottom:.6rem}
+.unlock-list{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-top:1rem}
+.unlock-item{font-size:.78rem;color:var(--tx2);border:1px solid var(--bd);border-radius:10px;padding:.55rem .65rem}
+
+.pt-meta{margin-top:.8rem;display:grid;gap:.3rem}
+.pt-meta div{font-size:.69rem;color:var(--tx2);line-height:1.5}
+.pt-meta strong{color:var(--tx);font-weight:600}
+
+@media(max-width:960px){.featured-inner,.onboarding-inner{grid-template-columns:1fr}.unlock-list{grid-template-columns:1fr}}
 .orb-row{padding:12px 14px;border-top:1px solid rgba(255,255,255,.05);cursor:pointer;transition:background .15s,color .15s}
 .orb-row:first-child{border-top:none}
 .orb-row:hover{background:rgba(255,255,255,.05)}
@@ -565,12 +591,18 @@ section{position:relative;z-index:10}
 
 
 <section id="hero">
-  <div class="hero-kicker"><div class="live-dot"></div>🇮🇳 India's Decision Engine · Built for Bharat</div>
+  <div class="hero-kicker"><div class="live-dot"></div>🇮🇳 VIA · Bharat-first feed ecosystem</div>
   <h1 class="hero-h1">
-    <div class="line"><span>Research</span></div>
-    <div class="line"><span><em>Smarter.</em></span></div>
-    <div class="line"><span>Choose Better.</span></div>
+    <div class="line"><span>VIA</span></div>
+    <div class="line"><span><em>Read, explore, and publish</em></span></div>
+    <div class="line"><span>in Bharat’s own feed.</span></div>
   </h1>
+  <div class="hero-actions">
+    <a class="hero-action" href="/ONDC-demo/index.html">Open Feed →</a>
+    <a class="hero-action" href="#cat-tools">Explore Tools →</a>
+    <a class="hero-action" href="/cohort-apply-here/index.html">Start Creator Setup →</a>
+    <a class="hero-action" href="/interview-prep/index.html">Open Bot →</a>
+  </div>
   <div class="orb-wrap" id="orb-wrap">
     <div class="orb-bar">
       <div class="orb-pulse-dot"></div>
@@ -589,6 +621,29 @@ section{position:relative;z-index:10}
     </div>
   </div>
   <div class="hero-scroll"><div class="scroll-mouse"></div>scroll to explore</div>
+</section>
+
+<section id="featured-path">
+  <div class="featured-inner">
+    <article class="featured-card">
+      <div class="featured-chip">Featured Story</div>
+      <h3>How Bharat creators are using VIA to publish faster.</h3>
+      <p>Read the latest ecosystem story, then jump directly into the feed, tools, and creator workflow without waiting for loading overlays.</p>
+      <div class="path-steps"><span class="path-step">1. Read story</span><span class="path-step">2. Open featured tool</span><span class="path-step">3. Save your progress</span></div>
+    </article>
+    <article class="featured-card">
+      <div class="featured-chip">Featured Tool</div>
+      <h3>Alchemist Decision Tool</h3>
+      <p>Turn messy choices into clear action plans. Best for creators, founders, and students evaluating high-impact decisions.</p>
+      <a class="hero-action" href="/alchemist/index.html" style="margin-top:.8rem">Open Tool Now →</a>
+    </article>
+    <article class="featured-card">
+      <div class="featured-chip">Explore Path</div>
+      <h3>Feed → Tools → Creator Setup</h3>
+      <p>Use this clear flow to understand VIA in under 5 seconds and immediately take a next step.</p>
+      <a class="hero-action" href="#onboarding-strip" style="margin-top:.8rem">See sign-in benefits →</a>
+    </article>
+  </div>
 </section>
 
 <div class="marquee-wrap">
@@ -1429,7 +1484,8 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){naviga
         <div class="pt-name">Interview Simulator</div>
         <div class="pt-desc">Practice job interviews with a chat-style simulator. Get realistic questions, instant feedback, and build confidence before the real thing.</div>
         <div class="pt-footer-row">
-          <button class="pt-card-cta" onclick="event.stopPropagation();openModal('/interview-prep/index.html','🎤','Interview Simulator')">Open Tool <span class="cta-arrow">→</span></button>
+          <button class="pt-card-cta" onclick="event.stopPropagation();openModal('/interview-prep/index.html','🎤','Interview Simulator')">Open now <span class="cta-arrow">→</span></button>
+          <div class="pt-meta"><div><strong>What it does:</strong> Simulates interview rounds with feedback.</div><div><strong>Who it is for:</strong> Students and job seekers.</div></div>
           <span class="pt-badge pt-badge--live">● Live</span>
         </div>
       </div>
@@ -1439,7 +1495,8 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){naviga
         <div class="pt-name">Sales Dashboard</div>
         <div class="pt-desc">Track revenue and visualize business performance. Upload a CSV or enter data manually for instant KPIs, pivot tables, and trend charts.</div>
         <div class="pt-footer-row">
-          <button class="pt-card-cta" onclick="event.stopPropagation();openModal('/sales-dashboard/index.html','📊','Sales Dashboard')">Open Tool <span class="cta-arrow">→</span></button>
+          <button class="pt-card-cta" onclick="event.stopPropagation();openModal('/sales-dashboard/index.html','📊','Sales Dashboard')">Open now <span class="cta-arrow">→</span></button>
+          <div class="pt-meta"><div><strong>What it does:</strong> Converts sales data into KPI dashboards.</div><div><strong>Who it is for:</strong> MSME owners and operators.</div></div>
           <span class="pt-badge pt-badge--live">● Live</span>
         </div>
       </div>
@@ -1449,7 +1506,8 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){naviga
         <div class="pt-name">Restaurant Website Builder</div>
         <div class="pt-desc">Create a restaurant website with menu, gallery and WhatsApp ordering. Live example: Jalaram Food Court, Rajkot.</div>
         <div class="pt-footer-row">
-          <button class="pt-card-cta" onclick="event.stopPropagation();openModal('/Jalaram-food-court-rajkot/index.html','🍽️','Restaurant Website Builder')">Open Tool <span class="cta-arrow">→</span></button>
+          <button class="pt-card-cta" onclick="event.stopPropagation();openModal('/Jalaram-food-court-rajkot/index.html','🍽️','Restaurant Website Builder')">Open now <span class="cta-arrow">→</span></button>
+          <div class="pt-meta"><div><strong>What it does:</strong> Publishes restaurant web pages with ordering links.</div><div><strong>Who it is for:</strong> Local food brands and cafes.</div></div>
           <span class="pt-badge pt-badge--live">● Live</span>
         </div>
       </div>
@@ -1459,7 +1517,8 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){naviga
         <div class="pt-name">Finance Dashboard</div>
         <div class="pt-desc">Visualize expenses, profit and cash flow with interactive P&amp;L charts, budget vs actual breakdowns, and Indian FY filters.</div>
         <div class="pt-footer-row">
-          <button class="pt-card-cta" onclick="event.stopPropagation();openModal('/finance-dashboard-msme/index.html','💰','Finance Dashboard')">Open Tool <span class="cta-arrow">→</span></button>
+          <button class="pt-card-cta" onclick="event.stopPropagation();openModal('/finance-dashboard-msme/index.html','💰','Finance Dashboard')">Open now <span class="cta-arrow">→</span></button>
+          <div class="pt-meta"><div><strong>What it does:</strong> Tracks profit, expenses, and cash flow.</div><div><strong>Who it is for:</strong> Founders and finance managers.</div></div>
           <span class="pt-badge pt-badge--live">● Live</span>
         </div>
       </div>
@@ -1469,7 +1528,8 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){naviga
         <div class="pt-name">Decision Tool</div>
         <div class="pt-desc">Compare products and evaluate buying decisions. AI-powered structured frameworks surface clarity from complex, high-stakes choices.</div>
         <div class="pt-footer-row">
-          <button class="pt-card-cta" onclick="event.stopPropagation();openModal('/alchemist/index.html','⚖️','Decision Tool')">Open Tool <span class="cta-arrow">→</span></button>
+          <button class="pt-card-cta" onclick="event.stopPropagation();openModal('/alchemist/index.html','⚖️','Decision Tool')">Open now <span class="cta-arrow">→</span></button>
+          <div class="pt-meta"><div><strong>What it does:</strong> Scores options with structured decision logic.</div><div><strong>Who it is for:</strong> Buyers, founders, and creators.</div></div>
           <span class="pt-badge pt-badge--live">● Live</span>
         </div>
       </div>
@@ -1479,7 +1539,8 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){naviga
         <div class="pt-name">Custom Web App Generator</div>
         <div class="pt-desc">Turn simple ideas into working web tools. Describe what you need and the engine generates a fully functional app on the spot.</div>
         <div class="pt-footer-row">
-          <button class="pt-card-cta" onclick="event.stopPropagation();openModal('/app-generator/index.html','🔧','Custom Web App Generator')">Open Tool <span class="cta-arrow">→</span></button>
+          <button class="pt-card-cta" onclick="event.stopPropagation();openModal('/app-generator/index.html','🔧','Custom Web App Generator')">Open now <span class="cta-arrow">→</span></button>
+          <div class="pt-meta"><div><strong>What it does:</strong> Generates working app starters from prompts.</div><div><strong>Who it is for:</strong> Makers launching MVPs quickly.</div></div>
           <span class="pt-badge pt-badge--live">● Live</span>
         </div>
       </div>
@@ -1499,6 +1560,33 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){naviga
   });
 })();
 </script>
+
+<section id="onboarding-strip">
+  <div class="onboarding-inner">
+    <div class="onboarding-card">
+      <div class="featured-chip">Onboarding clarity</div>
+      <h3>Sign in once. Keep every decision moving.</h3>
+      <p style="font-size:.85rem;color:var(--tx2)">Signing in turns VIA from a browse-only experience into a working decision workspace across feed + tools.</p>
+      <div class="unlock-list">
+        <div class="unlock-item"><strong>Save posts</strong> from the feed for later action.</div>
+        <div class="unlock-item"><strong>Keep progress</strong> inside active tools and workflows.</div>
+        <div class="unlock-item"><strong>Creator setup</strong> continues from where you left off.</div>
+        <div class="unlock-item"><strong>Profile growth</strong> tracks your tool usage and momentum.</div>
+      </div>
+    </div>
+    <div class="onboarding-card">
+      <div class="featured-chip">Next step</div>
+      <h3>Start now</h3>
+      <p style="font-size:.82rem;color:var(--tx2)">Open the feed, explore tools, then sign in to save and grow.</p>
+      <div style="display:grid;gap:.5rem;margin-top:.9rem">
+        <a class="hero-action" href="/ONDC-demo/index.html">Open Feed</a>
+        <a class="hero-action" href="#cat-tools">Explore Tools</a>
+        <a class="hero-action" href="/cohort-apply-here/index.html">Start Creator Setup</a>
+        <a class="hero-action" href="/memory/index.html">Save Progress</a>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section id="cat-tools" data-cat="tools" class="cat-section">
   <div class="cat-inner">
