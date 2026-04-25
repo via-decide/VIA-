@@ -1,63 +1,41 @@
-const CACHE = "viadecide-pwa-v4";
-const CORE = [
-  "/",
-  "/index.html",
-  "/manifest.json",
-  "/router.js",
-  "/icon-192.png",
-  "/icon-512.png"
+/* PrintByDD Store — Service Worker v1.0 */
+const CACHE = 'printbydd-v1';
+const OFFLINE_ASSETS = [
+  './',
+  './index.html',
+  './keychain.html',
+  './gifts-that-mean-more.html',
+  './1000217276.jpg',
+  './1000217292.png',
+  './1000217293.jpg',
+  './manifest.json',
 ];
 
-// Install: cache core
-self.addEventListener("install", (event) => {
-  event.waitUntil((async () => {
-    const cache = await caches.open(CACHE);
-    await cache.addAll(CORE);
-    self.skipWaiting();
-  })());
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE).then(c => c.addAll(OFFLINE_ASSETS)).then(() => self.skipWaiting())
+  );
 });
 
-// Activate: clean old caches
-self.addEventListener("activate", (event) => {
-  event.waitUntil((async () => {
-    const keys = await caches.keys();
-    await Promise.all(keys.map(k => (k !== CACHE ? caches.delete(k) : Promise.resolve())));
-    self.clients.claim();
-  })());
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
 });
 
-// Fetch: network-first for HTML, cache-first for assets
-self.addEventListener("fetch", (event) => {
-  const req = event.request;
-  const url = new URL(req.url);
-
-  // only same-origin
-  if (url.origin !== location.origin) return;
-
-  const isHTML = req.mode === "navigate" || (req.headers.get("accept") || "").includes("text/html");
-
-  if (isHTML) {
-    event.respondWith((async () => {
-      try {
-        const fresh = await fetch(req);
-        const cache = await caches.open(CACHE);
-        cache.put(req, fresh.clone());
-        return fresh;
-      } catch {
-        const cached = await caches.match(req);
-        return cached || caches.match("/index.html");
-      }
-    })());
-    return;
-  }
-
-  // assets: cache-first
-  event.respondWith((async () => {
-    const cached = await caches.match(req);
-    if (cached) return cached;
-    const fresh = await fetch(req);
-    const cache = await caches.open(CACHE);
-    cache.put(req, fresh.clone());
-    return fresh;
-  })());
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      if (cached) return cached;
+      return fetch(e.request).then(res => {
+        if (!res || res.status !== 200 || res.type === 'opaque') return res;
+        const clone = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+        return res;
+      }).catch(() => caches.match('./index.html'));
+    })
+  );
 });

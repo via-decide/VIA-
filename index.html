@@ -1,1805 +1,1006 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ViaDecide — Sovereign Kinetic OS</title>
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-<style>
-  :root {
-    --bg: #08080a;
-    --bg2: #0d0d10;
-    --surface: #111116;
-    --border: rgba(255,255,255,0.07);
-    --gold: #e8b84b;
-    --gold2: #f5d07a;
-    --saffron: #ff8c00;
-    --green: #138808;
-    --white: #f0ede8;
-    --muted: rgba(240,237,232,0.45);
-    --radius: 16px;
-  }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="PrintByDD" />
+  <meta name="description" content="Precision 3D manufacturing — smart accessories, architectural models, and gifts that mean more." />
+  <link rel="manifest" href="./manifest.json" />
+  <title>PrintByDD • Architectural 3D Manufacturing</title>
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <style>
+    /* ══════════════════════════════════════
+       GLOBAL UX PATCH — (A) + (B)
+       ── Kills iOS/Android blue tap flash
+       ── Pointer users: no outline
+          Keyboard users: :focus-visible ring
+       ── Text selection disabled site-wide;
+          re-enabled for all editable surfaces
+    ══════════════════════════════════════ */
 
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--white);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 16px;
-    line-height: 1.6;
-    overflow-x: hidden;
-    cursor: none;
-  }
-
-  .cursor {
-    position: fixed;
-    width: 10px; height: 10px;
-    background: var(--gold);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transition: transform 0.15s ease, opacity 0.2s;
-    transform: translate(-50%, -50%);
-  }
-  .cursor-ring {
-    position: fixed;
-    width: 36px; height: 36px;
-    border: 1px solid rgba(232,184,75,0.5);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transition: transform 0.35s ease, width 0.3s, height 0.3s, opacity 0.3s;
-    transform: translate(-50%, -50%);
-  }
-  body:hover .cursor { opacity: 1; }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0.5;
-  }
-
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 48px;
-    background: linear-gradient(to bottom, rgba(8,8,10,0.95), transparent);
-    backdrop-filter: blur(12px);
-  }
-  .nav-logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.1rem;
-    letter-spacing: 0.12em;
-    color: var(--white);
-    text-decoration: none;
-  }
-  .nav-logo span { color: var(--gold); }
-  .nav-links {
-    display: flex;
-    gap: 36px;
-    list-style: none;
-  }
-  .nav-links a {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s;
-    text-transform: uppercase;
-  }
-  .nav-links a:hover { color: var(--gold); }
-  .mobile-menu-btn { display: none; background: transparent; border: none; font-size: 1.5rem; color: var(--gold); cursor: pointer; }
-  .nav-cta {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    background: var(--gold);
-    color: #08080a;
-    padding: 10px 22px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 700;
-    transition: background 0.2s, transform 0.2s;
-  }
-  .nav-cta:hover { background: var(--gold2); transform: translateY(-1px); }
-
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 140px 48px 80px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero::after {
-    content: '';
-    position: absolute;
-    top: -200px; right: -200px;
-    width: 700px; height: 700px;
-    background: radial-gradient(circle, rgba(232,184,75,0.12) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    bottom: -100px; left: 10%;
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(19,136,8,0.07) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .hero-eyebrow {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 28px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.2s ease forwards;
-  }
-  .hero-eyebrow::before {
-    content: '';
-    width: 40px; height: 1px;
-    background: var(--gold);
-  }
-
-  .hero-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: clamp(3.2rem, 8vw, 7rem);
-    line-height: 1.0;
-    letter-spacing: -0.02em;
-    max-width: 900px;
-    margin-bottom: 32px;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.4s ease forwards;
-  }
-  .hero-title .accent { color: var(--gold); }
-  .hero-title .block-text {
-    display: block;
-    -webkit-text-stroke: 1px rgba(240,237,232,0.2);
-    color: transparent;
-  }
-
-  .hero-sub {
-    font-size: 1.15rem;
-    color: var(--muted);
-    max-width: 520px;
-    margin-bottom: 52px;
-    font-weight: 300;
-    line-height: 1.75;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.6s ease forwards;
-  }
-
-  .hero-actions {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.8s ease forwards;
-  }
-  .btn-primary {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 0.05em;
-    background: var(--gold);
-    color: #08080a;
-    padding: 16px 36px;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: all 0.25s;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .btn-primary:hover { background: var(--gold2); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(232,184,75,0.25); }
-  .btn-ghost {
-    font-family: 'Syne', sans-serif;
-    font-weight: 600;
-    font-size: 0.9rem;
-    letter-spacing: 0.05em;
-    border: 1px solid var(--border);
-    color: var(--white);
-    padding: 16px 36px;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: all 0.25s;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
-
-  .scroll-hint {
-    position: absolute;
-    bottom: 40px; left: 48px;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    color: var(--muted);
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    opacity: 0;
-    animation: fadeUp 1s 1.2s ease forwards;
-  }
-  .scroll-line {
-    width: 40px; height: 1px;
-    background: var(--muted);
-    position: relative;
-    overflow: hidden;
-  }
-  .scroll-line::after {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: var(--gold);
-    animation: lineScroll 2s 1.5s infinite;
-  }
-
-  .hero-stats {
-    position: absolute;
-    right: 48px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-    opacity: 0;
-    animation: fadeLeft 0.8s 1s ease forwards;
-  }
-  .stat-item {
-    text-align: right;
-  }
-  .stat-num {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 2rem;
-    color: var(--gold);
-    line-height: 1;
-  }
-  .stat-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.12em;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-top: 4px;
-  }
-  .stat-divider {
-    width: 100%; height: 1px;
-    background: var(--border);
-  }
-
-  .marquee-wrap {
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    overflow: hidden;
-    padding: 14px 0;
-    background: var(--bg2);
-  }
-  .marquee-track {
-    display: flex;
-    gap: 0;
-    animation: marquee 28s linear infinite;
-    white-space: nowrap;
-  }
-  .marquee-item {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    padding: 0 48px;
-    flex-shrink: 0;
-  }
-  .marquee-item span { color: var(--gold); }
-
-  section {
-    padding: 100px 48px;
-    position: relative;
-  }
-
-  .section-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .section-label::before {
-    content: '';
-    width: 24px; height: 1px;
-    background: var(--gold);
-  }
-
-  .section-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: clamp(2rem, 4vw, 3.5rem);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    max-width: 700px;
-    margin-bottom: 20px;
-  }
-  .section-sub {
-    font-size: 1rem;
-    color: var(--muted);
-    max-width: 500px;
-    font-weight: 300;
-    line-height: 1.75;
-    margin-bottom: 60px;
-  }
-
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-  .feature-card {
-    background: var(--surface);
-    padding: 48px 40px;
-    position: relative;
-    overflow: hidden;
-    transition: background 0.3s;
-    display: block;
-    color: inherit;
-    text-decoration: none;
-  }
-  .feature-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .feature-card:hover { background: #16161c; }
-  .feature-card:hover::before { opacity: 1; }
-
-  .feature-icon {
-    font-size: 2.2rem;
-    margin-bottom: 28px;
-    display: block;
-  }
-  .feature-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.15em;
-    color: var(--gold);
-    margin-bottom: 16px;
-    text-transform: uppercase;
-  }
-  .feature-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 1.3rem;
-    margin-bottom: 14px;
-    letter-spacing: -0.01em;
-  }
-  .feature-desc {
-    font-size: 0.9rem;
-    color: var(--muted);
-    line-height: 1.7;
-    font-weight: 300;
-  }
-  .feature-tag {
-    display: inline-block;
-    margin-top: 24px;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--gold);
-    border: 1px solid rgba(232,184,75,0.3);
-    padding: 4px 12px;
-    border-radius: 4px;
-  }
-
-  .logichub-section {
-    background: var(--bg2);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .logichub-inner {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: center;
-  }
-  .logichub-visual {
-    position: relative;
-    height: 440px;
-    border-radius: var(--radius);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .node-graph {
-    position: relative;
-    width: 320px;
-    height: 280px;
-  }
-  .node {
-    position: absolute;
-    width: 52px; height: 52px;
-    border-radius: 50%;
-    border: 2px solid var(--gold);
-    background: rgba(232,184,75,0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.55rem;
-    color: var(--gold);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    animation: nodePulse 3s ease-in-out infinite;
-    cursor: pointer;
-    transition: background 0.3s, transform 0.3s;
-    text-align: center;
-    line-height: 1.3;
-  }
-  .node:hover { background: rgba(232,184,75,0.2); transform: scale(1.1); }
-  .node.center { top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68px; height: 68px; font-size: 0.6rem; border-width: 2px; background: rgba(232,184,75,0.15); animation-delay: 0s; }
-  .node.n1 { top: 5%; left: 40%; animation-delay: 0.4s; }
-  .node.n2 { top: 30%; left: 5%; animation-delay: 0.8s; }
-  .node.n3 { top: 30%; right: 5%; animation-delay: 1.2s; }
-  .node.n4 { bottom: 10%; left: 15%; animation-delay: 1.6s; }
-  .node.n5 { bottom: 10%; right: 15%; animation-delay: 2s; }
-  .node-lines {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-  }
-  .node-lines line {
-    stroke: rgba(232,184,75,0.2);
-    stroke-width: 1;
-    stroke-dasharray: 4 4;
-    animation: dashFlow 3s linear infinite;
-  }
-  .logichub-badge {
-    position: absolute;
-    bottom: 24px; right: 24px;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.1em;
-    color: var(--gold);
-    text-transform: uppercase;
-    border: 1px solid rgba(232,184,75,0.3);
-    padding: 6px 14px;
-    border-radius: 4px;
-    background: rgba(8,8,10,0.8);
-  }
-
-  .logichub-content .section-title { max-width: 100%; }
-  .logichub-steps {
-    margin-top: 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  .step {
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-    padding: 20px;
-    border-radius: 10px;
-    border: 1px solid transparent;
-    transition: border-color 0.3s, background 0.3s;
-  }
-  .step:hover {
-    border-color: var(--border);
-    background: var(--surface);
-  }
-  .step-num {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.8rem;
-    color: rgba(232,184,75,0.25);
-    line-height: 1;
-    min-width: 40px;
-  }
-  .step-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    margin-bottom: 6px;
-  }
-  .step-desc {
-    font-size: 0.88rem;
-    color: var(--muted);
-    font-weight: 300;
-  }
-
-  .origin-section {
-    overflow: hidden;
-    position: relative;
-  }
-  .origin-section::before {
-    content: 'KUTCH';
-    position: absolute;
-    bottom: -20px; right: -20px;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: clamp(6rem, 16vw, 14rem);
-    color: rgba(240,237,232,0.02);
-    letter-spacing: -0.05em;
-    pointer-events: none;
-    white-space: nowrap;
-  }
-  .origin-grid {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 80px;
-    align-items: start;
-  }
-  .origin-quote {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: clamp(1.5rem, 3vw, 2.2rem);
-    line-height: 1.3;
-    letter-spacing: -0.02em;
-    color: var(--white);
-    margin-bottom: 32px;
-    position: relative;
-  }
-  .origin-quote::before {
-    content: '"';
-    position: absolute;
-    top: -30px; left: -10px;
-    font-size: 6rem;
-    color: rgba(232,184,75,0.15);
-    font-family: 'Syne', sans-serif;
-    line-height: 1;
-    pointer-events: none;
-  }
-  .origin-meta {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.72rem;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-  .origin-meta span { color: var(--gold); }
-
-  .origin-metrics {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-  .metric {
-    background: var(--surface);
-    padding: 32px 28px;
-    transition: background 0.3s;
-  }
-  .metric:hover { background: #16161c; }
-  .metric-value {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 2.2rem;
-    line-height: 1;
-    margin-bottom: 8px;
-    color: var(--gold);
-  }
-  .metric-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    line-height: 1.5;
-  }
-
-  .connect-section {
-    padding: 120px 48px;
-    background: var(--bg2);
-    border-top: 1px solid var(--border);
-    position: relative;
-    overflow: hidden;
-  }
-  .connect-section::before {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 700px; height: 400px;
-    background: radial-gradient(ellipse, rgba(232,184,75,0.07) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .connect-inner {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: center;
-    max-width: 1200px;
-  }
-  .connect-left .section-title {
-    max-width: 100%;
-    margin-bottom: 24px;
-  }
-  .connect-left p {
-    font-size: 1rem;
-    color: var(--muted);
-    font-weight: 300;
-    line-height: 1.8;
-    max-width: 440px;
-    margin-bottom: 20px;
-  }
-  .connect-honest {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    padding: 20px 24px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: var(--surface);
-    margin-top: 36px;
-    margin-bottom: 40px;
-  }
-  .connect-honest-icon {
-    font-size: 1.4rem;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-  .connect-honest-text {
-    font-size: 0.88rem;
-    color: var(--muted);
-    font-weight: 300;
-    line-height: 1.7;
-  }
-  .connect-honest-text strong {
-    color: var(--white);
-    font-weight: 500;
-    display: block;
-    margin-bottom: 4px;
-  }
-
-  .call-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 48px 44px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s;
-  }
-  .call-card:hover { border-color: rgba(232,184,75,0.3); }
-  .call-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent 10%, var(--gold) 50%, transparent 90%);
-    opacity: 0.6;
-  }
-  .call-avatar {
-    width: 56px; height: 56px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(232,184,75,0.25), rgba(232,184,75,0.05));
-    border: 2px solid rgba(232,184,75,0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.6rem;
-    margin-bottom: 24px;
-  }
-  .call-card-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 14px;
-  }
-  .call-card-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.7rem;
-    letter-spacing: -0.02em;
-    line-height: 1.15;
-    margin-bottom: 16px;
-  }
-  .call-card-desc {
-    font-size: 0.9rem;
-    color: var(--muted);
-    font-weight: 300;
-    line-height: 1.75;
-    margin-bottom: 32px;
-  }
-  .call-details {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 36px;
-  }
-  .call-detail {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.06em;
-    color: var(--muted);
-    text-transform: uppercase;
-  }
-  .call-detail-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--gold);
-    flex-shrink: 0;
-  }
-  .btn-call {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    letter-spacing: 0.02em;
-    background: var(--gold);
-    color: #08080a;
-    padding: 18px 28px;
-    border-radius: 10px;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-    transition: all 0.25s;
-    position: relative;
-    overflow: hidden;
-  }
-  .btn-call::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
-    opacity: 0;
-    transition: opacity 0.25s;
-  }
-  .btn-call:hover { background: var(--gold2); transform: translateY(-2px); box-shadow: 0 16px 40px rgba(232,184,75,0.3); }
-  .btn-call:hover::after { opacity: 1; }
-  .call-note {
-    text-align: center;
-    margin-top: 16px;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: rgba(240,237,232,0.25);
-  }
-
-  .cta-section {
-    text-align: center;
-    padding: 120px 48px;
-    background: var(--bg2);
-    border-top: 1px solid var(--border);
-    position: relative;
-    overflow: hidden;
-  }
-  .cta-section::before {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 600px; height: 300px;
-    background: radial-gradient(ellipse, rgba(232,184,75,0.1) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .cta-section .section-label {
-    justify-content: center;
-  }
-  .cta-section .section-label::before { display: none; }
-  .cta-section .section-title {
-    text-align: center;
-    margin: 0 auto 20px;
-  }
-  .cta-section .section-sub {
-    text-align: center;
-    margin: 0 auto 48px;
-  }
-  .cta-buttons {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  @media (max-width: 900px) {
-    .connect-inner { grid-template-columns: 1fr; gap: 48px; }
-  }
-
-  footer {
-    padding: 60px 48px 40px;
-    border-top: 1px solid var(--border);
-  }
-  .footer-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 48px;
-  }
-  .footer-brand .nav-logo {
-    display: block;
-    margin-bottom: 14px;
-    font-size: 1.2rem;
-  }
-  .footer-tagline {
-    font-size: 0.85rem;
-    color: var(--muted);
-    font-weight: 300;
-    max-width: 260px;
-    line-height: 1.6;
-  }
-  .footer-links {
-    display: flex;
-    gap: 60px;
-  }
-  .footer-col-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 0.8rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 20px;
-    color: var(--white);
-  }
-  .footer-col ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .footer-col a {
-    font-size: 0.85rem;
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s;
-    font-weight: 300;
-  }
-  .footer-col a:hover { color: var(--gold); }
-  .footer-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 32px;
-    border-top: 1px solid var(--border);
-  }
-  .footer-copy {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    text-transform: uppercase;
-  }
-  .bharat-badge {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--muted);
-  }
-  .flag-bar {
-    display: flex;
-    height: 10px;
-    width: 28px;
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .flag-bar span { flex: 1; }
-  .flag-bar .f1 { background: #ff8c00; }
-  .flag-bar .f2 { background: #ffffff; }
-  .flag-bar .f3 { background: #138808; }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeLeft {
-    from { opacity: 0; transform: translate(24px, -50%); }
-    to { opacity: 1; transform: translate(0, -50%); }
-  }
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-  @keyframes nodePulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(232,184,75,0); }
-    50% { box-shadow: 0 0 0 8px rgba(232,184,75,0.1); }
-  }
-  @keyframes dashFlow {
-    from { stroke-dashoffset: 0; }
-    to { stroke-dashoffset: -24; }
-  }
-  @keyframes lineScroll {
-    from { left: -100%; }
-    to { left: 100%; }
-  }
-
-  .reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  @media (max-width: 900px) {
-    nav { padding: 16px 24px; }
-    .nav-links { 
-      display: flex; margin:0; padding:0; flex-direction: column; position: absolute; top: 100%; right: 0; 
-      background: var(--surface); width: 220px; padding: 20px; text-align: left; 
-      transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-      border-left: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    /* (A) Kill tap highlight on every element */
+    *,
+    *::before,
+    *::after {
+      -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+      tap-highlight-color: rgba(0,0,0,0) !important;
+      -webkit-touch-callout: none;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    .nav-links.open { transform: translateX(0); }
-    .mobile-menu-btn { display: block; }
-    section { padding: 72px 24px; }
-    .hero { padding: 120px 24px 80px; }
-    .hero-stats { display: none; }
-    .features-grid { grid-template-columns: 1fr; }
-    .logichub-inner { grid-template-columns: 1fr; gap: 40px; }
-    .logichub-visual { height: 300px; }
-    .origin-grid { grid-template-columns: 1fr; gap: 48px; }
-    .footer-inner { flex-direction: column; gap: 40px; }
-    .footer-links { flex-direction: column; gap: 32px; }
-    .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
-    .nav-logo { font-size: 0.95rem; }
-    .nav-cta { padding: 8px 14px; font-size: 0.62rem; }
-    .call-card { padding: 32px 24px; }
-    .scroll-hint { display: none; }
-  }
-</style>
+
+    /* (A) Mouse/pointer users: suppress outline.
+           Keyboard users: keep :focus-visible ring. */
+    *:focus:not(:focus-visible) {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+    a:focus-visible,
+    button:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2px solid rgba(255,42,42,0.55) !important;
+      outline-offset: 2px !important;
+    }
+
+    /* (A) Subtle branded selection colour */
+    ::selection      { background: rgba(255,42,42,0.18); color: inherit; }
+    ::-moz-selection { background: rgba(255,42,42,0.18); color: inherit; }
+
+    /* (B) Disable text selection globally */
+    body {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+
+    /* (B) Re-enable for all editable / readable surfaces */
+    input,
+    textarea,
+    select,
+    [contenteditable],
+    [contenteditable="true"],
+    .allow-select,
+    pre,
+    code,
+    .code-input {
+      -webkit-user-select: text !important;
+      -moz-user-select: text !important;
+      user-select: text !important;
+      -webkit-touch-callout: default !important;
+    }
+
+    /* ══════════════════════════════════════
+       CORE DESIGN TOKENS & BASE
+    ══════════════════════════════════════ */
+    :root {
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --text-main: #111111;
+      --text-muted: #666666;
+      --accent: #ff2a2a;
+      --border: rgba(0,0,0,0.08);
+      --header-height: 70px;
+      --font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                    "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    html { overflow-x: hidden; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font-stack);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a { text-decoration: none; color: inherit; cursor: pointer; }
+    button { background: none; border: none; cursor: pointer; font: inherit; }
+
+    body.invert-mode { background-color: #050505; }
+    body.invert-mode #appWrapper,
+    body.invert-mode .site-header,
+    body.invert-mode .auth-modal,
+    body.invert-mode #install-banner,
+    body.invert-mode #ios-hint { filter: invert(1) hue-rotate(180deg); }
+    body.invert-mode img { filter: invert(1) hue-rotate(180deg); }
+
+    #appWrapper {
+      min-height: 100vh;
+      background-color: var(--bg);
+      transition: filter 0.3s ease;
+    }
+
+    /* ── PWA Install Banner ── */
+    #install-banner {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 3000;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(0,0,0,0.08);
+      padding: 14px 20px;
+      box-shadow: 0 -8px 32px rgba(0,0,0,0.10);
+    }
+    #install-banner.show { display: block; }
+    .ib-inner {
+      display: flex; align-items: center; gap: 14px;
+      max-width: 640px; margin: 0 auto;
+    }
+    .ib-icon {
+      width: 46px; height: 46px; border-radius: 12px;
+      background: var(--accent); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 900; flex-shrink: 0;
+      letter-spacing: -0.02em;
+    }
+    .ib-txt { flex: 1; }
+    .ib-txt strong { display: block; font-size: 14px; font-weight: 800; color: var(--text-main); }
+    .ib-txt span   { font-size: 12px; color: var(--text-muted); }
+    .ib-acts { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+    .ib-btn {
+      font-size: 13px; font-weight: 800; padding: 9px 18px;
+      background: var(--text-main); color: #fff; border-radius: 999px;
+      cursor: pointer; transition: background .2s; white-space: nowrap;
+      border: none;
+    }
+    .ib-btn:hover { background: var(--accent); }
+    .ib-dismiss {
+      background: none; border: none; color: var(--text-muted);
+      font-size: 20px; cursor: pointer; padding: 2px 6px;
+      line-height: 1; transition: color .2s;
+    }
+    .ib-dismiss:hover { color: var(--text-main); }
+
+    /* ── iOS Install Hint ── */
+    #ios-hint {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 3000;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(0,0,0,0.08);
+      padding: 20px 24px 28px;
+      text-align: center;
+      box-shadow: 0 -8px 32px rgba(0,0,0,0.12);
+    }
+    #ios-hint.show { display: block; }
+    #ios-hint strong { display: block; font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 6px; }
+    #ios-hint p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    #ios-hint p strong { display: inline; font-size: 13px; }
+    #ios-hint-close {
+      position: absolute; top: 12px; right: 16px;
+      background: none; border: none; color: var(--text-muted);
+      font-size: 20px; cursor: pointer;
+    }
+
+    /* ── Nav install button ── */
+    #install-pwa-nav {
+      display: none;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px; font-weight: 800;
+      color: var(--accent);
+      padding: 6px 14px;
+      border: 1.5px solid var(--accent);
+      border-radius: 999px;
+      background: transparent;
+      cursor: pointer;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+    #install-pwa-nav:hover { background: var(--accent); color: #fff; }
+
+    /* ── Install App Section ── */
+    #install-section {
+      max-width: 840px;
+      margin: 60px 0 0;
+      padding: 0;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+    }
+    .install-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      background: #f5f5f5;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px;
+    }
+    .install-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,42,42,0.08);
+      color: var(--accent);
+      font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 999px;
+      border: 1px solid rgba(255,42,42,0.20);
+      margin-bottom: 14px;
+    }
+    .install-badge::before {
+      content: ''; width: 7px; height: 7px;
+      background: var(--accent); border-radius: 50%;
+      animation: ibdot 1.8s infinite;
+    }
+    @keyframes ibdot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    #install-section h2 {
+      font-size: clamp(22px,3vw,34px);
+      font-weight: 900; letter-spacing: -0.03em;
+      margin-bottom: 10px; color: var(--text-main); line-height: 1.15;
+    }
+    #install-section h2 span { color: var(--accent); }
+    #install-section > .install-inner > .install-l > p {
+      font-size: 15px; color: var(--text-muted); margin-bottom: 22px; line-height: 1.65;
+    }
+    .install-steps { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .install-step  { display: flex; align-items: flex-start; gap: 12px; }
+    .step-n {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--text-main); color: #fff;
+      font-size: 12px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .step-txt { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+    .step-txt strong { color: var(--text-main); }
+    .install-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .install-r {
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 18px; padding: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.07);
+    }
+    .dev-tabs {
+      display: flex; gap: 4px;
+      background: #f0f0f0; padding: 4px;
+      border-radius: 10px; margin-bottom: 16px;
+      width: 100%;
+    }
+    .dev-tab {
+      flex: 1; padding: 7px 0; border-radius: 7px;
+      font-size: 12px; font-weight: 700; text-align: center;
+      color: var(--text-muted); cursor: pointer;
+      border: none; background: transparent;
+      transition: all .2s;
+    }
+    .dev-tab.active {
+      background: #fff; color: var(--text-main);
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+    .dev-inst { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+    .dev-inst strong { display: block; font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; }
+    .dev-inst ol { padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+    .dev-inst li strong { display: inline; }
+
+    @media (max-width: 620px) {
+      .install-inner { grid-template-columns: 1fr; gap: 24px; padding: 24px 20px; }
+      .install-btns  { flex-direction: column; }
+      .install-btns button { width: 100%; text-align: center; }
+    }
+
+    /* ── Global Header ── */
+    .site-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-height);
+      background: rgba(250,250,250,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5vw;
+      z-index: 1000;
+      transition: filter 0.3s ease;
+      overflow: hidden;
+    }
+    .site-header .logo {
+      font-size: 20px; font-weight: 900;
+      letter-spacing: -0.03em; color: var(--text-main);
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .site-header nav {
+      display: flex; align-items: center; gap: 24px;
+      overflow: hidden; min-width: 0;
+    }
+    .site-header nav a {
+      font-size: 13px; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.05em;
+      transition: color 0.2s; white-space: nowrap; flex-shrink: 0;
+    }
+    .site-header nav a:hover,
+    .site-header nav a.active { color: var(--accent); }
+
+    .btn-icon {
+      font-weight: 900; color: var(--accent); font-size: 18px;
+      padding: 4px 10px; border: 1px solid var(--border);
+      border-radius: 999px; transition: transform 0.2s;
+      line-height: 1; flex-shrink: 0;
+    }
+    .btn-icon:active { transform: scale(0.92); }
+
+    /* ── Layout ── */
+    main {
+      padding-top: calc(var(--header-height) + 56px);
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-left: 5vw;
+      padding-right: 5vw;
+      padding-bottom: 100px;
+    }
+
+    /* ── Hero ── */
+    .hero { max-width: 840px; margin-bottom: 64px; }
+    .hero h1 {
+      font-size: clamp(40px,6vw,72px);
+      font-weight: 900; line-height: 1.05;
+      letter-spacing: -0.04em; margin-bottom: 18px; color: var(--text-main);
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      font-size: clamp(18px,2vw,22px);
+      color: var(--text-muted); line-height: 1.5;
+      max-width: 640px; margin-bottom: 32px;
+    }
+
+    .portal-cta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+    .btn-primary {
+      background: var(--text-main); color: var(--surface);
+      font-weight: 800; font-size: 14px;
+      padding: 14px 24px; border-radius: 999px;
+      letter-spacing: 0.02em;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .btn-primary:hover  { background: var(--accent); }
+    .btn-primary:active { transform: scale(0.97); }
+
+    .btn-secondary {
+      background: transparent; color: var(--text-main);
+      font-weight: 800; font-size: 14px;
+      padding: 14px 24px; border-radius: 999px;
+      border: 1px solid var(--border);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .btn-secondary:hover  { border-color: var(--text-main); }
+    .btn-secondary:active { transform: scale(0.97); }
+
+    /* ── Auth Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 2000;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .auth-modal {
+      background: var(--surface); width: 90%; max-width: 400px;
+      border-radius: 20px; padding: 32px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.15);
+      border: 1px solid var(--border);
+      transform: translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .modal-overlay.active .auth-modal { transform: translateY(0); }
+    .auth-modal h2 { font-size: 22px; font-weight: 900; margin-bottom: 8px; color: var(--text-main); letter-spacing: -0.02em; }
+    .auth-modal p  { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; }
+    .code-input {
+      width: 100%; background: var(--bg);
+      border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px; font-size: 20px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      letter-spacing: 3px; text-align: center; text-transform: uppercase;
+      color: var(--text-main); outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      margin-bottom: 16px;
+    }
+    .code-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,42,42,0.1); }
+    .auth-error { color: var(--accent); font-size: 12px; font-weight: 700; text-align: center; margin-bottom: 16px; display: none; }
+    .modal-actions { display: flex; gap: 12px; }
+    .modal-actions button { flex: 1; }
+
+    /* ── Section header ── */
+    .section-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 26px;
+      border-bottom: 1px solid var(--border); padding-bottom: 14px;
+    }
+    .section-header h2 {
+      font-size: 14px; text-transform: uppercase;
+      letter-spacing: 0.1em; font-weight: 800; color: var(--text-muted);
+    }
+
+    /* ── Grid ── */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap: 40px; }
+
+    /* ── Cards — native <a> tags, keyboard-accessible by default ── */
+    .card { display: flex; flex-direction: column; position: relative; cursor: pointer; }
+    .card:hover .card-image-wrap,
+    .card:hover .carousel-container {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.10);
+    }
+    .card-image-wrap {
+      width: 100%; aspect-ratio: 4/3;
+      border-radius: 14px; margin-bottom: 20px;
+      overflow: hidden; background: #f0f0f0;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.06);
+      transition: transform 0.4s cubic-bezier(0.2,0.8,0.2,1),
+                  box-shadow 0.4s cubic-bezier(0.2,0.8,0.2,1);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-image-wrap img {
+      width: 100%; height: 100%;
+      object-fit: contain; object-position: center; display: block;
+    }
+
+    /* ── Carousel ── */
+    .carousel-container {
+      width: 100%; aspect-ratio: 4/3;
+      border-radius: 14px; margin-bottom: 20px;
+      overflow: hidden; position: relative; background: #f0f0f0;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.06);
+      transition: transform 0.4s cubic-bezier(0.2,0.8,0.2,1),
+                  box-shadow 0.4s cubic-bezier(0.2,0.8,0.2,1);
+    }
+    .carousel-track {
+      display: flex; width: 100%; height: 100%;
+      overflow-x: auto; scroll-snap-type: x mandatory;
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    .carousel-track::-webkit-scrollbar { display: none; }
+    .carousel-track img {
+      flex: 0 0 100%; width: 100%; height: 100%;
+      object-fit: contain; object-position: center;
+      background: #f0f0f0; scroll-snap-align: center; display: block;
+    }
+    .swipe-hint {
+      position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.60); backdrop-filter: blur(4px);
+      color: #fff; font-size: 10px; font-weight: 700;
+      padding: 6px 14px; border-radius: 999px;
+      pointer-events: none; letter-spacing: 0.1em;
+      text-transform: uppercase; white-space: nowrap;
+    }
+
+    .card .kicker {
+      font-size: 11px; font-weight: 800; color: var(--accent);
+      letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .card h3 {
+      font-size: 24px; font-weight: 800; line-height: 1.2;
+      letter-spacing: -0.02em; margin-bottom: 12px; color: var(--text-main);
+    }
+    .card p {
+      font-size: 15px; color: var(--text-muted);
+      line-height: 1.6; margin-bottom: 24px; flex-grow: 1;
+    }
+    .card-link {
+      font-size: 13px; font-weight: 800; color: var(--text-main);
+      text-transform: uppercase; letter-spacing: 0.05em;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .card-link::after { content: '→'; transition: transform 0.2s; color: var(--accent); }
+    .card:hover .card-link::after { transform: translateX(4px); }
+
+    /* ── Mobile ── */
+    @media (max-width: 720px) {
+      .site-header { padding: 0 4vw; gap: 8px; }
+      .site-header nav { gap: 10px; }
+      .site-header nav a { font-size: 12px; }
+      .btn-icon { padding: 4px 9px; font-size: 16px; }
+      #navInsta { display: none !important; }
+      #install-pwa-nav { display: none !important; }
+      .grid { grid-template-columns: 1fr; gap: 28px; }
+      main { padding-left: 4vw; padding-right: 4vw; }
+      .portal-cta { flex-direction: column; align-items: stretch; }
+      .portal-cta button { width: 100%; text-align: center; }
+      #install-section { padding: 24px 20px; }
+      .install-btns { flex-direction: column; }
+      .install-btns button { width: 100%; text-align: center; }
+    }
+
+    @media (max-width: 420px) {
+      #navBlog { display: none; }
+    }
+  </style>
 </head>
+
 <body>
 
-<div id="app">
-Loading ViaDecide Engine...
-</div>
+  <!--
+    ══════════════════════════════════════
+    JS TAP-HIGHLIGHT POLISH — (C)
+    Inline, before paint. Intercepts focus
+    events fired by touch on non-input
+    elements and immediately blurs them,
+    preventing iOS's lingering focus ring.
+    • Passive listeners — no scroll impact.
+    • Click fires before blur (rAF defer).
+    ══════════════════════════════════════
+  -->
+  <script>
+  (function () {
+    var touchActive = false;
+    document.addEventListener('touchstart', function () {
+      touchActive = true;
+    }, { passive: true });
+    document.addEventListener('touchend', function () {
+      setTimeout(function () { touchActive = false; }, 400);
+    }, { passive: true });
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+    document.addEventListener('focus', function (e) {
+      if (!touchActive) return;
+      var tag = (e.target.tagName || '').toUpperCase();
+      if (
+        tag === 'INPUT' || tag === 'TEXTAREA' ||
+        tag === 'SELECT' || e.target.isContentEditable
+      ) return;
+      requestAnimationFrame(function () {
+        if (document.activeElement === e.target) e.target.blur();
+      });
+    }, true);
+  })();
+  </script>
 
-<nav>
-  <a class="nav-logo" href="./index.html"><span>//</span> VIADECIDE</a>
-  <div style="display:flex; align-items:center; gap: 16px;">
-    <ul class="nav-links" id="navLinks">
-      <li><a href="/zayvora">⚡ Zayvora</a></li>
-      <li><a href="#features">Tools</a></li>
-      <li><a href="#logichub">LogicHub</a></li>
-      <li><a href="#origin">Origin</a></li>
-      <li><a href="https://github.com/via-decide" target="_blank">GitHub</a></li>
-    </ul>
-    <a class="nav-cta" href="./contact.html">Contact</a>
-    <button class="mobile-menu-btn" id="mobileMenuBtn">≡</button>
-  </div>
-</nav>
+  <!-- ══════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════ -->
+  <header class="site-header">
+    <a id="navLogo" href="/" class="logo">PrintByDD</a>
+    <nav>
+      <a id="navHome"     href="/"                class="active">Home</a>
+      <a id="navProducts" href="/products">Products</a>
+      <a id="navBlog"     href="/printbydd/gifts">Blog</a>
 
-<section class="hero">
-  <div class="hero-eyebrow">Sovereign Kinetic OS &nbsp;·&nbsp; Bharat-First</div>
-  <h1 class="hero-title">
-    Decide.<br/>
-    <span class="accent">Engineer.</span><br/>
-    <span class="block-text">Dominate.</span>
-  </h1>
-  <p class="hero-sub">
-    A digital ecosystem built for decision engineering, spatial mathematics, and tactile sovereign tools. Architecture that thinks before you build.
-  </p>
-  <div class="hero-actions">
-    <a class="btn-primary" href="./viadecide.html">
-    <a class="btn-primary" href="./logichub.html">
-      Launch Engine <span>→</span>
-    </a>
-    <a class="btn-ghost" href="./logichub.html">
-      Explore LogicHub
-    </a>
-  </div>
-  <div class="scroll-hint">
-    <div class="scroll-line"></div>
-    Scroll to explore
-  </div>
-  <div class="hero-stats">
-    <div class="stat-item">
-      <div class="stat-num">58</div>
-      <div class="stat-label">Decision Tools</div>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat-item">
-      <div class="stat-num">81%</div>
-      <div class="stat-label">Token Reduction</div>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat-item">
-      <div class="stat-num">₹10K</div>
-      <div class="stat-label">Origin Investment</div>
-    </div>
-  </div>
-</section>
-
-<div class="marquee-wrap">
-  <div class="marquee-track">
-    <span class="marquee-item">Decision Logic <span>✦</span></span>
-    <span class="marquee-item">Spatial OS <span>✦</span></span>
-    <span class="marquee-item">LogicHub <span>✦</span></span>
-    <span class="marquee-item">Sovereign Data <span>✦</span></span>
-    <span class="marquee-item">Bharat First <span>✦</span></span>
-    <span class="marquee-item">Pattern Economics <span>✦</span></span>
-    <span class="marquee-item">Token Engineering <span>✦</span></span>
-    <span class="marquee-item">81% Reduction <span>✦</span></span>
-    <span class="marquee-item">Decision Logic <span>✦</span></span>
-    <span class="marquee-item">Spatial OS <span>✦</span></span>
-    <span class="marquee-item">LogicHub <span>✦</span></span>
-    <span class="marquee-item">Sovereign Data <span>✦</span></span>
-    <span class="marquee-item">Bharat First <span>✦</span></span>
-    <span class="marquee-item">Pattern Economics <span>✦</span></span>
-    <span class="marquee-item">Token Engineering <span>✦</span></span>
-    <span class="marquee-item">81% Reduction <span>✦</span></span>
-  </div>
-</div>
-
-<section id="features">
-  <div class="section-label">Core Systems</div>
-  <h2 class="section-title reveal">Three Pillars of Sovereign Intelligence</h2>
-  <p class="section-sub reveal">Every system in ViaDecide is designed to compound. One decision documented saves ten decisions next session.</p>
-  <div class="features-grid reveal">
-    <a class="feature-card" href="./logichub.html">
-      <span class="feature-icon">🧬</span>
-      <div class="feature-num">System 01</div>
-      <div class="feature-title">Decision Logic</div>
-      <div class="feature-desc">44 professional decision tools mapped onto an interactive 3D logic academy. Stop reinventing frameworks. Start applying them.</div>
-      <div class="feature-tag">44 Tools</div>
-    </a>
-    <a class="feature-card" href="./logichub.html">
-      <span class="feature-icon">🗺️</span>
-      <div class="feature-num">System 02</div>
-      <div class="feature-title">Spatial World</div>
-      <div class="feature-desc">Discover the ViaDecide ecosystem through a touch-optimized, high-fidelity spatial map. Your mental model, rendered in space.</div>
-      <div class="feature-tag">Touch-Optimized</div>
-    </a>
-    <a class="feature-card" href="./contact.html">
-      <span class="feature-icon">🌾</span>
-      <div class="feature-num">System 03</div>
-      <div class="feature-title">Sovereign Data</div>
-      <div class="feature-desc">Your profile, your seeds. A private, secure environment for your digital legacy. No clouds that you don't own.</div>
-      <div class="feature-tag">Private & Secure</div>
-    </a>
-  </div>
-</section>
-
-<section class="logichub-section" id="logichub">
-  <div class="logichub-inner">
-    <div class="logichub-visual reveal">
-      <div class="node-graph">
-        <svg class="node-lines" viewBox="0 0 320 280">
-          <line x1="160" y1="140" x2="148" y2="28" />
-          <line x1="160" y1="140" x2="28" y2="98" />
-          <line x1="160" y1="140" x2="292" y2="98" />
-          <line x1="160" y1="140" x2="65" y2="238" />
-          <line x1="160" y1="140" x2="255" y2="238" />
+      <a href="https://www.instagram.com/printbydd?igsh=a2Z3cDFwNG1wYm5n"
+         target="_blank" rel="noopener" id="navInsta"
+         style="display:inline-flex;align-items:center;gap:5px;padding:5px 11px;
+                border-radius:999px;border:1px solid rgba(0,0,0,0.10);
+                font-size:12px;font-weight:800;
+                background:linear-gradient(135deg,rgba(240,148,51,0.08),rgba(188,24,136,0.08));
+                white-space:nowrap;transition:all 0.2s;"
+         aria-label="PrintByDD on Instagram">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <defs>
+            <linearGradient id="ig-s" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%"   stop-color="#f09433"/>
+              <stop offset="50%"  stop-color="#dc2743"/>
+              <stop offset="100%" stop-color="#bc1888"/>
+            </linearGradient>
+          </defs>
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="url(#ig-s)"/>
+          <circle cx="12" cy="12" r="4" stroke="url(#ig-s)"/>
+          <circle cx="17.5" cy="6.5" r="1" fill="url(#ig-s)" stroke="none"/>
         </svg>
-        <div class="node center">LOGIC<br/>HUB</div>
-        <div class="node n1">CONFIG</div>
-        <div class="node n2">SCHEMA</div>
-        <div class="node n3">ROUTE</div>
-        <div class="node n4">STYLE</div>
-        <div class="node n5">UI</div>
-      </div>
-      <div class="logichub-badge">PRD Ready ✓</div>
-    </div>
-    <div class="logichub-content">
-      <div class="section-label">LogicHub</div>
-      <h2 class="section-title reveal">Build Apps Visually. Ship PRDs Instantly.</h2>
-      <p class="section-sub reveal">Drag nodes. Wire logic. One tap to copy your entire architecture as a Claude-ready PRD. No blank canvas. No token waste.</p>
-      <div class="logichub-steps reveal">
-        <div class="step">
-          <div class="step-num">01</div>
-          <div>
-            <div class="step-title">Map your architecture</div>
-            <div class="step-desc">Drag nodes onto the canvas. Define file types, dependencies, and logic flow visually.</div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">02</div>
-          <div>
-            <div class="step-title">One-tap PRD copy</div>
-            <div class="step-desc">Your entire architecture compiles into a structured, Claude-optimized PRD in one tap.</div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">03</div>
-          <div>
-            <div class="step-title">Paste → Download ZIP</div>
-            <div class="step-desc">Paste into Claude. Get production-ready files. Download as ZIP. Zero API key needed.</div>
-          </div>
-        </div>
-      </div>
-      <a class="btn-primary reveal" href="./logichub.html">Open LogicHub →</a>
-    </div>
-  </div>
-</section>
-
-<section class="origin-section" id="origin">
-  <div class="section-label">Origin</div>
-  <div class="origin-grid">
-    <div>
-      <p class="origin-quote reveal">
-        From ₹10,000 and 3 months of AI learning in Kutch — to $33,756 in token savings and a platform with 58 tools.
-      </p>
-      <p class="origin-meta reveal">
-        Founded <span>2025</span> &nbsp;·&nbsp; Built in <span>Kutch, India</span> &nbsp;·&nbsp; Powered by <span>Pattern Economics</span>
-      </p>
-    </div>
-    <div class="origin-metrics reveal">
-      <div class="metric">
-        <div class="metric-value">₹10K</div>
-        <div class="metric-label">Starting Investment</div>
-      </div>
-      <div class="metric">
-        <div class="metric-value">81%</div>
-        <div class="metric-label">Token Reduction</div>
-      </div>
-      <div class="metric">
-        <div class="metric-value">58</div>
-        <div class="metric-label">Tools Built</div>
-      </div>
-      <div class="metric">
-        <div class="metric-value">$33K</div>
-        <div class="metric-label">Costs Saved</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="connect-section" id="connect">
-  <div class="connect-inner">
-    <div class="connect-left">
-      <div class="section-label">Let's Talk</div>
-      <h2 class="section-title reveal">I'm not selling anything.<br/>I'm still building.</h2>
-      <p class="reveal">
-        ViaDecide is 3 months old. LogicHub just hit the Play Store. There's no case study, no client list, no polished portfolio deck.
-      </p>
-      <p class="reveal">
-        What I do have is a genuine obsession with how AI and metadata can change the way people build things — and a lot of thoughts I'd love to pressure-test with the right people.
-      </p>
-      <div class="connect-honest reveal">
-        <div class="connect-honest-icon">☕</div>
-        <div class="connect-honest-text">
-          <strong>What this call actually is</strong>
-          30 minutes. You talk, I listen. I share what I've been building and why. No pitch, no invoice at the end. If something clicks, great. If not, you still get a fresh perspective from someone building in Kutch on a ₹10K budget.
-        </div>
-      </div>
-      <div class="reveal" style="display:flex; gap:12px; flex-wrap:wrap;">
-        <a class="btn-primary" href="./viadecide.html">Explore ViaDecide →</a>
-        <a class="btn-primary" href="./logichub.html">Explore ViaDecide →</a>
-        <a class="btn-ghost" href="https://github.com/via-decide" target="_blank">GitHub</a>
-      </div>
-    </div>
-
-    <div id="cursor-dot"></div>
-    <div id="cursor-ring"></div>
-
-    <canvas id="warp-canvas"></canvas>
-
-    <div id="scroll-proxy"></div>
-
-    <main id="viewport">
-        <div id="camera">
-            
-            <section class="panel" data-z="0">
-                <img src="icon-192.png" alt="DH Logo" class="brand-logo magnetic" onerror="this.style.display='none'">
-                <div class="tag tag-saffron">Sol 1 // Epoch 2026</div>
-                <h1 class="hero-title">Visual Logic.<br><span class="gradient-text-saffron">Autonomous Core.</span></h1>
-                <p class="hero-subtitle">Zero dependencies. Pure spatial execution. Architect, verify, and deploy using the browser's native physical engine.</p>
-                <div class="btn-group">
-                    <a href="#vialogic" class="btn-tactile primary magnetic route-link" data-route="vialogic">Initialize System</a>
-                </div>
-                <p class="scroll-hint">[ SCROLL TO DISCOVER SECTORS ]</p>
-            </section>
-
-            <section class="panel" data-z="-2500">
-                <div class="glass-card magnetic">
-                    <span class="panel-icon">🧠</span>
-                    <div class="tag tag-neon">Sector 01</div>
-                    <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">ViaLogic Hub</h2>
-                    <p class="hero-subtitle">The ultimate node-based orchestrator. Engage with Philosophical nodes, synthesize logic, and map complex spatial cartographies.</p>
-                    <div class="btn-group">
-                        <a href="#vialogic" class="btn-tactile outline magnetic route-link" data-route="vialogic">Open ViaLogic</a>
-                        <a href="#logichub" class="btn-tactile outline magnetic route-link" data-route="logichub">Mount LogicHub</a>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel" data-z="-5000">
-                <div class="glass-card magnetic" style="border-color: rgba(74, 222, 128, 0.2);">
-                    <span class="panel-icon">🗺️</span>
-                    <div class="tag tag-green">Sector 02</div>
-                    <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">Spatial Engine</h2>
-                    <p class="hero-subtitle">Dive into the macro-world view. Navigate territories using enhanced 3D zoom and touch-optimized panning physics.</p>
-                    <div class="btn-group">
-                        <a href="#world" class="btn-tactile outline magnetic route-link" data-route="world" style="border-color: var(--accent-green); color: var(--accent-green);">Explore World</a>
-                        <a href="#world" class="btn-tactile outline magnetic route-link" data-route="world" style="border-color: var(--accent-green); color: var(--accent-green);">Explore World</a>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel" data-z="-7500">
-                <div class="glass-card magnetic" style="border-color: rgba(255, 103, 31, 0.2);">
-                    <span class="panel-icon">📇</span>
-                    <div class="tag tag-saffron">Sector 03</div>
-                    <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">Kinetic Feed</h2>
-                    <p class="hero-subtitle">Tactile physical engine integration. Experience swipe-based discovery, physics-driven cards, and real-time pulse syncs.</p>
-                    <div class="btn-group">
-                        <a href="#feed" class="btn-tactile outline magnetic route-link" data-route="feed" style="border-color: var(--saffron); color: var(--saffron);">Access Feed</a>
-                        <a href="#feed" class="btn-tactile outline magnetic route-link" data-route="feed" style="border-color: var(--saffron); color: var(--saffron);">Access Feed</a>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel" data-z="-10000">
-                <div class="glass-card magnetic" style="border-color: rgba(168, 85, 247, 0.2);">
-                    <span class="panel-icon">⚡</span>
-                    <div class="tag" style="background: rgba(168, 85, 247, 0.12); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.3);">Sector 04</div>
-                    <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">Ecosystem Tools</h2>
-                    <p class="hero-subtitle">Chronological releases, Idea Remixers, and AI-powered Decision Oracles utilizing embedded Gemini architectures.</p>
-                    <div class="btn-group">
-                        <a href="#updates" class="btn-tactile outline magnetic route-link" data-route="updates" style="border-color: #a855f7; color: #a855f7;">View Updates</a>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel" data-z="-12500">
-                <div class="glass-card magnetic" style="border-color: rgba(255, 215, 0, 0.2);">
-                    <span class="panel-icon">👤</span>
-                    <div class="tag" style="background: rgba(255, 215, 0, 0.12); color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.3);">Sector 05</div>
-                    <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">Orchade Profile</h2>
-                    <p class="hero-subtitle">Your personal architecture hub. Manage DataSeeds, track economy credits, and establish secure Firebase cloud persistence.</p>
-                    <div class="btn-group">
-                        <a href="#profile" class="btn-tactile outline magnetic route-link" data-route="profile" style="border-color: #ffd700; color: #ffd700;">View Profile</a>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel" data-z="-15000">
-                <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">The Architect.</h2>
-                <p class="hero-subtitle">Dharam Daxini // Engineered without a single node_modules folder. Commence Transmission.</p>
-                
-                <div class="btn-group" style="margin-bottom: 2rem;">
-                    <a href="#portfolio" target="_blank" class="btn-tactile primary magnetic">View Portfolio</a>
-                    <a href="https://github.com/via-decide/decide.engine-tools" target="_blank" class="btn-tactile outline magnetic">GitHub Repo</a>
-                </div>
-
-                <div class="social-grid">
-                    <a href="#vialogic" class="social-link magnetic route-link" data-route="vialogic" style="border-color: var(--accent-green);">
-                        <small style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-green);">CORE HUB</small>
-                        <span>ViaDecide</span>
-                    </a>
-                    <a href="https://youtube.com/@decide.engine" target="_blank" class="social-link magnetic">
-                        <small style="font-family: var(--font-mono); font-size: 0.7rem;">YOUTUBE</small>
-                        <span>decide.engine</span>
-                    </a>
-                    
-                    <a href="https://open.spotify.com/show/2okZ1WXMWXLrSwFzClUPPp?si=fbe27697d5e047a4" target="_blank" class="social-link magnetic">
-                        <small style="font-family: var(--font-mono); font-size: 0.7rem;">SPOTIFY</small>
-                        <span>Dharam Daxini</span>
-                    </a>
-                    
-                    <a href="https://instagram.com/dharamdaxini" target="_blank" class="social-link magnetic">
-                        <small style="font-family: var(--font-mono); font-size: 0.7rem;">INSTAGRAM</small>
-                        <span>@dharamdaxini</span>
-                    </a>
-                </div>
-                <div style="margin-top: 4rem; opacity: 0.4; font-size: 0.75rem; font-family: var(--font-mono); letter-spacing: 2px;">END OF TRANSMISSION</div>
-            </section>
-
-        </div>
-    </main>
-
-    <script>
-        /* ========================================================
-           ROUTE RESOLVER & 404 HANDLER
-           ======================================================== */
-        const ROUTES = {
-            vialogic: { file: './index.html#vialogic', hash: true },
-            feed: { file: './index.html#feed', hash: true },
-            world: { file: './index.html#world', hash: true },
-            profile: { file: './index.html#profile', hash: true },
-            updates: { file: './index.html#updates', hash: true },
-            logichub: { file: './logichub.html', hash: false },
-            studiosos: { file: './logichub.html', hash: false },
-            'decide-engine': { file: './logichub.html', hash: false }
-        };
-
-        function resolveRoute(path) {
-            const cleanPath = String(path || '')
-                .split('?')[0]
-                .split('#')[0]
-                .replace(/^\//, '');
-            const routeName = cleanPath || 'vialogic';
-            const route = ROUTES[routeName];
-
-            if (!route) {
-                handle404(routeName);
-                return false;
-            }
-
-            if (route.hash) {
-                handleHashRoute(routeName);
-                return true;
-            }
-
-            if (route.file) {
-                window.location.href = route.file;
-                return false;
-            }
-
-            handle404(routeName);
-            return false;
-        }
-
-        function handleHashRoute(sectionName) {
-            window.history.replaceState(null, '', `#${sectionName}`);
-            window.VIA_ROUTE_DEBUG.log(`hash route resolved: ${sectionName}`);
-        }
-
-        function handle404(attemptedPath) {
-            window.VIA_ROUTE_DEBUG.error(`Path not found: ${attemptedPath}`);
-            setTimeout(() => {
-                window.location.href = './index.html';
-            }, 300);
-        }
-
-        window.VIA_ROUTE_DEBUG = {
-            log: (msg) => console.log(`[VIA:ROUTE] ${msg}`),
-            error: (msg) => console.error(`[VIA:ROUTE:ERROR] ${msg}`),
-            listRoutes: () => console.table(ROUTES)
-        };
-
-        window.addEventListener('hashchange', () => {
-            const hash = window.location.hash.slice(1);
-            if (hash) {
-                resolveRoute(hash);
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.route-link').forEach((link) => {
-                link.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    resolveRoute(link.dataset.route || '');
-                });
-            });
-
-            const initialHash = window.location.hash.slice(1);
-            if (initialHash) {
-                resolveRoute(initialHash);
-            }
-        });
-
-        /* ========================================================
-           1. PURE VANILLA 3D SCROLL INTERPOLATION
-           ======================================================== */
-        const camera = document.getElementById('camera');
-        const depthReadout = document.getElementById('depth-readout');
-        const panels = document.querySelectorAll('.panel');
-        
-        let currentScroll = 0;
-        let targetScroll = 0;
-        const scrollMultiplier = 2.5; 
-
-        // Set initial Z transforms
-        panels.forEach(panel => {
-            const z = parseFloat(panel.getAttribute('data-z') || '0');
-            panel.style.transform = `translate(-50%, -50%) translateZ(${z}px)`;
-        });
-
-        window.addEventListener('scroll', () => { targetScroll = window.scrollY; });
-
-        function update3DCamera() {
-            currentScroll += (targetScroll - currentScroll) * 0.08;
-            let zTranslation = currentScroll * scrollMultiplier;
-            if(camera) camera.style.transform = `translateZ(${zTranslation}px)`;
-            if(depthReadout) depthReadout.innerText = Math.round(zTranslation).toString().padStart(5, '0');
-
-            // Hide panels that pass behind camera to prevent bugs
-            panels.forEach(panel => {
-                const pz = parseFloat(panel.getAttribute('data-z') || '0');
-                const relativeZ = pz + zTranslation;
-                if (relativeZ > 600 || relativeZ < -4000) {
-                    panel.style.opacity = '0';
-                    panel.style.pointerEvents = 'none';
-                    panel.style.visibility = 'hidden';
-                } else {
-                    panel.style.opacity = '1';
-                    panel.style.pointerEvents = 'auto';
-                    panel.style.visibility = 'visible';
-                }
-            });
-
-            requestAnimationFrame(update3DCamera);
-        }
-        update3DCamera();
-
-
-        /* ========================================================
-           2. HOLOGRAPHIC 3D PARTICLE & IMAGE ENGINE
-           ======================================================== */
-        const canvas = document.getElementById('warp-canvas');
-        const ctx = canvas.getContext('2d');
-        
-        let width, height, cx, cy;
-        let particles = [];
-        const isMobile = window.innerWidth <= 768;
-        const numParticles = isMobile ? 80 : 150; // Adjusted for complex rendering
-        const fov = 800; 
-
-        // Preload User Image (Brand Logo) to use as floating 3D objects
-        const userImg = new Image();
-        userImg.src = '1000221390.jpg';
-        let imgLoaded = false;
-        userImg.onload = () => { imgLoaded = true; };
-
-        function initCanvas() {
-            width = window.innerWidth; height = window.innerHeight;
-            canvas.width = width; canvas.height = height;
-            cx = width / 2; cy = height / 2;
-        }
-
-        class HoloNode {
-            constructor() {
-                this.reset();
-                this.z = Math.random() * 8000; // Scatter initially throughout depth
-            }
-            reset() {
-                this.x = (Math.random() - 0.5) * 5000; 
-                this.y = (Math.random() - 0.5) * 4000;
-                this.z = 2000 + Math.random() * 2000; // Spawn deep
-                this.speed = 1.5 + Math.random() * 3;
-                
-                // 3D Rendering Properties
-                this.rotation = Math.random() * Math.PI * 2;
-                this.rotSpeed = (Math.random() - 0.5) * 0.02;
-                
-                // Categorize Particle Types
-                // 0: Small Saffron Dot, 1: Cyan Wireframe Hex, 2: Floating Image/Card, 3: Crosshair
-                const rand = Math.random();
-                if (rand < 0.4) this.type = 0;
-                else if (rand < 0.6) this.type = 1;
-                else if (rand < 0.8) this.type = 2;
-                else this.type = 3;
-
-                this.color = Math.random() > 0.5 ? '255, 103, 31' : '0, 229, 204';
-            }
-            
-            update(scrollVelocity) {
-                // Move towards camera, accelerate based on scroll speed
-                this.z -= this.speed + (scrollVelocity * 0.8);
-                this.rotation += this.rotSpeed;
-                if (this.z <= 0) this.reset();
-            }
-            
-            draw() {
-                const scale = fov / (fov + this.z);
-                const x2d = cx + this.x * scale;
-                const y2d = cy + this.y * scale;
-
-                // Fade in from distance, fade out right before hitting camera
-                let opacity = Math.min(1, Math.max(0, 1 - (this.z / 3000)));
-                if (this.z < 200) opacity *= (this.z / 200); 
-
-                ctx.save();
-                ctx.translate(x2d, y2d);
-                ctx.scale(scale, scale);
-                ctx.rotate(this.rotation);
-
-                ctx.strokeStyle = `rgba(${this.color}, ${opacity})`;
-                ctx.fillStyle = `rgba(${this.color}, ${opacity * 0.2})`;
-                ctx.lineWidth = 1.5;
-
-                switch(this.type) {
-                    case 0: // Glowing Dot (Ambient Dust)
-                        ctx.beginPath(); ctx.arc(0, 0, 3, 0, Math.PI * 2);
-                        ctx.fillStyle = `rgba(${this.color}, ${opacity * 0.8})`; ctx.fill();
-                        break;
-                        
-                    case 1: // Wireframe Hexagon
-                        ctx.beginPath();
-                        for(let i=0; i<6; i++) {
-                            ctx.lineTo(20 * Math.cos(i * Math.PI / 3), 20 * Math.sin(i * Math.PI / 3));
-                        }
-                        ctx.closePath(); ctx.stroke(); ctx.fill();
-                        // Inner dot
-                        ctx.beginPath(); ctx.arc(0,0, 2, 0, Math.PI*2); 
-                        ctx.fillStyle = `rgba(${this.color}, ${opacity})`; ctx.fill();
-                        break;
-                        
-                    case 2: // Floating Image or UI Card
-                        // Draw a high-tech glowing border
-                        ctx.strokeRect(-40, -40, 80, 80);
-                        
-                        if (imgLoaded) {
-                            // Draw actual user image, slightly faded by depth
-                            ctx.globalAlpha = opacity * 0.8;
-                            // Clip to rounded rect for modern look
-                            ctx.beginPath();
-                            ctx.roundRect ? ctx.roundRect(-38, -38, 76, 76, 8) : ctx.rect(-38, -38, 76, 76);
-                            ctx.clip();
-                            ctx.drawImage(userImg, -38, -38, 76, 76);
-                        } else {
-                            // Fallback: Draw simulated code/UI card
-                            ctx.fillStyle = `rgba(15, 15, 26, ${opacity * 0.9})`;
-                            ctx.fillRect(-38, -38, 76, 76);
-                            ctx.fillStyle = `rgba(${this.color}, ${opacity})`;
-                            ctx.fillRect(-30, -25, 40, 4);
-                            ctx.fillRect(-30, -15, 60, 4);
-                            ctx.fillRect(-30, -5, 50, 4);
-                        }
-                        
-                        // Draw corner brackets
-                        ctx.beginPath();
-                        ctx.moveTo(-45, -30); ctx.lineTo(-45, -45); ctx.lineTo(-30, -45);
-                        ctx.moveTo(45, -30); ctx.lineTo(45, -45); ctx.lineTo(30, -45);
-                        ctx.moveTo(-45, 30); ctx.lineTo(-45, 45); ctx.lineTo(-30, 45);
-                        ctx.moveTo(45, 30); ctx.lineTo(45, 45); ctx.lineTo(30, 45);
-                        ctx.stroke();
-                        break;
-                        
-                    case 3: // Crosshair / Data Node
-                        ctx.beginPath();
-                        ctx.moveTo(-15, 0); ctx.lineTo(15, 0);
-                        ctx.moveTo(0, -15); ctx.lineTo(0, 15);
-                        ctx.stroke();
-                        ctx.beginPath(); ctx.arc(0,0, 8, 0, Math.PI*2); ctx.stroke();
-                        break;
-                }
-
-                ctx.restore();
-            }
-        }
-
-        initCanvas();
-        for (let i = 0; i < numParticles; i++) particles.push(new HoloNode());
-
-        window.addEventListener('resize', initCanvas);
-
-        let lastScroll = 0;
-        function animateCanvas() {
-            const velocity = Math.abs(currentScroll - lastScroll);
-            lastScroll = currentScroll;
-
-            ctx.clearRect(0, 0, width, height);
-            
-            // Depth Sorting (Z-Buffer): Sort particles so further ones are drawn first
-            particles.sort((a, b) => b.z - a.z);
-
-            particles.forEach(p => {
-                p.update(velocity);
-                p.draw();
-            });
-            requestAnimationFrame(animateCanvas);
-        }
-        animateCanvas();
-
-
-        /* ========================================================
-           3. MAGNETIC UI PHYSICS & CUSTOM CURSOR
-           ======================================================== */
-        const dot = document.getElementById('cursor-dot');
-        const ring = document.getElementById('cursor-ring');
-        const magnetics = document.querySelectorAll('.magnetic');
-
-        let mouseX = window.innerWidth / 2;
-        let mouseY = window.innerHeight / 2;
-        let ringX = mouseX;
-        let ringY = mouseY;
-
-        window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX; mouseY = e.clientY;
-            dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
-        });
-
-        function animateCursor() {
-            ringX += (mouseX - ringX) * 0.15;
-            ringY += (mouseY - ringY) * 0.15;
-            ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
-            requestAnimationFrame(animateCursor);
-        }
-        if(window.innerWidth > 768) animateCursor(); 
-
-        magnetics.forEach(btn => {
-            btn.addEventListener('mousemove', (e) => {
-                const rect = btn.getBoundingClientRect();
-                const hx = rect.left + rect.width / 2;
-                const hy = rect.top + rect.height / 2;
-                
-                const dx = (e.clientX - hx) * 0.15; 
-                const dy = (e.clientY - hy) * 0.15; 
-                
-                if(btn.classList.contains('glass-card')) {
-                   btn.style.transform = `translate(${dx}px, ${dy}px) scale(1.02)`;
-                } else {
-                   btn.style.transform = `translate(${dx}px, ${dy}px) scale(1.05)`;
-                }
-                
-                ring.style.width = '50px'; ring.style.height = '50px';
-                ring.style.borderColor = 'var(--saffron)'; dot.style.background = 'var(--saffron)';
-            });
-
-            btn.addEventListener('mouseleave', () => {
-                btn.style.transform = `translate(0px, 0px) scale(1)`;
-                ring.style.width = '40px'; ring.style.height = '40px';
-                ring.style.borderColor = 'rgba(255,255,255,0.4)'; dot.style.background = 'var(--text-main)';
-            });
-        });
-
-    </script>
-    <div class="call-card reveal">
-      <div class="call-avatar">🧠</div>
-      <div class="call-card-label">Free · No obligation</div>
-      <div class="call-card-title">30-Minute<br/>Open Call</div>
-      <div class="call-card-desc">
-        Curious about LogicHub? Want to explore token engineering for your own project? Just want to talk AI systems with someone who thinks differently? Book a slot.
-      </div>
-      <div class="call-details">
-        <div class="call-detail">
-          <div class="call-detail-dot"></div>
-          30 min · Video or Voice
-        </div>
-        <div class="call-detail">
-          <div class="call-detail-dot"></div>
-          No prep needed on your end
-        </div>
-        <div class="call-detail">
-          <div class="call-detail-dot"></div>
-          Completely free, always
-        </div>
-        <div class="call-detail">
-          <div class="call-detail-dot"></div>
-          English · Hindi · Gujarati
-        </div>
-      </div>
-      <a class="btn-call" href="./contact.html">
-        Book a Free Call →
+        <span style="background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+                     -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+                     background-clip:text;">@printbydd</span>
       </a>
-      <div class="call-note">No calendar tool yet — just shoot an email &nbsp;·&nbsp; I reply fast</div>
-    </div>
-  </div>
-</section>
 
-<footer>
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <a class="nav-logo" href="./index.html"><span>//</span> VIADECIDE</a>
-      <p class="footer-tagline">Sovereign Kinetic OS. Built in Kutch. For the world.</p>
-    </div>
-    <div class="footer-links">
-      <div class="footer-col">
-        <div class="footer-col-title">Platform</div>
-        <ul>
-          <li><a href="./viadecide.html">Launch Engine</a></li>
-          <li><a href="./index.html">Launch Engine</a></li>
-          <li><a href="./logichub.html">LogicHub</a></li>
-          <li><a href="#features">Decision Tools</a></li>
-        </ul>
+      <button id="install-pwa-nav" aria-label="Install app" type="button">📲 Install</button>
+      <button id="btnTheme" class="btn-icon" aria-label="Toggle theme" title="Toggle theme" type="button">☾</button>
+    </nav>
+  </header>
+
+  <!-- ══════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════ -->
+  <div id="appWrapper">
+    <main>
+
+      <!-- Hero -->
+      <div class="hero">
+        <h1>Physical concepts,<br>built in <span>3D.</span></h1>
+        <p>Precision manufacturing, smart accessories, and the psychology behind objects that matter.</p>
+        <div class="portal-cta" id="portalCtaContainer">
+          <button class="btn-primary"   onclick="openAuthModal()">Enter Portal</button>
+          <button class="btn-secondary" onclick="requestNewCode()">Request Access</button>
+        </div>
       </div>
-      <div class="footer-col">
-        <div class="footer-col-title">Open Source</div>
-        <ul>
-          <li><a href="https://github.com/via-decide/via-OS" target="_blank">via-OS</a></li>
-          <li><a href="https://github.com/via-decide/decide.engine-tools" target="_blank">engine-tools</a></li>
-          <li><a href="https://github.com/via-decide/LogicHub" target="_blank">LogicHub</a></li>
-        </ul>
+
+      <!-- Products section -->
+      <div class="section-header">
+        <h2>Products</h2>
+      </div>
+
+      <div class="grid">
+        <a id="cardKeychain" href="/keychain" class="card">
+          <div class="card-image-wrap">
+            <img src="./1000217293.jpg" alt="Hardcore NFC Keychain" />
+          </div>
+          <div class="kicker">Smart Accessories</div>
+          <h3>The Hardcore NFC Keychain</h3>
+          <p>A seamless blend of physical durability and digital utility. Discover how we engineered a hidden digital vault inside a dual-color 3D print.</p>
+          <span class="card-link">View Product</span>
+        </a>
+
+        <a id="cardNumberplate" href="/printbydd/numberplate" class="card">
+          <div class="card-image-wrap">
+            <img src="./numberplate-preview.png" alt="3D Numberplate Keychain"
+                 onerror="this.style.display='none';" />
+          </div>
+          <div class="kicker">Custom Vehicle ID</div>
+          <h3>3D Two-Tone Numberplate</h3>
+          <p>Pick character color + boundary-height color, preview in 3D, then order. Designed for crisp readability and an engineered finish.</p>
+          <span class="card-link">View Product</span>
+        </a>
+      </div>
+
+      <!-- Blog section -->
+      <div class="section-header" style="margin-top:56px;">
+        <h2>Featured Perspectives</h2>
+      </div>
+
+      <div class="grid">
+        <a id="cardBlog" href="/printbydd/gifts" class="card">
+          <div class="carousel-container" aria-label="Image gallery">
+            <div class="carousel-track">
+              <img src="./1000217292.png" alt="Geometric Organizer" />
+              <img src="./1000217276.jpg" alt="Muscle Keychain Model" />
+            </div>
+            <div class="swipe-hint">Swipe Gallery ↔</div>
+          </div>
+          <div class="kicker">Gifting Psychology</div>
+          <h3>Gifts That Mean More</h3>
+          <p>The gifts people remember aren't always the costly ones. Learn why personalized objects become everyday memory triggers.</p>
+          <span class="card-link">Read Story</span>
+        </a>
+
+        <!-- Added blog card (active like others) -->
+        <a id="cardBlogPersonalized" href="./blog-personalized-gifts.html" class="card">
+          <div class="card-image-wrap">
+            <img
+              alt="Personalized gifts and emotional bonds"
+              src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%3Cdefs%3E%3CradialGradient%20id%3D%27g%27%20cx%3D%2750%25%27%20cy%3D%2740%25%27%20r%3D%2770%25%27%3E%3Cstop%20offset%3D%270%25%27%20stop-color%3D%27%23ff2a2a%27%20stop-opacity%3D%270.18%27/%3E%3Cstop%20offset%3D%27100%25%27%20stop-color%3D%27%23ffffff%27%20stop-opacity%3D%270%27/%3E%3C/radialGradient%3E%3ClinearGradient%20id%3D%27r%27%20x1%3D%270%25%27%20y1%3D%270%25%27%20x2%3D%27100%25%27%20y2%3D%27100%25%27%3E%3Cstop%20offset%3D%270%25%27%20stop-color%3D%27%23ff2a2a%27/%3E%3Cstop%20offset%3D%27100%25%27%20stop-color%3D%27%23ff6b6b%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27%23f0f0f0%27/%3E%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url(%23g)%27/%3E%3Cg%20transform%3D%27translate(70%2C58)%27%3E%3Crect%20x%3D%2760%27%20y%3D%27110%27%20width%3D%27140%27%20height%3D%27110%27%20rx%3D%2716%27%20fill%3D%27url(%23r)%27%20opacity%3D%270.95%27/%3E%3Crect%20x%3D%2752%27%20y%3D%2790%27%20width%3D%27156%27%20height%3D%2738%27%20rx%3D%2716%27%20fill%3D%27%23ffffff%27%20opacity%3D%270.72%27/%3E%3Crect%20x%3D%27124%27%20y%3D%2790%27%20width%3D%2712%27%20height%3D%27130%27%20rx%3D%276%27%20fill%3D%27%23ffffff%27%20opacity%3D%270.34%27/%3E%3Cpath%20d%3D%27M130%2090%20c-10-10-26-12-36-3%20c-10%209-6%2023%205%2028%20c11%205%2021-2%2029-10%20c8%208%2018%2015%2029%2010%20c11-5%2015-19%205-28%20c-10-9-26-7-36%203z%27%20fill%3D%27%23ff2a2a%27%20opacity%3D%270.45%27/%3E%3C/g%3E%3Ctext%20x%3D%27200%27%20y%3D%27258%27%20text-anchor%3D%27middle%27%20font-family%3D%27-apple-system%2C%20BlinkMacSystemFont%2C%20Segoe%20UI%2C%20Arial%2C%20sans-serif%27%20font-size%3D%2716%27%20fill%3D%27%23111111%27%20opacity%3D%270.75%27%3EThe%20Gift%20Lab%20%E2%80%94%20Emotional%20Bonds%3C/text%3E%3C/svg%3E" />
+          </div>
+          <div class="kicker">The Gift Lab</div>
+          <h3>Personalized Gifts & Emotional Bonds</h3>
+          <p>Why custom details create stronger attachment — psychology, memory science, and how everyday objects become emotional anchors.</p>
+          <span class="card-link">Read Story</span>
+        </a>
+      </div>
+
+      <!-- Install section -->
+      <div id="install-section">
+        <div class="install-inner">
+          <div class="install-l">
+            <div class="install-badge">📲 Install App</div>
+            <h2>Get PrintByDD on<br>any <span>device.</span></h2>
+            <p>Install our store as a Progressive Web App — no App Store needed. Works on Android, iPhone, Windows, Mac, and Linux. Browse and order offline, loads instantly from your homescreen.</p>
+            <div class="install-steps">
+              <div class="install-step">
+                <div class="step-n">1</div>
+                <div class="step-txt"><strong>Open in your browser</strong> — Chrome, Safari, or Edge</div>
+              </div>
+              <div class="install-step">
+                <div class="step-n">2</div>
+                <div class="step-txt"><strong>Tap the install prompt</strong> — or use your browser menu</div>
+              </div>
+              <div class="install-step">
+                <div class="step-n">3</div>
+                <div class="step-txt"><strong>Enjoy instant access</strong> — PrintByDD lives on your homescreen</div>
+              </div>
+            </div>
+            <div class="install-btns">
+              <button id="install-pwa-section" class="btn-primary"   style="display:none" type="button">📲 Install PrintByDD</button>
+              <button id="ios-trigger-section" class="btn-secondary" style="display:none" type="button">🍎 iPhone Instructions</button>
+            </div>
+          </div>
+
+          <div class="install-r">
+            <div class="dev-tabs">
+              <button class="dev-tab active" data-tab="android" type="button">Android</button>
+              <button class="dev-tab"        data-tab="ios"     type="button">iPhone</button>
+              <button class="dev-tab"        data-tab="desktop" type="button">Desktop</button>
+            </div>
+            <div id="tab-android" class="dev-inst">
+              <strong>📱 Android — Chrome</strong>
+              <ol>
+                <li>Open <strong>store.viadecide.com</strong> in Chrome</li>
+                <li>Tap the <strong>3-dot menu (⋮)</strong> top-right</li>
+                <li>Tap <strong>"Install app"</strong></li>
+                <li>Tap <strong>Install</strong> — icon appears on homescreen</li>
+              </ol>
+            </div>
+            <div id="tab-ios" class="dev-inst" style="display:none">
+              <strong>🍎 iPhone / iPad — Safari</strong>
+              <ol>
+                <li>Open in <strong>Safari</strong> (not Chrome)</li>
+                <li>Tap the <strong>Share button (□↑)</strong> at bottom</li>
+                <li>Tap <strong>"Add to Home Screen"</strong></li>
+                <li>Tap <strong>Add</strong> — done!</li>
+              </ol>
+            </div>
+            <div id="tab-desktop" class="dev-inst" style="display:none">
+              <strong>💻 Desktop — Chrome / Edge</strong>
+              <ol>
+                <li>Open in <strong>Chrome or Edge</strong></li>
+                <li>Look for the <strong>install icon ⊕</strong> in address bar</li>
+                <li>Or: <strong>3-dot menu → "Install PrintByDD"</strong></li>
+                <li>Click <strong>Install</strong> — opens as its own app!</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PWA BANNERS
+  ══════════════════════════════════════ -->
+  <div id="install-banner">
+    <div class="ib-inner">
+      <div class="ib-icon">P</div>
+      <div class="ib-txt">
+        <strong>Install PrintByDD Store</strong>
+        <span>Add to homescreen — works offline, loads instantly</span>
+      </div>
+      <div class="ib-acts">
+        <button class="ib-btn"     id="install-banner-btn"     type="button">Install</button>
+        <button class="ib-dismiss" id="install-banner-dismiss" aria-label="Dismiss" type="button">✕</button>
       </div>
     </div>
   </div>
-  <div class="footer-bottom">
-    <div class="footer-copy">© 2026 ViaDecide Spatial OS — Apache 2.0</div>
-    <div class="bharat-badge">
-      <div class="flag-bar"><span class="f1"></span><span class="f2"></span><span class="f3"></span></div>
-      Made in Bharat
+
+  <div id="ios-hint">
+    <button id="ios-hint-close" aria-label="Close" type="button">✕</button>
+    <strong>Install on iPhone / iPad</strong>
+    <p>Tap the <strong>Share button (□↑)</strong> at the bottom of Safari,<br>
+       then tap <strong>"Add to Home Screen"</strong> and tap <strong>Add</strong>.</p>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       AUTH MODAL
+  ══════════════════════════════════════ -->
+  <div class="modal-overlay" id="authModalOverlay">
+    <div class="auth-modal">
+      <h2>Client Login</h2>
+      <p>Enter your 5-character secure access code (e.g., VIA-A1B2C).</p>
+      <input type="text" id="accessCodeInput" class="code-input allow-select"
+             placeholder="VIA-XXXXX" autocomplete="off" spellcheck="false" maxlength="9">
+      <div class="auth-error" id="authErrorMsg">Invalid code. Please check your WhatsApp.</div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeAuthModal()" type="button">Cancel</button>
+        <button class="btn-primary"   onclick="verifyCode()"     type="button">Unlock</button>
+      </div>
     </div>
   </div>
-</footer>
 
-<script src="./scripts/bootstrap.js"></script>
+  <!-- ══════════════════════════════════════
+       SCRIPTS
+  ══════════════════════════════════════ -->
+  <script>
+  (function () {
+    "use strict";
 
-<script>
-(() => {
-  const cursorElem = document.getElementById('cursor');
-  const ringElem = document.getElementById('cursorRing');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursorElem.style.left = mx + 'px';
-    cursorElem.style.top = my + 'px';
-  });
-  function animRing() {
-    rx += (mx - rx) * 0.12;
-    ry += (my - ry) * 0.12;
-    ringElem.style.left = rx + 'px';
-    ringElem.style.top = ry + 'px';
-    requestAnimationFrame(animRing);
-  }
-  animRing();
-  document.querySelectorAll('a, button, .node, .feature-card, .step, .metric').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      ringElem.style.width = '54px'; ringElem.style.height = '54px';
-      ringElem.style.borderColor = 'rgba(232,184,75,0.8)';
+    /* ── ROUTER ── */
+    (function fixStoreLinks() {
+      var isStoreDomain = location.hostname === 'store.viadecide.com';
+      if (!isStoreDomain) return;
+      if (location.pathname === '/printbydd') history.replaceState(null, '', '/printbydd/');
+    })();
+
+    function isStore() {
+      return location.hostname === 'store.viadecide.com' ||
+             location.pathname.startsWith('/printbydd');
+    }
+    function routeTo(pathHtml, pathRoute) {
+      return isStore() ? pathRoute : pathHtml;
+    }
+    (function applyNavRoutes() {
+      var links = {
+        'navLogo':              ['./index.html',                     '/printbydd/'],
+        'navHome':              ['./index.html',                     '/printbydd/'],
+        'navProducts':          ['./products.html',                  '/printbydd/products'],
+        'navBlog':              ['./gifts-that-mean-more.html',      '/printbydd/gifts'],
+        'cardKeychain':         ['./keychain.html',                  '/printbydd/keychain'],
+        'cardNumberplate':      ['./numberplate.html',               '/printbydd/numberplate'],
+        'cardBlog':             ['./gifts-that-mean-more.html',      '/printbydd/gifts'],
+        'cardBlogPersonalized': ['./blog-personalized-gifts.html',   '/printbydd/blog-personalized-gifts']
+      };
+      Object.keys(links).forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.href = routeTo(links[id][0], links[id][1]);
+      });
+    })();
+
+    /* ── THEME ── */
+    var THEME_KEY = "VD_INVERT_THEME";
+    var btnTheme  = document.getElementById("btnTheme");
+
+    function setInvert(on) {
+      document.body.classList.toggle("invert-mode", !!on);
+      btnTheme.textContent = on ? "☀" : "☾";
+      try { localStorage.setItem(THEME_KEY, on ? "1" : "0"); } catch (e) {}
+    }
+    (function initTheme() {
+      var saved = "0";
+      try { saved = localStorage.getItem(THEME_KEY) || "0"; } catch (e) {}
+      setInvert(saved === "1");
+    })();
+    btnTheme.addEventListener("click", function () {
+      setInvert(!document.body.classList.contains("invert-mode"));
     });
-    el.addEventListener('mouseleave', () => {
-      ringElem.style.width = '36px'; ringElem.style.height = '36px';
-      ringElem.style.borderColor = 'rgba(232,184,75,0.5)';
-    });
-  });
 
-  const reveals = document.querySelectorAll('.reveal');
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('visible'), i * 80);
-        obs.unobserve(e.target);
+    /* ── AUTH ── */
+    var AUTH_KEY  = "PBD_USER_VERIFIED";
+    var WA_NUMBER = "916351537770";
+
+    (function checkAuthStatus() {
+      if (localStorage.getItem(AUTH_KEY) === "true") showLoggedInState();
+    })();
+
+    window.requestNewCode = function () {
+      var text = "✦ *PRINTBYDD ACCESS REQUEST* ✦\n\n*Role:* CUSTOMER\n*Email:* [Enter your email here]\n\n_Please generate my secure access code._";
+      window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(text), '_blank');
+    };
+
+    var modal    = document.getElementById("authModalOverlay");
+    var input    = document.getElementById("accessCodeInput");
+    var errorMsg = document.getElementById("authErrorMsg");
+
+    window.openAuthModal  = function () {
+      modal.classList.add("active");
+      input.value = "";
+      errorMsg.style.display = "none";
+      input.focus();
+    };
+    window.closeAuthModal = function () { modal.classList.remove("active"); };
+    window.verifyCode     = function () {
+      var code = input.value.trim().toUpperCase();
+      if (code.startsWith("VIA-") && code.length >= 8) {
+        localStorage.setItem(AUTH_KEY, "true");
+        closeAuthModal();
+        showLoggedInState();
+      } else {
+        errorMsg.style.display = "block";
+        input.value = "";
+        input.focus();
       }
-    });
-  }, { threshold: 0.05, rootMargin: '50px' });
-  reveals.forEach(r => obs.observe(r));
+    };
+    function showLoggedInState() {
+      document.getElementById("portalCtaContainer").innerHTML =
+        '<button class="btn-primary" onclick="alert(\'Portal Dashboard Coming Soon!\')">Access Dashboard</button>' +
+        '<button class="btn-secondary" onclick="logout()" style="border:none;text-decoration:underline">Sign Out</button>';
+    }
+    window.logout = function () { localStorage.removeItem(AUTH_KEY); location.reload(); };
 
-  // Mobile menu toggle
-  const mobileBtn = document.getElementById('mobileMenuBtn');
-  const navLinks = document.getElementById('navLinks');
-  if (mobileBtn && navLinks) {
-    mobileBtn.addEventListener('click', () => {
-      navLinks.classList.toggle('open');
+    /* Allow closing auth modal with Escape */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modal.classList.contains('active')) closeAuthModal();
     });
-  }
-})();
-</script>
+
+    /* ── DEVICE TABS ── */
+    document.querySelectorAll('.dev-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        document.querySelectorAll('.dev-tab').forEach(function (t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        document.querySelectorAll('.dev-inst').forEach(function (d) { d.style.display = 'none'; });
+        var panel = document.getElementById('tab-' + tab.dataset.tab);
+        if (panel) panel.style.display = 'block';
+      });
+      /* Keyboard support for tab buttons */
+      tab.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.click(); }
+      });
+    });
+
+    /* ── PWA INSTALL ── */
+    var dP = null;
+    var isIOS = /iP(ad|hone|od)/.test(navigator.userAgent) && !window.MSStream;
+    var isStandalone = window.matchMedia('(display-mode:standalone)').matches ||
+                       navigator.standalone === true;
+
+    var navBtn     = document.getElementById('install-pwa-nav');
+    var secBtn     = document.getElementById('install-pwa-section');
+    var iosTrigger = document.getElementById('ios-trigger-section');
+    var banner     = document.getElementById('install-banner');
+    var bannerBtn  = document.getElementById('install-banner-btn');
+    var bannerDis  = document.getElementById('install-banner-dismiss');
+    var iosHint    = document.getElementById('ios-hint');
+    var iosClose   = document.getElementById('ios-hint-close');
+
+    function isMobile() { return window.innerWidth <= 720; }
+
+    function showInstallBtns() {
+      if (navBtn && !isMobile()) navBtn.style.display = 'inline-flex';
+      if (secBtn) secBtn.style.display = 'inline-flex';
+    }
+    function hideInstallBtns() {
+      if (navBtn) navBtn.style.display = 'none';
+      if (secBtn) secBtn.style.display = 'none';
+      if (banner) banner.classList.remove('show');
+    }
+
+    if (isStandalone) hideInstallBtns();
+
+    function doInstall() {
+      if (dP) {
+        dP.prompt();
+        dP.userChoice.then(function (result) {
+          if (result.outcome === 'accepted') { dP = null; hideInstallBtns(); }
+        });
+      }
+    }
+
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      dP = e;
+      showInstallBtns();
+      setTimeout(function () {
+        try {
+          var dismissed = sessionStorage.getItem('pbd-install-dismissed');
+          if (!dismissed && !isStandalone && banner) banner.classList.add('show');
+        } catch (ex) {}
+      }, 3500);
+    });
+
+    if (navBtn)    navBtn.addEventListener('click', doInstall);
+    if (secBtn)    secBtn.addEventListener('click', doInstall);
+    if (bannerBtn) bannerBtn.addEventListener('click', function () {
+      doInstall();
+      if (banner) banner.classList.remove('show');
+    });
+    if (bannerDis) bannerDis.addEventListener('click', function () {
+      if (banner) banner.classList.remove('show');
+      try { sessionStorage.setItem('pbd-install-dismissed', '1'); } catch (e) {}
+    });
+
+    if (isIOS && !isStandalone) {
+      if (navBtn && !isMobile()) navBtn.style.display = 'inline-flex';
+      if (iosTrigger) {
+        iosTrigger.style.display = 'inline-flex';
+        iosTrigger.addEventListener('click', function () {
+          if (iosHint) iosHint.classList.add('show');
+        });
+      }
+      setTimeout(function () {
+        try {
+          var d = sessionStorage.getItem('pbd-ios-dismissed');
+          if (!d && iosHint) iosHint.classList.add('show');
+        } catch (e) {}
+      }, 4500);
+    }
+    if (iosClose) iosClose.addEventListener('click', function () {
+      if (iosHint) iosHint.classList.remove('show');
+      try { sessionStorage.setItem('pbd-ios-dismissed', '1'); } catch (e) {}
+    });
+
+    window.addEventListener('appinstalled', function () { dP = null; hideInstallBtns(); });
+    window.addEventListener('resize', function () {
+      if (isMobile() && navBtn) navBtn.style.display = 'none';
+    });
+
+    /* ── SERVICE WORKER ── */
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./sw.js').catch(function () {});
+      });
+    }
+
+  })();
+  </script>
 </body>
 </html>
